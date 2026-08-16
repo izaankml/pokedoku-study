@@ -21,6 +21,7 @@ import {
   consumeHandoffFromUrl,
   getToken,
   removeDeviceBlock,
+  resetRemoteBlocks,
   setToken,
   syncBlock,
 } from "./logic/sync.js";
@@ -159,6 +160,24 @@ function App() {
     scheduleSync();
   }, [scheduleSync]);
 
+  // Wipe everything: this device and every synced device's block.
+  const resetAll = useCallback(async () => {
+    const fresh = { ...emptyBlock(blockRef.current.deviceId), deviceName: blockRef.current.deviceName };
+    saveBlock(fresh);
+    setBlock(fresh);
+    blockRef.current = fresh;
+    if (!getToken()) return;
+    setSyncState((s) => ({ ...s, status: "syncing" }));
+    try {
+      const blocks = await resetRemoteBlocks(fresh);
+      setRemoteBlocks([]);
+      lastSyncRef.current = Date.now();
+      setSyncState({ status: "ok", deviceCount: blocks.length, lastSyncedAt: lastSyncRef.current });
+    } catch (err) {
+      setSyncState((s) => ({ ...s, status: "error", lastError: err.message }));
+    }
+  }, []);
+
   // Fold another device's history into this one and drop its block from
   // the gist (for stale duplicates: reinstalled apps, cleared storage,
   // private windows).
@@ -210,10 +229,11 @@ function App() {
       saveToken,
       syncNow,
       resetLocal,
+      resetAll,
       devices,
       absorbDevice,
     }),
-    [block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal, devices, absorbDevice]
+    [block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal, resetAll, devices, absorbDevice]
   );
 
   const selectTab = useCallback((t) => {

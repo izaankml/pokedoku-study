@@ -138,6 +138,24 @@ export async function syncBlock(ownBlock) {
   return Object.values(devices);
 }
 
+// Replaces the gist with just our (freshly reset) block: a full reset
+// across every device. Other devices start over on their next sync.
+export async function resetRemoteBlocks(ownBlock) {
+  const gistId = await findGistId();
+  if (!gistId) return [ownBlock];
+  await api(`/gists/${gistId}`, {
+    method: "PATCH",
+    body: {
+      files: {
+        [GIST_FILENAME]: {
+          content: JSON.stringify({ devices: { [ownBlock.deviceId]: ownBlock } }),
+        },
+      },
+    },
+  });
+  return [ownBlock];
+}
+
 // Drops another device's block from the gist (after its history has been
 // absorbed locally — see stats.absorbBlock). Returns the remaining blocks.
 export async function removeDeviceBlock(deviceId, ownBlock) {

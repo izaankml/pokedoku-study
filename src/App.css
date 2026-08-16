@@ -106,10 +106,14 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  background: var(--bg-0);
 }
 
 body {
-  background: var(--bg-0);
+  /* The canvas colour shows in the strip iOS Safari leaves under the fixed
+     nav (below the layout viewport, above its toolbar); matching the nav's
+     surface makes it read as one bar. The page itself paints on #root. */
+  background: var(--surface-1);
   color: var(--text-hi);
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -1161,21 +1165,24 @@ header h1 {
 
   .stats-table th:nth-child(2),
   .stats-table td:nth-child(2) {
-    width: 64px;
+    width: 56px;
   }
 
+  /* Accuracy hugs the right edge (header too) so the bar sits well clear
+     of the Answered number */
   .stats-table th:nth-child(3),
   .stats-table td:nth-child(3) {
-    width: 132px;
+    width: 140px;
+    text-align: right;
   }
 
-  /* shorter bar so the centred bar + % keep clear of the Answered column */
-  .acc-track {
-    width: 40px;
-  }
-
-  .acc {
+  .stats-table .acc {
+    justify-content: flex-end;
     gap: 6px;
+  }
+
+  .stats-table .acc-track {
+    width: 36px;
   }
 }
 
@@ -1538,58 +1545,54 @@ main > * {
   }
 }
 
+.reset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin: calc(-1 * var(--sp-2)) 0 var(--sp-4);
+}
+
 /* ---- Pokémon detail popup ---- */
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 80;
+  touch-action: none; /* the card scrolls, the page behind it doesn't */
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.6);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  padding: 0;
+  padding: var(--sp-4);
 }
 
 .modal {
   position: relative;
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
   max-height: min(84dvh, 720px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--sp-4) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--sp-4);
+  border-radius: var(--radius-lg);
   background: var(--surface-1);
   border: 1px solid var(--border);
-  border-bottom: none;
   box-shadow: var(--shadow-2);
+  text-align: center;
   animation: modal-in var(--dur-med) var(--ease-out) both;
 }
 
 @keyframes modal-in {
   from {
-    transform: translateY(24px);
+    transform: translateY(12px) scale(0.98);
     opacity: 0;
   }
   to {
     transform: none;
     opacity: 1;
-  }
-}
-
-@media (min-width: 641px) {
-  .modal-backdrop {
-    align-items: center;
-    padding: var(--sp-4);
-  }
-
-  .modal {
-    border-radius: var(--radius-lg);
-    border-bottom: 1px solid var(--border);
-    padding-bottom: var(--sp-4);
   }
 }
 
@@ -1608,10 +1611,11 @@ main > * {
 
 .detail-head {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
   margin-bottom: var(--sp-3);
-  padding-right: 40px;
+  padding: 0 32px;
 }
 
 .detail-head h3 {
@@ -1628,8 +1632,6 @@ main > * {
   width: 96px;
   height: 96px;
   flex: none;
-  border-radius: 50%;
-  background: var(--surface-2);
 }
 
 .detail-group {
@@ -1648,6 +1650,7 @@ main > * {
 .detail-pills {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
 }
 

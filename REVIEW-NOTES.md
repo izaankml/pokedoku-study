@@ -169,12 +169,19 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     the sprite, dex number, "form of …", and every category it counts for,
     grouped like the dropdowns; Esc/backdrop/× close it.
 28. Stats: Answered and Accuracy are centred (headers and cells).
-29. `theme-color` is now the tab-bar surface (#1c1b20) instead of the page
-    black, so Safari's toolbar zone under the fixed nav (which the page
-    can't paint) blends with the bar instead of showing as a black band.
-    **Assumption**: iOS Safari tints its bottom (and top status-bar) chrome
-    from theme-color — check on device; if the top now looks wrong, revert
-    index.html's theme-color to #0c0c0f.
+29. Black band under the nav: iOS 26 Safari leaves a strip between the
+    layout viewport's bottom (where `position: fixed; bottom: 0` ends) and
+    its floating toolbar, and paints the *canvas* (body background) there.
+    theme-color didn't tint it (still black in the 11:17 screenshot), so
+    `body` background is now the nav's surface colour (#1c1b20) and the page
+    black is painted on `#root` (which fills the layout viewport) — nothing
+    visible changes elsewhere. `theme-color` also stays #1c1b20. If the
+    band is *still* black on device, Safari isn't showing the canvas there
+    at all and the strip is Safari's own — nothing on our side can paint it.
+30b. Detail card: centred dialog on all sizes (was a bottom sheet on
+    phones), content centred, no circle behind the sprite; the page behind
+    it can't scroll (`#root` overflow locked while open, backdrop
+    `touch-action: none`).
 
 30. Records carry `evoItem` (the item an item evolution needs: used stone,
     held item, or held-while-trading item). Dex `evoItem` plus overrides for
@@ -189,6 +196,15 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     "Item / Stone — Use an Ice Stone" — and in the detail sheet. Item and
     Stone stay separate options because PokeDoku has both categories
     (Stone ⊂ Item).
+
+31. Stats: on phones Accuracy (header + bar + %) is right-aligned at the
+    table edge and the bar is 36px, so it sits ~80px clear of the Answered
+    number (the earlier phone bar override had lost to a later base rule).
+    A "Reset stats" button now sits under the review tiles; with sync
+    across several devices it becomes "Reset this device" + "Reset all
+    devices" (the latter empties every block in the gist — other devices
+    start over on their next sync). The old button at the very bottom is
+    gone.
 
 ## Sync devices (why "5 devices")
 

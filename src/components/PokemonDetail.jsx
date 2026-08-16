@@ -18,7 +18,14 @@ function PokemonDetail({ pokemon, onClose }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    // #root is the page's scroller (see App.css); freeze it while open
+    const root = document.getElementById("root");
+    const prev = root ? root.style.overflow : "";
+    if (root) root.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (root) root.style.overflow = prev;
+    };
   }, [onClose]);
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;

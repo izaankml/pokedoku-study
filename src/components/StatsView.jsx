@@ -307,12 +307,43 @@ function SyncPanel() {
   );
 }
 
+// Reset lives up top, next to the review numbers it clears. With sync on,
+// there's a choice between this device's history and everything.
+function ResetPanel() {
+  const { resetLocal, resetAll, token, devices } = useStats();
+  const synced = Boolean(token) && devices.length > 1;
+  return (
+    <div className="reset-actions">
+      <button
+        className="ghost danger"
+        onClick={() => {
+          if (window.confirm(synced ? "Reset this device's stats? Other devices keep theirs." : "Reset all stats?"))
+            resetLocal();
+        }}
+      >
+        {synced ? "Reset this device" : "Reset stats"}
+      </button>
+      {synced ? (
+        <button
+          className="ghost danger"
+          onClick={() => {
+            if (window.confirm("Reset stats on ALL devices? This can't be undone.")) resetAll();
+          }}
+        >
+          Reset all devices
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 function StatsView() {
-  const { merged, resetLocal } = useStats();
+  const { merged } = useStats();
 
   return (
     <div className="stats">
       <ReviewPanel merged={merged} />
+      <ResetPanel />
       <SyncPanel />
 
       {CATEGORY_GROUPS.map(([group, label]) => {
@@ -353,14 +384,6 @@ function StatsView() {
       })}
 
       <section>
-        <button
-          className="ghost danger"
-          onClick={() => {
-            if (window.confirm("Reset this device's stats?")) resetLocal();
-          }}
-        >
-          Reset this device&apos;s stats
-        </button>
         <p className="hint meta">
           Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
           {DATA_META.count} Pokémon · generated {DATA_META.generatedAt}
