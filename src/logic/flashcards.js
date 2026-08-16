@@ -83,7 +83,7 @@ export const DECKS = [
   {
     id: "branched",
     label: "Evolution Line",
-    questionText: "Can this Pokémon evolve into two or more different Pokémon?",
+    questionText: "Does this Pokémon have a branched evolution?",
     options: YES_NO,
     answers: (p) => [p.branched ? "yes" : "no"],
     categories: () => ["branched"],

@@ -245,6 +245,15 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     are bottom-aligned (PokeAPI draws each Pokémon at its own height in the
     canvas; floating ones will still sit higher — that's the artwork).
 
+37. Cards layout: bigger question with more room above it; the name sits
+    right under the sprite (the pill row only takes space once answered);
+    sprite/pills/name/answer/abilities live in a fixed-height block so the
+    buttons never move; on phones the Cards tab fills the screen and the
+    answer buttons + Skip/Don't Know are centred in the space under the
+    Pokémon (`.app`/`main`/`.flashcards` flex column, `.answer-area` flex:1).
+    Evolution Line question shortened to one line ("Does this Pokémon have
+    a branched evolution?"). Phone bottom padding trimmed to nav + 12px.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

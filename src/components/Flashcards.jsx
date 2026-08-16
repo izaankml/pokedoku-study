@@ -122,7 +122,7 @@ function Flashcards() {
           </button>
         ))}
       </div>
-      <p className="hint">{deck.question(card.param)}</p>
+      <p className="hint card-question">{deck.question(card.param)}</p>
       <PokemonCard
         pokemon={pokemon}
         eager
@@ -140,6 +140,7 @@ function Flashcards() {
         }
         extra={answered ? `Abilities: ${abilityText(pokemon)}` : null}
       />
+      <div className="answer-area">
       <div
         className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
       >
@@ -174,6 +175,7 @@ function Flashcards() {
             </button>
           </>
         )}
+      </div>
       </div>
     </div>
   );
