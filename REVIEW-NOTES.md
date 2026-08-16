@@ -143,6 +143,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     `position: sticky` had never worked (it was boxed inside a short
     `<header>`); `header { display: contents }` fixes it.
 
+25. Tab routing: the active tab is in the URL hash (`#browse`, `#drill`,
+    `#cards`, `#grid`, `#stats`), pushed on each tab click, so refresh,
+    back/forward and shared links land on the same tab; no hash = Drill.
+    The QR-handoff hash (`#connect=…`) is consumed and cleared before the
+    tab is read, so the two don't collide.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

@@ -26,6 +26,14 @@ import {
 } from "./logic/sync.js";
 
 const TABS = ["Browse", "Drill", "Cards", "Grid", "Stats"];
+const DEFAULT_TAB = "Drill";
+
+// The active tab lives in the URL hash (#cards) so a refresh, a shared
+// link, or back/forward lands on the same tab.
+function tabFromHash() {
+  const slug = window.location.hash.replace(/^#\/?/, "").toLowerCase();
+  return TABS.find((t) => t.toLowerCase() === slug) || null;
+}
 const SYNC_DEBOUNCE_MS = 10_000;
 // Re-pull other devices' progress while the tab is open: on becoming
 // visible again (if the last sync is older than MIN_REPULL_MS) and on a
@@ -34,7 +42,7 @@ const REPULL_INTERVAL_MS = 5 * 60_000;
 const MIN_REPULL_MS = 60_000;
 
 function App() {
-  const [tab, setTab] = useState("Drill");
+  const [tab, setTab] = useState(() => tabFromHash() || DEFAULT_TAB);
   const [block, setBlock] = useState(() => {
     const loaded = loadBlock();
     if (loaded.deviceName) return loaded;
@@ -210,9 +218,21 @@ function App() {
 
   const selectTab = useCallback((t) => {
     setTab(t);
+    if (tabFromHash() !== t) window.history.pushState(null, "", `#${t.toLowerCase()}`);
     // #root is the scroll container (see App.css)
     document.getElementById("root")?.scrollTo(0, 0);
     window.scrollTo(0, 0);
+  }, []);
+
+  // Back/forward (and hand-edited hashes) drive the tab too.
+  useEffect(() => {
+    const onHash = () => setTab(tabFromHash() || DEFAULT_TAB);
+    window.addEventListener("popstate", onHash);
+    window.addEventListener("hashchange", onHash);
+    return () => {
+      window.removeEventListener("popstate", onHash);
+      window.removeEventListener("hashchange", onHash);
+    };
   }, []);
 
   return (
