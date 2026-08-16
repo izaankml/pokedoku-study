@@ -4,6 +4,9 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  /* every control paints its own pressed state; iOS's grey flash on top
+     of that (worst while scrolling past tappable cards) is just noise */
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -667,6 +670,12 @@ header h1 {
 
 .pokemon-card.clickable {
   cursor: pointer;
+  /* a figure acting as a button: no grey iOS tap flash while scrolling
+     past it, and no text selection on a long press */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* ♀/♂ come from a fallback font with a different baseline */
