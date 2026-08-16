@@ -92,6 +92,22 @@
   --pokeball-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h6.6M14.4 12H21'/%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3C/svg%3E");
 }
 
+/* The app scrolls inside #root, not the document: iOS bounces the whole
+   web view — fixed strip and nav included — when the root overscrolls,
+   but an inner scroller only bounces its own content. */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
   background: var(--bg-0);
   color: var(--text-hi);
@@ -100,16 +116,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* "Pokédex lid" strip along the top edge; on phones it sits just below
-   the status bar (the safe-area inset), on desktop at the very top */
+/* "Pokédex lid" strip along the top edge. On phones the status-bar area
+   above it is painted too, so scrolled content never peeks out there. */
 body::before {
   content: "";
   position: fixed;
-  top: env(safe-area-inset-top, 0px);
+  top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: var(--accent);
+  height: calc(env(safe-area-inset-top, 0px) + 3px);
+  background: linear-gradient(to bottom, var(--bg-0) calc(100% - 3px), var(--accent) calc(100% - 3px));
   z-index: 60;
   pointer-events: none;
 }
@@ -141,6 +157,12 @@ button {
 }
 
 /* ---- header ---- */
+
+/* h1 and tabs are direct children of the scroller, so the sticky tab bar
+   isn't bounded by a short header box */
+.app > header {
+  display: contents;
+}
 
 header h1 {
   display: flex;

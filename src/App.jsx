@@ -210,6 +210,8 @@ function App() {
 
   const selectTab = useCallback((t) => {
     setTab(t);
+    // #root is the scroll container (see App.css)
+    document.getElementById("root")?.scrollTo(0, 0);
     window.scrollTo(0, 0);
   }, []);
 

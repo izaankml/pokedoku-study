@@ -127,6 +127,18 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     rules in App.css and never applied; moved after them, header type
     tightened, Accuracy header right-aligned like its values.
 
+24. Overscroll: the app now scrolls inside `#root` (`html, body`
+    overflow hidden; `#root` 100dvh, `overscroll-behavior: contain`). iOS
+    bounces the entire web view — fixed strip and nav included — when the
+    *root* overscrolls, which is what made the strip float and the nav
+    vanish at the top/bottom of a page; an inner scroller only bounces its
+    own content. Tab switches reset `#root`'s scroll. Side effects to check
+    on device: Safari's toolbar may no longer auto-minimise while scrolling
+    (inner scrollers don't drive it), and the top strip is fixed with the
+    status-bar area painted dark above it. Bonus: the desktop tab bar's
+    `position: sticky` had never worked (it was boxed inside a short
+    `<header>`); `header { display: contents }` fixes it.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:
