@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { generateGrid } from "../logic/grid.js";
 import { intersection, pairKey } from "../logic/matching.js";
@@ -16,6 +16,11 @@ function PracticeGrid() {
   const [grid, setGrid] = useState(() => generateGrid(merged));
   const [cells, setCells] = useState(emptyCells);
   const [selected, setSelected] = useState(null);
+  // On phones the answer panel sits below the board; bring it into view
+  const panelRef = useRef(null);
+  useEffect(() => {
+    if (selected !== null) panelRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [selected]);
   const [guesses, setGuesses] = useState(0);
   const [message, setMessage] = useState("");
 
@@ -127,14 +132,14 @@ function PracticeGrid() {
           {done ? " — done!" : ""}
         </p>
         <button className="ghost" onClick={newGame}>
-          New grid
+          New Grid
         </button>
       </div>
       <p key={message} className="grid-message">
         {message || " "}
       </p>
       {selected !== null && cells[selected].status === "empty" ? (
-        <div className="cell-panel">
+        <div className="cell-panel" ref={panelRef}>
           <div className="question">
             <CategoryPill cat={getCategory(cellCats(selected)[0])} />
             <span className="times">×</span>
@@ -142,14 +147,14 @@ function PracticeGrid() {
           </div>
           <PokemonAutocomplete onSubmit={guess} />
           <button className="ghost" onClick={revealCell}>
-            Reveal this cell
+            Reveal This Cell
           </button>
         </div>
       ) : null}
       {selected !== null && cells[selected].status !== "empty" ? (
         <AnswerList
           pokemon={intersection(...cellCats(selected))}
-          title="This cell's answers"
+          title="This Cell's Answers"
           highlightId={cells[selected].pokemon?.id}
         />
       ) : null}

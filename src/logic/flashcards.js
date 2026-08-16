@@ -130,7 +130,7 @@ export const DECKS = [
     questionText: "Which of these abilities can this Pokémon have?",
     options: [
       ...CATEGORIES.filter((c) => c.group === "ability"),
-      { id: "none", label: "None of these", short: "None of these" },
+      { id: "none", label: "None of These", short: "None of These" },
     ],
     answers: (p) => (p.abilities.length ? p.abilities.map((a) => `ability-${a}`) : ["none"]),
     eligible: (p) => !p.flags.includes("gmax"),

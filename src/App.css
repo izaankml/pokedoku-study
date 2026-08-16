@@ -875,8 +875,8 @@ header h1 {
   gap: var(--sp-2);
 }
 
-/* region / types / group pills shown after a right answer; the row keeps
-   its height when empty so the buttons below never move */
+/* region / types / group pills shown once a card is answered; the row
+   keeps its height when empty so the buttons below never move */
 .card-tags {
   display: flex;
   flex-wrap: wrap;
@@ -1033,7 +1033,7 @@ header h1 {
 
 .board {
   display: grid;
-  grid-template-columns: minmax(64px, 1fr) repeat(3, minmax(72px, 2fr));
+  grid-template-columns: minmax(84px, 1fr) repeat(3, minmax(72px, 2fr));
   gap: var(--sp-2);
   margin: 0 auto;
   max-width: 480px;
@@ -1611,6 +1611,11 @@ main > * {
   justify-content: center;
   gap: var(--sp-2);
   margin: calc(-1 * var(--sp-2)) 0 var(--sp-4);
+}
+
+/* keep the grid's answer panel clear of the phone nav when scrolled into view */
+.cell-panel {
+  scroll-margin-bottom: calc(var(--nav-h) + 24px);
 }
 
 /* ---- Pokémon detail popup ---- */

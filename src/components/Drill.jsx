@@ -58,7 +58,7 @@ function Drill() {
           <PokemonAutocomplete onSubmit={grade} />
           <div className="drill-actions">
             <button className="ghost" onClick={giveUp}>
-              Give up
+              Don&apos;t Know
             </button>
             {streak > 1 ? (
               <span key={streak} className={streak >= 5 ? "streak hot" : "streak"}>
@@ -78,11 +78,11 @@ function Drill() {
           </p>
           {nextIn ? <p className="due-note">This pair comes back in {nextIn}.</p> : null}
           <button className="primary" onClick={next}>
-            Next question
+            Next Question
           </button>
           <AnswerList
             pokemon={answers}
-            title="Valid answers"
+            title="Valid Answers"
             highlightId={result.pokemon?.id}
           />
         </>

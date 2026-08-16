@@ -41,14 +41,14 @@ function ReviewPanel({ merged }) {
   const pairs = scheduleSummary(merged.pairs, pairKeys, now);
   return (
     <section className="srs-panel">
-      <h3>Spaced review</h3>
+      <h3>Spaced Review</h3>
       <p className="hint">
         Answered items come back on a growing schedule (10 min → 1 → 3 → 7 → 16
         → 35 → 80 → 180 days) and reset on a miss. Due items are favoured;
         mastered ones fade out.
       </p>
       <ReviewRow label="Flashcards" summary={cards} />
-      <ReviewRow label="Drill pairs" summary={pairs} />
+      <ReviewRow label="Drill Pairs" summary={pairs} />
     </section>
   );
 }
@@ -166,7 +166,7 @@ function DeviceList({ devices, absorbDevice, now }) {
         <li key={d.deviceId}>
           <span className="device-name">
             {d.name}
-            {d.isThis ? <span className="device-this"> · this device</span> : null}
+            {d.isThis ? <span className="device-this"> · This Device</span> : null}
           </span>
           <span className="device-meta">
             {d.attempts} answer{d.attempts === 1 ? "" : "s"}
@@ -189,7 +189,7 @@ function DeviceList({ devices, absorbDevice, now }) {
                 setBusy(null);
               }}
             >
-              {busy === d.deviceId ? "Merging…" : "Merge into this device"}
+              {busy === d.deviceId ? "Merging…" : "Merge Into This Device"}
             </button>
           ) : null}
         </li>
@@ -209,7 +209,7 @@ function SyncPanel() {
 
   return (
     <section className="sync-panel">
-      <h3>Cross-device sync</h3>
+      <h3>Cross-Device Sync</h3>
       {token ? (
         <>
           <p className="hint">
@@ -223,14 +223,14 @@ function SyncPanel() {
           </p>
           <div className="sync-actions">
             <button className="ghost" onClick={syncNow}>
-              Sync now
+              Sync Now
             </button>
             <button
               className="ghost"
               aria-expanded={showQR}
               onClick={() => setShowQR((v) => !v)}
             >
-              {showQR ? "Hide QR" : "Link another device"}
+              {showQR ? "Hide QR" : "Link Another Device"}
             </button>
             {deviceList.length > 1 ? (
               <button
@@ -238,7 +238,7 @@ function SyncPanel() {
                 aria-expanded={showDevices}
                 onClick={() => setShowDevices((v) => !v)}
               >
-                {showDevices ? "Hide devices" : "Devices"}
+                {showDevices ? "Hide Devices" : "Devices"}
               </button>
             ) : null}
             <button className="ghost" onClick={() => saveToken("")}>
@@ -266,7 +266,7 @@ function SyncPanel() {
           </p>
           <details className="sync-help">
             <summary>
-              <Chevron /> How to create a token
+              <Chevron /> How to Create a Token
             </summary>
             <ol className="sync-steps">
               <li>
@@ -321,7 +321,7 @@ function ResetPanel() {
             resetLocal();
         }}
       >
-        {synced ? "Reset this device" : "Reset stats"}
+        {synced ? "Reset This Device" : "Reset Stats"}
       </button>
       {synced ? (
         <button
@@ -330,7 +330,7 @@ function ResetPanel() {
             if (window.confirm("Reset stats on ALL devices? This can't be undone.")) resetAll();
           }}
         >
-          Reset all devices
+          Reset All Devices
         </button>
       ) : null}
     </div>

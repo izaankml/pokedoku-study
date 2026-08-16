@@ -11,8 +11,8 @@ import PokemonCard from "./PokemonCard.jsx";
 const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby"];
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
-// Region, typing and group of a Pokémon as pills — the reward for a right
-// answer, and a reminder of what else PokeDoku can ask about it.
+// Region, typing and group of a Pokémon as pills, shown once a card is
+// answered — a reminder of what else PokeDoku can ask about it.
 const REGULAR = { id: "regular", short: "Regular", group: "special" };
 function summaryPills(p) {
   const groups = GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`));
@@ -62,7 +62,6 @@ function Flashcards() {
   const entry = merged.flashcards[key];
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
   const answered = picked !== null;
-  const correct = answered && picked !== GAVE_UP && answerIds.has(picked);
 
   function commit(nextCard, nextPicked) {
     session.card = nextCard;
@@ -129,7 +128,7 @@ function Flashcards() {
         eager
         belowSprite={
           <div className="card-tags" aria-live="polite">
-            {correct
+            {answered
               ? summaryPills(pokemon).map((c) => <CategoryPill key={c.id} cat={c} useShort />)
               : null}
           </div>
@@ -159,7 +158,7 @@ function Flashcards() {
       <div className="card-actions">
         {answered ? (
           <button className="primary" onClick={next}>
-            Next card
+            Next Card
           </button>
         ) : (
           <>
@@ -167,7 +166,7 @@ function Flashcards() {
               Skip
             </button>
             <button className="ghost" onClick={giveUp}>
-              Don&apos;t know
+              Don&apos;t Know
             </button>
           </>
         )}

@@ -222,11 +222,20 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     together; the `<img>` is keyed by Pokémon so a stale sprite never
     lingers, and the flashcard sprite loads eagerly.
 
-34. After a *correct* card answer, region / type / group pills appear
+34. After a card is answered (right, wrong or Don't Know), region / type /
+    group pills appear
     under the sprite (a "Regular" pill when the Pokémon is in no group —
     Bulbapedia's term for non-Legendary/Mythical); the row keeps its height
     when empty so the buttons never move. The Group deck's "None of these"
     is now "Regular"; "Give up" is "Don't know".
+
+35. Full-app spacing/alignment pass (desktop 1280 + iPhone-size, every tab
+    and state): grid row-header column widened so "Dual-Type" doesn't wrap;
+    picking a grid cell scrolls its answer panel into view above the phone
+    nav; all buttons/headings/sub-headings Title Case ("Don't Know" in
+    Drill too, "Next Question", "Valid Answers", "New Grid", "Reveal This
+    Cell", "Spaced Review", "Cross-Device Sync", "Sync Now", "Link Another
+    Device", "Reset Stats", …); Ability deck "None of These".
 
 ## Sync devices (why "5 devices")
 
