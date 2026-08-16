@@ -789,6 +789,16 @@ header h1 {
   .region-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .stats-table th:nth-child(2),
+  .stats-table td:nth-child(2) {
+    width: 84px;
+  }
+
+  .stats-table th:nth-child(3),
+  .stats-table td:nth-child(3) {
+    width: 120px;
+  }
 }
 
 /* ---- practice board ---- */
@@ -932,7 +942,18 @@ header h1 {
 .stats-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 0.88rem;
+}
+
+.stats-table th:nth-child(2),
+.stats-table td:nth-child(2) {
+  width: 110px;
+}
+
+.stats-table th:nth-child(3),
+.stats-table td:nth-child(3) {
+  width: 150px;
 }
 
 .stats-table th,
