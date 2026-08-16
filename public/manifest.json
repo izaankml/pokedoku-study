@@ -1,0 +1,13 @@
+{
+  "name": "PokeDoku Study",
+  "short_name": "PokeDoku Study",
+  "description": "Learn every category Pokémon fall into, for PokeDoku.",
+  "start_url": "/pokedoku-study/",
+  "scope": "/pokedoku-study/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
