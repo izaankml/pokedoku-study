@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CATEGORIES, getCategory } from "./categories.js";
 import { POKEMON_BY_ID } from "./pokedex.js";
-import { intersection, membersOf } from "../logic/matching.js";
+import { intersection, membersOf, pairIsValid } from "../logic/matching.js";
 
 const p = (id) => POKEMON_BY_ID.get(id);
 const inCat = (catId, pokemonId) => getCategory(catId).predicate(p(pokemonId));
@@ -21,6 +21,12 @@ describe("categories", () => {
     expect(inCat("region-hisui", 899)).toBe(true); // Wyrdeer
     expect(inCat("region-sinnoh", 899)).toBe(false);
     expect(inCat("region-galar", 899)).toBe(false);
+    expect(inCat("region-hisui", 10229)).toBe(true); // Hisuian Growlithe
+    expect(inCat("region-kanto", 10229)).toBe(false);
+    expect(inCat("region-unova", 10247)).toBe(true); // White-Striped Basculin
+    expect(inCat("region-hisui", 10247)).toBe(true);
+    expect(inCat("region-kanto", 10034)).toBe(true); // Mega Charizard X
+    expect(inCat("type-dragon", 10034)).toBe(true);
     expect(inCat("flag-starter", 6)).toBe(true); // Charizard
     expect(inCat("flag-mega", 6)).toBe(true);
     expect(inCat("flag-gmax", 6)).toBe(true);
@@ -36,6 +42,12 @@ describe("categories", () => {
     const fireFighting = intersection("type-fire", "type-fighting");
     expect(fireFighting.map((x) => x.name)).toContain("blaziken");
     expect(fireFighting.map((x) => x.name)).toContain("infernape");
+    // dual-region forms make a few region × region cells possible
+    const unovaHisui = intersection("region-unova", "region-hisui");
+    expect(unovaHisui.map((x) => x.name)).toEqual(["basculinwhitestriped"]);
+    expect(pairIsValid("region-unova", "region-hisui")).toBe(true);
+    expect(pairIsValid("region-kanto", "region-johto")).toBe(false);
+    expect(pairIsValid("stage-first", "stage-final")).toBe(false);
   });
 
   it("has no empty categories", () => {

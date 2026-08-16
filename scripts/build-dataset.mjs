@@ -180,6 +180,7 @@ const baseRecords = species.map((s) => {
     types: s.types.map((t) => t.toLowerCase()),
     gen,
     region: HISUI_IDS.has(s.num) ? "hisui" : GEN_REGIONS[gen - 1],
+    regions: [HISUI_IDS.has(s.num) ? "hisui" : GEN_REGIONS[gen - 1]],
     stage: stageOf(s),
     evoMethod: evoMethodOf(s),
     flags: flagsOf(s),
@@ -189,11 +190,16 @@ const baseById = new Map(baseRecords.map((r) => [r.id, r]));
 
 // ---- alternate forms ----------------------------------------------------
 //
-// A form belongs to the region it was introduced in (Hisuian Growlithe is
-// Hisui, White-Striped Basculin is Hisui, Bloodmoon Ursaluna is Paldea),
-// which is what PokeDoku does ("Pokémon must originate from this region").
-// The two exceptions are also PokeDoku's: Mega (and Primal) forms use the
-// base form's region, as do Gigantamax forms (which have no records here).
+// `region` is where the form debuted; `regions` is every region category it
+// counts for. PokeDoku's rules ("How to play"):
+// - Regional forms (Alolan/Galarian/Hisuian/Paldean ...) count only for the
+//   region the form debuted in: Hisuian Growlithe is Hisui, not Kanto.
+// - Mega and Gigantamax forms count for the base Pokémon's debut region.
+//   Primal forms are not Megas; we keep them in the base region too (Primal
+//   Reversion debuted in ORAS, a Hoenn game).
+// - Any other form that debuted in a different region than its base counts
+//   for BOTH: White-Striped Basculin is Unova and Hisui, Origin Dialga is
+//   Sinnoh and Hisui, Bloodmoon Ursaluna is Hisui and Paldea.
 
 const REGIONAL_ADJECTIVE = {
   Alola: "Alolan",
@@ -219,14 +225,23 @@ function formDisplayName(s) {
   return `${base} (${parts.join(" ")})`;
 }
 
+const isRegionalForme = (s) => s.forme.split("-")[0] in REGIONAL_ADJECTIVE;
+
 function formRegion(s) {
   const baseRecord = baseById.get(s.num);
-  if (isMegaLike(s)) return { gen: baseRecord.gen, region: baseRecord.region };
+  if (isMegaLike(s)) {
+    return { gen: baseRecord.gen, region: baseRecord.region, regions: [baseRecord.region] };
+  }
   const gen = s.gen;
   const hisui =
     gen === 8 &&
     (s.forme.startsWith("Hisui") || HISUI_IDS.has(s.num) || HISUI_FORM_IDS.has(s.id));
-  return { gen, region: hisui ? "hisui" : GEN_REGIONS[gen - 1] };
+  const region = hisui ? "hisui" : GEN_REGIONS[gen - 1];
+  const regions =
+    isRegionalForme(s) || region === baseRecord.region
+      ? [region]
+      : [baseRecord.region, region];
+  return { gen, region, regions };
 }
 
 // Stage/method for a form: from the evolution graph when the form takes
@@ -276,7 +291,7 @@ function coversNothingNew(form, base) {
   return (
     subset(form.types, base.types) &&
     form.types.length === base.types.length &&
-    form.region === base.region &&
+    subset(form.regions, base.regions) &&
     form.stage === base.stage &&
     form.evoMethod === base.evoMethod &&
     subset(form.flags, base.flags)
@@ -343,6 +358,11 @@ check(count((r) => r.flags.includes("fossil")) === 25, "fossil != 25");
 check(count((r) => r.flags.includes("starter")) === 81, "starter != 81");
 check(count((r) => r.flags.includes("baby")) === 19, "baby != 19");
 check(count((r) => r.region === "hisui") === 7, "hisui species != 7");
+check(
+  records.every((r) => r.regions.includes(r.region) && r.regions.length <= 2),
+  "regions must contain region"
+);
+check(baseRecords.every((r) => r.regions.length === 1), "species have one region");
 check(count((r) => r.flags.includes("gmax")) === 32, "gmax != 32");
 check(count((r) => r.flags.includes("mega")) === 87, "mega != 87 (incl. Legends Z-A)");
 check(count((r) => r.flags.includes("legendary")) === 71, "legendary != 71");
@@ -362,18 +382,25 @@ check(formCount(regional("Alola")) === 18, "alolan forms != 18");
 check(formCount(regional("Galar")) === 20, "galarian forms != 20 (19 + Zen)");
 check(formCount(regional("Hisui")) === 16, "hisuian forms != 16");
 check(formCount(regional("Paldea")) === 4, "paldean forms != 4 (Tauros x3, Wooper)");
+const only = (r, region) => r.region === region && r.regions.length === 1;
 check(
-  formRecords.filter(regional("Alola")).every((r) => r.region === "alola") &&
-    formRecords.filter(regional("Galar")).every((r) => r.region === "galar") &&
-    formRecords.filter(regional("Hisui")).every((r) => r.region === "hisui") &&
-    formRecords.filter(regional("Paldea")).every((r) => r.region === "paldea"),
-  "regional forms must belong to their region"
+  formRecords.filter(regional("Alola")).every((r) => only(r, "alola")) &&
+    formRecords.filter(regional("Galar")).every((r) => only(r, "galar")) &&
+    formRecords.filter(regional("Hisui")).every((r) => only(r, "hisui")) &&
+    formRecords.filter(regional("Paldea")).every((r) => only(r, "paldea")),
+  "regional forms must belong only to their region"
 );
 check(
   formRecords.filter((r) => /(^|-)Mega(-|$)/.test(r.form) || r.form === "Primal")
-    .every((r) => r.region === baseById.get(r.species).region),
-  "mega/primal forms must use the base region"
+    .every((r) => only(r, baseById.get(r.species).region)),
+  "mega/primal forms must use only the base region"
 );
+check(
+  formRecords.filter((r) => r.regions.length === 2)
+    .every((r) => r.regions[0] === baseById.get(r.species).region && r.regions[1] === r.region),
+  "dual-region forms list base region then debut region"
+);
+check(!formRecords.some((r) => r.form === "Primal" && r.flags.includes("mega")), "Primal is not Mega");
 
 // spot checks
 check(byId.get(65).evoMethod === "trade", "Alakazam should be trade");
@@ -391,6 +418,16 @@ check(byName.get("growlithehisui").stage === "first", "Hisuian Growlithe is firs
 check(byName.get("arcaninehisui").evoMethod === "item", "Hisuian Arcanine by item");
 check(byId.get(550).region === "unova", "Basculin (Red-Striped) stays unova");
 check(byName.get("basculinwhitestriped").region === "hisui", "White-Striped Basculin is hisui");
+check(
+  byName.get("basculinwhitestriped").regions.join() === "unova,hisui",
+  "White-Striped Basculin counts for Unova and Hisui"
+);
+check(byName.get("growlithehisui").regions.join() === "hisui", "Hisuian Growlithe is Hisui only");
+check(byName.get("dialgaorigin").regions.join() === "sinnoh,hisui", "Origin Dialga: Sinnoh and Hisui");
+check(byName.get("ursalunabloodmoon").regions.join() === "hisui,paldea", "Bloodmoon: Hisui and Paldea");
+check(byName.get("groudonprimal").regions.join() === "hoenn", "Primal Groudon: Hoenn only");
+check(byName.get("hoopaunbound").regions.join() === "kalos", "Hoopa Unbound: Kalos only");
+check(byName.get("zygarde10").regions.join() === "kalos,alola", "Zygarde 10%: Kalos and Alola");
 check(!byName.has("basculinbluestriped"), "Blue-Striped Basculin adds nothing (dropped)");
 check(byName.get("dialgaorigin").region === "hisui", "Origin Dialga is hisui");
 check(byName.get("ursalunabloodmoon").region === "paldea", "Bloodmoon Ursaluna is paldea");
@@ -453,7 +490,9 @@ console.log(
   `\n${formRecords.length} form records (${droppedForms.length} candidates dropped as covered by their base species):`
 );
 for (const region of GEN_REGIONS.concat("hisui")) {
-  const names = formRecords.filter((r) => r.region === region).map((r) => r.displayName);
+  const names = formRecords
+    .filter((r) => r.regions.includes(region))
+    .map((r) => (r.regions.length > 1 ? `${r.displayName} (+${r.regions.filter((x) => x !== region)})` : r.displayName));
   if (names.length) console.log(String(names.length).padStart(5), region + ":", names.join(", "));
 }
 console.log("dropped:", droppedForms.map((r) => r.displayName).join(", "));

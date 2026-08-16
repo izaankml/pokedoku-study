@@ -55,7 +55,10 @@ export const CATEGORIES = [
     short: label,
     group: "region",
     priorWeight,
-    predicate: (p) => p.region === id,
+    // `regions` lists every region a record counts for: a species' origin,
+    // or for a form that debuted elsewhere, both (White-Striped Basculin is
+    // Unova and Hisui) — see scripts/build-dataset.mjs
+    predicate: (p) => p.regions.includes(id),
   })),
   ...[
     ["level", "Evolved by level-up", "Level evo"],

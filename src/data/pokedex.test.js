@@ -48,30 +48,41 @@ describe("pokedex dataset invariants", () => {
     expect(hisui).toEqual([899, 900, 901, 902, 903, 904, 905]);
   });
 
-  it("puts forms in the region they were introduced in", () => {
-    expect(byName.get("growlithe").region).toBe("kanto");
-    expect(byName.get("growlithehisui").region).toBe("hisui");
+  it("puts regional forms only in the region they debuted in", () => {
+    for (const p of SPECIES) expect(p.regions).toEqual([p.region]);
+    expect(byName.get("growlithe").regions).toEqual(["kanto"]);
+    expect(byName.get("growlithehisui").regions).toEqual(["hisui"]);
     expect(byName.get("growlithehisui").types).toEqual(["fire", "rock"]);
-    expect(byName.get("basculin").region).toBe("unova");
-    expect(byName.get("basculinwhitestriped").region).toBe("hisui");
-    expect(byName.get("dialgaorigin").region).toBe("hisui");
-    expect(byName.get("raichualola").region).toBe("alola");
-    expect(byName.get("meowthgalar").region).toBe("galar");
-    expect(byName.get("wooperpaldea").region).toBe("paldea");
-    expect(byName.get("ursalunabloodmoon").region).toBe("paldea");
+    expect(byName.get("raichualola").regions).toEqual(["alola"]);
+    expect(byName.get("meowthgalar").regions).toEqual(["galar"]);
+    expect(byName.get("wooperpaldea").regions).toEqual(["paldea"]);
     const regional = (prefix, region) =>
-      FORMS.filter((p) => p.form.startsWith(prefix)).every((p) => p.region === region);
+      FORMS.filter((p) => p.form.startsWith(prefix)).every(
+        (p) => p.region === region && p.regions.length === 1
+      );
     expect(regional("Alola", "alola")).toBe(true);
     expect(regional("Galar", "galar")).toBe(true);
     expect(regional("Hisui", "hisui")).toBe(true);
     expect(regional("Paldea", "paldea")).toBe(true);
   });
 
+  it("counts other forms that debuted elsewhere for both regions", () => {
+    expect(byName.get("basculin").regions).toEqual(["unova"]);
+    expect(byName.get("basculinwhitestriped").region).toBe("hisui");
+    expect(byName.get("basculinwhitestriped").regions).toEqual(["unova", "hisui"]);
+    expect(byName.get("dialgaorigin").regions).toEqual(["sinnoh", "hisui"]);
+    expect(byName.get("ursalunabloodmoon").regions).toEqual(["hisui", "paldea"]);
+    expect(byName.get("zygarde10").regions).toEqual(["kalos", "alola"]);
+    expect(byName.get("rotomwash").regions).toEqual(["sinnoh"]);
+    for (const p of POKEMON) expect(p.regions).toContain(p.region);
+  });
+
   it("keeps Mega and Primal forms in their base species' region", () => {
-    expect(byName.get("charizardmegax").region).toBe("kanto");
+    expect(byName.get("charizardmegax").regions).toEqual(["kanto"]);
     expect(byName.get("charizardmegax").types).toEqual(["fire", "dragon"]);
     expect(byName.get("charizardmegax").flags).toContain("mega");
-    expect(byName.get("groudonprimal").region).toBe("hoenn");
+    expect(byName.get("groudonprimal").regions).toEqual(["hoenn"]);
+    expect(byName.get("groudonprimal").flags).not.toContain("mega"); // PokeDoku: Primal is not Mega
     // covered entirely by its base species, so no record
     expect(byName.has("charizardmegay")).toBe(false);
   });

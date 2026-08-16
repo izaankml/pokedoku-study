@@ -13,15 +13,18 @@ function Flashcards() {
   const [pokemon, setPokemon] = useState(() => pickFlashcardPokemon(merged));
   const [picked, setPicked] = useState(null); // region id the user chose
 
-  const answerCat = REGION_CATS.find((c) => c.id === `region-${pokemon.region}`);
+  // A few forms count for two regions (White-Striped Basculin: Unova and
+  // Hisui); either answer is right.
+  const answerCats = REGION_CATS.filter((c) => pokemon.regions.includes(c.id.slice(7)));
+  const answerIds = new Set(answerCats.map((c) => c.id));
   // After answering, merged already reflects this attempt's new streak.
   const entry = merged.flashcards[String(pokemon.id)];
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
 
   function choose(cat) {
     if (picked) return;
-    const correct = cat.id === answerCat.id;
-    recordAttempt({ categories: [answerCat.id], speciesId: pokemon.id, correct });
+    const correct = answerIds.has(cat.id);
+    recordAttempt({ categories: [...answerIds], speciesId: pokemon.id, correct });
     setPicked(cat.id);
   }
 
@@ -40,7 +43,7 @@ function Flashcards() {
         pokemon={pokemon}
         caption={
           picked
-            ? `Gen ${pokemon.gen} — ${answerCat.short}${nextIn ? ` · next in ${nextIn}` : ""}`
+            ? `Gen ${pokemon.gen} — ${answerCats.map((c) => c.short).join(" / ")}${nextIn ? ` · next in ${nextIn}` : ""}`
             : null
         }
       />
@@ -48,7 +51,7 @@ function Flashcards() {
         {REGION_CATS.map((cat) => {
           let cls = "region-btn";
           if (picked) {
-            if (cat.id === answerCat.id) cls += " correct";
+            if (answerIds.has(cat.id)) cls += " correct";
             else if (cat.id === picked) cls += " wrong";
           }
           return (

@@ -20,15 +20,15 @@ export function intersection(catA, catB) {
   return intersectionCache.get(key);
 }
 
-// Same-group pairs are structurally empty (a Pokémon has one region, one
-// stage, one type count) — except types, where a pair means a dual type.
+// Same-group pairs are structurally empty (a Pokémon has one stage, one
+// type count) — except types (a pair means a dual type), special flags, and
+// regions (a few forms count for two regions).
+const SAME_GROUP_OK = new Set(["type", "special", "region"]);
 export function pairIsValid(catA, catB, min = 1) {
   if (catA === catB) return false;
   const a = getCategory(catA);
   const b = getCategory(catB);
-  if (a.group === b.group && a.group !== "type" && a.group !== "special") {
-    return false;
-  }
+  if (a.group === b.group && !SAME_GROUP_OK.has(a.group)) return false;
   return intersection(catA, catB).length >= min;
 }
 

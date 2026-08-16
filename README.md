@@ -80,12 +80,14 @@ Notes on judgment calls:
 - Single-stage Pokémon are their own stage — they don't count as "final".
 - Starters cover the whole line (81), excluding the Let's Go partners.
 - "Has a Mega" includes the Legends: Z-A Megas (87 species).
-- Forms belong to the region they were introduced in, as in PokeDoku:
-  Growlithe is Kanto and Hisuian Growlithe is Hisui; Red-Striped Basculin
-  is Unova and White-Striped Basculin is Hisui; Bloodmoon Ursaluna is
-  Paldea. Mega and Primal forms are the exception and keep their base
-  species' region (also PokeDoku's rule). Only the seven Legends: Arceus
-  originals are Hisui *species*.
+- Regions follow PokeDoku's "How to play": regional forms count only for
+  the region they debuted in (Growlithe is Kanto, Hisuian Growlithe is
+  Hisui); Mega forms count for the base species' region; any other form
+  that debuted elsewhere counts for *both* (White-Striped Basculin is
+  Unova and Hisui, Origin Dialga is Sinnoh and Hisui, Bloodmoon Ursaluna
+  is Hisui and Paldea). Records carry `region` (debut) and `regions` (all
+  that count). Primal forms are not Megas and stay in Hoenn. Only the
+  seven Legends: Arceus originals are Hisui *species*.
 - A form only gets its own record when it can answer some cell its base
   species can't (a new type, type count, region, stage, method, or flag).
   Mega Charizard X (Fire/Dragon) is in; Mega Charizard Y and Gigantamax
