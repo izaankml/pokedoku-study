@@ -9,7 +9,7 @@ const byName = new Map(POKEMON.map((p) => [p.name, p]));
 describe("pokedex dataset invariants", () => {
   it("has all 1025 species exactly once, plus forms with unique ids", () => {
     expect(SPECIES.length).toBe(1025);
-    expect(FORMS.length).toBe(113);
+    expect(FORMS.length).toBe(232);
     expect(new Set(POKEMON.map((p) => p.id)).size).toBe(POKEMON.length);
     expect(new Set(POKEMON.map((p) => p.name)).size).toBe(POKEMON.length);
     for (const p of SPECIES) expect(p.species).toBe(p.id);
@@ -37,8 +37,10 @@ describe("pokedex dataset invariants", () => {
     expect(flagCount("fossil")).toBe(25);
     expect(flagCount("starter")).toBe(81);
     expect(flagCount("baby")).toBe(19);
-    expect(flagCount("gmax")).toBe(32);
-    expect(flagCount("mega")).toBe(87);
+    expect(flagCount("gmax")).toBe(0); // Gigantamax forms carry it instead
+    expect(flagCount("mega")).toBe(0);
+    expect(FORMS.filter((p) => p.flags.includes("gmax")).length).toBe(34);
+    expect(FORMS.filter((p) => p.flags.includes("mega")).length).toBe(96);
     expect(flagCount("legendary")).toBe(71);
     expect(flagCount("mythical")).toBe(23);
   });
@@ -49,7 +51,8 @@ describe("pokedex dataset invariants", () => {
   });
 
   it("puts regional forms only in the region they debuted in", () => {
-    for (const p of SPECIES) expect(p.regions).toEqual([p.region]);
+    for (const p of SPECIES) expect(p.regions).toEqual(p.region ? [p.region] : []);
+    expect(byName.get("meltan").regions).toEqual([]); // GO/Let's Go, no region
     expect(byName.get("growlithe").regions).toEqual(["kanto"]);
     expect(byName.get("growlithehisui").regions).toEqual(["hisui"]);
     expect(byName.get("growlithehisui").types).toEqual(["fire", "rock"]);
@@ -73,41 +76,69 @@ describe("pokedex dataset invariants", () => {
     expect(byName.get("dialgaorigin").regions).toEqual(["sinnoh", "hisui"]);
     expect(byName.get("ursalunabloodmoon").regions).toEqual(["hisui", "paldea"]);
     expect(byName.get("zygarde10").regions).toEqual(["kalos", "alola"]);
+    expect(byName.get("hoopaunbound").regions).toEqual(["kalos", "hoenn"]);
+    expect(byName.get("deoxysattack").regions).toEqual(["hoenn", "kanto"]);
     expect(byName.get("rotomwash").regions).toEqual(["sinnoh"]);
-    for (const p of POKEMON) expect(p.regions).toContain(p.region);
+    for (const p of POKEMON) {
+      if (p.region === null) expect(p.regions).toEqual([]);
+      else expect(p.regions).toContain(p.region);
+    }
   });
 
-  it("keeps Mega and Primal forms in their base species' region", () => {
+  it("makes Mega and Gigantamax forms the Mega/Gigantamax answers", () => {
     expect(byName.get("charizardmegax").regions).toEqual(["kanto"]);
     expect(byName.get("charizardmegax").types).toEqual(["fire", "dragon"]);
-    expect(byName.get("charizardmegax").flags).toContain("mega");
+    expect(byName.get("charizardmegax").flags).toEqual(["mega"]); // not a starter
+    expect(byName.get("charizardmegax").stage).toBe(null); // no evolution categories
+    expect(byName.get("charizardmegay").flags).toEqual(["mega"]);
+    expect(byName.get("charizardgmax").flags).toEqual(["gmax"]);
+    expect(byName.get("charizardgmax").moves).toEqual([]);
     expect(byName.get("groudonprimal").regions).toEqual(["hoenn"]);
     expect(byName.get("groudonprimal").flags).not.toContain("mega"); // PokeDoku: Primal is not Mega
+    expect(byName.get("mewtwomegax").flags).toEqual(["legendary", "mega"]);
+    expect(byName.get("pikachustarter").flags).toEqual(["starter"]); // Let's Go partner
     // covered entirely by its base species, so no record
-    expect(byName.has("charizardmegay")).toBe(false);
+    expect(byName.has("kyuremblack")).toBe(false);
   });
 
   it("gives forms sensible evolution data", () => {
     expect(byName.get("growlithehisui").stage).toBe("first");
-    expect(byName.get("arcaninehisui").evoMethod).toBe("item");
+    expect(byName.get("arcaninehisui").evoMethods).toEqual(["item", "stone"]);
     expect(byName.get("raichualola").stage).toBe("final");
     expect(byName.get("meowthgalar").stage).toBe("first"); // -> Perrserker
     expect(byName.get("mrmimegalar").stage).toBe("middle");
     expect(byName.get("rotomwash").stage).toBe("single"); // inherits Rotom
-    expect(byName.get("charizardmegax").stage).toBe("final"); // inherits Charizard
+    expect(byName.get("slowpokegalar").branched).toBe(true);
     expect(byName.get("articunogalar").flags).toContain("legendary");
   });
 
   it("gets known evolution facts right", () => {
-    expect(POKEMON_BY_ID.get(65).evoMethod).toBe("trade"); // Alakazam
-    expect(POKEMON_BY_ID.get(134).evoMethod).toBe("item"); // Vaporeon
-    expect(POKEMON_BY_ID.get(133).evoMethod).toBe(null); // Eevee
-    expect(POKEMON_BY_ID.get(169).evoMethod).toBe("friendship"); // Crobat
-    expect(POKEMON_BY_ID.get(700).evoMethod).toBe("friendship"); // Sylveon
-    expect(POKEMON_BY_ID.get(292).evoMethod).toBe("other"); // Shedinja
+    expect(POKEMON_BY_ID.get(65).evoMethods).toEqual(["trade", "item"]); // Alakazam
+    expect(POKEMON_BY_ID.get(134).evoMethods).toEqual(["item", "stone"]); // Vaporeon
+    expect(POKEMON_BY_ID.get(133).evoMethods).toEqual([]); // Eevee
+    expect(POKEMON_BY_ID.get(169).evoMethods).toEqual(["friendship", "level"]); // Crobat
+    expect(POKEMON_BY_ID.get(700).evoMethods).toEqual(["friendship", "level"]); // Sylveon
+    expect(POKEMON_BY_ID.get(292).evoMethods).toEqual(["level"]); // Shedinja
+    expect(POKEMON_BY_ID.get(208).evoMethods).toEqual(["trade", "item"]); // Steelix
+    expect(POKEMON_BY_ID.get(983).evoMethods).toEqual(["level"]); // Kingambit
     expect(POKEMON_BY_ID.get(65).stage).toBe("final");
     expect(POKEMON_BY_ID.get(151).stage).toBe("single"); // Mew
+    expect(POKEMON_BY_ID.get(83).stage).toBe("single"); // Kantonian Farfetch'd
+    expect(POKEMON_BY_ID.get(550).stage).toBe("single"); // Red-Striped Basculin
+    expect(POKEMON_BY_ID.get(122).stage).toBe("final"); // Mr. Mime
     expect(POKEMON_BY_ID.get(789).stage).toBe("first"); // Cosmog
     expect(POKEMON_BY_ID.get(791).stage).toBe("final"); // Solgaleo
+    expect(POKEMON_BY_ID.get(133).branched).toBe(true); // Eevee
+    expect(POKEMON_BY_ID.get(744).branched).toBe(false); // Rockruff: Lycanroc forms
+    expect(POKEMON_BY_ID.get(123).branched).toBe(true); // Scyther: Scizor / Kleavor
+  });
+
+  it("carries moves and abilities", () => {
+    expect(POKEMON_BY_ID.get(25).moves).toContain("surf"); // Pikachu
+    expect(POKEMON_BY_ID.get(6).moves).toContain("earthquake");
+    expect(POKEMON_BY_ID.get(6).moves).not.toContain("surf");
+    expect(POKEMON_BY_ID.get(130).abilities).toContain("intimidate"); // Gyarados
+    expect(POKEMON_BY_ID.get(94).abilities).toEqual([]); // Gengar lost Levitate
+    expect(byName.get("rotomwash").moves).toContain("hydropump");
   });
 });

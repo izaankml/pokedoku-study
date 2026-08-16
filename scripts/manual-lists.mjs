@@ -7,9 +7,9 @@ export const BABY_IDS = new Set([
   446, 447, 458, 848,
 ]);
 
-// First-partner base forms (Bulbasaur..Sprigatito lines); Let's Go
-// Pikachu/Eevee partners are deliberately excluded (PokeDoku does the same).
-// Expanded to whole evolution lines by the build script.
+// First-partner base forms (Bulbasaur..Sprigatito lines). Expanded to whole
+// evolution lines by the build script. The Let's Go Partner Pikachu/Eevee
+// forms are first partners too (PokeDoku counts them) — see FORM_IDS.
 export const STARTER_BASE_IDS = new Set([
   1, 4, 7, 152, 155, 158, 252, 255, 258, 387, 390, 393, 495, 498, 501, 650,
   653, 656, 722, 725, 728, 810, 813, 816, 906, 909, 912,
@@ -52,19 +52,68 @@ export const HISUI_FORM_IDS = new Set([
   "palkiaorigin",
 ]);
 
-// Where our method taxonomy deliberately disagrees with @pkmn/dex evoType
-// (keys are dex ids/slugs). Rationale:
-// - sylveon: friendship + Fairy move in modern games (dex says levelExtra)
-// - shedinja: party-slot side effect, no real method (dex says plain level)
-// - ursaluna: Peat Block is a used item (dex says other)
-// - sneasler: Razor Claw is a used item in PLA, per PokeAPI (dex says levelHold)
+// Evolution methods a Pokémon counts for, where they can't be read off the
+// dex evoType (keys are dex ids/slugs). PokeDoku counts every method that
+// works in some core game, so a Pokémon can have several. Sources: PokeDoku's
+// notes and pokedoku-helper.com's PokeAPI-derived data.
+// - Linking Cord (Legends: Arceus) makes the classic trade evolutions also
+//   count as item.
+// - Modern games swapped some location/level evolutions for stones or made
+//   held items usable, so those count as item AND level.
+// - dex "other" methods: PokeAPI files most as level-up (Rage Fist, 999 coins,
+//   1000 steps, recoil...), a few as item (Sweets, Towers), and three as
+//   nothing at all (critical hits, taking damage, agile-style moves).
 export const EVO_METHOD_OVERRIDES = {
-  sylveon: "friendship",
-  shedinja: "other",
-  ursaluna: "item",
-  sneasler: "item",
+  alakazam: ["trade", "item"],
+  machamp: ["trade", "item"],
+  golem: ["trade", "item"],
+  gengar: ["trade", "item"],
+  sylveon: ["friendship", "level"],
+  magnezone: ["item", "level"],
+  probopass: ["item", "level"],
+  vikavolt: ["item", "level"],
+  crabominable: ["item", "level"],
+  leafeon: ["item", "stone", "level"],
+  glaceon: ["item", "stone", "level"],
+  milotic: ["trade", "item", "level"],
+  ursaluna: ["item"],
+  shedinja: ["level"],
+  basculegion: ["level"],
+  basculegionf: ["level"],
+  overqwil: ["level"],
+  pawmot: ["level"],
+  rabsca: ["level"],
+  brambleghast: ["level"],
+  annihilape: ["level"],
+  kingambit: ["level"],
+  gholdengo: ["level"],
+  alcremie: ["item"],
+  urshifu: ["item"],
+  urshifurapidstrike: ["item"],
+  sirfetchd: [],
+  runerigus: [],
+  wyrdeer: [],
+  melmetal: [], // Meltan Candy in GO; no in-game method
 };
 
+// Evolution links the dex is missing (child slug -> parent species name).
+export const PREVO_OVERRIDES = {
+  melmetal: "Meltan",
+};
+
+// Species PokeDoku assigns no region at all (Meltan and Melmetal come from
+// Pokémon GO / Let's Go and are neither Alola nor Galar).
+export const NO_REGION_IDS = new Set([808, 809]);
+
+// Forms whose debut region isn't the one their generation implies (dex ids/
+// slugs -> region). PokeDoku counts these for both the base region and the
+// debut region: Deoxys' Attack/Defense formes debuted in FireRed/LeafGreen
+// (Kanto), Hoopa Unbound in Omega Ruby/Alpha Sapphire (Hoenn).
+export const FORM_DEBUT_REGION_OVERRIDES = {
+  deoxysattack: "kanto",
+  deoxysdefense: "kanto",
+  hoopaunbound: "hoenn",
+};
 // Showdown spells these with -F/-M suffixes; form names keep the hyphens
 // the generic "Base (Forme)" formatter would turn into spaces
 export const DISPLAY_NAME_OVERRIDES = {
@@ -73,20 +122,24 @@ export const DISPLAY_NAME_OVERRIDES = {
   basculinwhitestriped: "Basculin (White-Striped)",
   oricoriopompom: "Oricorio (Pom-Pom)",
   greninjaash: "Ash-Greninja",
+  pikachustarter: "Partner Pikachu",
+  eeveestarter: "Partner Eevee",
+  toxtricitygmax: "Gigantamax Toxtricity",
+  toxtricitylowkeygmax: "Gigantamax Toxtricity (Low Key)",
+  urshifugmax: "Gigantamax Urshifu",
+  urshifurapidstrikegmax: "Gigantamax Urshifu (Rapid Strike)",
 };
 
-// Alternate forms that get their own dataset record, mapped from their
+// Alternate forms that can get their own dataset record, mapped from their
 // @pkmn/dex id to the PokeAPI id PokeDoku uses for them (which is also the
 // sprite id). This is the intersection of @pkmn/dex formes and PokeDoku's
-// visible answer list (api.pokedoku.com/api/pokemon/all), minus:
-// - Gigantamax forms: identical to the base species in every category
-//   (the base record carries the "gmax" flag)
-// - Let's Go partner Pikachu/Eevee, Totems, and PokeDoku's own cosmetic
-//   pseudo-ids (90000+: seasons, genders, cloaks) which have no PokeAPI
-//   sprite and no category difference
+// visible answer list (api.pokedoku.com/api/pokemon/all), minus Totems and
+// PokeDoku's own cosmetic pseudo-ids (90000+: seasons, genders, cloaks),
+// which have no PokeAPI sprite and no category difference.
 // The build script drops any form here whose category profile is a subset
-// of its base species' (e.g. Mega Charizard Y, Kyurem-Black, Lycanroc
-// Midnight) — those never answer a cell the base species doesn't.
+// of its base species' (e.g. Kyurem-Black, Lycanroc Midnight) — those never
+// answer a cell the base species doesn't. Mega and Gigantamax forms always
+// stay: in PokeDoku they are the answers to the Mega/Gigantamax categories.
 export const FORM_IDS = {
   venusaurmega: 10033, // Venusaur-Mega
   charizardmegax: 10034, // Charizard-Mega-X
@@ -329,4 +382,41 @@ export const FORM_IDS = {
   ogerponcornerstone: 10275, // Ogerpon-Cornerstone
   terapagosterastal: 10276, // Terapagos-Terastal
   terapagosstellar: 10277, // Terapagos-Stellar
+  // Gigantamax forms and Let's Go partners
+  venusaurgmax: 10195, // Venusaur-Gmax
+  charizardgmax: 10196, // Charizard-Gmax
+  blastoisegmax: 10197, // Blastoise-Gmax
+  butterfreegmax: 10198, // Butterfree-Gmax
+  pikachustarter: 10158, // Pikachu-Starter
+  pikachugmax: 10199, // Pikachu-Gmax
+  meowthgmax: 10200, // Meowth-Gmax
+  machampgmax: 10201, // Machamp-Gmax
+  gengargmax: 10202, // Gengar-Gmax
+  kinglergmax: 10203, // Kingler-Gmax
+  laprasgmax: 10204, // Lapras-Gmax
+  eeveestarter: 10159, // Eevee-Starter
+  eeveegmax: 10205, // Eevee-Gmax
+  snorlaxgmax: 10206, // Snorlax-Gmax
+  garbodorgmax: 10207, // Garbodor-Gmax
+  melmetalgmax: 10208, // Melmetal-Gmax
+  rillaboomgmax: 10209, // Rillaboom-Gmax
+  cinderacegmax: 10210, // Cinderace-Gmax
+  inteleongmax: 10211, // Inteleon-Gmax
+  corviknightgmax: 10212, // Corviknight-Gmax
+  orbeetlegmax: 10213, // Orbeetle-Gmax
+  drednawgmax: 10214, // Drednaw-Gmax
+  coalossalgmax: 10215, // Coalossal-Gmax
+  flapplegmax: 10216, // Flapple-Gmax
+  appletungmax: 10217, // Appletun-Gmax
+  sandacondagmax: 10218, // Sandaconda-Gmax
+  toxtricitygmax: 10219, // Toxtricity-Gmax
+  toxtricitylowkeygmax: 10228, // Toxtricity-Low-Key-Gmax
+  centiskorchgmax: 10220, // Centiskorch-Gmax
+  hatterenegmax: 10221, // Hatterene-Gmax
+  grimmsnarlgmax: 10222, // Grimmsnarl-Gmax
+  alcremiegmax: 10223, // Alcremie-Gmax
+  copperajahgmax: 10224, // Copperajah-Gmax
+  duraludongmax: 10225, // Duraludon-Gmax
+  urshifurapidstrikegmax: 10227, // Urshifu-Rapid-Strike-Gmax
+  urshifugmax: 10226, // Urshifu-Gmax (Single Strike)
 };

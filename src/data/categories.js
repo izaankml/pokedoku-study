@@ -3,6 +3,8 @@
 // stats table. `priorWeight` biases question selection before any answer
 // history exists (3 = the user's known weak spots).
 
+import { ABILITIES, MOVES } from "./traits.js";
+
 const TYPE_NAMES = [
   "normal", "fire", "water", "electric", "grass", "ice", "fighting", "poison",
   "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark",
@@ -60,32 +62,54 @@ export const CATEGORIES = [
     // Unova and Hisui) — see scripts/build-dataset.mjs
     predicate: (p) => p.regions.includes(id),
   })),
+  // A Pokémon counts for every method that evolves it in some core game
+  // (Alakazam: trade and item, via the Linking Cord). Stone is the subset
+  // of item where an evolution stone is used, not held.
   ...[
-    ["level", "Evolved by level-up", "Level evo"],
-    ["item", "Evolved by item", "Item evo"],
-    ["trade", "Evolved by trade", "Trade evo"],
-    ["friendship", "Evolved by friendship", "Friendship evo"],
-  ].map(([m, label, short]) => ({
+    ["level", "Evolved by level-up", "Level evo", 2],
+    ["item", "Evolved by item", "Item evo", 2],
+    ["stone", "Evolved by stone", "Stone evo", 2],
+    ["trade", "Evolved by trade", "Trade evo", 2],
+    ["friendship", "Evolved by friendship", "Friendship evo", 2],
+  ].map(([m, label, short, priorWeight]) => ({
     id: `evo-${m}`,
     label,
     short,
     group: "evo",
-    priorWeight: 2,
-    predicate: (p) => p.evoMethod === m,
+    priorWeight,
+    predicate: (p) => p.evoMethods.includes(m),
   })),
   ...[
-    ["first", "First stage"],
-    ["middle", "Middle stage"],
-    ["final", "Final stage"],
-    ["single", "Single stage (no evolutions)"],
-  ].map(([st, label]) => ({
+    ["first", "First stage", "First stage"],
+    ["middle", "Middle stage", "Middle stage"],
+    ["final", "Final stage", "Final stage"],
+    ["single", "No evolution line", "No evo line"],
+  ].map(([st, label, short]) => ({
     id: `stage-${st}`,
     label,
-    short: label.replace(" (no evolutions)", ""),
+    short,
     group: "stage",
     priorWeight: 1,
     predicate: (p) => p.stage === st,
   })),
+  {
+    id: "stage-notFully",
+    label: "Not fully evolved",
+    short: "Not fully evolved",
+    group: "stage",
+    priorWeight: 1,
+    predicate: (p) => p.stage === "first" || p.stage === "middle",
+  },
+  {
+    id: "branched",
+    label: "Branched evolution",
+    short: "Branched",
+    group: "evoLine",
+    priorWeight: 2,
+    predicate: (p) => p.branched,
+  },
+  // Mega and Gigantamax are the Mega/Gigantamax form records themselves
+  // (Mega Charizard X, Gigantamax Charizard), not the base species.
   ...[
     ["legendary", "Legendary", 1],
     ["mythical", "Mythical", 1],
@@ -94,15 +118,31 @@ export const CATEGORIES = [
     ["fossil", "Fossil", 1],
     ["starter", "First partner (starter line)", 1],
     ["baby", "Baby", 1],
-    ["mega", "Has a Mega Evolution", 2],
-    ["gmax", "Has a Gigantamax form", 2],
+    ["mega", "Mega Evolution", 2],
+    ["gmax", "Gigantamax", 2],
   ].map(([f, label, priorWeight]) => ({
     id: `flag-${f}`,
     label,
-    short: label.replace("Has a ", "").replace(" (starter line)", ""),
+    short: label.replace(" (starter line)", ""),
     group: "special",
     priorWeight,
     predicate: (p) => p.flags.includes(f),
+  })),
+  ...MOVES.map((m) => ({
+    id: `move-${m.id}`,
+    label: `Learns ${m.name}`,
+    short: m.name,
+    group: "move",
+    priorWeight: 2,
+    predicate: (p) => p.moves.includes(m.id),
+  })),
+  ...ABILITIES.map((a) => ({
+    id: `ability-${a.id}`,
+    label: `Has ${a.name}`,
+    short: a.name,
+    group: "ability",
+    priorWeight: 2,
+    predicate: (p) => p.abilities.includes(a.id),
   })),
 ];
 
@@ -114,8 +154,17 @@ export const CATEGORY_GROUPS = [
   ["region", "Regions"],
   ["evo", "Evolution method"],
   ["stage", "Evolution stage"],
+  ["evoLine", "Evolution line"],
   ["special", "Special"],
+  ["move", "Moves"],
+  ["ability", "Abilities"],
 ];
+
+// Groups where one Pokémon can never satisfy two categories, so such pairs
+// are structurally empty. Everything else (types → dual types, evolution
+// methods → Alakazam, regions → dual-region forms, ...) is decided by the
+// actual intersection.
+export const EXCLUSIVE_GROUPS = new Set(["typeCount", "stage"]);
 
 export function getCategory(id) {
   const cat = CATEGORY_BY_ID.get(id);

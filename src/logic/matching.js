@@ -1,5 +1,5 @@
 import { POKEMON } from "../data/pokedex.js";
-import { getCategory } from "../data/categories.js";
+import { EXCLUSIVE_GROUPS, getCategory } from "../data/categories.js";
 
 const membersCache = new Map();
 const intersectionCache = new Map();
@@ -20,15 +20,11 @@ export function intersection(catA, catB) {
   return intersectionCache.get(key);
 }
 
-// Same-group pairs are structurally empty (a Pokémon has one stage, one
-// type count) — except types (a pair means a dual type), special flags, and
-// regions (a few forms count for two regions).
-const SAME_GROUP_OK = new Set(["type", "special", "region"]);
 export function pairIsValid(catA, catB, min = 1) {
   if (catA === catB) return false;
   const a = getCategory(catA);
   const b = getCategory(catB);
-  if (a.group === b.group && !SAME_GROUP_OK.has(a.group)) return false;
+  if (a.group === b.group && EXCLUSIVE_GROUPS.has(a.group)) return false;
   return intersection(catA, catB).length >= min;
 }
 
