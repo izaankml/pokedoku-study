@@ -4,7 +4,24 @@ import { pickFlashcard } from "../logic/picker.js";
 import { DECKS, DECK_BY_ID, cardKey, session } from "../logic/flashcards.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
 import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
+import { CATEGORIES } from "../data/categories.js";
+import CategoryPill from "./CategoryPill.jsx";
 import PokemonCard from "./PokemonCard.jsx";
+
+const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby"];
+const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
+
+// Region, typing and group of a Pokémon as pills — the reward for a right
+// answer, and a reminder of what else PokeDoku can ask about it.
+const STANDARD = { id: "standard", short: "Standard", group: "special" };
+function summaryPills(p) {
+  const groups = GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`));
+  return [
+    ...p.regions.map((r) => CAT.get(`region-${r}`)),
+    ...p.types.map((t) => CAT.get(`type-${t}`)),
+    ...(groups.length ? groups : [STANDARD]),
+  ];
+}
 
 const GAVE_UP = "gaveup";
 
@@ -45,6 +62,7 @@ function Flashcards() {
   const entry = merged.flashcards[key];
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
   const answered = picked !== null;
+  const correct = answered && picked !== GAVE_UP && answerIds.has(picked);
 
   function commit(nextCard, nextPicked) {
     session.card = nextCard;
@@ -115,6 +133,11 @@ function Flashcards() {
             : null
         }
       />
+      <div className="card-tags" aria-live="polite">
+        {correct
+          ? summaryPills(pokemon).map((c) => <CategoryPill key={c.id} cat={c} useShort />)
+          : null}
+      </div>
       <div
         className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
       >
@@ -142,7 +165,7 @@ function Flashcards() {
               Skip
             </button>
             <button className="ghost" onClick={giveUp}>
-              Give up
+              Don&apos;t know
             </button>
           </>
         )}

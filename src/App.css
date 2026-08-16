@@ -875,6 +875,23 @@ header h1 {
   gap: var(--sp-2);
 }
 
+/* region / types / group pills shown after a right answer; the row keeps
+   its height when empty so the buttons below never move */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  min-height: 30px;
+  margin: 0 auto var(--sp-2);
+  max-width: 480px;
+}
+
+.card-tags .pill {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+}
+
 /* deck chips above the card */
 .deck-picker {
   display: flex;
@@ -980,15 +997,25 @@ header h1 {
   }
 
   .flashcards .pokemon-card {
-    margin: 0 0 var(--sp-2);
-    gap: var(--sp-2);
+    margin: 0 0 4px;
+    gap: 6px;
   }
 
   .flashcards .pokemon-card .sprite,
   .flashcards .pokemon-card .sprite-fallback {
     width: 96px;
     height: 96px;
-    padding: 16px;
+    padding: 12px;
+  }
+
+  .card-tags {
+    min-height: 26px;
+    margin-bottom: 4px;
+  }
+
+  .card-tags .pill {
+    padding: 3px 8px;
+    font-size: 0.72rem;
   }
 
   .flashcards .pokemon-card figcaption {
