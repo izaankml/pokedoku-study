@@ -58,7 +58,10 @@ export const DECKS = [
     id: "method",
     label: "Method",
     question: "How did this Pokémon evolve from its pre-evolution?",
-    options: ["evo-level", "evo-item", "evo-stone", "evo-trade", "evo-friendship"].map(cat),
+    options: ["evo-level", "evo-item", "evo-stone", "evo-trade", "evo-friendship"].map((id) => ({
+      ...cat(id),
+      short: cat(id).short.replace(" evo", "").replace("Level", "Level-up"),
+    })),
     answers: (p) => p.evoMethods.map((m) => `evo-${m}`),
     eligible: (p) =>
       (p.stage === "middle" || p.stage === "final") && p.evoMethods.length > 0 && !isMegaOrGmax(p),

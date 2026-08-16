@@ -112,8 +112,17 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     height. The remaining size difference is PokeAPI's sprite framing
     (classic 96px sprites vs the larger Z-A form renders) — a different
     sprite set (PokeAPI "home" renders) would fix it at ~10× the bytes.
-21. The top "Pokédex lid" strip is desktop-only now. On phones it painted
-    a 3px line just under Safari's status bar that read as a stray bar.
+21. The top "Pokédex lid" strip is desktop-only now and solid accent (the
+    fade-to-transparent was a styling choice from the redesign). On phones
+    it painted a 3px line just under Safari's status bar that read as a
+    stray bar.
+21b. Flashcard layout: the sprite sits alone in a 168px circle with the
+    name below (the name used to overlap the circle); the caption block
+    reserves three lines and the option grid reserves its tallest deck
+    (2 rows desktop, 5 rows phone), so the answer buttons and Skip/Give
+    up/Next stay in the same place across cards, decks and answer states
+    (measured identical in headless Chrome). Method options read
+    Level-up / Item / Stone / Trade / Friendship on cards.
 22. Stats table on phones: the narrow-column override sat *before* the base
     rules in App.css and never applied; moved after them, header type
     tightened, Accuracy header right-aligned like its values.

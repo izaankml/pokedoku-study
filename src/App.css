@@ -108,7 +108,7 @@ body {
     position: fixed;
     inset: 0 0 auto;
     height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-deep) 55%, transparent 95%);
+    background: var(--accent);
     z-index: 60;
     pointer-events: none;
   }
@@ -730,38 +730,53 @@ header h1 {
 
 .flashcards .pokemon-card {
   font-size: 1.05rem;
-  margin: var(--sp-2) 0 var(--sp-4);
-  padding: var(--sp-4);
-  background: radial-gradient(circle at 50% 44%, var(--surface-1) 0 84px, transparent 85px);
+  margin: var(--sp-2) 0 var(--sp-3);
+  gap: var(--sp-3);
 }
 
+/* the sprite sits alone in a circle; the name goes underneath */
 .flashcards .pokemon-card .sprite,
 .flashcards .pokemon-card .sprite-fallback {
+  box-sizing: content-box;
   width: 128px;
   height: 128px;
+  padding: 20px;
+  border-radius: 50%;
+  background: var(--surface-1);
 }
 
 .flashcards .pokemon-card .sprite {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
 }
 
+/* room for a two-line name plus the answer line, so the buttons below
+   never move when a card is answered or swapped */
 .flashcards .pokemon-card figcaption {
   font-size: 1.05rem;
   font-weight: 700;
+  line-height: 1.25;
   color: var(--text-hi);
-  min-height: 2.7em;
+  white-space: normal;
+  height: 3.75em;
+  max-width: 320px;
 }
 
 .region-buttons {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 44px;
+  align-content: start;
   gap: var(--sp-2);
   max-width: 480px;
+  min-height: calc(2 * 44px + var(--sp-2)); /* two rows: the tallest deck */
   margin: 0 auto var(--sp-2);
 }
 
 .region-btn {
   min-height: 44px;
+  padding: 0 6px;
+  white-space: nowrap;
+  font-size: 0.92rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface-1);
@@ -859,6 +874,7 @@ header h1 {
   .region-buttons.deck-stage,
   .region-buttons.deck-method {
     grid-template-columns: repeat(2, 1fr);
+    min-height: calc(5 * 44px + 4 * var(--sp-2)); /* five rows: the region deck */
   }
 
 }
