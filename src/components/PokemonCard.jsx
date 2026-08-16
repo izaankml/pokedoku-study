@@ -22,7 +22,9 @@ function PokemonCard({ pokemon, caption, onClick }) {
     >
       <Sprite pokemon={pokemon} />
       <figcaption title={pokemon.displayName}>
-        <PokemonName name={pokemon.displayName} />
+        <span className="card-name">
+          <PokemonName name={pokemon.displayName} />
+        </span>
         {caption ? <span className="card-caption">{caption}</span> : null}
       </figcaption>
     </figure>

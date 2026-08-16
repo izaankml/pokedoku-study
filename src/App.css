@@ -694,15 +694,23 @@ header h1 {
 }
 
 /* Form names ("Gigantamax Urshifu (Rapid Strike)") need up to three
-   lines; every card reserves them so rows stay uniform */
+   lines; every card reserves them so rows stay uniform, and the name is
+   centred inside that box */
 .answer-grid .pokemon-card figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   white-space: normal;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
   font-size: 0.76rem;
   line-height: 1.2;
   height: 3.6em;
+}
+
+.answer-grid .pokemon-card .card-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   overflow-wrap: anywhere;
 }
 
@@ -1153,12 +1161,21 @@ header h1 {
 
   .stats-table th:nth-child(2),
   .stats-table td:nth-child(2) {
-    width: 76px;
+    width: 64px;
   }
 
   .stats-table th:nth-child(3),
   .stats-table td:nth-child(3) {
-    width: 118px;
+    width: 132px;
+  }
+
+  /* shorter bar so the centred bar + % keep clear of the Answered column */
+  .acc-track {
+    width: 40px;
+  }
+
+  .acc {
+    gap: 6px;
   }
 }
 
