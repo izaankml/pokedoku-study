@@ -1,5 +1,7 @@
-// Flashcard decks — one per group of categories in Stats. Each shows a
-// Pokémon and asks one question with a fixed set of answer buttons. A card
+// Flashcard decks — one per group of categories in Stats, except Type
+// Count (answering the Type deck with both types already says mono or
+// dual). Each shows a Pokémon and asks one question with a fixed set of
+// answer buttons. A card
 // can have several correct answers (a dual type, a form counting for two
 // regions, Koraidon being Paradox and Legendary); any of them is accepted.
 // Some decks ask about a specific thing per card (`param`): the Moves deck
@@ -52,14 +54,6 @@ export const DECKS = [
     options: CATEGORIES.filter((c) => c.group === "type"),
     answers: (p) => p.types.map((t) => `type-${t}`),
     // Megas can change type (Mega Charizard X); Gmax never does
-    eligible: (p) => !p.flags.includes("gmax"),
-  },
-  {
-    id: "typeCount",
-    label: "Type Count",
-    questionText: "Mono-type or dual-type?",
-    options: ["mono", "dual"].map(cat),
-    answers: (p) => [p.types.length === 1 ? "mono" : "dual"],
     eligible: (p) => !p.flags.includes("gmax"),
   },
   {

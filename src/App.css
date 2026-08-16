@@ -140,6 +140,9 @@ button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
   transition:
     transform var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast),
@@ -387,8 +390,12 @@ header h1 {
   filter: none;
 }
 
+/* disabled: drops back to a quiet outline instead of a dimmed red */
 .primary:disabled {
-  opacity: 0.5;
+  background: var(--surface-1);
+  border-color: var(--border);
+  color: var(--text-low);
+  box-shadow: none;
   cursor: default;
   filter: none;
   translate: 0 0;
@@ -450,24 +457,25 @@ header h1 {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.pill.type-normal { --type-c: var(--type-normal); }
-.pill.type-fire { --type-c: var(--type-fire); }
-.pill.type-water { --type-c: var(--type-water); }
-.pill.type-electric { --type-c: var(--type-electric); }
-.pill.type-grass { --type-c: var(--type-grass); }
-.pill.type-ice { --type-c: var(--type-ice); }
-.pill.type-fighting { --type-c: var(--type-fighting); }
-.pill.type-poison { --type-c: var(--type-poison); }
-.pill.type-ground { --type-c: var(--type-ground); }
-.pill.type-flying { --type-c: var(--type-flying); }
-.pill.type-psychic { --type-c: var(--type-psychic); }
-.pill.type-bug { --type-c: var(--type-bug); }
-.pill.type-rock { --type-c: var(--type-rock); }
-.pill.type-ghost { --type-c: var(--type-ghost); }
-.pill.type-dragon { --type-c: var(--type-dragon); }
-.pill.type-dark { --type-c: var(--type-dark); }
-.pill.type-steel { --type-c: var(--type-steel); }
-.pill.type-fairy { --type-c: var(--type-fairy); }
+/* one colour token per type — pills and the Type deck's buttons both read it */
+.type-normal { --type-c: var(--type-normal); }
+.type-fire { --type-c: var(--type-fire); }
+.type-water { --type-c: var(--type-water); }
+.type-electric { --type-c: var(--type-electric); }
+.type-grass { --type-c: var(--type-grass); }
+.type-ice { --type-c: var(--type-ice); }
+.type-fighting { --type-c: var(--type-fighting); }
+.type-poison { --type-c: var(--type-poison); }
+.type-ground { --type-c: var(--type-ground); }
+.type-flying { --type-c: var(--type-flying); }
+.type-psychic { --type-c: var(--type-psychic); }
+.type-bug { --type-c: var(--type-bug); }
+.type-rock { --type-c: var(--type-rock); }
+.type-ghost { --type-c: var(--type-ghost); }
+.type-dragon { --type-c: var(--type-dragon); }
+.type-dark { --type-c: var(--type-dark); }
+.type-steel { --type-c: var(--type-steel); }
+.type-fairy { --type-c: var(--type-fairy); }
 
 .pill.type-fighting,
 .pill.type-poison,
@@ -635,13 +643,6 @@ header h1 {
   color: var(--text-mid);
 }
 
-.card-caption {
-  display: block;
-  color: var(--text-low);
-  font-size: 0.8rem;
-  font-weight: 400;
-}
-
 .answer-list {
   margin-top: var(--sp-4);
   text-align: left;
@@ -724,6 +725,10 @@ header h1 {
 
 /* ---- browse ---- */
 
+.browser > .hint {
+  text-align: center;
+}
+
 .browser-controls {
   position: sticky;
   top: 46px;
@@ -770,7 +775,22 @@ header h1 {
   text-align: center;
 }
 
-.drill-actions {
+/* Long-pressing a phone screen shouldn't start selecting the card, the
+   pills or the board — the answer input is the only text field here. */
+.flashcards,
+.board,
+.question,
+.pill,
+.tabs,
+.card-actions,
+.action-row {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Secondary buttons under an input (Drill's Don't Know, Grid's Reveal) */
+.action-row {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -784,19 +804,23 @@ header h1 {
   margin: var(--sp-3) 0 var(--sp-4);
 }
 
-/* Sprite, (pills once answered), name, answer line, abilities — inside a
-   block of fixed height so nothing below moves when a card is answered.
-   Until then the name sits right under the sprite. */
+/* The card itself: sprite and name on a raised surface. Everything that
+   appears after answering (verdict, facts, schedule) lives in the answer
+   area below, so the card never changes height. */
 .flashcards .pokemon-card {
-  font-size: 1.05rem;
-  margin: 0 0 var(--sp-3);
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto var(--sp-4);
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
   gap: var(--sp-3);
-  height: 292px;
-  justify-content: flex-start;
+  font-size: 1.05rem;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1), var(--edge-hi);
 }
 
-/* the sprite stands on its own; pills and the name go underneath.
-   PokeAPI draws each Pokémon at a different height in its canvas — bottom
+/* PokeAPI draws each Pokémon at a different height in its canvas — bottom
    alignment at least keeps the ones standing on the ground level */
 .flashcards .pokemon-card .sprite,
 .flashcards .pokemon-card .sprite-fallback {
@@ -811,29 +835,40 @@ header h1 {
 }
 
 .flashcards .pokemon-card figcaption {
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.25;
   color: var(--text-hi);
   white-space: normal;
-  max-width: 360px;
 }
 
-.flashcards .card-extra {
-  font-size: 0.78rem;
-  color: var(--text-low);
+/* verdict, options, facts and the action row, as one centred column */
+.answer-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.answer-area .verdict {
+  margin: 0;
+}
+
+.verdict.revealed {
+  color: var(--text-mid);
+  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 .region-buttons {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-auto-rows: 44px;
-  align-content: center;
+  align-content: start; /* options hug the card; spare rows sit above the actions */
   gap: var(--sp-2);
   width: 100%; /* auto side margins would shrink it inside the flex column */
   max-width: 480px;
-  min-height: calc(3 * 44px + 2 * var(--sp-2)); /* three rows: the Type deck */
-  margin: 0 auto var(--sp-2);
+  /* three rows (the Type deck) so the action row sits still across decks */
+  min-height: calc(3 * 44px + 2 * var(--sp-2));
 }
 
 .region-btn {
@@ -856,32 +891,15 @@ header h1 {
   scale: 0.96;
 }
 
-/* once answered only the right options (and a wrong pick) remain; centre
-   them in the same reserved area */
-.region-buttons.answered {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
+/* Type deck: a wash of each type's colour, like the pills */
+.region-btn[class*="type-"] {
+  background: color-mix(in srgb, var(--type-c) 14%, var(--surface-1));
+  border-color: color-mix(in srgb, var(--type-c) 40%, var(--border));
 }
 
-.region-buttons.answered .region-btn {
-  min-width: 140px;
-  padding: 0 18px;
-  opacity: 0.4;
-}
-
-.region-buttons.answered .region-btn.correct,
-.region-buttons.answered .region-btn.wrong {
-  opacity: 1;
-}
-
-.region-btn.correct {
-  background: linear-gradient(180deg, var(--correct-strong), var(--correct));
-  border-color: var(--correct);
-  color: #0d1a0d;
-  font-weight: 800;
-  animation: pop-in var(--dur-slow) var(--ease-bounce) both;
+.region-btn[class*="type-"]:hover {
+  background: color-mix(in srgb, var(--type-c) 26%, var(--surface-1));
+  border-color: color-mix(in srgb, var(--type-c) 70%, var(--border));
 }
 
 /* multi-select decks: toggled options before Check */
@@ -892,14 +910,46 @@ header h1 {
   color: var(--text-hi);
 }
 
-/* a right answer the player didn't select */
+.region-btn[class*="type-"].selected {
+  background: color-mix(in srgb, var(--type-c) 45%, var(--surface-1));
+  border-color: var(--type-c);
+  box-shadow: inset 0 0 0 1px var(--type-c);
+}
+
+/* once answered only the right options (and a wrong pick) remain */
+.region-buttons.answered {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  min-height: 0;
+}
+
+.region-buttons.answered .region-btn {
+  min-width: 140px;
+  padding: 0 18px;
+  pointer-events: none; /* the result, not buttons any more */
+}
+
+/* picked and right */
+.region-btn.correct {
+  background: linear-gradient(180deg, var(--correct-strong), var(--correct));
+  border-color: var(--correct);
+  color: #0d1a0d;
+  font-weight: 800;
+  animation: pop-in var(--dur-slow) var(--ease-bounce) both;
+}
+
+/* right, but not picked: a miss in a multi deck, or the reveal */
 .region-btn.correct.missed {
   background: transparent;
   color: var(--correct-strong);
   border: 2px dashed var(--correct);
-  animation: none;
+  box-shadow: none;
+  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
+/* picked and wrong */
 .region-btn.wrong {
   background: var(--wrong);
   border-color: var(--wrong);
@@ -908,11 +958,12 @@ header h1 {
 }
 
 .card-actions {
-  min-height: 60px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
+  margin-top: var(--sp-1);
 }
 
 .card-actions .ghost,
@@ -920,19 +971,22 @@ header h1 {
   min-width: 130px; /* Check / Skip / Don't Know the same size */
 }
 
-/* region / types / group pills shown once a card is answered */
+/* what else PokeDoku can ask about this Pokémon, shown once answered */
+.card-facts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 480px;
+  animation: fade-up var(--dur-med) var(--ease-out) both;
+}
+
 .card-tags {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-content: center;
-  align-self: stretch; /* full card width, so it centres on the same axis as the name */
   gap: 6px;
-  padding: 0 var(--sp-2);
-}
-
-.card-tags:empty {
-  display: none;
+  margin-bottom: 4px;
 }
 
 .card-tags .pill {
@@ -940,13 +994,24 @@ header h1 {
   font-size: 0.78rem;
 }
 
-/* deck chips above the card */
+.card-extra {
+  font-size: 0.82rem;
+  color: var(--text-low);
+  line-height: 1.4;
+}
+
+.card-facts .due-note {
+  margin: 4px 0 0;
+}
+
+/* deck chips above the card; the width wraps them into two even rows */
 .deck-picker {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
-  margin-bottom: var(--sp-3);
+  max-width: 480px;
+  margin: 0 auto var(--sp-3);
 }
 
 .chip {
@@ -989,7 +1054,6 @@ header h1 {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.region-buttons.deck-typeCount,
 .region-buttons.deck-branched,
 .region-buttons.deck-move {
   grid-template-columns: repeat(2, 1fr);
@@ -997,8 +1061,8 @@ header h1 {
 }
 
 @media (max-width: 480px) {
-  /* Everything (chips, card, options, Skip/Give up) has to fit above the
-     nav without scrolling, inside Safari's ~680px of visible height. */
+  /* Everything (chips, card, options, Skip/Don't Know) has to fit above
+     the nav without scrolling, inside Safari's ~680px of visible height. */
   .region-buttons,
   .region-buttons.deck-special,
   .region-buttons.deck-stage,
@@ -1007,14 +1071,13 @@ header h1 {
     grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: 44px;
     gap: 6px;
-    min-height: calc(4 * 44px + 3 * 6px); /* four rows: Type (5×4) and Region (3×4) */
+    min-height: 0; /* the answer area centres itself in the free space */
   }
 
   .region-buttons.deck-type {
     grid-template-columns: repeat(5, 1fr);
   }
 
-  .region-buttons.deck-typeCount,
   .region-buttons.deck-branched,
   .region-buttons.deck-move {
     grid-template-columns: repeat(2, 1fr);
@@ -1030,14 +1093,18 @@ header h1 {
     font-size: 0.8rem;
   }
 
-  /* one scrollable row of deck chips */
+  /* one scrollable row of deck chips, faded at the edges so it reads as
+     scrollable */
   .deck-picker {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
     scrollbar-width: none;
+    max-width: none;
     margin: 0 -16px 4px;
     padding: 0 16px;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
   }
 
   .deck-picker::-webkit-scrollbar {
@@ -1057,19 +1124,15 @@ header h1 {
     margin: 10px 0;
   }
 
-  /* no reserved block on phones: the sprite is big, the name hugs it, and
-     the answer/ability lines use the room the shorter answered option list
-     frees up */
   .flashcards .pokemon-card {
-    margin: 0;
-    gap: 8px;
-    height: auto;
+    margin-bottom: var(--sp-3);
+    padding: var(--sp-4) var(--sp-3) var(--sp-3);
+    gap: var(--sp-2);
   }
 
-  .flashcards .pokemon-card .sprite,
-  .flashcards .pokemon-card .sprite-fallback {
-    width: 148px;
-    height: 148px;
+  .flashcards .pokemon-card figcaption {
+    font-size: 1.1rem;
+    line-height: 1.2;
   }
 
   .card-tags .pill {
@@ -1077,17 +1140,12 @@ header h1 {
     font-size: 0.76rem;
   }
 
-  .flashcards .pokemon-card figcaption {
-    font-size: 1.05rem;
-    line-height: 1.2;
-  }
-
-  .flashcards .card-extra {
-    font-size: 0.74rem;
+  .card-extra {
+    font-size: 0.78rem;
   }
 
   .card-actions {
-    min-height: 56px;
+    align-self: stretch;
     gap: 6px;
   }
 
@@ -1099,8 +1157,8 @@ header h1 {
     padding: 0 8px;
   }
 
-  /* the Cards tab fills the screen; answers sit centred in the space left
-     under the Pokémon */
+  /* the Cards tab fills the screen; the answer area centres itself in the
+     space left under the card */
   .app {
     min-height: 100dvh;
     display: flex;
@@ -1121,14 +1179,8 @@ header h1 {
 
   .flashcards .answer-area {
     flex: 1;
-    display: flex;
-    flex-direction: column;
     justify-content: center;
-  }
-
-  /* answered: only the right option(s) remain, so no reserved rows */
-  .region-buttons.answered {
-    min-height: 0;
+    padding-bottom: var(--sp-2);
   }
 }
 

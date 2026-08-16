@@ -146,9 +146,11 @@ function PracticeGrid() {
             <CategoryPill cat={getCategory(cellCats(selected)[1])} />
           </div>
           <PokemonAutocomplete onSubmit={guess} />
-          <button className="ghost" onClick={revealCell}>
-            Reveal This Cell
-          </button>
+          <div className="action-row">
+            <button className="ghost" onClick={revealCell}>
+              Reveal This Cell
+            </button>
+          </div>
         </div>
       ) : null}
       {selected !== null && cells[selected].status !== "empty" ? (

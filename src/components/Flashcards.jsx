@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickFlashcard } from "../logic/picker.js";
 import { DECKS, DECK_BY_ID, cardKey, session } from "../logic/flashcards.js";
@@ -12,15 +12,16 @@ const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil",
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Region, typing and group of a Pokémon as pills, shown once a card is
-// answered — a reminder of what else PokeDoku can ask about it.
+// answered — a reminder of what else PokeDoku can ask about it. Whatever
+// the card itself asked (its answers) is left out; the buttons show that.
 const abilityText = (p) =>
   p.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ");
-function summaryPills(p) {
+function summaryPills(p, except) {
   return [
     ...p.regions.map((r) => CAT.get(`region-${r}`)),
     ...p.types.map((t) => CAT.get(`type-${t}`)),
     ...GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
-  ];
+  ].filter((c) => !except.has(c.id));
 }
 
 const GAVE_UP = "gaveup";
@@ -36,6 +37,7 @@ function Flashcards() {
   });
   const [picked, setPicked] = useState(session.picked);
   const [selection, setSelection] = useState(session.selection);
+  const pickerRef = useRef(null);
 
   function freshCard(forDeck, alsoExclude = []) {
     const { deck, pokemon, param } = pickFlashcard(merged, {
@@ -54,6 +56,36 @@ function Flashcards() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card, deckId]);
 
+  // On phones the deck row scrolls sideways; keep the active chip in view
+  // (coming back to the tab with "Ability" selected shouldn't hide it).
+  useEffect(() => {
+    const row = pickerRef.current;
+    const chip = row?.querySelector(".chip.active");
+    if (!row || !chip || row.scrollWidth <= row.clientWidth) return;
+    const target = chip.offsetLeft - (row.clientWidth - chip.offsetWidth) / 2;
+    row.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+  }, [deckId]);
+
+  // Enter moves the card along from the keyboard: Check once something is
+  // selected, Next Card once answered. Cancelling the default keeps a
+  // focused option button from also being "clicked".
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== "Enter" || e.metaKey || e.ctrlKey || e.altKey) return;
+      // Enter on a focused tab or deck chip still activates that
+      if (document.activeElement?.closest(".tabs, .deck-picker")) return;
+      if (picked !== null) {
+        e.preventDefault();
+        next();
+      } else if (DECK_BY_ID.get(card.deckId).multi && selection.length) {
+        e.preventDefault();
+        check();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   const deck = DECK_BY_ID.get(card.deckId);
   const pokemon = POKEMON_BY_ID.get(card.pokemonId);
   const answerIds = new Set(deck.answers(pokemon, card.param));
@@ -63,8 +95,11 @@ function Flashcards() {
   const entry = merged.flashcards[key];
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
   const answered = picked !== null;
-  const pickedIds = new Set(Array.isArray(picked) ? picked : picked ? [picked] : []);
+  const gaveUp = picked === GAVE_UP;
+  const pickedIds = new Set(Array.isArray(picked) ? picked : picked && !gaveUp ? [picked] : []);
   const multi = Boolean(deck.multi);
+  const wasCorrect =
+    answered && !gaveUp && pickedIds.size === answerIds.size && [...pickedIds].every((id) => answerIds.has(id));
 
   function commit(nextCard, nextPicked) {
     session.card = nextCard;
@@ -126,15 +161,33 @@ function Flashcards() {
     if (!answered && id !== "all" && card.deckId !== id) commit(freshCard(id), null);
   }
 
-  const answerLabel =
-    deck.options
-      .filter((o) => answerIds.has(o.id))
-      .map((o) => o.short)
-      .join(" / ") + (deck.id === "method" && pokemon.evoDetail ? ` — ${pokemon.evoDetail}` : "");
+  // Once answered only the right options (and any wrong picks) remain.
+  // Solid green = picked and right; dashed = right but not picked (a miss
+  // in a multi deck, or the reveal after a wrong pick / Don't Know); red =
+  // picked and wrong.
+  const shownOptions = answered
+    ? deck.options.filter((o) => answerIds.has(o.id) || pickedIds.has(o.id))
+    : deck.options;
+  const optionClass = (option) => {
+    let cls = "region-btn";
+    if (deck.id === "type") cls += ` type-${option.id.slice(5)}`;
+    if (answered) {
+      if (answerIds.has(option.id)) cls += pickedIds.has(option.id) ? " correct" : " correct missed";
+      else if (pickedIds.has(option.id)) cls += " wrong";
+    } else if (selection.includes(option.id)) {
+      cls += " selected";
+    }
+    return cls;
+  };
+
+  const facts = [
+    deck.id === "method" && pokemon.evoDetail ? `Evolves: ${pokemon.evoDetail}` : null,
+    `Abilities: ${abilityText(pokemon)}`,
+  ].filter(Boolean);
 
   return (
     <div className="flashcards">
-      <div className="deck-picker" role="tablist" aria-label="Deck">
+      <div className="deck-picker" role="tablist" aria-label="Deck" ref={pickerRef}>
         {[{ id: "all", label: "All" }, ...DECKS].map((d) => (
           <button
             key={d.id}
@@ -148,66 +201,60 @@ function Flashcards() {
         ))}
       </div>
       <p className="hint card-question">{deck.question(card.param)}</p>
-      <PokemonCard
-        pokemon={pokemon}
-        eager
-        belowSprite={
-          <div className="card-tags" aria-live="polite">
-            {answered
-              ? summaryPills(pokemon).map((c) => <CategoryPill key={c.id} cat={c} useShort />)
-              : null}
-          </div>
-        }
-        caption={
-          answered
-            ? `${answerLabel}${nextIn ? ` · next in ${nextIn}` : ""}`
-            : null
-        }
-        extra={answered ? `Abilities: ${abilityText(pokemon)}` : null}
-      />
-      <div className="answer-area">
-      <div
-        className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
-      >
-        {(answered
-          ? deck.options.filter((o) => answerIds.has(o.id) || pickedIds.has(o.id))
-          : deck.options
-        ).map((option) => {
-          let cls = "region-btn";
-          if (answered) {
-            if (answerIds.has(option.id)) cls += pickedIds.has(option.id) || !multi ? " correct" : " correct missed";
-            else if (pickedIds.has(option.id)) cls += " wrong";
-          } else if (selection.includes(option.id)) {
-            cls += " selected";
-          }
-          return (
-            <button key={option.id} className={cls} onClick={() => choose(option)}>
+      <PokemonCard pokemon={pokemon} eager />
+      <div className={`answer-area${answered ? " answered" : ""}`}>
+        {answered ? (
+          <p
+            key={key}
+            className={`verdict ${gaveUp ? "revealed" : wasCorrect ? "correct" : "wrong"}`}
+            aria-live="polite"
+          >
+            {gaveUp ? "Revealed." : wasCorrect ? "Correct!" : "Not quite."}
+          </p>
+        ) : null}
+        <div className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}>
+          {shownOptions.map((option) => (
+            <button key={option.id} className={optionClass(option)} onClick={() => choose(option)}>
               {option.short}
             </button>
-          );
-        })}
-      </div>
-      <div className="card-actions">
+          ))}
+        </div>
         {answered ? (
-          <button className="primary" onClick={next}>
-            Next Card
-          </button>
-        ) : (
-          <>
-            {multi ? (
-              <button className="primary" disabled={!selection.length} onClick={check}>
-                Check
+          <div className="card-facts">
+            <div className="card-tags">
+              {summaryPills(pokemon, answerIds).map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
+            </div>
+            {facts.map((line) => (
+              <p key={line} className="card-extra">
+                {line}
+              </p>
+            ))}
+            {nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
+          </div>
+        ) : null}
+        <div className="card-actions">
+          {answered ? (
+            <button className="primary" onClick={next}>
+              Next Card
+            </button>
+          ) : (
+            <>
+              {multi ? (
+                <button className="primary" disabled={!selection.length} onClick={check}>
+                  Check
+                </button>
+              ) : null}
+              <button className="ghost" onClick={next}>
+                Skip
               </button>
-            ) : null}
-            <button className="ghost" onClick={next}>
-              Skip
-            </button>
-            <button className="ghost" onClick={giveUp}>
-              Don&apos;t Know
-            </button>
-          </>
-        )}
-      </div>
+              <button className="ghost" onClick={giveUp}>
+                Don&apos;t Know
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

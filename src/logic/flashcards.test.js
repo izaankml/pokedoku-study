@@ -18,7 +18,6 @@ describe("flashcard decks", () => {
     expect(method.answers(by("alakazam"))).toEqual(["evo-trade", "evo-item"]);
     const type = DECK_BY_ID.get("type");
     expect(type.answers(by("charizardmegax"))).toEqual(["type-fire", "type-dragon"]);
-    expect(DECK_BY_ID.get("typeCount").answers(by("pikachu"))).toEqual(["mono"]);
     expect(DECK_BY_ID.get("branched").answers(by("eevee"))).toEqual(["yes"]);
     const move = DECK_BY_ID.get("move");
     expect(move.answers(by("pikachu"), "surf")).toEqual(["yes"]);
@@ -34,9 +33,9 @@ describe("flashcard decks", () => {
     expect(DECK_BY_ID.get("method").implies).toEqual({ "evo-stone": ["evo-item"], "evo-friendship": ["evo-level"] });
   });
 
-  it("covers every category group in Stats", () => {
+  it("covers every category group in Stats except Type Count (the Type deck implies it)", () => {
     expect(DECKS.map((d) => d.id)).toEqual([
-      "region", "type", "typeCount", "method", "stage", "branched", "special", "move", "ability",
+      "region", "type", "method", "stage", "branched", "special", "move", "ability",
     ]);
   });
 

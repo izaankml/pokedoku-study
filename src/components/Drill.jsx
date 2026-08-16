@@ -56,7 +56,7 @@ function Drill() {
       {result === null ? (
         <>
           <PokemonAutocomplete onSubmit={grade} />
-          <div className="drill-actions">
+          <div className="action-row">
             <button className="ghost" onClick={giveUp}>
               Don&apos;t Know
             </button>
@@ -69,7 +69,9 @@ function Drill() {
         </>
       ) : (
         <>
-          <p className={result.correct ? "verdict correct" : "verdict wrong"}>
+          <p
+            className={`verdict ${result.correct ? "correct" : result.pokemon ? "wrong" : "revealed"}`}
+          >
             {result.correct
               ? `Correct — ${result.pokemon.displayName}!`
               : result.pokemon
