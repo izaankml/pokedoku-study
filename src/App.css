@@ -917,20 +917,25 @@ header h1 {
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
+/* A wrapping row rather than a grid, so a short last row centres; every
+   option is one --cols-th of the width, per deck */
 .region-buttons {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-auto-rows: 44px;
+  --cols: 5;
+  --gap: var(--sp-2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-content: start; /* options hug the card; spare rows sit above the actions */
-  gap: var(--sp-2);
+  gap: var(--gap);
   width: 100%; /* auto side margins would shrink it inside the flex column */
   max-width: 480px;
   /* three rows (the Type deck) so the action row sits still across decks */
-  min-height: calc(3 * 44px + 2 * var(--sp-2));
+  min-height: calc(3 * 44px + 2 * var(--gap));
 }
 
 .region-btn {
-  min-height: 44px;
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  height: 44px;
   padding: 0 6px;
   white-space: nowrap;
   font-size: 0.92rem;
@@ -984,6 +989,7 @@ header h1 {
 }
 
 .region-buttons.answered .region-btn {
+  flex: 0 0 auto;
   min-width: 140px;
   padding: 0 18px;
   pointer-events: none; /* the result, not buttons any more */
@@ -1096,25 +1102,25 @@ header h1 {
 
 /* per-deck column counts */
 .region-buttons.deck-type {
-  grid-template-columns: repeat(6, 1fr);
+  --cols: 6;
 }
 
 .region-buttons.deck-stage,
 .region-buttons.deck-special {
-  grid-template-columns: repeat(4, 1fr);
+  --cols: 4;
 }
 
 .region-buttons.deck-method {
-  grid-template-columns: repeat(5, 1fr);
+  --cols: 5;
 }
 
 .region-buttons.deck-ability {
-  grid-template-columns: repeat(3, 1fr);
+  --cols: 3;
 }
 
 .region-buttons.deck-branched,
 .region-buttons.deck-move {
-  grid-template-columns: repeat(2, 1fr);
+  --cols: 2;
   max-width: 320px;
 }
 
@@ -1126,23 +1132,21 @@ header h1 {
   .region-buttons.deck-stage,
   .region-buttons.deck-method,
   .region-buttons.deck-ability {
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 44px;
-    gap: 6px;
+    --cols: 3;
+    --gap: 6px;
     min-height: 0; /* the answer area centres itself in the free space */
   }
 
   .region-buttons.deck-type {
-    grid-template-columns: repeat(5, 1fr);
+    --cols: 5;
   }
 
   .region-buttons.deck-branched,
   .region-buttons.deck-move {
-    grid-template-columns: repeat(2, 1fr);
+    --cols: 2;
   }
 
   .region-btn {
-    min-height: 44px;
     font-size: 0.86rem;
     padding: 0 2px;
   }
