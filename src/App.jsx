@@ -8,17 +8,27 @@ import Flashcards from "./components/Flashcards.jsx";
 import PracticeGrid from "./components/PracticeGrid.jsx";
 import StatsView from "./components/StatsView.jsx";
 import { emptyBlock, loadBlock, mergeBlocks, saveBlock, withAttempt } from "./logic/stats.js";
-import { getToken, setToken, syncBlock } from "./logic/sync.js";
+import { consumeHandoffFromUrl, getToken, setToken, syncBlock } from "./logic/sync.js";
 
 const TABS = ["Browse", "Drill", "Cards", "Grid", "Stats"];
 const SYNC_DEBOUNCE_MS = 10_000;
+// Re-pull other devices' progress while the tab is open: on becoming
+// visible again (if the last sync is older than MIN_REPULL_MS) and on a
+// timer while visible.
+const REPULL_INTERVAL_MS = 5 * 60_000;
+const MIN_REPULL_MS = 60_000;
 
 function App() {
   const [tab, setTab] = useState("Drill");
   const [block, setBlock] = useState(loadBlock);
   const [remoteBlocks, setRemoteBlocks] = useState([]);
-  const [token, setTokenState] = useState(getToken);
-  const [syncState, setSyncState] = useState({ status: "idle", deviceCount: 1 });
+  // A QR handoff link (#connect=…) stores its token before anything else.
+  const [token, setTokenState] = useState(() => consumeHandoffFromUrl() || getToken());
+  const [syncState, setSyncState] = useState({
+    status: "idle",
+    deviceCount: 1,
+    lastSyncedAt: null,
+  });
 
   const blockRef = useRef(block);
   blockRef.current = block;
@@ -27,15 +37,36 @@ function App() {
   // (see stats.withAttempt) so last-writer-wins sync stays correct.
   const mergedRef = useRef(null);
 
+  const lastSyncRef = useRef(0);
+  const inFlightRef = useRef(false);
+  const rerunRef = useRef(false);
+
   const syncNow = useCallback(async () => {
     if (!getToken()) return;
+    if (inFlightRef.current) {
+      rerunRef.current = true; // pick up whatever changed once this one lands
+      return;
+    }
+    inFlightRef.current = true;
     setSyncState((s) => ({ ...s, status: "syncing" }));
     try {
       const blocks = await syncBlock(blockRef.current);
       setRemoteBlocks(blocks.filter((b) => b.deviceId !== blockRef.current.deviceId));
-      setSyncState({ status: "ok", deviceCount: blocks.length });
+      lastSyncRef.current = Date.now();
+      setSyncState({ status: "ok", deviceCount: blocks.length, lastSyncedAt: lastSyncRef.current });
     } catch (err) {
-      setSyncState({ status: "error", lastError: err.message, deviceCount: 1 });
+      setSyncState((s) => ({
+        status: "error",
+        lastError: err.message,
+        deviceCount: 1,
+        lastSyncedAt: s.lastSyncedAt,
+      }));
+    } finally {
+      inFlightRef.current = false;
+      if (rerunRef.current) {
+        rerunRef.current = false;
+        syncNow();
+      }
     }
   }, []);
 
@@ -48,6 +79,20 @@ function App() {
   useEffect(() => {
     syncNow();
     return () => clearTimeout(timerRef.current);
+  }, [syncNow]);
+
+  useEffect(() => {
+    const repull = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - lastSyncRef.current < MIN_REPULL_MS) return;
+      syncNow();
+    };
+    document.addEventListener("visibilitychange", repull);
+    const interval = setInterval(repull, REPULL_INTERVAL_MS);
+    return () => {
+      document.removeEventListener("visibilitychange", repull);
+      clearInterval(interval);
+    };
   }, [syncNow]);
 
   const recordAttempt = useCallback(
@@ -67,7 +112,8 @@ function App() {
       setToken(value);
       setTokenState(value);
       setRemoteBlocks([]);
-      setSyncState({ status: "idle", deviceCount: 1 });
+      lastSyncRef.current = 0;
+      setSyncState({ status: "idle", deviceCount: 1, lastSyncedAt: null });
       if (value) syncNow();
     },
     [syncNow]

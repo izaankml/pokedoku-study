@@ -26,10 +26,19 @@ Galar, Hisui, Paldea).
 
 Progress lives in `localStorage`. To share it between devices, the Stats
 tab can store progress in a private GitHub Gist: create a fine-grained
-personal access token with only the **Gists** read/write permission and
-paste it on each device. Each device writes only its own stat block, so
-devices never overwrite each other; displayed stats are the sum of all
-blocks.
+personal access token with only the **Gists** read/write permission,
+paste it once, then use **Link another device** to move it to your other
+devices by QR code (the code encodes the app URL with the token in the
+`#fragment`, which never reaches a server). Each device writes only its
+own stat block, so devices never overwrite each other; counts are summed
+across blocks and review schedules take the most recent answer. Open
+tabs re-pull other devices' progress when they regain focus and every
+few minutes.
+
+Answered flashcards and drill pairs are spaced: correct answers push the
+next review out (10 min → 1 → 3 → 7 → 16 → 35 → 80 → 180 days) and a
+miss resets to 10 minutes; due items are weighted up, mastered ones
+fade out.
 
 ## Development
 

@@ -1114,6 +1114,31 @@ tr.weak .acc-fill {
   font-size: 0.8rem;
 }
 
+/* ---- device handoff ---- */
+
+.handoff {
+  margin-top: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  animation: fade-up var(--dur-med) var(--ease-out);
+}
+
+.handoff-qr {
+  width: 200px;
+  height: 200px;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.handoff-note {
+  text-align: center;
+  max-width: 340px;
+  margin-bottom: 0;
+}
+
 /* ---- spaced review ---- */
 
 .srs-panel .hint {

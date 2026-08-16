@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 import { useStats } from "../StatsContext.js";
+import { handoffUrl } from "../logic/sync.js";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { smoothedAccuracy } from "../logic/stats.js";
 import { allValidPairs, pairKey } from "../logic/matching.js";
@@ -91,9 +93,71 @@ function Chevron() {
   );
 }
 
+// Re-render every `ms` so relative times stay fresh.
+function useNow(ms) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), ms);
+    return () => clearInterval(id);
+  }, [ms]);
+  return now;
+}
+
+function timeAgo(ts, now) {
+  const s = Math.max(0, Math.round((now - ts) / 1000));
+  if (s < 10) return "just now";
+  if (s < 60) return `${s}s ago`;
+  const m = Math.round(s / 60);
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h} h ago`;
+  return `${Math.round(h / 24)} d ago`;
+}
+
+function LinkDeviceQR() {
+  const [dataUrl, setDataUrl] = useState(null);
+  const [error, setError] = useState(null);
+  const url = handoffUrl();
+
+  useEffect(() => {
+    if (!url) return;
+    let cancelled = false;
+    QRCode.toDataURL(url, {
+      errorCorrectionLevel: "M",
+      margin: 2,
+      width: 240,
+      color: { dark: "#0c0c0f", light: "#f5f4f6" },
+    })
+      .then((d) => !cancelled && setDataUrl(d))
+      .catch((e) => !cancelled && setError(e.message));
+    return () => {
+      cancelled = true;
+    };
+  }, [url]);
+
+  if (!url) return null;
+  return (
+    <div className="handoff">
+      {dataUrl ? (
+        <img className="handoff-qr" src={dataUrl} alt="QR code linking this account" />
+      ) : error ? (
+        <p className="hint">Couldn&apos;t render QR: {error}</p>
+      ) : null}
+      <p className="hint handoff-note">
+        Scan with the other device&apos;s camera to connect it. This code
+        contains your token — don&apos;t share it or screenshot it publicly.
+      </p>
+    </div>
+  );
+}
+
 function SyncPanel() {
   const { syncState, token, saveToken, syncNow } = useStats();
   const [draft, setDraft] = useState("");
+  const [showQR, setShowQR] = useState(false);
+  const now = useNow(15_000);
+  const devices = `${syncState.deviceCount} device${syncState.deviceCount === 1 ? "" : "s"}`;
+  const synced = syncState.lastSyncedAt ? timeAgo(syncState.lastSyncedAt, now) : null;
 
   return (
     <section className="sync-panel">
@@ -102,21 +166,29 @@ function SyncPanel() {
         <>
           <p className="hint">
             <span className={`status-dot ${syncState.status}`} />
-            {syncState.status === "ok" &&
-              `Synced — tracking ${syncState.deviceCount} device${syncState.deviceCount === 1 ? "" : "s"}.`}
+            {syncState.status === "ok" && `Synced ${synced} — tracking ${devices}.`}
             {syncState.status === "syncing" && "Syncing…"}
             {syncState.status === "error" &&
-              `Sync failed: ${syncState.lastError}. Check the token's Gists permission.`}
+              `Sync failed: ${syncState.lastError}. Check the token's Gists permission.` +
+                (synced ? ` Last good sync ${synced}.` : "")}
             {syncState.status === "idle" && "Token saved."}
           </p>
           <div className="sync-actions">
             <button className="ghost" onClick={syncNow}>
               Sync now
             </button>
+            <button
+              className="ghost"
+              aria-expanded={showQR}
+              onClick={() => setShowQR((v) => !v)}
+            >
+              {showQR ? "Hide QR" : "Link another device"}
+            </button>
             <button className="ghost" onClick={() => saveToken("")}>
               Disconnect
             </button>
           </div>
+          {showQR ? <LinkDeviceQR /> : null}
         </>
       ) : (
         <>
@@ -138,7 +210,10 @@ function SyncPanel() {
                 Under Account permissions, set <strong>Gists</strong> to Read
                 and write (nothing else), then generate
               </li>
-              <li>Paste the token here, on each device you use</li>
+              <li>
+                Paste the token here — then use <strong>Link another
+                device</strong> to move it to your other devices by QR code
+              </li>
             </ol>
           </details>
           <div className="sync-actions">

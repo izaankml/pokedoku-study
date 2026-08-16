@@ -25,6 +25,41 @@ export function setToken(token) {
   }
 }
 
+// ---- device handoff via URL fragment ----
+//
+// "Link another device" renders a QR code of the app URL with the token
+// (and gist id, if known) in the hash. The fragment never reaches any
+// server; on load the receiving device stores it and scrubs the URL.
+
+const HANDOFF_PARAM = "connect";
+const HANDOFF_GIST_PARAM = "gist";
+
+export function handoffUrl() {
+  const token = getToken();
+  if (!token) return null;
+  const params = new URLSearchParams({ [HANDOFF_PARAM]: token });
+  const gistId = localStorage.getItem(GIST_ID_KEY);
+  if (gistId) params.set(HANDOFF_GIST_PARAM, gistId);
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = params.toString();
+  return url.toString();
+}
+
+// Call once on startup. Returns the token if the URL carried one.
+export function consumeHandoffFromUrl() {
+  const hash = window.location.hash.replace(/^#/, "");
+  if (!hash) return null;
+  const params = new URLSearchParams(hash);
+  const token = params.get(HANDOFF_PARAM);
+  if (!token) return null;
+  setToken(token);
+  const gistId = params.get(HANDOFF_GIST_PARAM);
+  if (gistId) localStorage.setItem(GIST_ID_KEY, gistId);
+  window.history.replaceState(null, "", window.location.pathname + window.location.search);
+  return token.trim();
+}
+
 async function api(path, { method = "GET", body } = {}) {
   const res = await fetch(`${API}${path}`, {
     method,
@@ -61,7 +96,8 @@ function parseBlocks(content) {
   return parsed && typeof parsed.devices === "object" ? parsed.devices : {};
 }
 
-// Pulls every device's block, writes ours back, returns all blocks
+// Pulls every device's block, writes ours back (only if the remote copy
+// differs, so periodic re-pulls don't churn the gist), returns all blocks
 // (ours included) for merging. Throws on network/auth errors.
 export async function syncBlock(ownBlock) {
   const gistId = await findGistId();
@@ -88,12 +124,16 @@ export async function syncBlock(ownBlock) {
   } catch {
     devices = {}; // corrupt remote content -> rebuild from local blocks
   }
+  const remoteOwn = devices[ownBlock.deviceId];
+  const changed = JSON.stringify(remoteOwn) !== JSON.stringify(ownBlock);
   devices[ownBlock.deviceId] = ownBlock;
-  await api(`/gists/${gistId}`, {
-    method: "PATCH",
-    body: {
-      files: { [GIST_FILENAME]: { content: JSON.stringify({ devices }) } },
-    },
-  });
+  if (changed) {
+    await api(`/gists/${gistId}`, {
+      method: "PATCH",
+      body: {
+        files: { [GIST_FILENAME]: { content: JSON.stringify({ devices }) } },
+      },
+    });
+  }
   return Object.values(devices);
 }

@@ -22,6 +22,8 @@ import {
   ULTRA_BEAST_IDS,
   PARADOX_IDS,
   HISUI_IDS,
+  HISUI_FORM_IDS,
+  FORM_IDS,
   EVO_METHOD_OVERRIDES,
   DISPLAY_NAME_OVERRIDES,
 } from "./manual-lists.mjs";
@@ -52,36 +54,56 @@ const species = all
   )
   .sort((a, b) => a.num - b.num);
 
-// ---- evolution graph over base species ---------------------------------
+// Alternate forms (regional variants, Megas, Rotom appliances, ...). Only
+// those in FORM_IDS become records, but the whole set takes part in the
+// evolution graph so form-to-form links (Growlithe-Hisui -> Arcanine-Hisui)
+// resolve.
+const formes = all
+  .filter((s) => s.num >= 1 && s.num <= MAX_NUM && s.forme && s.isNonstandard !== "CAP")
+  .sort((a, b) => a.num - b.num);
 
-const byName = new Map(species.map((s) => [s.name, s]));
+// ---- evolution graph ----------------------------------------------------
 
-// prevo can name a forme ("Basculin-White-Striped"); resolve to its base species
-function parentOf(s) {
-  if (!s.prevo) return null;
-  const direct = byName.get(s.prevo);
-  if (direct) return direct;
-  const forme = Dex.species.get(s.prevo);
-  return byName.get(forme.baseSpecies) || null;
-}
+// Two graphs: one over base species only (a base record's stage ignores
+// forms, so Kantonian Farfetch'd stays "first" via Sirfetch'd), and one over
+// species + forms for the form records themselves.
+function makeGraph(pool) {
+  const byName = new Map(pool.map((s) => [s.name, s]));
 
-const childrenOf = new Map();
-for (const s of species) {
-  const parent = parentOf(s);
-  if (parent) {
-    if (!childrenOf.has(parent.name)) childrenOf.set(parent.name, []);
-    childrenOf.get(parent.name).push(s);
+  // prevo can name a forme outside the pool ("Basculin-White-Striped" for
+  // the base-only graph); resolve to its base species
+  function parentOf(s) {
+    if (!s.prevo) return null;
+    const direct = byName.get(s.prevo);
+    if (direct) return direct;
+    const forme = Dex.species.get(s.prevo);
+    return byName.get(forme.baseSpecies) || null;
   }
+
+  const childrenOf = new Map();
+  for (const s of pool) {
+    const parent = parentOf(s);
+    if (parent) {
+      if (!childrenOf.has(parent.name)) childrenOf.set(parent.name, []);
+      childrenOf.get(parent.name).push(s);
+    }
+  }
+
+  function stageOf(s) {
+    const hasParent = parentOf(s) !== null;
+    const hasChildren = childrenOf.has(s.name);
+    if (!hasParent && !hasChildren) return "single";
+    if (!hasParent) return "first";
+    if (hasChildren) return "middle";
+    return "final";
+  }
+
+  return { parentOf, childrenOf, stageOf };
 }
 
-function stageOf(s) {
-  const hasParent = parentOf(s) !== null;
-  const hasChildren = childrenOf.has(s.name);
-  if (!hasParent && !hasChildren) return "single";
-  if (!hasParent) return "first";
-  if (hasChildren) return "middle";
-  return "final";
-}
+const baseGraph = makeGraph(species);
+const fullGraph = makeGraph(species.concat(formes));
+const { childrenOf, stageOf } = baseGraph;
 
 // ---- evolution method ---------------------------------------------------
 
@@ -144,10 +166,12 @@ function flagsOf(s) {
 
 // ---- assemble -----------------------------------------------------------
 
-const records = species.map((s) => {
+const baseRecords = species.map((s) => {
   const gen = genOf(s.num);
   return {
     id: s.num,
+    species: s.num,
+    form: null,
     name: s.id,
     displayName: DISPLAY_NAME_OVERRIDES[s.id] || s.name,
     types: s.types.map((t) => t.toLowerCase()),
@@ -158,6 +182,126 @@ const records = species.map((s) => {
     flags: flagsOf(s),
   };
 });
+const baseById = new Map(baseRecords.map((r) => [r.id, r]));
+
+// ---- alternate forms ----------------------------------------------------
+//
+// A form belongs to the region it was introduced in (Hisuian Growlithe is
+// Hisui, White-Striped Basculin is Hisui, Bloodmoon Ursaluna is Paldea),
+// which is what PokeDoku does ("Pokémon must originate from this region").
+// The two exceptions are also PokeDoku's: Mega (and Primal) forms use the
+// base form's region, as do Gigantamax forms (which have no records here).
+
+const REGIONAL_ADJECTIVE = {
+  Alola: "Alolan",
+  Galar: "Galarian",
+  Hisui: "Hisuian",
+  Paldea: "Paldean",
+};
+
+const isMegaLike = (s) => s.isMega || s.forme === "Primal";
+
+function formDisplayName(s) {
+  const base = DISPLAY_NAME_OVERRIDES[Dex.species.get(s.baseSpecies).id] || s.baseSpecies;
+  const parts = s.forme.split("-");
+  if (parts[0] === "Mega" || parts[0] === "Primal") {
+    return [parts[0], base, ...parts.slice(1)].join(" ");
+  }
+  const adjective = REGIONAL_ADJECTIVE[parts[0]];
+  if (adjective) {
+    const rest = parts.slice(1).join(" ");
+    return rest ? `${adjective} ${base} (${rest})` : `${adjective} ${base}`;
+  }
+  return `${base} (${parts.join(" ")})`;
+}
+
+function formRegion(s) {
+  const baseRecord = baseById.get(s.num);
+  if (isMegaLike(s)) return { gen: baseRecord.gen, region: baseRecord.region };
+  const gen = s.gen;
+  const hisui =
+    gen === 8 &&
+    (s.forme.startsWith("Hisui") || HISUI_IDS.has(s.num) || HISUI_FORM_IDS.has(s.id));
+  return { gen, region: hisui ? "hisui" : GEN_REGIONS[gen - 1] };
+}
+
+// Stage/method for a form: from the evolution graph when the form takes
+// part in one (Growlithe-Hisui, Wormadam-Sandy); otherwise inherited from
+// the form it changes from (Zen Darmanitan-Galar <- Darmanitan-Galar) or,
+// failing that, from the base species (Mega Charizard <- Charizard,
+// Bloodmoon Ursaluna <- Ursaluna).
+const evoCache = new Map();
+function formEvolution(s) {
+  if (evoCache.has(s.id)) return evoCache.get(s.id);
+  let result;
+  if (s.prevo || fullGraph.childrenOf.has(s.name)) {
+    result = { stage: fullGraph.stageOf(s), evoMethod: evoMethodOf(s) };
+  } else {
+    const from = s.changesFrom ? Dex.species.get(s.changesFrom) : null;
+    if (from && from.forme && from.num === s.num) {
+      result = formEvolution(from);
+    } else {
+      const baseRecord = baseById.get(s.num);
+      result = { stage: baseRecord.stage, evoMethod: baseRecord.evoMethod };
+    }
+  }
+  evoCache.set(s.id, result);
+  return result;
+}
+
+function formFlags(s) {
+  const baseFlags = baseById.get(s.num).flags;
+  const flags = [];
+  const legendary =
+    s.tags.includes("Sub-Legendary") || s.tags.includes("Restricted Legendary");
+  if (legendary || baseFlags.includes("legendary")) flags.push("legendary");
+  if (s.tags.includes("Mythical") || baseFlags.includes("mythical")) flags.push("mythical");
+  for (const f of ["ultraBeast", "paradox", "fossil", "starter", "baby"]) {
+    if (baseFlags.includes(f)) flags.push(f);
+  }
+  if (s.isMega) flags.push("mega");
+  if (s.canGigantamax) flags.push("gmax");
+  return flags;
+}
+
+// A form only earns a record if it can answer some cell its base species
+// cannot: a type the base lacks, a different type count, region, stage,
+// method, or flag. Otherwise the base record already covers it.
+function coversNothingNew(form, base) {
+  const subset = (a, b) => a.every((x) => b.includes(x));
+  return (
+    subset(form.types, base.types) &&
+    form.types.length === base.types.length &&
+    form.region === base.region &&
+    form.stage === base.stage &&
+    form.evoMethod === base.evoMethod &&
+    subset(form.flags, base.flags)
+  );
+}
+
+const candidateForms = formes.filter((s) => s.id in FORM_IDS);
+const droppedForms = [];
+const formRecords = [];
+for (const s of candidateForms) {
+  const record = {
+    id: FORM_IDS[s.id],
+    species: s.num,
+    form: s.forme,
+    name: s.id,
+    displayName: formDisplayName(s),
+    types: s.types.map((t) => t.toLowerCase()),
+    ...formRegion(s),
+    ...formEvolution(s),
+    flags: formFlags(s),
+  };
+  if (coversNothingNew(record, baseById.get(s.num))) droppedForms.push(record);
+  else formRecords.push(record);
+}
+
+// Base species first, then its forms, in dex order.
+const records = baseRecords
+  .concat(formRecords)
+  .sort((a, b) => a.species - b.species || (a.form === null ? -1 : b.form === null ? 1 : 0));
 
 // ---- validate -----------------------------------------------------------
 
@@ -166,14 +310,17 @@ const check = (cond, msg) => {
   if (!cond) failures.push(msg);
 };
 const byId = new Map(records.map((r) => [r.id, r]));
-const count = (pred) => records.filter(pred).length;
+const byName = new Map(records.map((r) => [r.name, r]));
+// Base-species counts (forms are validated separately below)
+const count = (pred) => baseRecords.filter(pred).length;
 const has = (id, flag) => byId.get(id).flags.includes(flag);
 
-check(records.length === MAX_NUM, `species count ${records.length} != ${MAX_NUM}`);
+check(baseRecords.length === MAX_NUM, `species count ${baseRecords.length} != ${MAX_NUM}`);
 check(
-  new Set(records.map((r) => r.id)).size === MAX_NUM,
-  "duplicate or missing dex numbers"
+  new Set(records.map((r) => r.id)).size === records.length,
+  "duplicate ids"
 );
+check(new Set(records.map((r) => r.name)).size === records.length, "duplicate names");
 for (let g = 1; g <= 9; g++) {
   const n = count((r) => r.gen === g);
   check(
@@ -191,11 +338,25 @@ check(count((r) => r.flags.includes("paradox")) === 22, "paradox != 22");
 check(count((r) => r.flags.includes("fossil")) === 25, "fossil != 25");
 check(count((r) => r.flags.includes("starter")) === 81, "starter != 81");
 check(count((r) => r.flags.includes("baby")) === 19, "baby != 19");
-check(count((r) => r.region === "hisui") === 7, "hisui != 7");
+check(count((r) => r.region === "hisui") === 7, "hisui species != 7");
 check(count((r) => r.flags.includes("gmax")) === 32, "gmax != 32");
 check(count((r) => r.flags.includes("mega")) === 85, "mega != 85 (incl. Legends Z-A)");
 check(count((r) => r.flags.includes("legendary")) === 71, "legendary != 71");
 check(count((r) => r.flags.includes("mythical")) === 23, "mythical != 23");
+
+// forms
+const EXPECTED_FORM_COUNT = 148;
+check(
+  formRecords.length === EXPECTED_FORM_COUNT,
+  `form count ${formRecords.length} != ${EXPECTED_FORM_COUNT}`
+);
+check(formRecords.every((r) => r.id >= 10000), "form ids must be PokeAPI form ids");
+check(formRecords.every((r) => baseById.has(r.species)), "form without base species");
+const formCount = (pred) => formRecords.filter(pred).length;
+check(formCount((r) => r.region === "alola") === 18, "alolan forms != 18");
+check(formCount((r) => r.region === "galar") === 20, "galarian forms != 20 (19 + Zen)");
+check(formCount((r) => r.region === "hisui") === 20, "hisuian forms != 20 (16 + 4)");
+check(formCount((r) => r.region === "paldea") === 5, "paldean forms != 5 (Tauros x3, Wooper, Bloodmoon)");
 
 // spot checks
 check(byId.get(65).evoMethod === "trade", "Alakazam should be trade");
@@ -208,6 +369,31 @@ check(byId.get(292).evoMethod === "other", "Shedinja should be other");
 check(byId.get(899).region === "hisui", "Wyrdeer should be hisui");
 check(byId.get(904).region === "hisui", "Overqwil should be hisui");
 check(byId.get(58).region === "kanto", "Growlithe stays kanto");
+check(byName.get("growlithehisui").region === "hisui", "Hisuian Growlithe is hisui");
+check(byName.get("growlithehisui").stage === "first", "Hisuian Growlithe is first stage");
+check(byName.get("arcaninehisui").evoMethod === "item", "Hisuian Arcanine by item");
+check(byId.get(550).region === "unova", "Basculin (Red-Striped) stays unova");
+check(byName.get("basculinwhitestriped").region === "hisui", "White-Striped Basculin is hisui");
+check(!byName.has("basculinbluestriped"), "Blue-Striped Basculin adds nothing (dropped)");
+check(byName.get("dialgaorigin").region === "hisui", "Origin Dialga is hisui");
+check(byName.get("ursalunabloodmoon").region === "paldea", "Bloodmoon Ursaluna is paldea");
+check(byName.get("raichualola").evoMethod === "item", "Alolan Raichu by item");
+check(byName.get("raichualola").stage === "final", "Alolan Raichu is final");
+check(byName.get("meowthgalar").stage === "first", "Galarian Meowth is first (Perrserker)");
+check(byName.get("mrmimegalar").stage === "middle", "Galarian Mr. Mime is middle");
+check(byName.get("taurospaldeacombat").region === "paldea", "Paldean Tauros is paldea");
+check(byName.get("charizardmegax").region === "kanto", "Mega Charizard X uses base region");
+check(byName.get("charizardmegax").types.includes("dragon"), "Mega Charizard X is Dragon");
+check(has(FORM_IDS.charizardmegax, "mega") && has(FORM_IDS.charizardmegax, "starter"), "Mega Charizard X flags");
+check(!byName.has("charizardmegay"), "Mega Charizard Y adds nothing (dropped)");
+check(byName.get("groudonprimal").region === "hoenn", "Primal Groudon uses base region");
+check(has(FORM_IDS.articunogalar, "legendary"), "Galarian Articuno is legendary");
+check(byName.get("zygarde10").region === "alola", "Zygarde 10% debuted in Alola");
+check(byName.get("darmanitangalarzen").evoMethod === "item", "Galarian Zen inherits Galarian Darmanitan");
+check(byName.get("rotomwash").stage === "single", "Rotom-Wash inherits Rotom's stage");
+check(byName.get("growlithehisui").displayName === "Hisuian Growlithe", "form display name");
+check(byName.get("taurospaldeacombat").displayName === "Paldean Tauros (Combat)", "form display name 2");
+check(byName.get("charizardmegax").displayName === "Mega Charizard X", "form display name 3");
 check(byId.get(849).region === "galar", "Toxtricity should be galar");
 check(byId.get(983).region === "paldea", "Kingambit should be paldea");
 check(has(6, "starter") && has(6, "mega") && has(6, "gmax"), "Charizard flags");
@@ -244,8 +430,16 @@ console.log(
 );
 console.log(
   "mega species:",
-  records.filter((r) => r.flags.includes("mega")).map((r) => r.displayName).join(", ")
+  baseRecords.filter((r) => r.flags.includes("mega")).map((r) => r.displayName).join(", ")
 );
+console.log(
+  `\n${formRecords.length} form records (${droppedForms.length} candidates dropped as covered by their base species):`
+);
+for (const region of GEN_REGIONS.concat("hisui")) {
+  const names = formRecords.filter((r) => r.region === region).map((r) => r.displayName);
+  if (names.length) console.log(String(names.length).padStart(5), region + ":", names.join(", "));
+}
+console.log("dropped:", droppedForms.map((r) => r.displayName).join(", "));
 
 if (failures.length) {
   console.error("\nVALIDATION FAILED:");
@@ -259,6 +453,7 @@ const out = {
     sourceVersion: dexVersion,
     generatedAt: new Date().toISOString().slice(0, 10),
     count: records.length,
+    speciesCount: baseRecords.length,
   },
   pokemon: records,
 };
