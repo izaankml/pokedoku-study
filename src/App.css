@@ -100,18 +100,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* "Pokédex lid" strip along the top edge (desktop only — on phones the
-   status bar owns that edge and the strip read as a stray line) */
-@media (min-width: 641px) {
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0 0 auto;
-    height: 3px;
-    background: var(--accent);
-    z-index: 60;
-    pointer-events: none;
-  }
+/* "Pokédex lid" strip along the top edge; on phones it sits just below
+   the status bar (the safe-area inset), on desktop at the very top */
+body::before {
+  content: "";
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 60;
+  pointer-events: none;
 }
 
 button {
