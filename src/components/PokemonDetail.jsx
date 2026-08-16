@@ -1,18 +1,23 @@
 import { useEffect } from "react";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
-import CategoryPill from "./CategoryPill.jsx";
+import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
 // Everything a Pokémon counts for, grouped the way the dropdowns are —
-// minus type count, which the type pills already show.
-const DETAIL_LABELS = { type: "Type" };
+// minus type count (the type pills already show it) and the tracked
+// abilities (the full ability list below covers them). Small groups sit
+// two abreast so the sheet rarely needs scrolling; Moves take a full row.
+const DETAIL_LABELS = { type: "Type", region: "Region", special: "Group" };
+const SKIP = new Set(["typeCount", "ability"]);
+const WIDE = new Set(["move"]);
 function categoriesOf(pokemon) {
-  return CATEGORY_GROUPS.filter(([group]) => group !== "typeCount")
+  return CATEGORY_GROUPS.filter(([group]) => !SKIP.has(group))
     .map(([group, label]) => ({
       group,
       label: DETAIL_LABELS[group] || label,
+      wide: WIDE.has(group),
       cats: CATEGORIES.filter((c) => c.group === group && c.predicate(pokemon)),
     }))
     .filter((g) => g.cats.length);
@@ -34,6 +39,16 @@ function PokemonDetail({ pokemon, onClose }) {
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
   const groups = categoriesOf(pokemon);
+  const renderGroup = (g) => (
+    <section key={g.group} className={`detail-group${g.wide ? " wide" : ""}`}>
+      <h4>{g.label}</h4>
+      <div className="detail-pills">
+        {g.cats.map((c) => (
+          <CategoryPill key={c.id} cat={c} useShort />
+        ))}
+      </div>
+    </section>
+  );
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -59,21 +74,20 @@ function PokemonDetail({ pokemon, onClose }) {
               {pokemon.evoDetail ? ` · evolves: ${pokemon.evoDetail}` : ""}
               {pokemon.stage === null ? " · no evolution categories" : ""}
             </p>
-            <p className="hint detail-meta">
-              Abilities: {pokemon.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ")}
-            </p>
           </div>
         </div>
-        {groups.map((g) => (
-          <section key={g.group} className="detail-group">
-            <h4>{g.label}</h4>
+        <div className="detail-grid">
+          {groups.filter((g) => !g.wide).map(renderGroup)}
+          <section className="detail-group wide">
+            <h4>Abilities</h4>
             <div className="detail-pills">
-              {g.cats.map((c) => (
-                <CategoryPill key={c.id} cat={c} useShort />
+              {pokemon.abilityList.map((a) => (
+                <AbilityPill key={a.name} ability={a} />
               ))}
             </div>
           </section>
-        ))}
+          {groups.filter((g) => g.wide).map(renderGroup)}
+        </div>
       </div>
     </div>
   );

@@ -104,6 +104,7 @@ body {
 #root {
   height: 100dvh;
   overflow-y: auto;
+  overflow-x: hidden; /* scaled sprites (Sprite.jsx) overhang their slots */
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   background: var(--bg-0);
@@ -272,6 +273,8 @@ header h1 {
     background: var(--surface-1);
     border-top: 1px solid var(--border);
     border-bottom: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.35);
     margin-bottom: 0;
   }
 
@@ -486,6 +489,50 @@ header h1 {
   text-shadow: none;
 }
 
+/* Regions: a two-tone border in the colours of the region's games (the
+   fill is painted on the padding box, the gradient on the border box, so
+   the ring follows the pill's radius) */
+.pill[class*="region-"] {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
+    linear-gradient(135deg, var(--r1), var(--r2)) border-box;
+}
+
+.region-kanto { --r1: #e8463a; --r2: #3f78e0; }   /* Red / Blue */
+.region-johto { --r1: #dcae2a; --r2: #b7bcc8; }   /* Gold / Silver */
+.region-hoenn { --r1: #2f9d63; --r2: #63cf94; }   /* Emerald */
+.region-sinnoh { --r1: #8fd2f2; --r2: #f2a6c9; }  /* Diamond / Pearl */
+.region-unova { --r1: #5a5a63; --r2: #ececf0; }   /* Black / White */
+.region-kalos { --r1: #4d78e6; --r2: #e24d4d; }   /* X / Y */
+.region-alola { --r1: #f59d2e; --r2: #5062cc; }   /* Sun / Moon */
+.region-galar { --r1: #40b8e0; --r2: #dc4d85; }   /* Sword / Shield */
+.region-hisui { --r1: #cfa84f; --r2: #3f938d; }   /* Legends: Arceus */
+.region-paldea { --r1: #dc3f30; --r2: #8047bf; } /* Scarlet / Violet */
+
+/* Abilities: outlined, quieter than category pills; the ones PokeDoku
+   asks about get the accent wash */
+.pill.ability {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text-mid);
+}
+
+.pill.ability.tracked {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  color: var(--text-hi);
+}
+
+.pill-note {
+  margin-left: 6px;
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
 .question {
   display: flex;
   align-items: center;
@@ -590,6 +637,10 @@ header h1 {
 
 .sprite {
   image-rendering: pixelated;
+  /* Sprite.jsx scales the image up to fill its slot; the transparent
+     overhang must neither catch taps meant for a neighbour nor widen the
+     page (see #root) */
+  pointer-events: none;
 }
 
 .sprite-fallback {
@@ -1872,8 +1923,19 @@ main > * {
   flex: none;
 }
 
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4) var(--sp-3);
+  margin-top: var(--sp-4);
+}
+
 .detail-group {
-  margin-top: var(--sp-3);
+  min-width: 0;
+}
+
+.detail-group.wide {
+  grid-column: 1 / -1;
 }
 
 .detail-group h4 {

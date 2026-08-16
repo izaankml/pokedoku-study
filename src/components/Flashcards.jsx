@@ -5,7 +5,7 @@ import { DECKS, DECK_BY_ID, cardKey, session } from "../logic/flashcards.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
 import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
 import { CATEGORIES } from "../data/categories.js";
-import CategoryPill from "./CategoryPill.jsx";
+import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonCard from "./PokemonCard.jsx";
 
 const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby"];
@@ -13,9 +13,8 @@ const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Typing, region and group of a Pokémon as pills, shown once a card is
 // answered — the same summary strip whatever the deck asked, so the eye
-// always finds the types in the same place.
-const abilityText = (p) =>
-  p.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ");
+// always finds the types in the same place. Abilities follow as their own
+// row of pills.
 function summaryPills(p) {
   return [
     ...p.types.map((t) => CAT.get(`type-${t}`)),
@@ -179,10 +178,7 @@ function Flashcards() {
     return cls;
   };
 
-  const facts = [
-    deck.id === "method" && pokemon.evoDetail ? `Evolves: ${pokemon.evoDetail}` : null,
-    `Abilities: ${abilityText(pokemon)}`,
-  ].filter(Boolean);
+  const evolves = deck.id === "method" && pokemon.evoDetail ? `Evolves: ${pokemon.evoDetail}` : null;
 
   return (
     <div className="flashcards">
@@ -210,11 +206,12 @@ function Flashcards() {
                   <CategoryPill key={c.id} cat={c} useShort />
                 ))}
               </div>
-              {facts.map((line) => (
-                <p key={line} className="card-extra">
-                  {line}
-                </p>
-              ))}
+              <div className="card-tags">
+                {pokemon.abilityList.map((a) => (
+                  <AbilityPill key={a.name} ability={a} />
+                ))}
+              </div>
+              {evolves ? <p className="card-extra">{evolves}</p> : null}
             </div>
             <p
               key={key}
