@@ -141,12 +141,12 @@ function Flashcards() {
     commit(card, GAVE_UP);
   }
 
-  function next() {
+  function next(forDeck = deckId) {
     session.recent = [...session.recent, pokemon.id].slice(-10);
     const upcoming =
-      session.next && (deckId === "all" || session.next.deckId === deckId) && session.next.pokemonId !== pokemon.id
+      session.next && (forDeck === "all" || session.next.deckId === forDeck) && session.next.pokemonId !== pokemon.id
         ? session.next
-        : freshCard(deckId);
+        : freshCard(forDeck);
     session.next = null;
     commit(upcoming, null);
   }
@@ -154,9 +154,10 @@ function Flashcards() {
   function changeDeck(id) {
     session.deckId = id;
     setDeckId(id);
-    // An unanswered card from another deck is replaced; an answered one
-    // stays until "Next" so the result remains visible.
-    if (!answered && id !== "all" && card.deckId !== id) commit(freshCard(id), null);
+    // Switching decks moves on: an answered card is done, and an
+    // unanswered one is replaced unless it already fits the new deck.
+    if (answered) next(id);
+    else if (id !== "all" && card.deckId !== id) commit(freshCard(id), null);
   }
 
   // Once answered only the right options (and any wrong picks) remain.
@@ -235,12 +236,12 @@ function Flashcards() {
         </div>
         <div className="card-actions">
           {answered ? (
-            <button className="primary" onClick={next}>
+            <button className="primary" onClick={() => next()}>
               Next Card
             </button>
           ) : (
             <>
-              <button className="ghost" onClick={next}>
+              <button className="ghost" onClick={() => next()}>
                 Skip
               </button>
               <button className="primary" disabled={!selection.length} onClick={submit}>
