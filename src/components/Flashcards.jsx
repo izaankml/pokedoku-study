@@ -127,17 +127,19 @@ function Flashcards() {
       <PokemonCard
         pokemon={pokemon}
         eager
+        belowSprite={
+          <div className="card-tags" aria-live="polite">
+            {correct
+              ? summaryPills(pokemon).map((c) => <CategoryPill key={c.id} cat={c} useShort />)
+              : null}
+          </div>
+        }
         caption={
           answered
             ? `${answerLabel}${nextIn ? ` · next in ${nextIn}` : ""}`
             : null
         }
       />
-      <div className="card-tags" aria-live="polite">
-        {correct
-          ? summaryPills(pokemon).map((c) => <CategoryPill key={c.id} cat={c} useShort />)
-          : null}
-      </div>
       <div
         className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
       >

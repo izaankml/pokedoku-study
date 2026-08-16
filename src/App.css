@@ -881,9 +881,9 @@ header h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-content: center;
   gap: 6px;
   min-height: 30px;
-  margin: 0 auto var(--sp-2);
   max-width: 480px;
 }
 
@@ -1010,7 +1010,6 @@ header h1 {
 
   .card-tags {
     min-height: 26px;
-    margin-bottom: 4px;
   }
 
   .card-tags .pill {
