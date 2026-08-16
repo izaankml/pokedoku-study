@@ -81,7 +81,7 @@ function Flashcards() {
     deck.options
       .filter((o) => answerIds.has(o.id))
       .map((o) => o.short)
-      .join(" / ") + (deck.id === "method" && pokemon.evoItem ? ` (${pokemon.evoItem})` : "");
+      .join(" / ") + (deck.id === "method" && pokemon.evoDetail ? ` — ${pokemon.evoDetail}` : "");
 
   return (
     <div className="flashcards">

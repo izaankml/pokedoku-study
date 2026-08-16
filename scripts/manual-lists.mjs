@@ -111,6 +111,29 @@ export const EVO_ITEM_OVERRIDES = {
   urshifurapidstrike: "Scroll of Waters",
 };
 
+// How a Pokémon evolves, in words, where the dex's fields don't tell the
+// whole story (dex ids/slugs -> text). Everything else is composed from
+// evoType/evoLevel/evoItem/evoMove/evoCondition by the build script.
+export const EVO_DETAIL_OVERRIDES = {
+  alakazam: "Trade, or use a Linking Cord",
+  machamp: "Trade, or use a Linking Cord",
+  golem: "Trade, or use a Linking Cord",
+  gengar: "Trade, or use a Linking Cord",
+  magnezone: "Use a Thunder Stone, or level up in a special magnetic field",
+  probopass: "Level up in a special magnetic field, or use a Thunder Stone",
+  vikavolt: "Use a Thunder Stone, or level up in a special magnetic field",
+  crabominable: "Use an Ice Stone, or level up at Mount Lanakila",
+  leafeon: "Use a Leaf Stone, or level up near a Moss Rock",
+  glaceon: "Use an Ice Stone, or level up near an Ice Rock",
+  milotic: "Trade holding a Prism Scale, or level up with max Beauty",
+  sylveon: "High friendship while knowing a Fairy-type move",
+  ursaluna: "Use a Peat Block during a full moon",
+  alcremie: "Spin while holding a Sweet",
+  shedinja: "Evolve Nincada with an empty party slot and a Poké Ball",
+  melmetal: "Meltan Candy (Pokémon GO)",
+  kleavor: "Use a Black Augurite",
+};
+
 // Evolution links the dex is missing (child slug -> parent species name).
 export const PREVO_OVERRIDES = {
   melmetal: "Meltan",

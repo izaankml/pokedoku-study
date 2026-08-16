@@ -46,6 +46,7 @@ import {
   FORM_IDS,
   EVO_METHOD_OVERRIDES,
   EVO_ITEM_OVERRIDES,
+  EVO_DETAIL_OVERRIDES,
   PREVO_OVERRIDES,
   DISPLAY_NAME_OVERRIDES,
 } from "./manual-lists.mjs";
@@ -184,6 +185,38 @@ function evoItemOf(s, methods) {
   const item = EVO_ITEM_OVERRIDES[s.id] || s.evoItem || null;
   if (!item) throw new Error(`item evolution without an item: ${s.name}`);
   return item;
+}
+
+const withArticle = (item) => (/^(a |an )/.test(item) ? item : `${/^[aeiou]/i.test(item) ? "an" : "a"} ${item}`);
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+// How it evolves, in words: "Level 36", "Use a Water Stone", "Level up
+// holding a Razor Claw at night", "High friendship during the day", ...
+function evoDetailOf(s, methods, item) {
+  if (!parentOf(s)) return null;
+  if (EVO_DETAIL_OVERRIDES[s.id]) return EVO_DETAIL_OVERRIDES[s.id];
+  const cond = s.evoCondition ? ` ${s.evoCondition}` : "";
+  switch (s.evoType) {
+    case undefined:
+      return s.evoLevel ? `Level ${s.evoLevel}${cond}` : `Level up${cond}`;
+    case "levelMove":
+      return `Level up knowing ${s.evoMove}${cond}`;
+    case "levelExtra":
+      return `Level up${cond}`;
+    case "levelFriendship":
+      return `High friendship${cond}`;
+    case "useItem":
+      return `Use ${withArticle(item)}${cond}`;
+    case "levelHold":
+      return `Level up holding ${withArticle(item)}${cond}`;
+    case "trade":
+      return item ? `Trade holding ${withArticle(item)}` : `Trade${cond}`;
+    case "other":
+      if (methods.length === 0 && !s.evoCondition) return null;
+      return cap(s.evoCondition);
+    default:
+      return null;
+  }
 }
 
 // ---- moves & abilities --------------------------------------------------
@@ -343,6 +376,7 @@ for (const s of species) {
     stage: stageOf(s),
     evoMethods: evoMethodsOf(s),
     evoItem: evoItemOf(s, evoMethodsOf(s)),
+    evoDetail: evoDetailOf(s, evoMethodsOf(s), evoItemOf(s, evoMethodsOf(s))),
     branched: isBranched(s),
     flags: speciesFlags(s),
     moves: await learnableMoves(s),
@@ -360,25 +394,28 @@ const evoCache = new Map();
 function formEvolution(s) {
   if (evoCache.has(s.id)) return evoCache.get(s.id);
   let result;
+  const none = { stage: "single", evoMethods: [], evoItem: null, evoDetail: null, branched: false };
   if (hasNoEvolution(s)) {
-    result = { stage: null, evoMethods: [], evoItem: null, branched: false };
+    result = { ...none, stage: null };
   } else if (parentOf(s) || childrenOf.has(s.name)) {
     const evoMethods = evoMethodsOf(s);
+    const evoItem = evoItemOf(s, evoMethods);
     result = {
       stage: stageOf(s),
       evoMethods,
-      evoItem: evoItemOf(s, evoMethods),
+      evoItem,
+      evoDetail: evoDetailOf(s, evoMethods, evoItem),
       branched: isBranched(s),
     };
   } else if (s.changesFrom) {
     const from = Dex.species.get(s.changesFrom);
     result = from.forme
       ? formEvolution(from)
-      : (({ stage, evoMethods, evoItem, branched }) => ({ stage, evoMethods, evoItem, branched }))(
+      : (({ stage, evoMethods, evoItem, evoDetail, branched }) => ({ stage, evoMethods, evoItem, evoDetail, branched }))(
           baseById.get(s.num)
         );
   } else {
-    result = { stage: "single", evoMethods: [], evoItem: null, branched: false };
+    result = none;
   }
   evoCache.set(s.id, result);
   return result;
@@ -483,6 +520,15 @@ check(records.every((r) => r.evoMethods.includes("item") === (r.evoItem !== null
 check(get("vaporeon").evoItem === "Water Stone" && get("alakazam").evoItem === "Linking Cord", "evo items");
 check(get("steelix").evoItem === "Metal Coat" && get("weavile").evoItem === "Razor Claw", "held evo items");
 check(get("kleavor").evoItem === "Black Augurite" && get("pikachu").evoItem === null, "evo item overrides / none");
+check(get("charizard").evoDetail === "Level 36", "Charizard: Level 36");
+check(get("vaporeon").evoDetail === "Use a Water Stone", "Vaporeon detail");
+check(get("weavile").evoDetail === "Level up holding a Razor Claw at night", "Weavile detail");
+check(get("umbreon").evoDetail === "High friendship at night", "Umbreon detail");
+check(get("steelix").evoDetail === "Trade holding a Metal Coat", "Steelix detail");
+check(get("escavalier").evoDetail === "Trade with a Shelmet", "Escavalier detail");
+check(get("hydrapple").evoDetail === "Level up knowing Dragon Cheer", "Hydrapple detail");
+check(get("kingambit").evoDetail === "Defeat 3 Bisharp leading Pawniard and level-up", "Kingambit detail");
+check(records.every((r) => (r.stage === "middle" || r.stage === "final") === (r.evoDetail !== null) || r.stage === null), "evolved records have a detail");
 check(records.every((r) => r.stage !== null || r.evoMethods.length === 0), "no stage means no methods");
 check(records.every((r) => r.moves.every((m) => MOVES.some((x) => x.id === m))), "unknown move id");
 check(records.every((r) => r.abilities.every((a) => ABILITIES.some((x) => x.id === a))), "unknown ability id");

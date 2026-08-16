@@ -45,7 +45,7 @@ function PokemonDetail({ pokemon, onClose }) {
             <p className="hint detail-meta">
               #{String(pokemon.species).padStart(4, "0")}
               {base ? ` · form of ${base.displayName}` : ""}
-              {pokemon.evoItem ? ` · evolves with ${pokemon.evoItem}` : ""}
+              {pokemon.evoDetail ? ` · evolves: ${pokemon.evoDetail}` : ""}
               {pokemon.stage === null ? " · no evolution categories" : ""}
             </p>
           </div>

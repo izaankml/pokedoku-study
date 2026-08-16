@@ -133,6 +133,10 @@ describe("pokedex dataset invariants", () => {
     expect(POKEMON_BY_ID.get(208).evoItem).toBe("Metal Coat"); // Steelix (held while trading)
     expect(POKEMON_BY_ID.get(25).evoItem).toBe(null); // Pikachu
     expect(byName.get("arcaninehisui").evoItem).toBe("Fire Stone");
+    expect(POKEMON_BY_ID.get(6).evoDetail).toBe("Level 36"); // Charizard
+    expect(POKEMON_BY_ID.get(197).evoDetail).toBe("High friendship at night"); // Umbreon
+    expect(POKEMON_BY_ID.get(461).evoDetail).toBe("Level up holding a Razor Claw at night"); // Weavile
+    expect(POKEMON_BY_ID.get(1).evoDetail).toBe(null); // Bulbasaur
     expect(POKEMON_BY_ID.get(133).branched).toBe(true); // Eevee
     expect(POKEMON_BY_ID.get(744).branched).toBe(false); // Rockruff: Lycanroc forms
     expect(POKEMON_BY_ID.get(123).branched).toBe(true); // Scyther: Scizor / Kleavor

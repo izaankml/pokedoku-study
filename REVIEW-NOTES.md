@@ -180,9 +180,15 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     held item, or held-while-trading item). Dex `evoItem` plus overrides for
     Linking Cord (Alakazam/Machamp/Golem/Gengar), Probopass (Thunder Stone),
     Kleavor (Black Augurite), Ursaluna (Peat Block), Alcremie ("a Sweet"),
-    Urshifu (Scrolls). Shown on the answered Method card — "Item / Stone
-    (Ice Stone)" — and in the detail sheet. Item and Stone stay separate
-    options because PokeDoku has both categories (Stone ⊂ Item).
+    Urshifu (Scrolls), and `evoDetail`, a sentence composed from the dex's
+    evoType/evoLevel/evoItem/evoMove/evoCondition ("Level 36", "Use a
+    Water Stone", "Level up holding a Razor Claw at night", "High
+    friendship at night", "Trade with a Shelmet") with overrides where the
+    dex is terse (Linking Cord, magnetic-field/stone alternatives, Milotic,
+    Sylveon, Shedinja, Melmetal). Shown on the answered Method card —
+    "Item / Stone — Use an Ice Stone" — and in the detail sheet. Item and
+    Stone stay separate options because PokeDoku has both categories
+    (Stone ⊂ Item).
 
 ## Sync devices (why "5 devices")
 
