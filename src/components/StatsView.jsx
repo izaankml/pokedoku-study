@@ -373,7 +373,7 @@ function StatsView() {
                         {group === "region" || group === "type" ? c.short : c.label}
                         {weak ? <span className="weak-chip">Weak</span> : null}
                       </td>
-                      <td>{entry ? entry.a : 0}</td>
+                      <td className={entry?.a ? undefined : "zero"}>{entry ? entry.a : 0}</td>
                       <td>
                         <AccuracyBar entry={entry} weakRow={weak} />
                       </td>

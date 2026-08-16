@@ -1369,12 +1369,24 @@ header h1 {
   letter-spacing: 0.06em;
 }
 
+/* numbers right-aligned, headers with them, so the two figure columns
+   read as one flush block instead of digits floating under wide labels */
 .stats-table th:nth-child(2),
 .stats-table td:nth-child(2),
 .stats-table th:nth-child(3),
 .stats-table td:nth-child(3) {
-  text-align: left;
+  text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+.stats-table th:nth-child(2),
+.stats-table td:nth-child(2) {
+  padding-right: var(--sp-3);
+}
+
+/* an unanswered row: dim zero, so the answered ones stand out */
+.stats-table td.zero {
+  color: var(--text-low);
 }
 
 /* phones: tighter columns and header type (after the base rules so it wins) */
@@ -1392,11 +1404,12 @@ header h1 {
   .stats-table th:nth-child(2),
   .stats-table td:nth-child(2) {
     width: 84px;
+    padding-right: var(--sp-2);
   }
 
   .stats-table th:nth-child(3),
   .stats-table td:nth-child(3) {
-    width: 118px;
+    width: 112px;
   }
 
   .stats-table .acc {
@@ -1423,7 +1436,7 @@ header h1 {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .acc-track {
