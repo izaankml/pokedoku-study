@@ -176,6 +176,14 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     from theme-color — check on device; if the top now looks wrong, revert
     index.html's theme-color to #0c0c0f.
 
+30. Records carry `evoItem` (the item an item evolution needs: used stone,
+    held item, or held-while-trading item). Dex `evoItem` plus overrides for
+    Linking Cord (Alakazam/Machamp/Golem/Gengar), Probopass (Thunder Stone),
+    Kleavor (Black Augurite), Ursaluna (Peat Block), Alcremie ("a Sweet"),
+    Urshifu (Scrolls). Shown on the answered Method card — "Item / Stone
+    (Ice Stone)" — and in the detail sheet. Item and Stone stay separate
+    options because PokeDoku has both categories (Stone ⊂ Item).
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

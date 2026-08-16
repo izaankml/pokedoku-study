@@ -45,6 +45,7 @@ import {
   FORM_DEBUT_REGION_OVERRIDES,
   FORM_IDS,
   EVO_METHOD_OVERRIDES,
+  EVO_ITEM_OVERRIDES,
   PREVO_OVERRIDES,
   DISPLAY_NAME_OVERRIDES,
 } from "./manual-lists.mjs";
@@ -175,6 +176,14 @@ function evoMethodsOf(s) {
     default:
       throw new Error(`unmapped evoType "${s.evoType}" on ${s.name}`);
   }
+}
+
+// The item an item evolution needs (used, held, or held while trading).
+function evoItemOf(s, methods) {
+  if (!methods.includes("item")) return null;
+  const item = EVO_ITEM_OVERRIDES[s.id] || s.evoItem || null;
+  if (!item) throw new Error(`item evolution without an item: ${s.name}`);
+  return item;
 }
 
 // ---- moves & abilities --------------------------------------------------
@@ -333,6 +342,7 @@ for (const s of species) {
     regions: region ? [region] : [],
     stage: stageOf(s),
     evoMethods: evoMethodsOf(s),
+    evoItem: evoItemOf(s, evoMethodsOf(s)),
     branched: isBranched(s),
     flags: speciesFlags(s),
     moves: await learnableMoves(s),
@@ -351,18 +361,24 @@ function formEvolution(s) {
   if (evoCache.has(s.id)) return evoCache.get(s.id);
   let result;
   if (hasNoEvolution(s)) {
-    result = { stage: null, evoMethods: [], branched: false };
+    result = { stage: null, evoMethods: [], evoItem: null, branched: false };
   } else if (parentOf(s) || childrenOf.has(s.name)) {
-    result = { stage: stageOf(s), evoMethods: evoMethodsOf(s), branched: isBranched(s) };
+    const evoMethods = evoMethodsOf(s);
+    result = {
+      stage: stageOf(s),
+      evoMethods,
+      evoItem: evoItemOf(s, evoMethods),
+      branched: isBranched(s),
+    };
   } else if (s.changesFrom) {
     const from = Dex.species.get(s.changesFrom);
     result = from.forme
       ? formEvolution(from)
-      : (({ stage, evoMethods, branched }) => ({ stage, evoMethods, branched }))(
+      : (({ stage, evoMethods, evoItem, branched }) => ({ stage, evoMethods, evoItem, branched }))(
           baseById.get(s.num)
         );
   } else {
-    result = { stage: "single", evoMethods: [], branched: false };
+    result = { stage: "single", evoMethods: [], evoItem: null, branched: false };
   }
   evoCache.set(s.id, result);
   return result;
@@ -463,6 +479,10 @@ check(count((r) => r.branched) === 15, "branched species != 15");
 check(count((r) => r.stage === "single") === 205, "single-stage species != 205");
 check(count((r) => r.evoMethods.includes("stone")) === 44, "stone evolutions != 44");
 check(records.every((r) => !r.evoMethods.includes("stone") || r.evoMethods.includes("item")), "stone implies item");
+check(records.every((r) => r.evoMethods.includes("item") === (r.evoItem !== null)), "item evolutions name their item");
+check(get("vaporeon").evoItem === "Water Stone" && get("alakazam").evoItem === "Linking Cord", "evo items");
+check(get("steelix").evoItem === "Metal Coat" && get("weavile").evoItem === "Razor Claw", "held evo items");
+check(get("kleavor").evoItem === "Black Augurite" && get("pikachu").evoItem === null, "evo item overrides / none");
 check(records.every((r) => r.stage !== null || r.evoMethods.length === 0), "no stage means no methods");
 check(records.every((r) => r.moves.every((m) => MOVES.some((x) => x.id === m))), "unknown move id");
 check(records.every((r) => r.abilities.every((a) => ABILITIES.some((x) => x.id === a))), "unknown ability id");

@@ -77,10 +77,11 @@ function Flashcards() {
     if (!answered && id !== "all" && card.deckId !== id) commit(freshCard(id), null);
   }
 
-  const answerLabel = deck.options
-    .filter((o) => answerIds.has(o.id))
-    .map((o) => o.short)
-    .join(" / ");
+  const answerLabel =
+    deck.options
+      .filter((o) => answerIds.has(o.id))
+      .map((o) => o.short)
+      .join(" / ") + (deck.id === "method" && pokemon.evoItem ? ` (${pokemon.evoItem})` : "");
 
   return (
     <div className="flashcards">

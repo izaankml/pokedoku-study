@@ -96,6 +96,21 @@ export const EVO_METHOD_OVERRIDES = {
   melmetal: [], // Meltan Candy in GO; no in-game method
 };
 
+// The item behind an item evolution where the dex doesn't name one
+// (dex ids/slugs -> item). Everything else comes from the dex's evoItem.
+export const EVO_ITEM_OVERRIDES = {
+  alakazam: "Linking Cord",
+  machamp: "Linking Cord",
+  golem: "Linking Cord",
+  gengar: "Linking Cord",
+  probopass: "Thunder Stone",
+  kleavor: "Black Augurite",
+  ursaluna: "Peat Block",
+  alcremie: "a Sweet",
+  urshifu: "Scroll of Darkness",
+  urshifurapidstrike: "Scroll of Waters",
+};
+
 // Evolution links the dex is missing (child slug -> parent species name).
 export const PREVO_OVERRIDES = {
   melmetal: "Meltan",

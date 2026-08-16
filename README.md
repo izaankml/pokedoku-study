@@ -85,7 +85,8 @@ Notes on judgment calls:
   Cord), Crobat is friendship *and* level, Steelix is trade *and* item
   (held Metal Coat). "Stone" is the subset of item where an evolution
   stone is used. Kingambit/Gholdengo are level (their items aren't
-  used); Sirfetch'd, Runerigus and Wyrdeer count for nothing.
+  used); Sirfetch'd, Runerigus and Wyrdeer count for nothing. Item
+  evolutions record the item (`evoItem`).
 - Evolution is form-aware: Kantonian Farfetch'd, Corsola, Qwilfish and
   Red-Striped Basculin have no evolution line (their evolutions belong to
   regional forms); Kantonian Mr. Mime and Linoone are final stage.

@@ -128,6 +128,11 @@ describe("pokedex dataset invariants", () => {
     expect(POKEMON_BY_ID.get(122).stage).toBe("final"); // Mr. Mime
     expect(POKEMON_BY_ID.get(789).stage).toBe("first"); // Cosmog
     expect(POKEMON_BY_ID.get(791).stage).toBe("final"); // Solgaleo
+    expect(POKEMON_BY_ID.get(134).evoItem).toBe("Water Stone"); // Vaporeon
+    expect(POKEMON_BY_ID.get(65).evoItem).toBe("Linking Cord"); // Alakazam
+    expect(POKEMON_BY_ID.get(208).evoItem).toBe("Metal Coat"); // Steelix (held while trading)
+    expect(POKEMON_BY_ID.get(25).evoItem).toBe(null); // Pikachu
+    expect(byName.get("arcaninehisui").evoItem).toBe("Fire Stone");
     expect(POKEMON_BY_ID.get(133).branched).toBe(true); // Eevee
     expect(POKEMON_BY_ID.get(744).branched).toBe(false); // Rockruff: Lycanroc forms
     expect(POKEMON_BY_ID.get(123).branched).toBe(true); // Scyther: Scizor / Kleavor
