@@ -65,10 +65,14 @@ export const EVO_METHOD_OVERRIDES = {
   sneasler: "item",
 };
 
-// Showdown spells these with -F/-M suffixes
+// Showdown spells these with -F/-M suffixes; form names keep the hyphens
+// the generic "Base (Forme)" formatter would turn into spaces
 export const DISPLAY_NAME_OVERRIDES = {
   nidoranf: "Nidoran♀",
   nidoranm: "Nidoran♂",
+  basculinwhitestriped: "Basculin (White-Striped)",
+  oricoriopompom: "Oricorio (Pom-Pom)",
+  greninjaash: "Ash-Greninja",
 };
 
 // Alternate forms that get their own dataset record, mapped from their

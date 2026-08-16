@@ -3,11 +3,14 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-16",
-  "count": 1025
+  "count": 1138,
+  "speciesCount": 1025
  },
  "pokemon": [
   {
    "id": 1,
+   "species": 1,
+   "form": null,
    "name": "bulbasaur",
    "displayName": "Bulbasaur",
    "types": [
@@ -24,6 +27,8 @@
   },
   {
    "id": 2,
+   "species": 2,
+   "form": null,
    "name": "ivysaur",
    "displayName": "Ivysaur",
    "types": [
@@ -40,6 +45,8 @@
   },
   {
    "id": 3,
+   "species": 3,
+   "form": null,
    "name": "venusaur",
    "displayName": "Venusaur",
    "types": [
@@ -58,6 +65,8 @@
   },
   {
    "id": 4,
+   "species": 4,
+   "form": null,
    "name": "charmander",
    "displayName": "Charmander",
    "types": [
@@ -73,6 +82,8 @@
   },
   {
    "id": 5,
+   "species": 5,
+   "form": null,
    "name": "charmeleon",
    "displayName": "Charmeleon",
    "types": [
@@ -88,6 +99,8 @@
   },
   {
    "id": 6,
+   "species": 6,
+   "form": null,
    "name": "charizard",
    "displayName": "Charizard",
    "types": [
@@ -105,7 +118,28 @@
    ]
   },
   {
+   "id": 10034,
+   "species": 6,
+   "form": "Mega-X",
+   "name": "charizardmegax",
+   "displayName": "Mega Charizard X",
+   "types": [
+    "fire",
+    "dragon"
+   ],
+   "gen": 1,
+   "region": "kanto",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter",
+    "mega"
+   ]
+  },
+  {
    "id": 7,
+   "species": 7,
+   "form": null,
    "name": "squirtle",
    "displayName": "Squirtle",
    "types": [
@@ -121,6 +155,8 @@
   },
   {
    "id": 8,
+   "species": 8,
+   "form": null,
    "name": "wartortle",
    "displayName": "Wartortle",
    "types": [
@@ -136,6 +172,8 @@
   },
   {
    "id": 9,
+   "species": 9,
+   "form": null,
    "name": "blastoise",
    "displayName": "Blastoise",
    "types": [
@@ -153,6 +191,8 @@
   },
   {
    "id": 10,
+   "species": 10,
+   "form": null,
    "name": "caterpie",
    "displayName": "Caterpie",
    "types": [
@@ -166,6 +206,8 @@
   },
   {
    "id": 11,
+   "species": 11,
+   "form": null,
    "name": "metapod",
    "displayName": "Metapod",
    "types": [
@@ -179,6 +221,8 @@
   },
   {
    "id": 12,
+   "species": 12,
+   "form": null,
    "name": "butterfree",
    "displayName": "Butterfree",
    "types": [
@@ -195,6 +239,8 @@
   },
   {
    "id": 13,
+   "species": 13,
+   "form": null,
    "name": "weedle",
    "displayName": "Weedle",
    "types": [
@@ -209,6 +255,8 @@
   },
   {
    "id": 14,
+   "species": 14,
+   "form": null,
    "name": "kakuna",
    "displayName": "Kakuna",
    "types": [
@@ -223,6 +271,8 @@
   },
   {
    "id": 15,
+   "species": 15,
+   "form": null,
    "name": "beedrill",
    "displayName": "Beedrill",
    "types": [
@@ -239,6 +289,8 @@
   },
   {
    "id": 16,
+   "species": 16,
+   "form": null,
    "name": "pidgey",
    "displayName": "Pidgey",
    "types": [
@@ -253,6 +305,8 @@
   },
   {
    "id": 17,
+   "species": 17,
+   "form": null,
    "name": "pidgeotto",
    "displayName": "Pidgeotto",
    "types": [
@@ -267,6 +321,8 @@
   },
   {
    "id": 18,
+   "species": 18,
+   "form": null,
    "name": "pidgeot",
    "displayName": "Pidgeot",
    "types": [
@@ -283,6 +339,8 @@
   },
   {
    "id": 19,
+   "species": 19,
+   "form": null,
    "name": "rattata",
    "displayName": "Rattata",
    "types": [
@@ -295,7 +353,25 @@
    "flags": []
   },
   {
+   "id": 10091,
+   "species": 19,
+   "form": "Alola",
+   "name": "rattataalola",
+   "displayName": "Alolan Rattata",
+   "types": [
+    "dark",
+    "normal"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 20,
+   "species": 20,
+   "form": null,
    "name": "raticate",
    "displayName": "Raticate",
    "types": [
@@ -308,7 +384,25 @@
    "flags": []
   },
   {
+   "id": 10092,
+   "species": 20,
+   "form": "Alola",
+   "name": "raticatealola",
+   "displayName": "Alolan Raticate",
+   "types": [
+    "dark",
+    "normal"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 21,
+   "species": 21,
+   "form": null,
    "name": "spearow",
    "displayName": "Spearow",
    "types": [
@@ -323,6 +417,8 @@
   },
   {
    "id": 22,
+   "species": 22,
+   "form": null,
    "name": "fearow",
    "displayName": "Fearow",
    "types": [
@@ -337,6 +433,8 @@
   },
   {
    "id": 23,
+   "species": 23,
+   "form": null,
    "name": "ekans",
    "displayName": "Ekans",
    "types": [
@@ -350,6 +448,8 @@
   },
   {
    "id": 24,
+   "species": 24,
+   "form": null,
    "name": "arbok",
    "displayName": "Arbok",
    "types": [
@@ -363,6 +463,8 @@
   },
   {
    "id": 25,
+   "species": 25,
+   "form": null,
    "name": "pikachu",
    "displayName": "Pikachu",
    "types": [
@@ -378,6 +480,8 @@
   },
   {
    "id": 26,
+   "species": 26,
+   "form": null,
    "name": "raichu",
    "displayName": "Raichu",
    "types": [
@@ -392,7 +496,25 @@
    ]
   },
   {
+   "id": 10100,
+   "species": 26,
+   "form": "Alola",
+   "name": "raichualola",
+   "displayName": "Alolan Raichu",
+   "types": [
+    "electric",
+    "psychic"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 27,
+   "species": 27,
+   "form": null,
    "name": "sandshrew",
    "displayName": "Sandshrew",
    "types": [
@@ -405,7 +527,25 @@
    "flags": []
   },
   {
+   "id": 10101,
+   "species": 27,
+   "form": "Alola",
+   "name": "sandshrewalola",
+   "displayName": "Alolan Sandshrew",
+   "types": [
+    "ice",
+    "steel"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 28,
+   "species": 28,
+   "form": null,
    "name": "sandslash",
    "displayName": "Sandslash",
    "types": [
@@ -418,7 +558,25 @@
    "flags": []
   },
   {
+   "id": 10102,
+   "species": 28,
+   "form": "Alola",
+   "name": "sandslashalola",
+   "displayName": "Alolan Sandslash",
+   "types": [
+    "ice",
+    "steel"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 29,
+   "species": 29,
+   "form": null,
    "name": "nidoranf",
    "displayName": "Nidoran♀",
    "types": [
@@ -432,6 +590,8 @@
   },
   {
    "id": 30,
+   "species": 30,
+   "form": null,
    "name": "nidorina",
    "displayName": "Nidorina",
    "types": [
@@ -445,6 +605,8 @@
   },
   {
    "id": 31,
+   "species": 31,
+   "form": null,
    "name": "nidoqueen",
    "displayName": "Nidoqueen",
    "types": [
@@ -459,6 +621,8 @@
   },
   {
    "id": 32,
+   "species": 32,
+   "form": null,
    "name": "nidoranm",
    "displayName": "Nidoran♂",
    "types": [
@@ -472,6 +636,8 @@
   },
   {
    "id": 33,
+   "species": 33,
+   "form": null,
    "name": "nidorino",
    "displayName": "Nidorino",
    "types": [
@@ -485,6 +651,8 @@
   },
   {
    "id": 34,
+   "species": 34,
+   "form": null,
    "name": "nidoking",
    "displayName": "Nidoking",
    "types": [
@@ -499,6 +667,8 @@
   },
   {
    "id": 35,
+   "species": 35,
+   "form": null,
    "name": "clefairy",
    "displayName": "Clefairy",
    "types": [
@@ -512,6 +682,8 @@
   },
   {
    "id": 36,
+   "species": 36,
+   "form": null,
    "name": "clefable",
    "displayName": "Clefable",
    "types": [
@@ -526,7 +698,27 @@
    ]
   },
   {
+   "id": 10278,
+   "species": 36,
+   "form": "Mega",
+   "name": "clefablemega",
+   "displayName": "Mega Clefable",
+   "types": [
+    "fairy",
+    "flying"
+   ],
+   "gen": 1,
+   "region": "kanto",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 37,
+   "species": 37,
+   "form": null,
    "name": "vulpix",
    "displayName": "Vulpix",
    "types": [
@@ -539,7 +731,24 @@
    "flags": []
   },
   {
+   "id": 10103,
+   "species": 37,
+   "form": "Alola",
+   "name": "vulpixalola",
+   "displayName": "Alolan Vulpix",
+   "types": [
+    "ice"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 38,
+   "species": 38,
+   "form": null,
    "name": "ninetales",
    "displayName": "Ninetales",
    "types": [
@@ -552,7 +761,25 @@
    "flags": []
   },
   {
+   "id": 10104,
+   "species": 38,
+   "form": "Alola",
+   "name": "ninetalesalola",
+   "displayName": "Alolan Ninetales",
+   "types": [
+    "ice",
+    "fairy"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 39,
+   "species": 39,
+   "form": null,
    "name": "jigglypuff",
    "displayName": "Jigglypuff",
    "types": [
@@ -567,6 +794,8 @@
   },
   {
    "id": 40,
+   "species": 40,
+   "form": null,
    "name": "wigglytuff",
    "displayName": "Wigglytuff",
    "types": [
@@ -581,6 +810,8 @@
   },
   {
    "id": 41,
+   "species": 41,
+   "form": null,
    "name": "zubat",
    "displayName": "Zubat",
    "types": [
@@ -595,6 +826,8 @@
   },
   {
    "id": 42,
+   "species": 42,
+   "form": null,
    "name": "golbat",
    "displayName": "Golbat",
    "types": [
@@ -609,6 +842,8 @@
   },
   {
    "id": 43,
+   "species": 43,
+   "form": null,
    "name": "oddish",
    "displayName": "Oddish",
    "types": [
@@ -623,6 +858,8 @@
   },
   {
    "id": 44,
+   "species": 44,
+   "form": null,
    "name": "gloom",
    "displayName": "Gloom",
    "types": [
@@ -637,6 +874,8 @@
   },
   {
    "id": 45,
+   "species": 45,
+   "form": null,
    "name": "vileplume",
    "displayName": "Vileplume",
    "types": [
@@ -651,6 +890,8 @@
   },
   {
    "id": 46,
+   "species": 46,
+   "form": null,
    "name": "paras",
    "displayName": "Paras",
    "types": [
@@ -665,6 +906,8 @@
   },
   {
    "id": 47,
+   "species": 47,
+   "form": null,
    "name": "parasect",
    "displayName": "Parasect",
    "types": [
@@ -679,6 +922,8 @@
   },
   {
    "id": 48,
+   "species": 48,
+   "form": null,
    "name": "venonat",
    "displayName": "Venonat",
    "types": [
@@ -693,6 +938,8 @@
   },
   {
    "id": 49,
+   "species": 49,
+   "form": null,
    "name": "venomoth",
    "displayName": "Venomoth",
    "types": [
@@ -707,6 +954,8 @@
   },
   {
    "id": 50,
+   "species": 50,
+   "form": null,
    "name": "diglett",
    "displayName": "Diglett",
    "types": [
@@ -719,7 +968,25 @@
    "flags": []
   },
   {
+   "id": 10105,
+   "species": 50,
+   "form": "Alola",
+   "name": "diglettalola",
+   "displayName": "Alolan Diglett",
+   "types": [
+    "ground",
+    "steel"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 51,
+   "species": 51,
+   "form": null,
    "name": "dugtrio",
    "displayName": "Dugtrio",
    "types": [
@@ -732,7 +999,25 @@
    "flags": []
   },
   {
+   "id": 10106,
+   "species": 51,
+   "form": "Alola",
+   "name": "dugtrioalola",
+   "displayName": "Alolan Dugtrio",
+   "types": [
+    "ground",
+    "steel"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 52,
+   "species": 52,
+   "form": null,
    "name": "meowth",
    "displayName": "Meowth",
    "types": [
@@ -747,7 +1032,39 @@
    ]
   },
   {
+   "id": 10107,
+   "species": 52,
+   "form": "Alola",
+   "name": "meowthalola",
+   "displayName": "Alolan Meowth",
+   "types": [
+    "dark"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10161,
+   "species": 52,
+   "form": "Galar",
+   "name": "meowthgalar",
+   "displayName": "Galarian Meowth",
+   "types": [
+    "steel"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 53,
+   "species": 53,
+   "form": null,
    "name": "persian",
    "displayName": "Persian",
    "types": [
@@ -760,7 +1077,24 @@
    "flags": []
   },
   {
+   "id": 10108,
+   "species": 53,
+   "form": "Alola",
+   "name": "persianalola",
+   "displayName": "Alolan Persian",
+   "types": [
+    "dark"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "friendship",
+   "flags": []
+  },
+  {
    "id": 54,
+   "species": 54,
+   "form": null,
    "name": "psyduck",
    "displayName": "Psyduck",
    "types": [
@@ -774,6 +1108,8 @@
   },
   {
    "id": 55,
+   "species": 55,
+   "form": null,
    "name": "golduck",
    "displayName": "Golduck",
    "types": [
@@ -787,6 +1123,8 @@
   },
   {
    "id": 56,
+   "species": 56,
+   "form": null,
    "name": "mankey",
    "displayName": "Mankey",
    "types": [
@@ -800,6 +1138,8 @@
   },
   {
    "id": 57,
+   "species": 57,
+   "form": null,
    "name": "primeape",
    "displayName": "Primeape",
    "types": [
@@ -813,6 +1153,8 @@
   },
   {
    "id": 58,
+   "species": 58,
+   "form": null,
    "name": "growlithe",
    "displayName": "Growlithe",
    "types": [
@@ -825,7 +1167,25 @@
    "flags": []
   },
   {
+   "id": 10229,
+   "species": 58,
+   "form": "Hisui",
+   "name": "growlithehisui",
+   "displayName": "Hisuian Growlithe",
+   "types": [
+    "fire",
+    "rock"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 59,
+   "species": 59,
+   "form": null,
    "name": "arcanine",
    "displayName": "Arcanine",
    "types": [
@@ -838,7 +1198,25 @@
    "flags": []
   },
   {
+   "id": 10230,
+   "species": 59,
+   "form": "Hisui",
+   "name": "arcaninehisui",
+   "displayName": "Hisuian Arcanine",
+   "types": [
+    "fire",
+    "rock"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 60,
+   "species": 60,
+   "form": null,
    "name": "poliwag",
    "displayName": "Poliwag",
    "types": [
@@ -852,6 +1230,8 @@
   },
   {
    "id": 61,
+   "species": 61,
+   "form": null,
    "name": "poliwhirl",
    "displayName": "Poliwhirl",
    "types": [
@@ -865,6 +1245,8 @@
   },
   {
    "id": 62,
+   "species": 62,
+   "form": null,
    "name": "poliwrath",
    "displayName": "Poliwrath",
    "types": [
@@ -879,6 +1261,8 @@
   },
   {
    "id": 63,
+   "species": 63,
+   "form": null,
    "name": "abra",
    "displayName": "Abra",
    "types": [
@@ -892,6 +1276,8 @@
   },
   {
    "id": 64,
+   "species": 64,
+   "form": null,
    "name": "kadabra",
    "displayName": "Kadabra",
    "types": [
@@ -905,6 +1291,8 @@
   },
   {
    "id": 65,
+   "species": 65,
+   "form": null,
    "name": "alakazam",
    "displayName": "Alakazam",
    "types": [
@@ -920,6 +1308,8 @@
   },
   {
    "id": 66,
+   "species": 66,
+   "form": null,
    "name": "machop",
    "displayName": "Machop",
    "types": [
@@ -933,6 +1323,8 @@
   },
   {
    "id": 67,
+   "species": 67,
+   "form": null,
    "name": "machoke",
    "displayName": "Machoke",
    "types": [
@@ -946,6 +1338,8 @@
   },
   {
    "id": 68,
+   "species": 68,
+   "form": null,
    "name": "machamp",
    "displayName": "Machamp",
    "types": [
@@ -961,6 +1355,8 @@
   },
   {
    "id": 69,
+   "species": 69,
+   "form": null,
    "name": "bellsprout",
    "displayName": "Bellsprout",
    "types": [
@@ -975,6 +1371,8 @@
   },
   {
    "id": 70,
+   "species": 70,
+   "form": null,
    "name": "weepinbell",
    "displayName": "Weepinbell",
    "types": [
@@ -989,6 +1387,8 @@
   },
   {
    "id": 71,
+   "species": 71,
+   "form": null,
    "name": "victreebel",
    "displayName": "Victreebel",
    "types": [
@@ -1005,6 +1405,8 @@
   },
   {
    "id": 72,
+   "species": 72,
+   "form": null,
    "name": "tentacool",
    "displayName": "Tentacool",
    "types": [
@@ -1019,6 +1421,8 @@
   },
   {
    "id": 73,
+   "species": 73,
+   "form": null,
    "name": "tentacruel",
    "displayName": "Tentacruel",
    "types": [
@@ -1033,6 +1437,8 @@
   },
   {
    "id": 74,
+   "species": 74,
+   "form": null,
    "name": "geodude",
    "displayName": "Geodude",
    "types": [
@@ -1046,7 +1452,25 @@
    "flags": []
   },
   {
+   "id": 10109,
+   "species": 74,
+   "form": "Alola",
+   "name": "geodudealola",
+   "displayName": "Alolan Geodude",
+   "types": [
+    "rock",
+    "electric"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 75,
+   "species": 75,
+   "form": null,
    "name": "graveler",
    "displayName": "Graveler",
    "types": [
@@ -1060,7 +1484,25 @@
    "flags": []
   },
   {
+   "id": 10110,
+   "species": 75,
+   "form": "Alola",
+   "name": "graveleralola",
+   "displayName": "Alolan Graveler",
+   "types": [
+    "rock",
+    "electric"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "middle",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 76,
+   "species": 76,
+   "form": null,
    "name": "golem",
    "displayName": "Golem",
    "types": [
@@ -1074,7 +1516,25 @@
    "flags": []
   },
   {
+   "id": 10111,
+   "species": 76,
+   "form": "Alola",
+   "name": "golemalola",
+   "displayName": "Alolan Golem",
+   "types": [
+    "rock",
+    "electric"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "trade",
+   "flags": []
+  },
+  {
    "id": 77,
+   "species": 77,
+   "form": null,
    "name": "ponyta",
    "displayName": "Ponyta",
    "types": [
@@ -1087,7 +1547,24 @@
    "flags": []
   },
   {
+   "id": 10162,
+   "species": 77,
+   "form": "Galar",
+   "name": "ponytagalar",
+   "displayName": "Galarian Ponyta",
+   "types": [
+    "psychic"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 78,
+   "species": 78,
+   "form": null,
    "name": "rapidash",
    "displayName": "Rapidash",
    "types": [
@@ -1100,7 +1577,25 @@
    "flags": []
   },
   {
+   "id": 10163,
+   "species": 78,
+   "form": "Galar",
+   "name": "rapidashgalar",
+   "displayName": "Galarian Rapidash",
+   "types": [
+    "psychic",
+    "fairy"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 79,
+   "species": 79,
+   "form": null,
    "name": "slowpoke",
    "displayName": "Slowpoke",
    "types": [
@@ -1114,7 +1609,24 @@
    "flags": []
   },
   {
+   "id": 10164,
+   "species": 79,
+   "form": "Galar",
+   "name": "slowpokegalar",
+   "displayName": "Galarian Slowpoke",
+   "types": [
+    "psychic"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 80,
+   "species": 80,
+   "form": null,
    "name": "slowbro",
    "displayName": "Slowbro",
    "types": [
@@ -1130,7 +1642,25 @@
    ]
   },
   {
+   "id": 10165,
+   "species": 80,
+   "form": "Galar",
+   "name": "slowbrogalar",
+   "displayName": "Galarian Slowbro",
+   "types": [
+    "poison",
+    "psychic"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 81,
+   "species": 81,
+   "form": null,
    "name": "magnemite",
    "displayName": "Magnemite",
    "types": [
@@ -1145,6 +1675,8 @@
   },
   {
    "id": 82,
+   "species": 82,
+   "form": null,
    "name": "magneton",
    "displayName": "Magneton",
    "types": [
@@ -1159,6 +1691,8 @@
   },
   {
    "id": 83,
+   "species": 83,
+   "form": null,
    "name": "farfetchd",
    "displayName": "Farfetch’d",
    "types": [
@@ -1172,7 +1706,24 @@
    "flags": []
   },
   {
+   "id": 10166,
+   "species": 83,
+   "form": "Galar",
+   "name": "farfetchdgalar",
+   "displayName": "Galarian Farfetch’d",
+   "types": [
+    "fighting"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 84,
+   "species": 84,
+   "form": null,
    "name": "doduo",
    "displayName": "Doduo",
    "types": [
@@ -1187,6 +1738,8 @@
   },
   {
    "id": 85,
+   "species": 85,
+   "form": null,
    "name": "dodrio",
    "displayName": "Dodrio",
    "types": [
@@ -1201,6 +1754,8 @@
   },
   {
    "id": 86,
+   "species": 86,
+   "form": null,
    "name": "seel",
    "displayName": "Seel",
    "types": [
@@ -1214,6 +1769,8 @@
   },
   {
    "id": 87,
+   "species": 87,
+   "form": null,
    "name": "dewgong",
    "displayName": "Dewgong",
    "types": [
@@ -1228,6 +1785,8 @@
   },
   {
    "id": 88,
+   "species": 88,
+   "form": null,
    "name": "grimer",
    "displayName": "Grimer",
    "types": [
@@ -1240,7 +1799,25 @@
    "flags": []
   },
   {
+   "id": 10112,
+   "species": 88,
+   "form": "Alola",
+   "name": "grimeralola",
+   "displayName": "Alolan Grimer",
+   "types": [
+    "poison",
+    "dark"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 89,
+   "species": 89,
+   "form": null,
    "name": "muk",
    "displayName": "Muk",
    "types": [
@@ -1253,7 +1830,25 @@
    "flags": []
   },
   {
+   "id": 10113,
+   "species": 89,
+   "form": "Alola",
+   "name": "mukalola",
+   "displayName": "Alolan Muk",
+   "types": [
+    "poison",
+    "dark"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 90,
+   "species": 90,
+   "form": null,
    "name": "shellder",
    "displayName": "Shellder",
    "types": [
@@ -1267,6 +1862,8 @@
   },
   {
    "id": 91,
+   "species": 91,
+   "form": null,
    "name": "cloyster",
    "displayName": "Cloyster",
    "types": [
@@ -1281,6 +1878,8 @@
   },
   {
    "id": 92,
+   "species": 92,
+   "form": null,
    "name": "gastly",
    "displayName": "Gastly",
    "types": [
@@ -1295,6 +1894,8 @@
   },
   {
    "id": 93,
+   "species": 93,
+   "form": null,
    "name": "haunter",
    "displayName": "Haunter",
    "types": [
@@ -1309,6 +1910,8 @@
   },
   {
    "id": 94,
+   "species": 94,
+   "form": null,
    "name": "gengar",
    "displayName": "Gengar",
    "types": [
@@ -1326,6 +1929,8 @@
   },
   {
    "id": 95,
+   "species": 95,
+   "form": null,
    "name": "onix",
    "displayName": "Onix",
    "types": [
@@ -1340,6 +1945,8 @@
   },
   {
    "id": 96,
+   "species": 96,
+   "form": null,
    "name": "drowzee",
    "displayName": "Drowzee",
    "types": [
@@ -1353,6 +1960,8 @@
   },
   {
    "id": 97,
+   "species": 97,
+   "form": null,
    "name": "hypno",
    "displayName": "Hypno",
    "types": [
@@ -1366,6 +1975,8 @@
   },
   {
    "id": 98,
+   "species": 98,
+   "form": null,
    "name": "krabby",
    "displayName": "Krabby",
    "types": [
@@ -1379,6 +1990,8 @@
   },
   {
    "id": 99,
+   "species": 99,
+   "form": null,
    "name": "kingler",
    "displayName": "Kingler",
    "types": [
@@ -1394,6 +2007,8 @@
   },
   {
    "id": 100,
+   "species": 100,
+   "form": null,
    "name": "voltorb",
    "displayName": "Voltorb",
    "types": [
@@ -1406,7 +2021,25 @@
    "flags": []
   },
   {
+   "id": 10231,
+   "species": 100,
+   "form": "Hisui",
+   "name": "voltorbhisui",
+   "displayName": "Hisuian Voltorb",
+   "types": [
+    "electric",
+    "grass"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 101,
+   "species": 101,
+   "form": null,
    "name": "electrode",
    "displayName": "Electrode",
    "types": [
@@ -1419,7 +2052,25 @@
    "flags": []
   },
   {
+   "id": 10232,
+   "species": 101,
+   "form": "Hisui",
+   "name": "electrodehisui",
+   "displayName": "Hisuian Electrode",
+   "types": [
+    "electric",
+    "grass"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 102,
+   "species": 102,
+   "form": null,
    "name": "exeggcute",
    "displayName": "Exeggcute",
    "types": [
@@ -1434,6 +2085,8 @@
   },
   {
    "id": 103,
+   "species": 103,
+   "form": null,
    "name": "exeggutor",
    "displayName": "Exeggutor",
    "types": [
@@ -1447,7 +2100,25 @@
    "flags": []
   },
   {
+   "id": 10114,
+   "species": 103,
+   "form": "Alola",
+   "name": "exeggutoralola",
+   "displayName": "Alolan Exeggutor",
+   "types": [
+    "grass",
+    "dragon"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 104,
+   "species": 104,
+   "form": null,
    "name": "cubone",
    "displayName": "Cubone",
    "types": [
@@ -1461,6 +2132,8 @@
   },
   {
    "id": 105,
+   "species": 105,
+   "form": null,
    "name": "marowak",
    "displayName": "Marowak",
    "types": [
@@ -1473,7 +2146,25 @@
    "flags": []
   },
   {
+   "id": 10115,
+   "species": 105,
+   "form": "Alola",
+   "name": "marowakalola",
+   "displayName": "Alolan Marowak",
+   "types": [
+    "fire",
+    "ghost"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 106,
+   "species": 106,
+   "form": null,
    "name": "hitmonlee",
    "displayName": "Hitmonlee",
    "types": [
@@ -1487,6 +2178,8 @@
   },
   {
    "id": 107,
+   "species": 107,
+   "form": null,
    "name": "hitmonchan",
    "displayName": "Hitmonchan",
    "types": [
@@ -1500,6 +2193,8 @@
   },
   {
    "id": 108,
+   "species": 108,
+   "form": null,
    "name": "lickitung",
    "displayName": "Lickitung",
    "types": [
@@ -1513,6 +2208,8 @@
   },
   {
    "id": 109,
+   "species": 109,
+   "form": null,
    "name": "koffing",
    "displayName": "Koffing",
    "types": [
@@ -1526,6 +2223,8 @@
   },
   {
    "id": 110,
+   "species": 110,
+   "form": null,
    "name": "weezing",
    "displayName": "Weezing",
    "types": [
@@ -1538,7 +2237,25 @@
    "flags": []
   },
   {
+   "id": 10167,
+   "species": 110,
+   "form": "Galar",
+   "name": "weezinggalar",
+   "displayName": "Galarian Weezing",
+   "types": [
+    "poison",
+    "fairy"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 111,
+   "species": 111,
+   "form": null,
    "name": "rhyhorn",
    "displayName": "Rhyhorn",
    "types": [
@@ -1553,6 +2270,8 @@
   },
   {
    "id": 112,
+   "species": 112,
+   "form": null,
    "name": "rhydon",
    "displayName": "Rhydon",
    "types": [
@@ -1567,6 +2286,8 @@
   },
   {
    "id": 113,
+   "species": 113,
+   "form": null,
    "name": "chansey",
    "displayName": "Chansey",
    "types": [
@@ -1580,6 +2301,8 @@
   },
   {
    "id": 114,
+   "species": 114,
+   "form": null,
    "name": "tangela",
    "displayName": "Tangela",
    "types": [
@@ -1593,6 +2316,8 @@
   },
   {
    "id": 115,
+   "species": 115,
+   "form": null,
    "name": "kangaskhan",
    "displayName": "Kangaskhan",
    "types": [
@@ -1608,6 +2333,8 @@
   },
   {
    "id": 116,
+   "species": 116,
+   "form": null,
    "name": "horsea",
    "displayName": "Horsea",
    "types": [
@@ -1621,6 +2348,8 @@
   },
   {
    "id": 117,
+   "species": 117,
+   "form": null,
    "name": "seadra",
    "displayName": "Seadra",
    "types": [
@@ -1634,6 +2363,8 @@
   },
   {
    "id": 118,
+   "species": 118,
+   "form": null,
    "name": "goldeen",
    "displayName": "Goldeen",
    "types": [
@@ -1647,6 +2378,8 @@
   },
   {
    "id": 119,
+   "species": 119,
+   "form": null,
    "name": "seaking",
    "displayName": "Seaking",
    "types": [
@@ -1660,6 +2393,8 @@
   },
   {
    "id": 120,
+   "species": 120,
+   "form": null,
    "name": "staryu",
    "displayName": "Staryu",
    "types": [
@@ -1673,6 +2408,8 @@
   },
   {
    "id": 121,
+   "species": 121,
+   "form": null,
    "name": "starmie",
    "displayName": "Starmie",
    "types": [
@@ -1689,6 +2426,8 @@
   },
   {
    "id": 122,
+   "species": 122,
+   "form": null,
    "name": "mrmime",
    "displayName": "Mr. Mime",
    "types": [
@@ -1702,7 +2441,25 @@
    "flags": []
   },
   {
+   "id": 10168,
+   "species": 122,
+   "form": "Galar",
+   "name": "mrmimegalar",
+   "displayName": "Galarian Mr. Mime",
+   "types": [
+    "ice",
+    "psychic"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "middle",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 123,
+   "species": 123,
+   "form": null,
    "name": "scyther",
    "displayName": "Scyther",
    "types": [
@@ -1717,6 +2474,8 @@
   },
   {
    "id": 124,
+   "species": 124,
+   "form": null,
    "name": "jynx",
    "displayName": "Jynx",
    "types": [
@@ -1731,6 +2490,8 @@
   },
   {
    "id": 125,
+   "species": 125,
+   "form": null,
    "name": "electabuzz",
    "displayName": "Electabuzz",
    "types": [
@@ -1744,6 +2505,8 @@
   },
   {
    "id": 126,
+   "species": 126,
+   "form": null,
    "name": "magmar",
    "displayName": "Magmar",
    "types": [
@@ -1757,6 +2520,8 @@
   },
   {
    "id": 127,
+   "species": 127,
+   "form": null,
    "name": "pinsir",
    "displayName": "Pinsir",
    "types": [
@@ -1771,7 +2536,27 @@
    ]
   },
   {
+   "id": 10040,
+   "species": 127,
+   "form": "Mega",
+   "name": "pinsirmega",
+   "displayName": "Mega Pinsir",
+   "types": [
+    "bug",
+    "flying"
+   ],
+   "gen": 1,
+   "region": "kanto",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 128,
+   "species": 128,
+   "form": null,
    "name": "tauros",
    "displayName": "Tauros",
    "types": [
@@ -1784,7 +2569,56 @@
    "flags": []
   },
   {
+   "id": 10250,
+   "species": 128,
+   "form": "Paldea-Combat",
+   "name": "taurospaldeacombat",
+   "displayName": "Paldean Tauros (Combat)",
+   "types": [
+    "fighting"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10251,
+   "species": 128,
+   "form": "Paldea-Blaze",
+   "name": "taurospaldeablaze",
+   "displayName": "Paldean Tauros (Blaze)",
+   "types": [
+    "fighting",
+    "fire"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10252,
+   "species": 128,
+   "form": "Paldea-Aqua",
+   "name": "taurospaldeaaqua",
+   "displayName": "Paldean Tauros (Aqua)",
+   "types": [
+    "fighting",
+    "water"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 129,
+   "species": 129,
+   "form": null,
    "name": "magikarp",
    "displayName": "Magikarp",
    "types": [
@@ -1798,6 +2632,8 @@
   },
   {
    "id": 130,
+   "species": 130,
+   "form": null,
    "name": "gyarados",
    "displayName": "Gyarados",
    "types": [
@@ -1813,7 +2649,27 @@
    ]
   },
   {
+   "id": 10041,
+   "species": 130,
+   "form": "Mega",
+   "name": "gyaradosmega",
+   "displayName": "Mega Gyarados",
+   "types": [
+    "water",
+    "dark"
+   ],
+   "gen": 1,
+   "region": "kanto",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 131,
+   "species": 131,
+   "form": null,
    "name": "lapras",
    "displayName": "Lapras",
    "types": [
@@ -1830,6 +2686,8 @@
   },
   {
    "id": 132,
+   "species": 132,
+   "form": null,
    "name": "ditto",
    "displayName": "Ditto",
    "types": [
@@ -1843,6 +2701,8 @@
   },
   {
    "id": 133,
+   "species": 133,
+   "form": null,
    "name": "eevee",
    "displayName": "Eevee",
    "types": [
@@ -1858,6 +2718,8 @@
   },
   {
    "id": 134,
+   "species": 134,
+   "form": null,
    "name": "vaporeon",
    "displayName": "Vaporeon",
    "types": [
@@ -1871,6 +2733,8 @@
   },
   {
    "id": 135,
+   "species": 135,
+   "form": null,
    "name": "jolteon",
    "displayName": "Jolteon",
    "types": [
@@ -1884,6 +2748,8 @@
   },
   {
    "id": 136,
+   "species": 136,
+   "form": null,
    "name": "flareon",
    "displayName": "Flareon",
    "types": [
@@ -1897,6 +2763,8 @@
   },
   {
    "id": 137,
+   "species": 137,
+   "form": null,
    "name": "porygon",
    "displayName": "Porygon",
    "types": [
@@ -1910,6 +2778,8 @@
   },
   {
    "id": 138,
+   "species": 138,
+   "form": null,
    "name": "omanyte",
    "displayName": "Omanyte",
    "types": [
@@ -1926,6 +2796,8 @@
   },
   {
    "id": 139,
+   "species": 139,
+   "form": null,
    "name": "omastar",
    "displayName": "Omastar",
    "types": [
@@ -1942,6 +2814,8 @@
   },
   {
    "id": 140,
+   "species": 140,
+   "form": null,
    "name": "kabuto",
    "displayName": "Kabuto",
    "types": [
@@ -1958,6 +2832,8 @@
   },
   {
    "id": 141,
+   "species": 141,
+   "form": null,
    "name": "kabutops",
    "displayName": "Kabutops",
    "types": [
@@ -1974,6 +2850,8 @@
   },
   {
    "id": 142,
+   "species": 142,
+   "form": null,
    "name": "aerodactyl",
    "displayName": "Aerodactyl",
    "types": [
@@ -1991,6 +2869,8 @@
   },
   {
    "id": 143,
+   "species": 143,
+   "form": null,
    "name": "snorlax",
    "displayName": "Snorlax",
    "types": [
@@ -2006,6 +2886,8 @@
   },
   {
    "id": 144,
+   "species": 144,
+   "form": null,
    "name": "articuno",
    "displayName": "Articuno",
    "types": [
@@ -2021,7 +2903,27 @@
    ]
   },
   {
+   "id": 10169,
+   "species": 144,
+   "form": "Galar",
+   "name": "articunogalar",
+   "displayName": "Galarian Articuno",
+   "types": [
+    "psychic",
+    "flying"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 145,
+   "species": 145,
+   "form": null,
    "name": "zapdos",
    "displayName": "Zapdos",
    "types": [
@@ -2037,7 +2939,27 @@
    ]
   },
   {
+   "id": 10170,
+   "species": 145,
+   "form": "Galar",
+   "name": "zapdosgalar",
+   "displayName": "Galarian Zapdos",
+   "types": [
+    "fighting",
+    "flying"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 146,
+   "species": 146,
+   "form": null,
    "name": "moltres",
    "displayName": "Moltres",
    "types": [
@@ -2053,7 +2975,27 @@
    ]
   },
   {
+   "id": 10171,
+   "species": 146,
+   "form": "Galar",
+   "name": "moltresgalar",
+   "displayName": "Galarian Moltres",
+   "types": [
+    "dark",
+    "flying"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 147,
+   "species": 147,
+   "form": null,
    "name": "dratini",
    "displayName": "Dratini",
    "types": [
@@ -2067,6 +3009,8 @@
   },
   {
    "id": 148,
+   "species": 148,
+   "form": null,
    "name": "dragonair",
    "displayName": "Dragonair",
    "types": [
@@ -2080,6 +3024,8 @@
   },
   {
    "id": 149,
+   "species": 149,
+   "form": null,
    "name": "dragonite",
    "displayName": "Dragonite",
    "types": [
@@ -2096,6 +3042,8 @@
   },
   {
    "id": 150,
+   "species": 150,
+   "form": null,
    "name": "mewtwo",
    "displayName": "Mewtwo",
    "types": [
@@ -2111,7 +3059,28 @@
    ]
   },
   {
+   "id": 10043,
+   "species": 150,
+   "form": "Mega-X",
+   "name": "mewtwomegax",
+   "displayName": "Mega Mewtwo X",
+   "types": [
+    "psychic",
+    "fighting"
+   ],
+   "gen": 1,
+   "region": "kanto",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary",
+    "mega"
+   ]
+  },
+  {
    "id": 151,
+   "species": 151,
+   "form": null,
    "name": "mew",
    "displayName": "Mew",
    "types": [
@@ -2127,6 +3096,8 @@
   },
   {
    "id": 152,
+   "species": 152,
+   "form": null,
    "name": "chikorita",
    "displayName": "Chikorita",
    "types": [
@@ -2142,6 +3113,8 @@
   },
   {
    "id": 153,
+   "species": 153,
+   "form": null,
    "name": "bayleef",
    "displayName": "Bayleef",
    "types": [
@@ -2157,6 +3130,8 @@
   },
   {
    "id": 154,
+   "species": 154,
+   "form": null,
    "name": "meganium",
    "displayName": "Meganium",
    "types": [
@@ -2172,7 +3147,28 @@
    ]
   },
   {
+   "id": 10282,
+   "species": 154,
+   "form": "Mega",
+   "name": "meganiummega",
+   "displayName": "Mega Meganium",
+   "types": [
+    "grass",
+    "fairy"
+   ],
+   "gen": 2,
+   "region": "johto",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter",
+    "mega"
+   ]
+  },
+  {
    "id": 155,
+   "species": 155,
+   "form": null,
    "name": "cyndaquil",
    "displayName": "Cyndaquil",
    "types": [
@@ -2188,6 +3184,8 @@
   },
   {
    "id": 156,
+   "species": 156,
+   "form": null,
    "name": "quilava",
    "displayName": "Quilava",
    "types": [
@@ -2203,6 +3201,8 @@
   },
   {
    "id": 157,
+   "species": 157,
+   "form": null,
    "name": "typhlosion",
    "displayName": "Typhlosion",
    "types": [
@@ -2217,7 +3217,27 @@
    ]
   },
   {
+   "id": 10233,
+   "species": 157,
+   "form": "Hisui",
+   "name": "typhlosionhisui",
+   "displayName": "Hisuian Typhlosion",
+   "types": [
+    "fire",
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter"
+   ]
+  },
+  {
    "id": 158,
+   "species": 158,
+   "form": null,
    "name": "totodile",
    "displayName": "Totodile",
    "types": [
@@ -2233,6 +3253,8 @@
   },
   {
    "id": 159,
+   "species": 159,
+   "form": null,
    "name": "croconaw",
    "displayName": "Croconaw",
    "types": [
@@ -2248,6 +3270,8 @@
   },
   {
    "id": 160,
+   "species": 160,
+   "form": null,
    "name": "feraligatr",
    "displayName": "Feraligatr",
    "types": [
@@ -2263,7 +3287,28 @@
    ]
   },
   {
+   "id": 10283,
+   "species": 160,
+   "form": "Mega",
+   "name": "feraligatrmega",
+   "displayName": "Mega Feraligatr",
+   "types": [
+    "water",
+    "dragon"
+   ],
+   "gen": 2,
+   "region": "johto",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter",
+    "mega"
+   ]
+  },
+  {
    "id": 161,
+   "species": 161,
+   "form": null,
    "name": "sentret",
    "displayName": "Sentret",
    "types": [
@@ -2277,6 +3322,8 @@
   },
   {
    "id": 162,
+   "species": 162,
+   "form": null,
    "name": "furret",
    "displayName": "Furret",
    "types": [
@@ -2290,6 +3337,8 @@
   },
   {
    "id": 163,
+   "species": 163,
+   "form": null,
    "name": "hoothoot",
    "displayName": "Hoothoot",
    "types": [
@@ -2304,6 +3353,8 @@
   },
   {
    "id": 164,
+   "species": 164,
+   "form": null,
    "name": "noctowl",
    "displayName": "Noctowl",
    "types": [
@@ -2318,6 +3369,8 @@
   },
   {
    "id": 165,
+   "species": 165,
+   "form": null,
    "name": "ledyba",
    "displayName": "Ledyba",
    "types": [
@@ -2332,6 +3385,8 @@
   },
   {
    "id": 166,
+   "species": 166,
+   "form": null,
    "name": "ledian",
    "displayName": "Ledian",
    "types": [
@@ -2346,6 +3401,8 @@
   },
   {
    "id": 167,
+   "species": 167,
+   "form": null,
    "name": "spinarak",
    "displayName": "Spinarak",
    "types": [
@@ -2360,6 +3417,8 @@
   },
   {
    "id": 168,
+   "species": 168,
+   "form": null,
    "name": "ariados",
    "displayName": "Ariados",
    "types": [
@@ -2374,6 +3433,8 @@
   },
   {
    "id": 169,
+   "species": 169,
+   "form": null,
    "name": "crobat",
    "displayName": "Crobat",
    "types": [
@@ -2388,6 +3449,8 @@
   },
   {
    "id": 170,
+   "species": 170,
+   "form": null,
    "name": "chinchou",
    "displayName": "Chinchou",
    "types": [
@@ -2402,6 +3465,8 @@
   },
   {
    "id": 171,
+   "species": 171,
+   "form": null,
    "name": "lanturn",
    "displayName": "Lanturn",
    "types": [
@@ -2416,6 +3481,8 @@
   },
   {
    "id": 172,
+   "species": 172,
+   "form": null,
    "name": "pichu",
    "displayName": "Pichu",
    "types": [
@@ -2431,6 +3498,8 @@
   },
   {
    "id": 173,
+   "species": 173,
+   "form": null,
    "name": "cleffa",
    "displayName": "Cleffa",
    "types": [
@@ -2446,6 +3515,8 @@
   },
   {
    "id": 174,
+   "species": 174,
+   "form": null,
    "name": "igglybuff",
    "displayName": "Igglybuff",
    "types": [
@@ -2462,6 +3533,8 @@
   },
   {
    "id": 175,
+   "species": 175,
+   "form": null,
    "name": "togepi",
    "displayName": "Togepi",
    "types": [
@@ -2477,6 +3550,8 @@
   },
   {
    "id": 176,
+   "species": 176,
+   "form": null,
    "name": "togetic",
    "displayName": "Togetic",
    "types": [
@@ -2491,6 +3566,8 @@
   },
   {
    "id": 177,
+   "species": 177,
+   "form": null,
    "name": "natu",
    "displayName": "Natu",
    "types": [
@@ -2505,6 +3582,8 @@
   },
   {
    "id": 178,
+   "species": 178,
+   "form": null,
    "name": "xatu",
    "displayName": "Xatu",
    "types": [
@@ -2519,6 +3598,8 @@
   },
   {
    "id": 179,
+   "species": 179,
+   "form": null,
    "name": "mareep",
    "displayName": "Mareep",
    "types": [
@@ -2532,6 +3613,8 @@
   },
   {
    "id": 180,
+   "species": 180,
+   "form": null,
    "name": "flaaffy",
    "displayName": "Flaaffy",
    "types": [
@@ -2545,6 +3628,8 @@
   },
   {
    "id": 181,
+   "species": 181,
+   "form": null,
    "name": "ampharos",
    "displayName": "Ampharos",
    "types": [
@@ -2559,7 +3644,27 @@
    ]
   },
   {
+   "id": 10045,
+   "species": 181,
+   "form": "Mega",
+   "name": "ampharosmega",
+   "displayName": "Mega Ampharos",
+   "types": [
+    "electric",
+    "dragon"
+   ],
+   "gen": 2,
+   "region": "johto",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 182,
+   "species": 182,
+   "form": null,
    "name": "bellossom",
    "displayName": "Bellossom",
    "types": [
@@ -2573,6 +3678,8 @@
   },
   {
    "id": 183,
+   "species": 183,
+   "form": null,
    "name": "marill",
    "displayName": "Marill",
    "types": [
@@ -2587,6 +3694,8 @@
   },
   {
    "id": 184,
+   "species": 184,
+   "form": null,
    "name": "azumarill",
    "displayName": "Azumarill",
    "types": [
@@ -2601,6 +3710,8 @@
   },
   {
    "id": 185,
+   "species": 185,
+   "form": null,
    "name": "sudowoodo",
    "displayName": "Sudowoodo",
    "types": [
@@ -2614,6 +3725,8 @@
   },
   {
    "id": 186,
+   "species": 186,
+   "form": null,
    "name": "politoed",
    "displayName": "Politoed",
    "types": [
@@ -2627,6 +3740,8 @@
   },
   {
    "id": 187,
+   "species": 187,
+   "form": null,
    "name": "hoppip",
    "displayName": "Hoppip",
    "types": [
@@ -2641,6 +3756,8 @@
   },
   {
    "id": 188,
+   "species": 188,
+   "form": null,
    "name": "skiploom",
    "displayName": "Skiploom",
    "types": [
@@ -2655,6 +3772,8 @@
   },
   {
    "id": 189,
+   "species": 189,
+   "form": null,
    "name": "jumpluff",
    "displayName": "Jumpluff",
    "types": [
@@ -2669,6 +3788,8 @@
   },
   {
    "id": 190,
+   "species": 190,
+   "form": null,
    "name": "aipom",
    "displayName": "Aipom",
    "types": [
@@ -2682,6 +3803,8 @@
   },
   {
    "id": 191,
+   "species": 191,
+   "form": null,
    "name": "sunkern",
    "displayName": "Sunkern",
    "types": [
@@ -2695,6 +3818,8 @@
   },
   {
    "id": 192,
+   "species": 192,
+   "form": null,
    "name": "sunflora",
    "displayName": "Sunflora",
    "types": [
@@ -2708,6 +3833,8 @@
   },
   {
    "id": 193,
+   "species": 193,
+   "form": null,
    "name": "yanma",
    "displayName": "Yanma",
    "types": [
@@ -2722,6 +3849,8 @@
   },
   {
    "id": 194,
+   "species": 194,
+   "form": null,
    "name": "wooper",
    "displayName": "Wooper",
    "types": [
@@ -2735,7 +3864,25 @@
    "flags": []
   },
   {
+   "id": 10253,
+   "species": 194,
+   "form": "Paldea",
+   "name": "wooperpaldea",
+   "displayName": "Paldean Wooper",
+   "types": [
+    "poison",
+    "ground"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 195,
+   "species": 195,
+   "form": null,
    "name": "quagsire",
    "displayName": "Quagsire",
    "types": [
@@ -2750,6 +3897,8 @@
   },
   {
    "id": 196,
+   "species": 196,
+   "form": null,
    "name": "espeon",
    "displayName": "Espeon",
    "types": [
@@ -2763,6 +3912,8 @@
   },
   {
    "id": 197,
+   "species": 197,
+   "form": null,
    "name": "umbreon",
    "displayName": "Umbreon",
    "types": [
@@ -2776,6 +3927,8 @@
   },
   {
    "id": 198,
+   "species": 198,
+   "form": null,
    "name": "murkrow",
    "displayName": "Murkrow",
    "types": [
@@ -2790,6 +3943,8 @@
   },
   {
    "id": 199,
+   "species": 199,
+   "form": null,
    "name": "slowking",
    "displayName": "Slowking",
    "types": [
@@ -2803,7 +3958,25 @@
    "flags": []
   },
   {
+   "id": 10172,
+   "species": 199,
+   "form": "Galar",
+   "name": "slowkinggalar",
+   "displayName": "Galarian Slowking",
+   "types": [
+    "poison",
+    "psychic"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 200,
+   "species": 200,
+   "form": null,
    "name": "misdreavus",
    "displayName": "Misdreavus",
    "types": [
@@ -2817,6 +3990,8 @@
   },
   {
    "id": 201,
+   "species": 201,
+   "form": null,
    "name": "unown",
    "displayName": "Unown",
    "types": [
@@ -2830,6 +4005,8 @@
   },
   {
    "id": 202,
+   "species": 202,
+   "form": null,
    "name": "wobbuffet",
    "displayName": "Wobbuffet",
    "types": [
@@ -2843,6 +4020,8 @@
   },
   {
    "id": 203,
+   "species": 203,
+   "form": null,
    "name": "girafarig",
    "displayName": "Girafarig",
    "types": [
@@ -2857,6 +4036,8 @@
   },
   {
    "id": 204,
+   "species": 204,
+   "form": null,
    "name": "pineco",
    "displayName": "Pineco",
    "types": [
@@ -2870,6 +4051,8 @@
   },
   {
    "id": 205,
+   "species": 205,
+   "form": null,
    "name": "forretress",
    "displayName": "Forretress",
    "types": [
@@ -2884,6 +4067,8 @@
   },
   {
    "id": 206,
+   "species": 206,
+   "form": null,
    "name": "dunsparce",
    "displayName": "Dunsparce",
    "types": [
@@ -2897,6 +4082,8 @@
   },
   {
    "id": 207,
+   "species": 207,
+   "form": null,
    "name": "gligar",
    "displayName": "Gligar",
    "types": [
@@ -2911,6 +4098,8 @@
   },
   {
    "id": 208,
+   "species": 208,
+   "form": null,
    "name": "steelix",
    "displayName": "Steelix",
    "types": [
@@ -2927,6 +4116,8 @@
   },
   {
    "id": 209,
+   "species": 209,
+   "form": null,
    "name": "snubbull",
    "displayName": "Snubbull",
    "types": [
@@ -2940,6 +4131,8 @@
   },
   {
    "id": 210,
+   "species": 210,
+   "form": null,
    "name": "granbull",
    "displayName": "Granbull",
    "types": [
@@ -2953,6 +4146,8 @@
   },
   {
    "id": 211,
+   "species": 211,
+   "form": null,
    "name": "qwilfish",
    "displayName": "Qwilfish",
    "types": [
@@ -2966,7 +4161,25 @@
    "flags": []
   },
   {
+   "id": 10234,
+   "species": 211,
+   "form": "Hisui",
+   "name": "qwilfishhisui",
+   "displayName": "Hisuian Qwilfish",
+   "types": [
+    "dark",
+    "poison"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 212,
+   "species": 212,
+   "form": null,
    "name": "scizor",
    "displayName": "Scizor",
    "types": [
@@ -2983,6 +4196,8 @@
   },
   {
    "id": 213,
+   "species": 213,
+   "form": null,
    "name": "shuckle",
    "displayName": "Shuckle",
    "types": [
@@ -2997,6 +4212,8 @@
   },
   {
    "id": 214,
+   "species": 214,
+   "form": null,
    "name": "heracross",
    "displayName": "Heracross",
    "types": [
@@ -3013,6 +4230,8 @@
   },
   {
    "id": 215,
+   "species": 215,
+   "form": null,
    "name": "sneasel",
    "displayName": "Sneasel",
    "types": [
@@ -3026,7 +4245,25 @@
    "flags": []
   },
   {
+   "id": 10235,
+   "species": 215,
+   "form": "Hisui",
+   "name": "sneaselhisui",
+   "displayName": "Hisuian Sneasel",
+   "types": [
+    "fighting",
+    "poison"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 216,
+   "species": 216,
+   "form": null,
    "name": "teddiursa",
    "displayName": "Teddiursa",
    "types": [
@@ -3040,6 +4277,8 @@
   },
   {
    "id": 217,
+   "species": 217,
+   "form": null,
    "name": "ursaring",
    "displayName": "Ursaring",
    "types": [
@@ -3053,6 +4292,8 @@
   },
   {
    "id": 218,
+   "species": 218,
+   "form": null,
    "name": "slugma",
    "displayName": "Slugma",
    "types": [
@@ -3066,6 +4307,8 @@
   },
   {
    "id": 219,
+   "species": 219,
+   "form": null,
    "name": "magcargo",
    "displayName": "Magcargo",
    "types": [
@@ -3080,6 +4323,8 @@
   },
   {
    "id": 220,
+   "species": 220,
+   "form": null,
    "name": "swinub",
    "displayName": "Swinub",
    "types": [
@@ -3094,6 +4339,8 @@
   },
   {
    "id": 221,
+   "species": 221,
+   "form": null,
    "name": "piloswine",
    "displayName": "Piloswine",
    "types": [
@@ -3108,6 +4355,8 @@
   },
   {
    "id": 222,
+   "species": 222,
+   "form": null,
    "name": "corsola",
    "displayName": "Corsola",
    "types": [
@@ -3121,7 +4370,24 @@
    "flags": []
   },
   {
+   "id": 10173,
+   "species": 222,
+   "form": "Galar",
+   "name": "corsolagalar",
+   "displayName": "Galarian Corsola",
+   "types": [
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 223,
+   "species": 223,
+   "form": null,
    "name": "remoraid",
    "displayName": "Remoraid",
    "types": [
@@ -3135,6 +4401,8 @@
   },
   {
    "id": 224,
+   "species": 224,
+   "form": null,
    "name": "octillery",
    "displayName": "Octillery",
    "types": [
@@ -3148,6 +4416,8 @@
   },
   {
    "id": 225,
+   "species": 225,
+   "form": null,
    "name": "delibird",
    "displayName": "Delibird",
    "types": [
@@ -3162,6 +4432,8 @@
   },
   {
    "id": 226,
+   "species": 226,
+   "form": null,
    "name": "mantine",
    "displayName": "Mantine",
    "types": [
@@ -3176,6 +4448,8 @@
   },
   {
    "id": 227,
+   "species": 227,
+   "form": null,
    "name": "skarmory",
    "displayName": "Skarmory",
    "types": [
@@ -3192,6 +4466,8 @@
   },
   {
    "id": 228,
+   "species": 228,
+   "form": null,
    "name": "houndour",
    "displayName": "Houndour",
    "types": [
@@ -3206,6 +4482,8 @@
   },
   {
    "id": 229,
+   "species": 229,
+   "form": null,
    "name": "houndoom",
    "displayName": "Houndoom",
    "types": [
@@ -3222,6 +4500,8 @@
   },
   {
    "id": 230,
+   "species": 230,
+   "form": null,
    "name": "kingdra",
    "displayName": "Kingdra",
    "types": [
@@ -3236,6 +4516,8 @@
   },
   {
    "id": 231,
+   "species": 231,
+   "form": null,
    "name": "phanpy",
    "displayName": "Phanpy",
    "types": [
@@ -3249,6 +4531,8 @@
   },
   {
    "id": 232,
+   "species": 232,
+   "form": null,
    "name": "donphan",
    "displayName": "Donphan",
    "types": [
@@ -3262,6 +4546,8 @@
   },
   {
    "id": 233,
+   "species": 233,
+   "form": null,
    "name": "porygon2",
    "displayName": "Porygon2",
    "types": [
@@ -3275,6 +4561,8 @@
   },
   {
    "id": 234,
+   "species": 234,
+   "form": null,
    "name": "stantler",
    "displayName": "Stantler",
    "types": [
@@ -3288,6 +4576,8 @@
   },
   {
    "id": 235,
+   "species": 235,
+   "form": null,
    "name": "smeargle",
    "displayName": "Smeargle",
    "types": [
@@ -3301,6 +4591,8 @@
   },
   {
    "id": 236,
+   "species": 236,
+   "form": null,
    "name": "tyrogue",
    "displayName": "Tyrogue",
    "types": [
@@ -3316,6 +4608,8 @@
   },
   {
    "id": 237,
+   "species": 237,
+   "form": null,
    "name": "hitmontop",
    "displayName": "Hitmontop",
    "types": [
@@ -3329,6 +4623,8 @@
   },
   {
    "id": 238,
+   "species": 238,
+   "form": null,
    "name": "smoochum",
    "displayName": "Smoochum",
    "types": [
@@ -3345,6 +4641,8 @@
   },
   {
    "id": 239,
+   "species": 239,
+   "form": null,
    "name": "elekid",
    "displayName": "Elekid",
    "types": [
@@ -3360,6 +4658,8 @@
   },
   {
    "id": 240,
+   "species": 240,
+   "form": null,
    "name": "magby",
    "displayName": "Magby",
    "types": [
@@ -3375,6 +4675,8 @@
   },
   {
    "id": 241,
+   "species": 241,
+   "form": null,
    "name": "miltank",
    "displayName": "Miltank",
    "types": [
@@ -3388,6 +4690,8 @@
   },
   {
    "id": 242,
+   "species": 242,
+   "form": null,
    "name": "blissey",
    "displayName": "Blissey",
    "types": [
@@ -3401,6 +4705,8 @@
   },
   {
    "id": 243,
+   "species": 243,
+   "form": null,
    "name": "raikou",
    "displayName": "Raikou",
    "types": [
@@ -3416,6 +4722,8 @@
   },
   {
    "id": 244,
+   "species": 244,
+   "form": null,
    "name": "entei",
    "displayName": "Entei",
    "types": [
@@ -3431,6 +4739,8 @@
   },
   {
    "id": 245,
+   "species": 245,
+   "form": null,
    "name": "suicune",
    "displayName": "Suicune",
    "types": [
@@ -3446,6 +4756,8 @@
   },
   {
    "id": 246,
+   "species": 246,
+   "form": null,
    "name": "larvitar",
    "displayName": "Larvitar",
    "types": [
@@ -3460,6 +4772,8 @@
   },
   {
    "id": 247,
+   "species": 247,
+   "form": null,
    "name": "pupitar",
    "displayName": "Pupitar",
    "types": [
@@ -3474,6 +4788,8 @@
   },
   {
    "id": 248,
+   "species": 248,
+   "form": null,
    "name": "tyranitar",
    "displayName": "Tyranitar",
    "types": [
@@ -3490,6 +4806,8 @@
   },
   {
    "id": 249,
+   "species": 249,
+   "form": null,
    "name": "lugia",
    "displayName": "Lugia",
    "types": [
@@ -3506,6 +4824,8 @@
   },
   {
    "id": 250,
+   "species": 250,
+   "form": null,
    "name": "hooh",
    "displayName": "Ho-Oh",
    "types": [
@@ -3522,6 +4842,8 @@
   },
   {
    "id": 251,
+   "species": 251,
+   "form": null,
    "name": "celebi",
    "displayName": "Celebi",
    "types": [
@@ -3538,6 +4860,8 @@
   },
   {
    "id": 252,
+   "species": 252,
+   "form": null,
    "name": "treecko",
    "displayName": "Treecko",
    "types": [
@@ -3553,6 +4877,8 @@
   },
   {
    "id": 253,
+   "species": 253,
+   "form": null,
    "name": "grovyle",
    "displayName": "Grovyle",
    "types": [
@@ -3568,6 +4894,8 @@
   },
   {
    "id": 254,
+   "species": 254,
+   "form": null,
    "name": "sceptile",
    "displayName": "Sceptile",
    "types": [
@@ -3583,7 +4911,28 @@
    ]
   },
   {
+   "id": 10065,
+   "species": 254,
+   "form": "Mega",
+   "name": "sceptilemega",
+   "displayName": "Mega Sceptile",
+   "types": [
+    "grass",
+    "dragon"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter",
+    "mega"
+   ]
+  },
+  {
    "id": 255,
+   "species": 255,
+   "form": null,
    "name": "torchic",
    "displayName": "Torchic",
    "types": [
@@ -3599,6 +4948,8 @@
   },
   {
    "id": 256,
+   "species": 256,
+   "form": null,
    "name": "combusken",
    "displayName": "Combusken",
    "types": [
@@ -3615,6 +4966,8 @@
   },
   {
    "id": 257,
+   "species": 257,
+   "form": null,
    "name": "blaziken",
    "displayName": "Blaziken",
    "types": [
@@ -3632,6 +4985,8 @@
   },
   {
    "id": 258,
+   "species": 258,
+   "form": null,
    "name": "mudkip",
    "displayName": "Mudkip",
    "types": [
@@ -3647,6 +5002,8 @@
   },
   {
    "id": 259,
+   "species": 259,
+   "form": null,
    "name": "marshtomp",
    "displayName": "Marshtomp",
    "types": [
@@ -3663,6 +5020,8 @@
   },
   {
    "id": 260,
+   "species": 260,
+   "form": null,
    "name": "swampert",
    "displayName": "Swampert",
    "types": [
@@ -3680,6 +5039,8 @@
   },
   {
    "id": 261,
+   "species": 261,
+   "form": null,
    "name": "poochyena",
    "displayName": "Poochyena",
    "types": [
@@ -3693,6 +5054,8 @@
   },
   {
    "id": 262,
+   "species": 262,
+   "form": null,
    "name": "mightyena",
    "displayName": "Mightyena",
    "types": [
@@ -3706,6 +5069,8 @@
   },
   {
    "id": 263,
+   "species": 263,
+   "form": null,
    "name": "zigzagoon",
    "displayName": "Zigzagoon",
    "types": [
@@ -3718,7 +5083,25 @@
    "flags": []
   },
   {
+   "id": 10174,
+   "species": 263,
+   "form": "Galar",
+   "name": "zigzagoongalar",
+   "displayName": "Galarian Zigzagoon",
+   "types": [
+    "dark",
+    "normal"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 264,
+   "species": 264,
+   "form": null,
    "name": "linoone",
    "displayName": "Linoone",
    "types": [
@@ -3731,7 +5114,25 @@
    "flags": []
   },
   {
+   "id": 10175,
+   "species": 264,
+   "form": "Galar",
+   "name": "linoonegalar",
+   "displayName": "Galarian Linoone",
+   "types": [
+    "dark",
+    "normal"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "middle",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 265,
+   "species": 265,
+   "form": null,
    "name": "wurmple",
    "displayName": "Wurmple",
    "types": [
@@ -3745,6 +5146,8 @@
   },
   {
    "id": 266,
+   "species": 266,
+   "form": null,
    "name": "silcoon",
    "displayName": "Silcoon",
    "types": [
@@ -3758,6 +5161,8 @@
   },
   {
    "id": 267,
+   "species": 267,
+   "form": null,
    "name": "beautifly",
    "displayName": "Beautifly",
    "types": [
@@ -3772,6 +5177,8 @@
   },
   {
    "id": 268,
+   "species": 268,
+   "form": null,
    "name": "cascoon",
    "displayName": "Cascoon",
    "types": [
@@ -3785,6 +5192,8 @@
   },
   {
    "id": 269,
+   "species": 269,
+   "form": null,
    "name": "dustox",
    "displayName": "Dustox",
    "types": [
@@ -3799,6 +5208,8 @@
   },
   {
    "id": 270,
+   "species": 270,
+   "form": null,
    "name": "lotad",
    "displayName": "Lotad",
    "types": [
@@ -3813,6 +5224,8 @@
   },
   {
    "id": 271,
+   "species": 271,
+   "form": null,
    "name": "lombre",
    "displayName": "Lombre",
    "types": [
@@ -3827,6 +5240,8 @@
   },
   {
    "id": 272,
+   "species": 272,
+   "form": null,
    "name": "ludicolo",
    "displayName": "Ludicolo",
    "types": [
@@ -3841,6 +5256,8 @@
   },
   {
    "id": 273,
+   "species": 273,
+   "form": null,
    "name": "seedot",
    "displayName": "Seedot",
    "types": [
@@ -3854,6 +5271,8 @@
   },
   {
    "id": 274,
+   "species": 274,
+   "form": null,
    "name": "nuzleaf",
    "displayName": "Nuzleaf",
    "types": [
@@ -3868,6 +5287,8 @@
   },
   {
    "id": 275,
+   "species": 275,
+   "form": null,
    "name": "shiftry",
    "displayName": "Shiftry",
    "types": [
@@ -3882,6 +5303,8 @@
   },
   {
    "id": 276,
+   "species": 276,
+   "form": null,
    "name": "taillow",
    "displayName": "Taillow",
    "types": [
@@ -3896,6 +5319,8 @@
   },
   {
    "id": 277,
+   "species": 277,
+   "form": null,
    "name": "swellow",
    "displayName": "Swellow",
    "types": [
@@ -3910,6 +5335,8 @@
   },
   {
    "id": 278,
+   "species": 278,
+   "form": null,
    "name": "wingull",
    "displayName": "Wingull",
    "types": [
@@ -3924,6 +5351,8 @@
   },
   {
    "id": 279,
+   "species": 279,
+   "form": null,
    "name": "pelipper",
    "displayName": "Pelipper",
    "types": [
@@ -3938,6 +5367,8 @@
   },
   {
    "id": 280,
+   "species": 280,
+   "form": null,
    "name": "ralts",
    "displayName": "Ralts",
    "types": [
@@ -3952,6 +5383,8 @@
   },
   {
    "id": 281,
+   "species": 281,
+   "form": null,
    "name": "kirlia",
    "displayName": "Kirlia",
    "types": [
@@ -3966,6 +5399,8 @@
   },
   {
    "id": 282,
+   "species": 282,
+   "form": null,
    "name": "gardevoir",
    "displayName": "Gardevoir",
    "types": [
@@ -3982,6 +5417,8 @@
   },
   {
    "id": 283,
+   "species": 283,
+   "form": null,
    "name": "surskit",
    "displayName": "Surskit",
    "types": [
@@ -3996,6 +5433,8 @@
   },
   {
    "id": 284,
+   "species": 284,
+   "form": null,
    "name": "masquerain",
    "displayName": "Masquerain",
    "types": [
@@ -4010,6 +5449,8 @@
   },
   {
    "id": 285,
+   "species": 285,
+   "form": null,
    "name": "shroomish",
    "displayName": "Shroomish",
    "types": [
@@ -4023,6 +5464,8 @@
   },
   {
    "id": 286,
+   "species": 286,
+   "form": null,
    "name": "breloom",
    "displayName": "Breloom",
    "types": [
@@ -4037,6 +5480,8 @@
   },
   {
    "id": 287,
+   "species": 287,
+   "form": null,
    "name": "slakoth",
    "displayName": "Slakoth",
    "types": [
@@ -4050,6 +5495,8 @@
   },
   {
    "id": 288,
+   "species": 288,
+   "form": null,
    "name": "vigoroth",
    "displayName": "Vigoroth",
    "types": [
@@ -4063,6 +5510,8 @@
   },
   {
    "id": 289,
+   "species": 289,
+   "form": null,
    "name": "slaking",
    "displayName": "Slaking",
    "types": [
@@ -4076,6 +5525,8 @@
   },
   {
    "id": 290,
+   "species": 290,
+   "form": null,
    "name": "nincada",
    "displayName": "Nincada",
    "types": [
@@ -4090,6 +5541,8 @@
   },
   {
    "id": 291,
+   "species": 291,
+   "form": null,
    "name": "ninjask",
    "displayName": "Ninjask",
    "types": [
@@ -4104,6 +5557,8 @@
   },
   {
    "id": 292,
+   "species": 292,
+   "form": null,
    "name": "shedinja",
    "displayName": "Shedinja",
    "types": [
@@ -4118,6 +5573,8 @@
   },
   {
    "id": 293,
+   "species": 293,
+   "form": null,
    "name": "whismur",
    "displayName": "Whismur",
    "types": [
@@ -4131,6 +5588,8 @@
   },
   {
    "id": 294,
+   "species": 294,
+   "form": null,
    "name": "loudred",
    "displayName": "Loudred",
    "types": [
@@ -4144,6 +5603,8 @@
   },
   {
    "id": 295,
+   "species": 295,
+   "form": null,
    "name": "exploud",
    "displayName": "Exploud",
    "types": [
@@ -4157,6 +5618,8 @@
   },
   {
    "id": 296,
+   "species": 296,
+   "form": null,
    "name": "makuhita",
    "displayName": "Makuhita",
    "types": [
@@ -4170,6 +5633,8 @@
   },
   {
    "id": 297,
+   "species": 297,
+   "form": null,
    "name": "hariyama",
    "displayName": "Hariyama",
    "types": [
@@ -4183,6 +5648,8 @@
   },
   {
    "id": 298,
+   "species": 298,
+   "form": null,
    "name": "azurill",
    "displayName": "Azurill",
    "types": [
@@ -4199,6 +5666,8 @@
   },
   {
    "id": 299,
+   "species": 299,
+   "form": null,
    "name": "nosepass",
    "displayName": "Nosepass",
    "types": [
@@ -4212,6 +5681,8 @@
   },
   {
    "id": 300,
+   "species": 300,
+   "form": null,
    "name": "skitty",
    "displayName": "Skitty",
    "types": [
@@ -4225,6 +5696,8 @@
   },
   {
    "id": 301,
+   "species": 301,
+   "form": null,
    "name": "delcatty",
    "displayName": "Delcatty",
    "types": [
@@ -4238,6 +5711,8 @@
   },
   {
    "id": 302,
+   "species": 302,
+   "form": null,
    "name": "sableye",
    "displayName": "Sableye",
    "types": [
@@ -4254,6 +5729,8 @@
   },
   {
    "id": 303,
+   "species": 303,
+   "form": null,
    "name": "mawile",
    "displayName": "Mawile",
    "types": [
@@ -4270,6 +5747,8 @@
   },
   {
    "id": 304,
+   "species": 304,
+   "form": null,
    "name": "aron",
    "displayName": "Aron",
    "types": [
@@ -4284,6 +5763,8 @@
   },
   {
    "id": 305,
+   "species": 305,
+   "form": null,
    "name": "lairon",
    "displayName": "Lairon",
    "types": [
@@ -4298,6 +5779,8 @@
   },
   {
    "id": 306,
+   "species": 306,
+   "form": null,
    "name": "aggron",
    "displayName": "Aggron",
    "types": [
@@ -4313,7 +5796,26 @@
    ]
   },
   {
+   "id": 10053,
+   "species": 306,
+   "form": "Mega",
+   "name": "aggronmega",
+   "displayName": "Mega Aggron",
+   "types": [
+    "steel"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 307,
+   "species": 307,
+   "form": null,
    "name": "meditite",
    "displayName": "Meditite",
    "types": [
@@ -4328,6 +5830,8 @@
   },
   {
    "id": 308,
+   "species": 308,
+   "form": null,
    "name": "medicham",
    "displayName": "Medicham",
    "types": [
@@ -4344,6 +5848,8 @@
   },
   {
    "id": 309,
+   "species": 309,
+   "form": null,
    "name": "electrike",
    "displayName": "Electrike",
    "types": [
@@ -4357,6 +5863,8 @@
   },
   {
    "id": 310,
+   "species": 310,
+   "form": null,
    "name": "manectric",
    "displayName": "Manectric",
    "types": [
@@ -4372,6 +5880,8 @@
   },
   {
    "id": 311,
+   "species": 311,
+   "form": null,
    "name": "plusle",
    "displayName": "Plusle",
    "types": [
@@ -4385,6 +5895,8 @@
   },
   {
    "id": 312,
+   "species": 312,
+   "form": null,
    "name": "minun",
    "displayName": "Minun",
    "types": [
@@ -4398,6 +5910,8 @@
   },
   {
    "id": 313,
+   "species": 313,
+   "form": null,
    "name": "volbeat",
    "displayName": "Volbeat",
    "types": [
@@ -4411,6 +5925,8 @@
   },
   {
    "id": 314,
+   "species": 314,
+   "form": null,
    "name": "illumise",
    "displayName": "Illumise",
    "types": [
@@ -4424,6 +5940,8 @@
   },
   {
    "id": 315,
+   "species": 315,
+   "form": null,
    "name": "roselia",
    "displayName": "Roselia",
    "types": [
@@ -4438,6 +5956,8 @@
   },
   {
    "id": 316,
+   "species": 316,
+   "form": null,
    "name": "gulpin",
    "displayName": "Gulpin",
    "types": [
@@ -4451,6 +5971,8 @@
   },
   {
    "id": 317,
+   "species": 317,
+   "form": null,
    "name": "swalot",
    "displayName": "Swalot",
    "types": [
@@ -4464,6 +5986,8 @@
   },
   {
    "id": 318,
+   "species": 318,
+   "form": null,
    "name": "carvanha",
    "displayName": "Carvanha",
    "types": [
@@ -4478,6 +6002,8 @@
   },
   {
    "id": 319,
+   "species": 319,
+   "form": null,
    "name": "sharpedo",
    "displayName": "Sharpedo",
    "types": [
@@ -4494,6 +6020,8 @@
   },
   {
    "id": 320,
+   "species": 320,
+   "form": null,
    "name": "wailmer",
    "displayName": "Wailmer",
    "types": [
@@ -4507,6 +6035,8 @@
   },
   {
    "id": 321,
+   "species": 321,
+   "form": null,
    "name": "wailord",
    "displayName": "Wailord",
    "types": [
@@ -4520,6 +6050,8 @@
   },
   {
    "id": 322,
+   "species": 322,
+   "form": null,
    "name": "numel",
    "displayName": "Numel",
    "types": [
@@ -4534,6 +6066,8 @@
   },
   {
    "id": 323,
+   "species": 323,
+   "form": null,
    "name": "camerupt",
    "displayName": "Camerupt",
    "types": [
@@ -4550,6 +6084,8 @@
   },
   {
    "id": 324,
+   "species": 324,
+   "form": null,
    "name": "torkoal",
    "displayName": "Torkoal",
    "types": [
@@ -4563,6 +6099,8 @@
   },
   {
    "id": 325,
+   "species": 325,
+   "form": null,
    "name": "spoink",
    "displayName": "Spoink",
    "types": [
@@ -4576,6 +6114,8 @@
   },
   {
    "id": 326,
+   "species": 326,
+   "form": null,
    "name": "grumpig",
    "displayName": "Grumpig",
    "types": [
@@ -4589,6 +6129,8 @@
   },
   {
    "id": 327,
+   "species": 327,
+   "form": null,
    "name": "spinda",
    "displayName": "Spinda",
    "types": [
@@ -4602,6 +6144,8 @@
   },
   {
    "id": 328,
+   "species": 328,
+   "form": null,
    "name": "trapinch",
    "displayName": "Trapinch",
    "types": [
@@ -4615,6 +6159,8 @@
   },
   {
    "id": 329,
+   "species": 329,
+   "form": null,
    "name": "vibrava",
    "displayName": "Vibrava",
    "types": [
@@ -4629,6 +6175,8 @@
   },
   {
    "id": 330,
+   "species": 330,
+   "form": null,
    "name": "flygon",
    "displayName": "Flygon",
    "types": [
@@ -4643,6 +6191,8 @@
   },
   {
    "id": 331,
+   "species": 331,
+   "form": null,
    "name": "cacnea",
    "displayName": "Cacnea",
    "types": [
@@ -4656,6 +6206,8 @@
   },
   {
    "id": 332,
+   "species": 332,
+   "form": null,
    "name": "cacturne",
    "displayName": "Cacturne",
    "types": [
@@ -4670,6 +6222,8 @@
   },
   {
    "id": 333,
+   "species": 333,
+   "form": null,
    "name": "swablu",
    "displayName": "Swablu",
    "types": [
@@ -4684,6 +6238,8 @@
   },
   {
    "id": 334,
+   "species": 334,
+   "form": null,
    "name": "altaria",
    "displayName": "Altaria",
    "types": [
@@ -4699,7 +6255,27 @@
    ]
   },
   {
+   "id": 10067,
+   "species": 334,
+   "form": "Mega",
+   "name": "altariamega",
+   "displayName": "Mega Altaria",
+   "types": [
+    "dragon",
+    "fairy"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 335,
+   "species": 335,
+   "form": null,
    "name": "zangoose",
    "displayName": "Zangoose",
    "types": [
@@ -4713,6 +6289,8 @@
   },
   {
    "id": 336,
+   "species": 336,
+   "form": null,
    "name": "seviper",
    "displayName": "Seviper",
    "types": [
@@ -4726,6 +6304,8 @@
   },
   {
    "id": 337,
+   "species": 337,
+   "form": null,
    "name": "lunatone",
    "displayName": "Lunatone",
    "types": [
@@ -4740,6 +6320,8 @@
   },
   {
    "id": 338,
+   "species": 338,
+   "form": null,
    "name": "solrock",
    "displayName": "Solrock",
    "types": [
@@ -4754,6 +6336,8 @@
   },
   {
    "id": 339,
+   "species": 339,
+   "form": null,
    "name": "barboach",
    "displayName": "Barboach",
    "types": [
@@ -4768,6 +6352,8 @@
   },
   {
    "id": 340,
+   "species": 340,
+   "form": null,
    "name": "whiscash",
    "displayName": "Whiscash",
    "types": [
@@ -4782,6 +6368,8 @@
   },
   {
    "id": 341,
+   "species": 341,
+   "form": null,
    "name": "corphish",
    "displayName": "Corphish",
    "types": [
@@ -4795,6 +6383,8 @@
   },
   {
    "id": 342,
+   "species": 342,
+   "form": null,
    "name": "crawdaunt",
    "displayName": "Crawdaunt",
    "types": [
@@ -4809,6 +6399,8 @@
   },
   {
    "id": 343,
+   "species": 343,
+   "form": null,
    "name": "baltoy",
    "displayName": "Baltoy",
    "types": [
@@ -4823,6 +6415,8 @@
   },
   {
    "id": 344,
+   "species": 344,
+   "form": null,
    "name": "claydol",
    "displayName": "Claydol",
    "types": [
@@ -4837,6 +6431,8 @@
   },
   {
    "id": 345,
+   "species": 345,
+   "form": null,
    "name": "lileep",
    "displayName": "Lileep",
    "types": [
@@ -4853,6 +6449,8 @@
   },
   {
    "id": 346,
+   "species": 346,
+   "form": null,
    "name": "cradily",
    "displayName": "Cradily",
    "types": [
@@ -4869,6 +6467,8 @@
   },
   {
    "id": 347,
+   "species": 347,
+   "form": null,
    "name": "anorith",
    "displayName": "Anorith",
    "types": [
@@ -4885,6 +6485,8 @@
   },
   {
    "id": 348,
+   "species": 348,
+   "form": null,
    "name": "armaldo",
    "displayName": "Armaldo",
    "types": [
@@ -4901,6 +6503,8 @@
   },
   {
    "id": 349,
+   "species": 349,
+   "form": null,
    "name": "feebas",
    "displayName": "Feebas",
    "types": [
@@ -4914,6 +6518,8 @@
   },
   {
    "id": 350,
+   "species": 350,
+   "form": null,
    "name": "milotic",
    "displayName": "Milotic",
    "types": [
@@ -4927,6 +6533,8 @@
   },
   {
    "id": 351,
+   "species": 351,
+   "form": null,
    "name": "castform",
    "displayName": "Castform",
    "types": [
@@ -4939,7 +6547,54 @@
    "flags": []
   },
   {
+   "id": 10013,
+   "species": 351,
+   "form": "Sunny",
+   "name": "castformsunny",
+   "displayName": "Castform (Sunny)",
+   "types": [
+    "fire"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10014,
+   "species": 351,
+   "form": "Rainy",
+   "name": "castformrainy",
+   "displayName": "Castform (Rainy)",
+   "types": [
+    "water"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10015,
+   "species": 351,
+   "form": "Snowy",
+   "name": "castformsnowy",
+   "displayName": "Castform (Snowy)",
+   "types": [
+    "ice"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 352,
+   "species": 352,
+   "form": null,
    "name": "kecleon",
    "displayName": "Kecleon",
    "types": [
@@ -4953,6 +6608,8 @@
   },
   {
    "id": 353,
+   "species": 353,
+   "form": null,
    "name": "shuppet",
    "displayName": "Shuppet",
    "types": [
@@ -4966,6 +6623,8 @@
   },
   {
    "id": 354,
+   "species": 354,
+   "form": null,
    "name": "banette",
    "displayName": "Banette",
    "types": [
@@ -4981,6 +6640,8 @@
   },
   {
    "id": 355,
+   "species": 355,
+   "form": null,
    "name": "duskull",
    "displayName": "Duskull",
    "types": [
@@ -4994,6 +6655,8 @@
   },
   {
    "id": 356,
+   "species": 356,
+   "form": null,
    "name": "dusclops",
    "displayName": "Dusclops",
    "types": [
@@ -5007,6 +6670,8 @@
   },
   {
    "id": 357,
+   "species": 357,
+   "form": null,
    "name": "tropius",
    "displayName": "Tropius",
    "types": [
@@ -5021,6 +6686,8 @@
   },
   {
    "id": 358,
+   "species": 358,
+   "form": null,
    "name": "chimecho",
    "displayName": "Chimecho",
    "types": [
@@ -5035,7 +6702,27 @@
    ]
   },
   {
+   "id": 10306,
+   "species": 358,
+   "form": "Mega",
+   "name": "chimechomega",
+   "displayName": "Mega Chimecho",
+   "types": [
+    "psychic",
+    "steel"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "final",
+   "evoMethod": "friendship",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 359,
+   "species": 359,
+   "form": null,
    "name": "absol",
    "displayName": "Absol",
    "types": [
@@ -5050,7 +6737,27 @@
    ]
   },
   {
+   "id": 10307,
+   "species": 359,
+   "form": "Mega-Z",
+   "name": "absolmegaz",
+   "displayName": "Mega Absol Z",
+   "types": [
+    "dark",
+    "ghost"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 360,
+   "species": 360,
+   "form": null,
    "name": "wynaut",
    "displayName": "Wynaut",
    "types": [
@@ -5066,6 +6773,8 @@
   },
   {
    "id": 361,
+   "species": 361,
+   "form": null,
    "name": "snorunt",
    "displayName": "Snorunt",
    "types": [
@@ -5079,6 +6788,8 @@
   },
   {
    "id": 362,
+   "species": 362,
+   "form": null,
    "name": "glalie",
    "displayName": "Glalie",
    "types": [
@@ -5094,6 +6805,8 @@
   },
   {
    "id": 363,
+   "species": 363,
+   "form": null,
    "name": "spheal",
    "displayName": "Spheal",
    "types": [
@@ -5108,6 +6821,8 @@
   },
   {
    "id": 364,
+   "species": 364,
+   "form": null,
    "name": "sealeo",
    "displayName": "Sealeo",
    "types": [
@@ -5122,6 +6837,8 @@
   },
   {
    "id": 365,
+   "species": 365,
+   "form": null,
    "name": "walrein",
    "displayName": "Walrein",
    "types": [
@@ -5136,6 +6853,8 @@
   },
   {
    "id": 366,
+   "species": 366,
+   "form": null,
    "name": "clamperl",
    "displayName": "Clamperl",
    "types": [
@@ -5149,6 +6868,8 @@
   },
   {
    "id": 367,
+   "species": 367,
+   "form": null,
    "name": "huntail",
    "displayName": "Huntail",
    "types": [
@@ -5162,6 +6883,8 @@
   },
   {
    "id": 368,
+   "species": 368,
+   "form": null,
    "name": "gorebyss",
    "displayName": "Gorebyss",
    "types": [
@@ -5175,6 +6898,8 @@
   },
   {
    "id": 369,
+   "species": 369,
+   "form": null,
    "name": "relicanth",
    "displayName": "Relicanth",
    "types": [
@@ -5189,6 +6914,8 @@
   },
   {
    "id": 370,
+   "species": 370,
+   "form": null,
    "name": "luvdisc",
    "displayName": "Luvdisc",
    "types": [
@@ -5202,6 +6929,8 @@
   },
   {
    "id": 371,
+   "species": 371,
+   "form": null,
    "name": "bagon",
    "displayName": "Bagon",
    "types": [
@@ -5215,6 +6944,8 @@
   },
   {
    "id": 372,
+   "species": 372,
+   "form": null,
    "name": "shelgon",
    "displayName": "Shelgon",
    "types": [
@@ -5228,6 +6959,8 @@
   },
   {
    "id": 373,
+   "species": 373,
+   "form": null,
    "name": "salamence",
    "displayName": "Salamence",
    "types": [
@@ -5244,6 +6977,8 @@
   },
   {
    "id": 374,
+   "species": 374,
+   "form": null,
    "name": "beldum",
    "displayName": "Beldum",
    "types": [
@@ -5258,6 +6993,8 @@
   },
   {
    "id": 375,
+   "species": 375,
+   "form": null,
    "name": "metang",
    "displayName": "Metang",
    "types": [
@@ -5272,6 +7009,8 @@
   },
   {
    "id": 376,
+   "species": 376,
+   "form": null,
    "name": "metagross",
    "displayName": "Metagross",
    "types": [
@@ -5288,6 +7027,8 @@
   },
   {
    "id": 377,
+   "species": 377,
+   "form": null,
    "name": "regirock",
    "displayName": "Regirock",
    "types": [
@@ -5303,6 +7044,8 @@
   },
   {
    "id": 378,
+   "species": 378,
+   "form": null,
    "name": "regice",
    "displayName": "Regice",
    "types": [
@@ -5318,6 +7061,8 @@
   },
   {
    "id": 379,
+   "species": 379,
+   "form": null,
    "name": "registeel",
    "displayName": "Registeel",
    "types": [
@@ -5333,6 +7078,8 @@
   },
   {
    "id": 380,
+   "species": 380,
+   "form": null,
    "name": "latias",
    "displayName": "Latias",
    "types": [
@@ -5350,6 +7097,8 @@
   },
   {
    "id": 381,
+   "species": 381,
+   "form": null,
    "name": "latios",
    "displayName": "Latios",
    "types": [
@@ -5367,6 +7116,8 @@
   },
   {
    "id": 382,
+   "species": 382,
+   "form": null,
    "name": "kyogre",
    "displayName": "Kyogre",
    "types": [
@@ -5382,6 +7133,8 @@
   },
   {
    "id": 383,
+   "species": 383,
+   "form": null,
    "name": "groudon",
    "displayName": "Groudon",
    "types": [
@@ -5396,7 +7149,27 @@
    ]
   },
   {
+   "id": 10078,
+   "species": 383,
+   "form": "Primal",
+   "name": "groudonprimal",
+   "displayName": "Primal Groudon",
+   "types": [
+    "ground",
+    "fire"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 384,
+   "species": 384,
+   "form": null,
    "name": "rayquaza",
    "displayName": "Rayquaza",
    "types": [
@@ -5414,6 +7187,8 @@
   },
   {
    "id": 385,
+   "species": 385,
+   "form": null,
    "name": "jirachi",
    "displayName": "Jirachi",
    "types": [
@@ -5430,6 +7205,8 @@
   },
   {
    "id": 386,
+   "species": 386,
+   "form": null,
    "name": "deoxys",
    "displayName": "Deoxys",
    "types": [
@@ -5445,6 +7222,8 @@
   },
   {
    "id": 387,
+   "species": 387,
+   "form": null,
    "name": "turtwig",
    "displayName": "Turtwig",
    "types": [
@@ -5460,6 +7239,8 @@
   },
   {
    "id": 388,
+   "species": 388,
+   "form": null,
    "name": "grotle",
    "displayName": "Grotle",
    "types": [
@@ -5475,6 +7256,8 @@
   },
   {
    "id": 389,
+   "species": 389,
+   "form": null,
    "name": "torterra",
    "displayName": "Torterra",
    "types": [
@@ -5491,6 +7274,8 @@
   },
   {
    "id": 390,
+   "species": 390,
+   "form": null,
    "name": "chimchar",
    "displayName": "Chimchar",
    "types": [
@@ -5506,6 +7291,8 @@
   },
   {
    "id": 391,
+   "species": 391,
+   "form": null,
    "name": "monferno",
    "displayName": "Monferno",
    "types": [
@@ -5522,6 +7309,8 @@
   },
   {
    "id": 392,
+   "species": 392,
+   "form": null,
    "name": "infernape",
    "displayName": "Infernape",
    "types": [
@@ -5538,6 +7327,8 @@
   },
   {
    "id": 393,
+   "species": 393,
+   "form": null,
    "name": "piplup",
    "displayName": "Piplup",
    "types": [
@@ -5553,6 +7344,8 @@
   },
   {
    "id": 394,
+   "species": 394,
+   "form": null,
    "name": "prinplup",
    "displayName": "Prinplup",
    "types": [
@@ -5568,6 +7361,8 @@
   },
   {
    "id": 395,
+   "species": 395,
+   "form": null,
    "name": "empoleon",
    "displayName": "Empoleon",
    "types": [
@@ -5584,6 +7379,8 @@
   },
   {
    "id": 396,
+   "species": 396,
+   "form": null,
    "name": "starly",
    "displayName": "Starly",
    "types": [
@@ -5598,6 +7395,8 @@
   },
   {
    "id": 397,
+   "species": 397,
+   "form": null,
    "name": "staravia",
    "displayName": "Staravia",
    "types": [
@@ -5612,6 +7411,8 @@
   },
   {
    "id": 398,
+   "species": 398,
+   "form": null,
    "name": "staraptor",
    "displayName": "Staraptor",
    "types": [
@@ -5627,7 +7428,27 @@
    ]
   },
   {
+   "id": 10308,
+   "species": 398,
+   "form": "Mega",
+   "name": "staraptormega",
+   "displayName": "Mega Staraptor",
+   "types": [
+    "fighting",
+    "flying"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 399,
+   "species": 399,
+   "form": null,
    "name": "bidoof",
    "displayName": "Bidoof",
    "types": [
@@ -5641,6 +7462,8 @@
   },
   {
    "id": 400,
+   "species": 400,
+   "form": null,
    "name": "bibarel",
    "displayName": "Bibarel",
    "types": [
@@ -5655,6 +7478,8 @@
   },
   {
    "id": 401,
+   "species": 401,
+   "form": null,
    "name": "kricketot",
    "displayName": "Kricketot",
    "types": [
@@ -5668,6 +7493,8 @@
   },
   {
    "id": 402,
+   "species": 402,
+   "form": null,
    "name": "kricketune",
    "displayName": "Kricketune",
    "types": [
@@ -5681,6 +7508,8 @@
   },
   {
    "id": 403,
+   "species": 403,
+   "form": null,
    "name": "shinx",
    "displayName": "Shinx",
    "types": [
@@ -5694,6 +7523,8 @@
   },
   {
    "id": 404,
+   "species": 404,
+   "form": null,
    "name": "luxio",
    "displayName": "Luxio",
    "types": [
@@ -5707,6 +7538,8 @@
   },
   {
    "id": 405,
+   "species": 405,
+   "form": null,
    "name": "luxray",
    "displayName": "Luxray",
    "types": [
@@ -5720,6 +7553,8 @@
   },
   {
    "id": 406,
+   "species": 406,
+   "form": null,
    "name": "budew",
    "displayName": "Budew",
    "types": [
@@ -5736,6 +7571,8 @@
   },
   {
    "id": 407,
+   "species": 407,
+   "form": null,
    "name": "roserade",
    "displayName": "Roserade",
    "types": [
@@ -5750,6 +7587,8 @@
   },
   {
    "id": 408,
+   "species": 408,
+   "form": null,
    "name": "cranidos",
    "displayName": "Cranidos",
    "types": [
@@ -5765,6 +7604,8 @@
   },
   {
    "id": 409,
+   "species": 409,
+   "form": null,
    "name": "rampardos",
    "displayName": "Rampardos",
    "types": [
@@ -5780,6 +7621,8 @@
   },
   {
    "id": 410,
+   "species": 410,
+   "form": null,
    "name": "shieldon",
    "displayName": "Shieldon",
    "types": [
@@ -5796,6 +7639,8 @@
   },
   {
    "id": 411,
+   "species": 411,
+   "form": null,
    "name": "bastiodon",
    "displayName": "Bastiodon",
    "types": [
@@ -5812,6 +7657,8 @@
   },
   {
    "id": 412,
+   "species": 412,
+   "form": null,
    "name": "burmy",
    "displayName": "Burmy",
    "types": [
@@ -5825,6 +7672,8 @@
   },
   {
    "id": 413,
+   "species": 413,
+   "form": null,
    "name": "wormadam",
    "displayName": "Wormadam",
    "types": [
@@ -5838,7 +7687,41 @@
    "flags": []
   },
   {
+   "id": 10004,
+   "species": 413,
+   "form": "Sandy",
+   "name": "wormadamsandy",
+   "displayName": "Wormadam (Sandy)",
+   "types": [
+    "bug",
+    "ground"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
+   "id": 10005,
+   "species": 413,
+   "form": "Trash",
+   "name": "wormadamtrash",
+   "displayName": "Wormadam (Trash)",
+   "types": [
+    "bug",
+    "steel"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 414,
+   "species": 414,
+   "form": null,
    "name": "mothim",
    "displayName": "Mothim",
    "types": [
@@ -5853,6 +7736,8 @@
   },
   {
    "id": 415,
+   "species": 415,
+   "form": null,
    "name": "combee",
    "displayName": "Combee",
    "types": [
@@ -5867,6 +7752,8 @@
   },
   {
    "id": 416,
+   "species": 416,
+   "form": null,
    "name": "vespiquen",
    "displayName": "Vespiquen",
    "types": [
@@ -5881,6 +7768,8 @@
   },
   {
    "id": 417,
+   "species": 417,
+   "form": null,
    "name": "pachirisu",
    "displayName": "Pachirisu",
    "types": [
@@ -5894,6 +7783,8 @@
   },
   {
    "id": 418,
+   "species": 418,
+   "form": null,
    "name": "buizel",
    "displayName": "Buizel",
    "types": [
@@ -5907,6 +7798,8 @@
   },
   {
    "id": 419,
+   "species": 419,
+   "form": null,
    "name": "floatzel",
    "displayName": "Floatzel",
    "types": [
@@ -5920,6 +7813,8 @@
   },
   {
    "id": 420,
+   "species": 420,
+   "form": null,
    "name": "cherubi",
    "displayName": "Cherubi",
    "types": [
@@ -5933,6 +7828,8 @@
   },
   {
    "id": 421,
+   "species": 421,
+   "form": null,
    "name": "cherrim",
    "displayName": "Cherrim",
    "types": [
@@ -5946,6 +7843,8 @@
   },
   {
    "id": 422,
+   "species": 422,
+   "form": null,
    "name": "shellos",
    "displayName": "Shellos",
    "types": [
@@ -5959,6 +7858,8 @@
   },
   {
    "id": 423,
+   "species": 423,
+   "form": null,
    "name": "gastrodon",
    "displayName": "Gastrodon",
    "types": [
@@ -5973,6 +7874,8 @@
   },
   {
    "id": 424,
+   "species": 424,
+   "form": null,
    "name": "ambipom",
    "displayName": "Ambipom",
    "types": [
@@ -5986,6 +7889,8 @@
   },
   {
    "id": 425,
+   "species": 425,
+   "form": null,
    "name": "drifloon",
    "displayName": "Drifloon",
    "types": [
@@ -6000,6 +7905,8 @@
   },
   {
    "id": 426,
+   "species": 426,
+   "form": null,
    "name": "drifblim",
    "displayName": "Drifblim",
    "types": [
@@ -6014,6 +7921,8 @@
   },
   {
    "id": 427,
+   "species": 427,
+   "form": null,
    "name": "buneary",
    "displayName": "Buneary",
    "types": [
@@ -6027,6 +7936,8 @@
   },
   {
    "id": 428,
+   "species": 428,
+   "form": null,
    "name": "lopunny",
    "displayName": "Lopunny",
    "types": [
@@ -6041,7 +7952,27 @@
    ]
   },
   {
+   "id": 10088,
+   "species": 428,
+   "form": "Mega",
+   "name": "lopunnymega",
+   "displayName": "Mega Lopunny",
+   "types": [
+    "normal",
+    "fighting"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "final",
+   "evoMethod": "friendship",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 429,
+   "species": 429,
+   "form": null,
    "name": "mismagius",
    "displayName": "Mismagius",
    "types": [
@@ -6055,6 +7986,8 @@
   },
   {
    "id": 430,
+   "species": 430,
+   "form": null,
    "name": "honchkrow",
    "displayName": "Honchkrow",
    "types": [
@@ -6069,6 +8002,8 @@
   },
   {
    "id": 431,
+   "species": 431,
+   "form": null,
    "name": "glameow",
    "displayName": "Glameow",
    "types": [
@@ -6082,6 +8017,8 @@
   },
   {
    "id": 432,
+   "species": 432,
+   "form": null,
    "name": "purugly",
    "displayName": "Purugly",
    "types": [
@@ -6095,6 +8032,8 @@
   },
   {
    "id": 433,
+   "species": 433,
+   "form": null,
    "name": "chingling",
    "displayName": "Chingling",
    "types": [
@@ -6110,6 +8049,8 @@
   },
   {
    "id": 434,
+   "species": 434,
+   "form": null,
    "name": "stunky",
    "displayName": "Stunky",
    "types": [
@@ -6124,6 +8065,8 @@
   },
   {
    "id": 435,
+   "species": 435,
+   "form": null,
    "name": "skuntank",
    "displayName": "Skuntank",
    "types": [
@@ -6138,6 +8081,8 @@
   },
   {
    "id": 436,
+   "species": 436,
+   "form": null,
    "name": "bronzor",
    "displayName": "Bronzor",
    "types": [
@@ -6152,6 +8097,8 @@
   },
   {
    "id": 437,
+   "species": 437,
+   "form": null,
    "name": "bronzong",
    "displayName": "Bronzong",
    "types": [
@@ -6166,6 +8113,8 @@
   },
   {
    "id": 438,
+   "species": 438,
+   "form": null,
    "name": "bonsly",
    "displayName": "Bonsly",
    "types": [
@@ -6181,6 +8130,8 @@
   },
   {
    "id": 439,
+   "species": 439,
+   "form": null,
    "name": "mimejr",
    "displayName": "Mime Jr.",
    "types": [
@@ -6197,6 +8148,8 @@
   },
   {
    "id": 440,
+   "species": 440,
+   "form": null,
    "name": "happiny",
    "displayName": "Happiny",
    "types": [
@@ -6212,6 +8165,8 @@
   },
   {
    "id": 441,
+   "species": 441,
+   "form": null,
    "name": "chatot",
    "displayName": "Chatot",
    "types": [
@@ -6226,6 +8181,8 @@
   },
   {
    "id": 442,
+   "species": 442,
+   "form": null,
    "name": "spiritomb",
    "displayName": "Spiritomb",
    "types": [
@@ -6240,6 +8197,8 @@
   },
   {
    "id": 443,
+   "species": 443,
+   "form": null,
    "name": "gible",
    "displayName": "Gible",
    "types": [
@@ -6254,6 +8213,8 @@
   },
   {
    "id": 444,
+   "species": 444,
+   "form": null,
    "name": "gabite",
    "displayName": "Gabite",
    "types": [
@@ -6268,6 +8229,8 @@
   },
   {
    "id": 445,
+   "species": 445,
+   "form": null,
    "name": "garchomp",
    "displayName": "Garchomp",
    "types": [
@@ -6283,7 +8246,26 @@
    ]
   },
   {
+   "id": 10309,
+   "species": 445,
+   "form": "Mega-Z",
+   "name": "garchompmegaz",
+   "displayName": "Mega Garchomp Z",
+   "types": [
+    "dragon"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 446,
+   "species": 446,
+   "form": null,
    "name": "munchlax",
    "displayName": "Munchlax",
    "types": [
@@ -6299,6 +8281,8 @@
   },
   {
    "id": 447,
+   "species": 447,
+   "form": null,
    "name": "riolu",
    "displayName": "Riolu",
    "types": [
@@ -6314,6 +8298,8 @@
   },
   {
    "id": 448,
+   "species": 448,
+   "form": null,
    "name": "lucario",
    "displayName": "Lucario",
    "types": [
@@ -6330,6 +8316,8 @@
   },
   {
    "id": 449,
+   "species": 449,
+   "form": null,
    "name": "hippopotas",
    "displayName": "Hippopotas",
    "types": [
@@ -6343,6 +8331,8 @@
   },
   {
    "id": 450,
+   "species": 450,
+   "form": null,
    "name": "hippowdon",
    "displayName": "Hippowdon",
    "types": [
@@ -6356,6 +8346,8 @@
   },
   {
    "id": 451,
+   "species": 451,
+   "form": null,
    "name": "skorupi",
    "displayName": "Skorupi",
    "types": [
@@ -6370,6 +8362,8 @@
   },
   {
    "id": 452,
+   "species": 452,
+   "form": null,
    "name": "drapion",
    "displayName": "Drapion",
    "types": [
@@ -6384,6 +8378,8 @@
   },
   {
    "id": 453,
+   "species": 453,
+   "form": null,
    "name": "croagunk",
    "displayName": "Croagunk",
    "types": [
@@ -6398,6 +8394,8 @@
   },
   {
    "id": 454,
+   "species": 454,
+   "form": null,
    "name": "toxicroak",
    "displayName": "Toxicroak",
    "types": [
@@ -6412,6 +8410,8 @@
   },
   {
    "id": 455,
+   "species": 455,
+   "form": null,
    "name": "carnivine",
    "displayName": "Carnivine",
    "types": [
@@ -6425,6 +8425,8 @@
   },
   {
    "id": 456,
+   "species": 456,
+   "form": null,
    "name": "finneon",
    "displayName": "Finneon",
    "types": [
@@ -6438,6 +8440,8 @@
   },
   {
    "id": 457,
+   "species": 457,
+   "form": null,
    "name": "lumineon",
    "displayName": "Lumineon",
    "types": [
@@ -6451,6 +8455,8 @@
   },
   {
    "id": 458,
+   "species": 458,
+   "form": null,
    "name": "mantyke",
    "displayName": "Mantyke",
    "types": [
@@ -6467,6 +8473,8 @@
   },
   {
    "id": 459,
+   "species": 459,
+   "form": null,
    "name": "snover",
    "displayName": "Snover",
    "types": [
@@ -6481,6 +8489,8 @@
   },
   {
    "id": 460,
+   "species": 460,
+   "form": null,
    "name": "abomasnow",
    "displayName": "Abomasnow",
    "types": [
@@ -6497,6 +8507,8 @@
   },
   {
    "id": 461,
+   "species": 461,
+   "form": null,
    "name": "weavile",
    "displayName": "Weavile",
    "types": [
@@ -6511,6 +8523,8 @@
   },
   {
    "id": 462,
+   "species": 462,
+   "form": null,
    "name": "magnezone",
    "displayName": "Magnezone",
    "types": [
@@ -6525,6 +8539,8 @@
   },
   {
    "id": 463,
+   "species": 463,
+   "form": null,
    "name": "lickilicky",
    "displayName": "Lickilicky",
    "types": [
@@ -6538,6 +8554,8 @@
   },
   {
    "id": 464,
+   "species": 464,
+   "form": null,
    "name": "rhyperior",
    "displayName": "Rhyperior",
    "types": [
@@ -6552,6 +8570,8 @@
   },
   {
    "id": 465,
+   "species": 465,
+   "form": null,
    "name": "tangrowth",
    "displayName": "Tangrowth",
    "types": [
@@ -6565,6 +8585,8 @@
   },
   {
    "id": 466,
+   "species": 466,
+   "form": null,
    "name": "electivire",
    "displayName": "Electivire",
    "types": [
@@ -6578,6 +8600,8 @@
   },
   {
    "id": 467,
+   "species": 467,
+   "form": null,
    "name": "magmortar",
    "displayName": "Magmortar",
    "types": [
@@ -6591,6 +8615,8 @@
   },
   {
    "id": 468,
+   "species": 468,
+   "form": null,
    "name": "togekiss",
    "displayName": "Togekiss",
    "types": [
@@ -6605,6 +8631,8 @@
   },
   {
    "id": 469,
+   "species": 469,
+   "form": null,
    "name": "yanmega",
    "displayName": "Yanmega",
    "types": [
@@ -6619,6 +8647,8 @@
   },
   {
    "id": 470,
+   "species": 470,
+   "form": null,
    "name": "leafeon",
    "displayName": "Leafeon",
    "types": [
@@ -6632,6 +8662,8 @@
   },
   {
    "id": 471,
+   "species": 471,
+   "form": null,
    "name": "glaceon",
    "displayName": "Glaceon",
    "types": [
@@ -6645,6 +8677,8 @@
   },
   {
    "id": 472,
+   "species": 472,
+   "form": null,
    "name": "gliscor",
    "displayName": "Gliscor",
    "types": [
@@ -6659,6 +8693,8 @@
   },
   {
    "id": 473,
+   "species": 473,
+   "form": null,
    "name": "mamoswine",
    "displayName": "Mamoswine",
    "types": [
@@ -6673,6 +8709,8 @@
   },
   {
    "id": 474,
+   "species": 474,
+   "form": null,
    "name": "porygonz",
    "displayName": "Porygon-Z",
    "types": [
@@ -6686,6 +8724,8 @@
   },
   {
    "id": 475,
+   "species": 475,
+   "form": null,
    "name": "gallade",
    "displayName": "Gallade",
    "types": [
@@ -6702,6 +8742,8 @@
   },
   {
    "id": 476,
+   "species": 476,
+   "form": null,
    "name": "probopass",
    "displayName": "Probopass",
    "types": [
@@ -6716,6 +8758,8 @@
   },
   {
    "id": 477,
+   "species": 477,
+   "form": null,
    "name": "dusknoir",
    "displayName": "Dusknoir",
    "types": [
@@ -6729,6 +8773,8 @@
   },
   {
    "id": 478,
+   "species": 478,
+   "form": null,
    "name": "froslass",
    "displayName": "Froslass",
    "types": [
@@ -6745,6 +8791,8 @@
   },
   {
    "id": 479,
+   "species": 479,
+   "form": null,
    "name": "rotom",
    "displayName": "Rotom",
    "types": [
@@ -6758,7 +8806,89 @@
    "flags": []
   },
   {
+   "id": 10008,
+   "species": 479,
+   "form": "Heat",
+   "name": "rotomheat",
+   "displayName": "Rotom (Heat)",
+   "types": [
+    "electric",
+    "fire"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10009,
+   "species": 479,
+   "form": "Wash",
+   "name": "rotomwash",
+   "displayName": "Rotom (Wash)",
+   "types": [
+    "electric",
+    "water"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10010,
+   "species": 479,
+   "form": "Frost",
+   "name": "rotomfrost",
+   "displayName": "Rotom (Frost)",
+   "types": [
+    "electric",
+    "ice"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10011,
+   "species": 479,
+   "form": "Fan",
+   "name": "rotomfan",
+   "displayName": "Rotom (Fan)",
+   "types": [
+    "electric",
+    "flying"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10012,
+   "species": 479,
+   "form": "Mow",
+   "name": "rotommow",
+   "displayName": "Rotom (Mow)",
+   "types": [
+    "electric",
+    "grass"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 480,
+   "species": 480,
+   "form": null,
    "name": "uxie",
    "displayName": "Uxie",
    "types": [
@@ -6774,6 +8904,8 @@
   },
   {
    "id": 481,
+   "species": 481,
+   "form": null,
    "name": "mesprit",
    "displayName": "Mesprit",
    "types": [
@@ -6789,6 +8921,8 @@
   },
   {
    "id": 482,
+   "species": 482,
+   "form": null,
    "name": "azelf",
    "displayName": "Azelf",
    "types": [
@@ -6804,6 +8938,8 @@
   },
   {
    "id": 483,
+   "species": 483,
+   "form": null,
    "name": "dialga",
    "displayName": "Dialga",
    "types": [
@@ -6819,7 +8955,27 @@
    ]
   },
   {
+   "id": 10245,
+   "species": 483,
+   "form": "Origin",
+   "name": "dialgaorigin",
+   "displayName": "Dialga (Origin)",
+   "types": [
+    "steel",
+    "dragon"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 484,
+   "species": 484,
+   "form": null,
    "name": "palkia",
    "displayName": "Palkia",
    "types": [
@@ -6835,7 +8991,27 @@
    ]
   },
   {
+   "id": 10246,
+   "species": 484,
+   "form": "Origin",
+   "name": "palkiaorigin",
+   "displayName": "Palkia (Origin)",
+   "types": [
+    "water",
+    "dragon"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 485,
+   "species": 485,
+   "form": null,
    "name": "heatran",
    "displayName": "Heatran",
    "types": [
@@ -6853,6 +9029,8 @@
   },
   {
    "id": 486,
+   "species": 486,
+   "form": null,
    "name": "regigigas",
    "displayName": "Regigigas",
    "types": [
@@ -6868,6 +9046,8 @@
   },
   {
    "id": 487,
+   "species": 487,
+   "form": null,
    "name": "giratina",
    "displayName": "Giratina",
    "types": [
@@ -6884,6 +9064,8 @@
   },
   {
    "id": 488,
+   "species": 488,
+   "form": null,
    "name": "cresselia",
    "displayName": "Cresselia",
    "types": [
@@ -6899,6 +9081,8 @@
   },
   {
    "id": 489,
+   "species": 489,
+   "form": null,
    "name": "phione",
    "displayName": "Phione",
    "types": [
@@ -6914,6 +9098,8 @@
   },
   {
    "id": 490,
+   "species": 490,
+   "form": null,
    "name": "manaphy",
    "displayName": "Manaphy",
    "types": [
@@ -6929,6 +9115,8 @@
   },
   {
    "id": 491,
+   "species": 491,
+   "form": null,
    "name": "darkrai",
    "displayName": "Darkrai",
    "types": [
@@ -6945,6 +9133,8 @@
   },
   {
    "id": 492,
+   "species": 492,
+   "form": null,
    "name": "shaymin",
    "displayName": "Shaymin",
    "types": [
@@ -6959,7 +9149,27 @@
    ]
   },
   {
+   "id": 10006,
+   "species": 492,
+   "form": "Sky",
+   "name": "shayminsky",
+   "displayName": "Shaymin (Sky)",
+   "types": [
+    "grass",
+    "flying"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "mythical"
+   ]
+  },
+  {
    "id": 493,
+   "species": 493,
+   "form": null,
    "name": "arceus",
    "displayName": "Arceus",
    "types": [
@@ -6975,6 +9185,8 @@
   },
   {
    "id": 494,
+   "species": 494,
+   "form": null,
    "name": "victini",
    "displayName": "Victini",
    "types": [
@@ -6991,6 +9203,8 @@
   },
   {
    "id": 495,
+   "species": 495,
+   "form": null,
    "name": "snivy",
    "displayName": "Snivy",
    "types": [
@@ -7006,6 +9220,8 @@
   },
   {
    "id": 496,
+   "species": 496,
+   "form": null,
    "name": "servine",
    "displayName": "Servine",
    "types": [
@@ -7021,6 +9237,8 @@
   },
   {
    "id": 497,
+   "species": 497,
+   "form": null,
    "name": "serperior",
    "displayName": "Serperior",
    "types": [
@@ -7036,6 +9254,8 @@
   },
   {
    "id": 498,
+   "species": 498,
+   "form": null,
    "name": "tepig",
    "displayName": "Tepig",
    "types": [
@@ -7051,6 +9271,8 @@
   },
   {
    "id": 499,
+   "species": 499,
+   "form": null,
    "name": "pignite",
    "displayName": "Pignite",
    "types": [
@@ -7067,6 +9289,8 @@
   },
   {
    "id": 500,
+   "species": 500,
+   "form": null,
    "name": "emboar",
    "displayName": "Emboar",
    "types": [
@@ -7084,6 +9308,8 @@
   },
   {
    "id": 501,
+   "species": 501,
+   "form": null,
    "name": "oshawott",
    "displayName": "Oshawott",
    "types": [
@@ -7099,6 +9325,8 @@
   },
   {
    "id": 502,
+   "species": 502,
+   "form": null,
    "name": "dewott",
    "displayName": "Dewott",
    "types": [
@@ -7114,6 +9342,8 @@
   },
   {
    "id": 503,
+   "species": 503,
+   "form": null,
    "name": "samurott",
    "displayName": "Samurott",
    "types": [
@@ -7128,7 +9358,27 @@
    ]
   },
   {
+   "id": 10236,
+   "species": 503,
+   "form": "Hisui",
+   "name": "samurotthisui",
+   "displayName": "Hisuian Samurott",
+   "types": [
+    "water",
+    "dark"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter"
+   ]
+  },
+  {
    "id": 504,
+   "species": 504,
+   "form": null,
    "name": "patrat",
    "displayName": "Patrat",
    "types": [
@@ -7142,6 +9392,8 @@
   },
   {
    "id": 505,
+   "species": 505,
+   "form": null,
    "name": "watchog",
    "displayName": "Watchog",
    "types": [
@@ -7155,6 +9407,8 @@
   },
   {
    "id": 506,
+   "species": 506,
+   "form": null,
    "name": "lillipup",
    "displayName": "Lillipup",
    "types": [
@@ -7168,6 +9422,8 @@
   },
   {
    "id": 507,
+   "species": 507,
+   "form": null,
    "name": "herdier",
    "displayName": "Herdier",
    "types": [
@@ -7181,6 +9437,8 @@
   },
   {
    "id": 508,
+   "species": 508,
+   "form": null,
    "name": "stoutland",
    "displayName": "Stoutland",
    "types": [
@@ -7194,6 +9452,8 @@
   },
   {
    "id": 509,
+   "species": 509,
+   "form": null,
    "name": "purrloin",
    "displayName": "Purrloin",
    "types": [
@@ -7207,6 +9467,8 @@
   },
   {
    "id": 510,
+   "species": 510,
+   "form": null,
    "name": "liepard",
    "displayName": "Liepard",
    "types": [
@@ -7220,6 +9482,8 @@
   },
   {
    "id": 511,
+   "species": 511,
+   "form": null,
    "name": "pansage",
    "displayName": "Pansage",
    "types": [
@@ -7233,6 +9497,8 @@
   },
   {
    "id": 512,
+   "species": 512,
+   "form": null,
    "name": "simisage",
    "displayName": "Simisage",
    "types": [
@@ -7246,6 +9512,8 @@
   },
   {
    "id": 513,
+   "species": 513,
+   "form": null,
    "name": "pansear",
    "displayName": "Pansear",
    "types": [
@@ -7259,6 +9527,8 @@
   },
   {
    "id": 514,
+   "species": 514,
+   "form": null,
    "name": "simisear",
    "displayName": "Simisear",
    "types": [
@@ -7272,6 +9542,8 @@
   },
   {
    "id": 515,
+   "species": 515,
+   "form": null,
    "name": "panpour",
    "displayName": "Panpour",
    "types": [
@@ -7285,6 +9557,8 @@
   },
   {
    "id": 516,
+   "species": 516,
+   "form": null,
    "name": "simipour",
    "displayName": "Simipour",
    "types": [
@@ -7298,6 +9572,8 @@
   },
   {
    "id": 517,
+   "species": 517,
+   "form": null,
    "name": "munna",
    "displayName": "Munna",
    "types": [
@@ -7311,6 +9587,8 @@
   },
   {
    "id": 518,
+   "species": 518,
+   "form": null,
    "name": "musharna",
    "displayName": "Musharna",
    "types": [
@@ -7324,6 +9602,8 @@
   },
   {
    "id": 519,
+   "species": 519,
+   "form": null,
    "name": "pidove",
    "displayName": "Pidove",
    "types": [
@@ -7338,6 +9618,8 @@
   },
   {
    "id": 520,
+   "species": 520,
+   "form": null,
    "name": "tranquill",
    "displayName": "Tranquill",
    "types": [
@@ -7352,6 +9634,8 @@
   },
   {
    "id": 521,
+   "species": 521,
+   "form": null,
    "name": "unfezant",
    "displayName": "Unfezant",
    "types": [
@@ -7366,6 +9650,8 @@
   },
   {
    "id": 522,
+   "species": 522,
+   "form": null,
    "name": "blitzle",
    "displayName": "Blitzle",
    "types": [
@@ -7379,6 +9665,8 @@
   },
   {
    "id": 523,
+   "species": 523,
+   "form": null,
    "name": "zebstrika",
    "displayName": "Zebstrika",
    "types": [
@@ -7392,6 +9680,8 @@
   },
   {
    "id": 524,
+   "species": 524,
+   "form": null,
    "name": "roggenrola",
    "displayName": "Roggenrola",
    "types": [
@@ -7405,6 +9695,8 @@
   },
   {
    "id": 525,
+   "species": 525,
+   "form": null,
    "name": "boldore",
    "displayName": "Boldore",
    "types": [
@@ -7418,6 +9710,8 @@
   },
   {
    "id": 526,
+   "species": 526,
+   "form": null,
    "name": "gigalith",
    "displayName": "Gigalith",
    "types": [
@@ -7431,6 +9725,8 @@
   },
   {
    "id": 527,
+   "species": 527,
+   "form": null,
    "name": "woobat",
    "displayName": "Woobat",
    "types": [
@@ -7445,6 +9741,8 @@
   },
   {
    "id": 528,
+   "species": 528,
+   "form": null,
    "name": "swoobat",
    "displayName": "Swoobat",
    "types": [
@@ -7459,6 +9757,8 @@
   },
   {
    "id": 529,
+   "species": 529,
+   "form": null,
    "name": "drilbur",
    "displayName": "Drilbur",
    "types": [
@@ -7472,6 +9772,8 @@
   },
   {
    "id": 530,
+   "species": 530,
+   "form": null,
    "name": "excadrill",
    "displayName": "Excadrill",
    "types": [
@@ -7488,6 +9790,8 @@
   },
   {
    "id": 531,
+   "species": 531,
+   "form": null,
    "name": "audino",
    "displayName": "Audino",
    "types": [
@@ -7502,7 +9806,27 @@
    ]
   },
   {
+   "id": 10069,
+   "species": 531,
+   "form": "Mega",
+   "name": "audinomega",
+   "displayName": "Mega Audino",
+   "types": [
+    "normal",
+    "fairy"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 532,
+   "species": 532,
+   "form": null,
    "name": "timburr",
    "displayName": "Timburr",
    "types": [
@@ -7516,6 +9840,8 @@
   },
   {
    "id": 533,
+   "species": 533,
+   "form": null,
    "name": "gurdurr",
    "displayName": "Gurdurr",
    "types": [
@@ -7529,6 +9855,8 @@
   },
   {
    "id": 534,
+   "species": 534,
+   "form": null,
    "name": "conkeldurr",
    "displayName": "Conkeldurr",
    "types": [
@@ -7542,6 +9870,8 @@
   },
   {
    "id": 535,
+   "species": 535,
+   "form": null,
    "name": "tympole",
    "displayName": "Tympole",
    "types": [
@@ -7555,6 +9885,8 @@
   },
   {
    "id": 536,
+   "species": 536,
+   "form": null,
    "name": "palpitoad",
    "displayName": "Palpitoad",
    "types": [
@@ -7569,6 +9901,8 @@
   },
   {
    "id": 537,
+   "species": 537,
+   "form": null,
    "name": "seismitoad",
    "displayName": "Seismitoad",
    "types": [
@@ -7583,6 +9917,8 @@
   },
   {
    "id": 538,
+   "species": 538,
+   "form": null,
    "name": "throh",
    "displayName": "Throh",
    "types": [
@@ -7596,6 +9932,8 @@
   },
   {
    "id": 539,
+   "species": 539,
+   "form": null,
    "name": "sawk",
    "displayName": "Sawk",
    "types": [
@@ -7609,6 +9947,8 @@
   },
   {
    "id": 540,
+   "species": 540,
+   "form": null,
    "name": "sewaddle",
    "displayName": "Sewaddle",
    "types": [
@@ -7623,6 +9963,8 @@
   },
   {
    "id": 541,
+   "species": 541,
+   "form": null,
    "name": "swadloon",
    "displayName": "Swadloon",
    "types": [
@@ -7637,6 +9979,8 @@
   },
   {
    "id": 542,
+   "species": 542,
+   "form": null,
    "name": "leavanny",
    "displayName": "Leavanny",
    "types": [
@@ -7651,6 +9995,8 @@
   },
   {
    "id": 543,
+   "species": 543,
+   "form": null,
    "name": "venipede",
    "displayName": "Venipede",
    "types": [
@@ -7665,6 +10011,8 @@
   },
   {
    "id": 544,
+   "species": 544,
+   "form": null,
    "name": "whirlipede",
    "displayName": "Whirlipede",
    "types": [
@@ -7679,6 +10027,8 @@
   },
   {
    "id": 545,
+   "species": 545,
+   "form": null,
    "name": "scolipede",
    "displayName": "Scolipede",
    "types": [
@@ -7695,6 +10045,8 @@
   },
   {
    "id": 546,
+   "species": 546,
+   "form": null,
    "name": "cottonee",
    "displayName": "Cottonee",
    "types": [
@@ -7709,6 +10061,8 @@
   },
   {
    "id": 547,
+   "species": 547,
+   "form": null,
    "name": "whimsicott",
    "displayName": "Whimsicott",
    "types": [
@@ -7723,6 +10077,8 @@
   },
   {
    "id": 548,
+   "species": 548,
+   "form": null,
    "name": "petilil",
    "displayName": "Petilil",
    "types": [
@@ -7736,6 +10092,8 @@
   },
   {
    "id": 549,
+   "species": 549,
+   "form": null,
    "name": "lilligant",
    "displayName": "Lilligant",
    "types": [
@@ -7748,7 +10106,25 @@
    "flags": []
   },
   {
+   "id": 10237,
+   "species": 549,
+   "form": "Hisui",
+   "name": "lilliganthisui",
+   "displayName": "Hisuian Lilligant",
+   "types": [
+    "grass",
+    "fighting"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 550,
+   "species": 550,
+   "form": null,
    "name": "basculin",
    "displayName": "Basculin",
    "types": [
@@ -7761,7 +10137,24 @@
    "flags": []
   },
   {
+   "id": 10247,
+   "species": 550,
+   "form": "White-Striped",
+   "name": "basculinwhitestriped",
+   "displayName": "Basculin (White-Striped)",
+   "types": [
+    "water"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 551,
+   "species": 551,
+   "form": null,
    "name": "sandile",
    "displayName": "Sandile",
    "types": [
@@ -7776,6 +10169,8 @@
   },
   {
    "id": 552,
+   "species": 552,
+   "form": null,
    "name": "krokorok",
    "displayName": "Krokorok",
    "types": [
@@ -7790,6 +10185,8 @@
   },
   {
    "id": 553,
+   "species": 553,
+   "form": null,
    "name": "krookodile",
    "displayName": "Krookodile",
    "types": [
@@ -7804,6 +10201,8 @@
   },
   {
    "id": 554,
+   "species": 554,
+   "form": null,
    "name": "darumaka",
    "displayName": "Darumaka",
    "types": [
@@ -7816,7 +10215,24 @@
    "flags": []
   },
   {
+   "id": 10176,
+   "species": 554,
+   "form": "Galar",
+   "name": "darumakagalar",
+   "displayName": "Galarian Darumaka",
+   "types": [
+    "ice"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 555,
+   "species": 555,
+   "form": null,
    "name": "darmanitan",
    "displayName": "Darmanitan",
    "types": [
@@ -7829,7 +10245,56 @@
    "flags": []
   },
   {
+   "id": 10017,
+   "species": 555,
+   "form": "Zen",
+   "name": "darmanitanzen",
+   "displayName": "Darmanitan (Zen)",
+   "types": [
+    "fire",
+    "psychic"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
+   "id": 10177,
+   "species": 555,
+   "form": "Galar",
+   "name": "darmanitangalar",
+   "displayName": "Galarian Darmanitan",
+   "types": [
+    "ice"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
+   "id": 10178,
+   "species": 555,
+   "form": "Galar-Zen",
+   "name": "darmanitangalarzen",
+   "displayName": "Galarian Darmanitan (Zen)",
+   "types": [
+    "ice",
+    "fire"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 556,
+   "species": 556,
+   "form": null,
    "name": "maractus",
    "displayName": "Maractus",
    "types": [
@@ -7843,6 +10308,8 @@
   },
   {
    "id": 557,
+   "species": 557,
+   "form": null,
    "name": "dwebble",
    "displayName": "Dwebble",
    "types": [
@@ -7857,6 +10324,8 @@
   },
   {
    "id": 558,
+   "species": 558,
+   "form": null,
    "name": "crustle",
    "displayName": "Crustle",
    "types": [
@@ -7871,6 +10340,8 @@
   },
   {
    "id": 559,
+   "species": 559,
+   "form": null,
    "name": "scraggy",
    "displayName": "Scraggy",
    "types": [
@@ -7885,6 +10356,8 @@
   },
   {
    "id": 560,
+   "species": 560,
+   "form": null,
    "name": "scrafty",
    "displayName": "Scrafty",
    "types": [
@@ -7901,6 +10374,8 @@
   },
   {
    "id": 561,
+   "species": 561,
+   "form": null,
    "name": "sigilyph",
    "displayName": "Sigilyph",
    "types": [
@@ -7915,6 +10390,8 @@
   },
   {
    "id": 562,
+   "species": 562,
+   "form": null,
    "name": "yamask",
    "displayName": "Yamask",
    "types": [
@@ -7927,7 +10404,25 @@
    "flags": []
   },
   {
+   "id": 10179,
+   "species": 562,
+   "form": "Galar",
+   "name": "yamaskgalar",
+   "displayName": "Galarian Yamask",
+   "types": [
+    "ground",
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 563,
+   "species": 563,
+   "form": null,
    "name": "cofagrigus",
    "displayName": "Cofagrigus",
    "types": [
@@ -7941,6 +10436,8 @@
   },
   {
    "id": 564,
+   "species": 564,
+   "form": null,
    "name": "tirtouga",
    "displayName": "Tirtouga",
    "types": [
@@ -7957,6 +10454,8 @@
   },
   {
    "id": 565,
+   "species": 565,
+   "form": null,
    "name": "carracosta",
    "displayName": "Carracosta",
    "types": [
@@ -7973,6 +10472,8 @@
   },
   {
    "id": 566,
+   "species": 566,
+   "form": null,
    "name": "archen",
    "displayName": "Archen",
    "types": [
@@ -7989,6 +10490,8 @@
   },
   {
    "id": 567,
+   "species": 567,
+   "form": null,
    "name": "archeops",
    "displayName": "Archeops",
    "types": [
@@ -8005,6 +10508,8 @@
   },
   {
    "id": 568,
+   "species": 568,
+   "form": null,
    "name": "trubbish",
    "displayName": "Trubbish",
    "types": [
@@ -8018,6 +10523,8 @@
   },
   {
    "id": 569,
+   "species": 569,
+   "form": null,
    "name": "garbodor",
    "displayName": "Garbodor",
    "types": [
@@ -8033,6 +10540,8 @@
   },
   {
    "id": 570,
+   "species": 570,
+   "form": null,
    "name": "zorua",
    "displayName": "Zorua",
    "types": [
@@ -8045,7 +10554,25 @@
    "flags": []
   },
   {
+   "id": 10238,
+   "species": 570,
+   "form": "Hisui",
+   "name": "zoruahisui",
+   "displayName": "Hisuian Zorua",
+   "types": [
+    "normal",
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "first",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 571,
+   "species": 571,
+   "form": null,
    "name": "zoroark",
    "displayName": "Zoroark",
    "types": [
@@ -8058,7 +10585,25 @@
    "flags": []
   },
   {
+   "id": 10239,
+   "species": 571,
+   "form": "Hisui",
+   "name": "zoroarkhisui",
+   "displayName": "Hisuian Zoroark",
+   "types": [
+    "normal",
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 572,
+   "species": 572,
+   "form": null,
    "name": "minccino",
    "displayName": "Minccino",
    "types": [
@@ -8072,6 +10617,8 @@
   },
   {
    "id": 573,
+   "species": 573,
+   "form": null,
    "name": "cinccino",
    "displayName": "Cinccino",
    "types": [
@@ -8085,6 +10632,8 @@
   },
   {
    "id": 574,
+   "species": 574,
+   "form": null,
    "name": "gothita",
    "displayName": "Gothita",
    "types": [
@@ -8098,6 +10647,8 @@
   },
   {
    "id": 575,
+   "species": 575,
+   "form": null,
    "name": "gothorita",
    "displayName": "Gothorita",
    "types": [
@@ -8111,6 +10662,8 @@
   },
   {
    "id": 576,
+   "species": 576,
+   "form": null,
    "name": "gothitelle",
    "displayName": "Gothitelle",
    "types": [
@@ -8124,6 +10677,8 @@
   },
   {
    "id": 577,
+   "species": 577,
+   "form": null,
    "name": "solosis",
    "displayName": "Solosis",
    "types": [
@@ -8137,6 +10692,8 @@
   },
   {
    "id": 578,
+   "species": 578,
+   "form": null,
    "name": "duosion",
    "displayName": "Duosion",
    "types": [
@@ -8150,6 +10707,8 @@
   },
   {
    "id": 579,
+   "species": 579,
+   "form": null,
    "name": "reuniclus",
    "displayName": "Reuniclus",
    "types": [
@@ -8163,6 +10722,8 @@
   },
   {
    "id": 580,
+   "species": 580,
+   "form": null,
    "name": "ducklett",
    "displayName": "Ducklett",
    "types": [
@@ -8177,6 +10738,8 @@
   },
   {
    "id": 581,
+   "species": 581,
+   "form": null,
    "name": "swanna",
    "displayName": "Swanna",
    "types": [
@@ -8191,6 +10754,8 @@
   },
   {
    "id": 582,
+   "species": 582,
+   "form": null,
    "name": "vanillite",
    "displayName": "Vanillite",
    "types": [
@@ -8204,6 +10769,8 @@
   },
   {
    "id": 583,
+   "species": 583,
+   "form": null,
    "name": "vanillish",
    "displayName": "Vanillish",
    "types": [
@@ -8217,6 +10784,8 @@
   },
   {
    "id": 584,
+   "species": 584,
+   "form": null,
    "name": "vanilluxe",
    "displayName": "Vanilluxe",
    "types": [
@@ -8230,6 +10799,8 @@
   },
   {
    "id": 585,
+   "species": 585,
+   "form": null,
    "name": "deerling",
    "displayName": "Deerling",
    "types": [
@@ -8244,6 +10815,8 @@
   },
   {
    "id": 586,
+   "species": 586,
+   "form": null,
    "name": "sawsbuck",
    "displayName": "Sawsbuck",
    "types": [
@@ -8258,6 +10831,8 @@
   },
   {
    "id": 587,
+   "species": 587,
+   "form": null,
    "name": "emolga",
    "displayName": "Emolga",
    "types": [
@@ -8272,6 +10847,8 @@
   },
   {
    "id": 588,
+   "species": 588,
+   "form": null,
    "name": "karrablast",
    "displayName": "Karrablast",
    "types": [
@@ -8285,6 +10862,8 @@
   },
   {
    "id": 589,
+   "species": 589,
+   "form": null,
    "name": "escavalier",
    "displayName": "Escavalier",
    "types": [
@@ -8299,6 +10878,8 @@
   },
   {
    "id": 590,
+   "species": 590,
+   "form": null,
    "name": "foongus",
    "displayName": "Foongus",
    "types": [
@@ -8313,6 +10894,8 @@
   },
   {
    "id": 591,
+   "species": 591,
+   "form": null,
    "name": "amoonguss",
    "displayName": "Amoonguss",
    "types": [
@@ -8327,6 +10910,8 @@
   },
   {
    "id": 592,
+   "species": 592,
+   "form": null,
    "name": "frillish",
    "displayName": "Frillish",
    "types": [
@@ -8341,6 +10926,8 @@
   },
   {
    "id": 593,
+   "species": 593,
+   "form": null,
    "name": "jellicent",
    "displayName": "Jellicent",
    "types": [
@@ -8355,6 +10942,8 @@
   },
   {
    "id": 594,
+   "species": 594,
+   "form": null,
    "name": "alomomola",
    "displayName": "Alomomola",
    "types": [
@@ -8368,6 +10957,8 @@
   },
   {
    "id": 595,
+   "species": 595,
+   "form": null,
    "name": "joltik",
    "displayName": "Joltik",
    "types": [
@@ -8382,6 +10973,8 @@
   },
   {
    "id": 596,
+   "species": 596,
+   "form": null,
    "name": "galvantula",
    "displayName": "Galvantula",
    "types": [
@@ -8396,6 +10989,8 @@
   },
   {
    "id": 597,
+   "species": 597,
+   "form": null,
    "name": "ferroseed",
    "displayName": "Ferroseed",
    "types": [
@@ -8410,6 +11005,8 @@
   },
   {
    "id": 598,
+   "species": 598,
+   "form": null,
    "name": "ferrothorn",
    "displayName": "Ferrothorn",
    "types": [
@@ -8424,6 +11021,8 @@
   },
   {
    "id": 599,
+   "species": 599,
+   "form": null,
    "name": "klink",
    "displayName": "Klink",
    "types": [
@@ -8437,6 +11036,8 @@
   },
   {
    "id": 600,
+   "species": 600,
+   "form": null,
    "name": "klang",
    "displayName": "Klang",
    "types": [
@@ -8450,6 +11051,8 @@
   },
   {
    "id": 601,
+   "species": 601,
+   "form": null,
    "name": "klinklang",
    "displayName": "Klinklang",
    "types": [
@@ -8463,6 +11066,8 @@
   },
   {
    "id": 602,
+   "species": 602,
+   "form": null,
    "name": "tynamo",
    "displayName": "Tynamo",
    "types": [
@@ -8476,6 +11081,8 @@
   },
   {
    "id": 603,
+   "species": 603,
+   "form": null,
    "name": "eelektrik",
    "displayName": "Eelektrik",
    "types": [
@@ -8489,6 +11096,8 @@
   },
   {
    "id": 604,
+   "species": 604,
+   "form": null,
    "name": "eelektross",
    "displayName": "Eelektross",
    "types": [
@@ -8504,6 +11113,8 @@
   },
   {
    "id": 605,
+   "species": 605,
+   "form": null,
    "name": "elgyem",
    "displayName": "Elgyem",
    "types": [
@@ -8517,6 +11128,8 @@
   },
   {
    "id": 606,
+   "species": 606,
+   "form": null,
    "name": "beheeyem",
    "displayName": "Beheeyem",
    "types": [
@@ -8530,6 +11143,8 @@
   },
   {
    "id": 607,
+   "species": 607,
+   "form": null,
    "name": "litwick",
    "displayName": "Litwick",
    "types": [
@@ -8544,6 +11159,8 @@
   },
   {
    "id": 608,
+   "species": 608,
+   "form": null,
    "name": "lampent",
    "displayName": "Lampent",
    "types": [
@@ -8558,6 +11175,8 @@
   },
   {
    "id": 609,
+   "species": 609,
+   "form": null,
    "name": "chandelure",
    "displayName": "Chandelure",
    "types": [
@@ -8574,6 +11193,8 @@
   },
   {
    "id": 610,
+   "species": 610,
+   "form": null,
    "name": "axew",
    "displayName": "Axew",
    "types": [
@@ -8587,6 +11208,8 @@
   },
   {
    "id": 611,
+   "species": 611,
+   "form": null,
    "name": "fraxure",
    "displayName": "Fraxure",
    "types": [
@@ -8600,6 +11223,8 @@
   },
   {
    "id": 612,
+   "species": 612,
+   "form": null,
    "name": "haxorus",
    "displayName": "Haxorus",
    "types": [
@@ -8613,6 +11238,8 @@
   },
   {
    "id": 613,
+   "species": 613,
+   "form": null,
    "name": "cubchoo",
    "displayName": "Cubchoo",
    "types": [
@@ -8626,6 +11253,8 @@
   },
   {
    "id": 614,
+   "species": 614,
+   "form": null,
    "name": "beartic",
    "displayName": "Beartic",
    "types": [
@@ -8639,6 +11268,8 @@
   },
   {
    "id": 615,
+   "species": 615,
+   "form": null,
    "name": "cryogonal",
    "displayName": "Cryogonal",
    "types": [
@@ -8652,6 +11283,8 @@
   },
   {
    "id": 616,
+   "species": 616,
+   "form": null,
    "name": "shelmet",
    "displayName": "Shelmet",
    "types": [
@@ -8665,6 +11298,8 @@
   },
   {
    "id": 617,
+   "species": 617,
+   "form": null,
    "name": "accelgor",
    "displayName": "Accelgor",
    "types": [
@@ -8678,6 +11313,8 @@
   },
   {
    "id": 618,
+   "species": 618,
+   "form": null,
    "name": "stunfisk",
    "displayName": "Stunfisk",
    "types": [
@@ -8691,7 +11328,25 @@
    "flags": []
   },
   {
+   "id": 10180,
+   "species": 618,
+   "form": "Galar",
+   "name": "stunfiskgalar",
+   "displayName": "Galarian Stunfisk",
+   "types": [
+    "ground",
+    "steel"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 619,
+   "species": 619,
+   "form": null,
    "name": "mienfoo",
    "displayName": "Mienfoo",
    "types": [
@@ -8705,6 +11360,8 @@
   },
   {
    "id": 620,
+   "species": 620,
+   "form": null,
    "name": "mienshao",
    "displayName": "Mienshao",
    "types": [
@@ -8718,6 +11375,8 @@
   },
   {
    "id": 621,
+   "species": 621,
+   "form": null,
    "name": "druddigon",
    "displayName": "Druddigon",
    "types": [
@@ -8731,6 +11390,8 @@
   },
   {
    "id": 622,
+   "species": 622,
+   "form": null,
    "name": "golett",
    "displayName": "Golett",
    "types": [
@@ -8745,6 +11406,8 @@
   },
   {
    "id": 623,
+   "species": 623,
+   "form": null,
    "name": "golurk",
    "displayName": "Golurk",
    "types": [
@@ -8761,6 +11424,8 @@
   },
   {
    "id": 624,
+   "species": 624,
+   "form": null,
    "name": "pawniard",
    "displayName": "Pawniard",
    "types": [
@@ -8775,6 +11440,8 @@
   },
   {
    "id": 625,
+   "species": 625,
+   "form": null,
    "name": "bisharp",
    "displayName": "Bisharp",
    "types": [
@@ -8789,6 +11456,8 @@
   },
   {
    "id": 626,
+   "species": 626,
+   "form": null,
    "name": "bouffalant",
    "displayName": "Bouffalant",
    "types": [
@@ -8802,6 +11471,8 @@
   },
   {
    "id": 627,
+   "species": 627,
+   "form": null,
    "name": "rufflet",
    "displayName": "Rufflet",
    "types": [
@@ -8816,6 +11487,8 @@
   },
   {
    "id": 628,
+   "species": 628,
+   "form": null,
    "name": "braviary",
    "displayName": "Braviary",
    "types": [
@@ -8829,7 +11502,25 @@
    "flags": []
   },
   {
+   "id": 10240,
+   "species": 628,
+   "form": "Hisui",
+   "name": "braviaryhisui",
+   "displayName": "Hisuian Braviary",
+   "types": [
+    "psychic",
+    "flying"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 629,
+   "species": 629,
+   "form": null,
    "name": "vullaby",
    "displayName": "Vullaby",
    "types": [
@@ -8844,6 +11535,8 @@
   },
   {
    "id": 630,
+   "species": 630,
+   "form": null,
    "name": "mandibuzz",
    "displayName": "Mandibuzz",
    "types": [
@@ -8858,6 +11551,8 @@
   },
   {
    "id": 631,
+   "species": 631,
+   "form": null,
    "name": "heatmor",
    "displayName": "Heatmor",
    "types": [
@@ -8871,6 +11566,8 @@
   },
   {
    "id": 632,
+   "species": 632,
+   "form": null,
    "name": "durant",
    "displayName": "Durant",
    "types": [
@@ -8885,6 +11582,8 @@
   },
   {
    "id": 633,
+   "species": 633,
+   "form": null,
    "name": "deino",
    "displayName": "Deino",
    "types": [
@@ -8899,6 +11598,8 @@
   },
   {
    "id": 634,
+   "species": 634,
+   "form": null,
    "name": "zweilous",
    "displayName": "Zweilous",
    "types": [
@@ -8913,6 +11614,8 @@
   },
   {
    "id": 635,
+   "species": 635,
+   "form": null,
    "name": "hydreigon",
    "displayName": "Hydreigon",
    "types": [
@@ -8927,6 +11630,8 @@
   },
   {
    "id": 636,
+   "species": 636,
+   "form": null,
    "name": "larvesta",
    "displayName": "Larvesta",
    "types": [
@@ -8941,6 +11646,8 @@
   },
   {
    "id": 637,
+   "species": 637,
+   "form": null,
    "name": "volcarona",
    "displayName": "Volcarona",
    "types": [
@@ -8955,6 +11662,8 @@
   },
   {
    "id": 638,
+   "species": 638,
+   "form": null,
    "name": "cobalion",
    "displayName": "Cobalion",
    "types": [
@@ -8971,6 +11680,8 @@
   },
   {
    "id": 639,
+   "species": 639,
+   "form": null,
    "name": "terrakion",
    "displayName": "Terrakion",
    "types": [
@@ -8987,6 +11698,8 @@
   },
   {
    "id": 640,
+   "species": 640,
+   "form": null,
    "name": "virizion",
    "displayName": "Virizion",
    "types": [
@@ -9003,6 +11716,8 @@
   },
   {
    "id": 641,
+   "species": 641,
+   "form": null,
    "name": "tornadus",
    "displayName": "Tornadus",
    "types": [
@@ -9018,6 +11733,8 @@
   },
   {
    "id": 642,
+   "species": 642,
+   "form": null,
    "name": "thundurus",
    "displayName": "Thundurus",
    "types": [
@@ -9034,6 +11751,8 @@
   },
   {
    "id": 643,
+   "species": 643,
+   "form": null,
    "name": "reshiram",
    "displayName": "Reshiram",
    "types": [
@@ -9050,6 +11769,8 @@
   },
   {
    "id": 644,
+   "species": 644,
+   "form": null,
    "name": "zekrom",
    "displayName": "Zekrom",
    "types": [
@@ -9066,6 +11787,8 @@
   },
   {
    "id": 645,
+   "species": 645,
+   "form": null,
    "name": "landorus",
    "displayName": "Landorus",
    "types": [
@@ -9082,6 +11805,8 @@
   },
   {
    "id": 646,
+   "species": 646,
+   "form": null,
    "name": "kyurem",
    "displayName": "Kyurem",
    "types": [
@@ -9098,6 +11823,8 @@
   },
   {
    "id": 647,
+   "species": 647,
+   "form": null,
    "name": "keldeo",
    "displayName": "Keldeo",
    "types": [
@@ -9114,6 +11841,8 @@
   },
   {
    "id": 648,
+   "species": 648,
+   "form": null,
    "name": "meloetta",
    "displayName": "Meloetta",
    "types": [
@@ -9129,7 +11858,27 @@
    ]
   },
   {
+   "id": 10018,
+   "species": 648,
+   "form": "Pirouette",
+   "name": "meloettapirouette",
+   "displayName": "Meloetta (Pirouette)",
+   "types": [
+    "normal",
+    "fighting"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "mythical"
+   ]
+  },
+  {
    "id": 649,
+   "species": 649,
+   "form": null,
    "name": "genesect",
    "displayName": "Genesect",
    "types": [
@@ -9146,6 +11895,8 @@
   },
   {
    "id": 650,
+   "species": 650,
+   "form": null,
    "name": "chespin",
    "displayName": "Chespin",
    "types": [
@@ -9161,6 +11912,8 @@
   },
   {
    "id": 651,
+   "species": 651,
+   "form": null,
    "name": "quilladin",
    "displayName": "Quilladin",
    "types": [
@@ -9176,6 +11929,8 @@
   },
   {
    "id": 652,
+   "species": 652,
+   "form": null,
    "name": "chesnaught",
    "displayName": "Chesnaught",
    "types": [
@@ -9193,6 +11948,8 @@
   },
   {
    "id": 653,
+   "species": 653,
+   "form": null,
    "name": "fennekin",
    "displayName": "Fennekin",
    "types": [
@@ -9208,6 +11965,8 @@
   },
   {
    "id": 654,
+   "species": 654,
+   "form": null,
    "name": "braixen",
    "displayName": "Braixen",
    "types": [
@@ -9223,6 +11982,8 @@
   },
   {
    "id": 655,
+   "species": 655,
+   "form": null,
    "name": "delphox",
    "displayName": "Delphox",
    "types": [
@@ -9240,6 +12001,8 @@
   },
   {
    "id": 656,
+   "species": 656,
+   "form": null,
    "name": "froakie",
    "displayName": "Froakie",
    "types": [
@@ -9255,6 +12018,8 @@
   },
   {
    "id": 657,
+   "species": 657,
+   "form": null,
    "name": "frogadier",
    "displayName": "Frogadier",
    "types": [
@@ -9270,6 +12035,8 @@
   },
   {
    "id": 658,
+   "species": 658,
+   "form": null,
    "name": "greninja",
    "displayName": "Greninja",
    "types": [
@@ -9286,7 +12053,27 @@
    ]
   },
   {
+   "id": 10117,
+   "species": 658,
+   "form": "Ash",
+   "name": "greninjaash",
+   "displayName": "Ash-Greninja",
+   "types": [
+    "water",
+    "dark"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter"
+   ]
+  },
+  {
    "id": 659,
+   "species": 659,
+   "form": null,
    "name": "bunnelby",
    "displayName": "Bunnelby",
    "types": [
@@ -9300,6 +12087,8 @@
   },
   {
    "id": 660,
+   "species": 660,
+   "form": null,
    "name": "diggersby",
    "displayName": "Diggersby",
    "types": [
@@ -9314,6 +12103,8 @@
   },
   {
    "id": 661,
+   "species": 661,
+   "form": null,
    "name": "fletchling",
    "displayName": "Fletchling",
    "types": [
@@ -9328,6 +12119,8 @@
   },
   {
    "id": 662,
+   "species": 662,
+   "form": null,
    "name": "fletchinder",
    "displayName": "Fletchinder",
    "types": [
@@ -9342,6 +12135,8 @@
   },
   {
    "id": 663,
+   "species": 663,
+   "form": null,
    "name": "talonflame",
    "displayName": "Talonflame",
    "types": [
@@ -9356,6 +12151,8 @@
   },
   {
    "id": 664,
+   "species": 664,
+   "form": null,
    "name": "scatterbug",
    "displayName": "Scatterbug",
    "types": [
@@ -9369,6 +12166,8 @@
   },
   {
    "id": 665,
+   "species": 665,
+   "form": null,
    "name": "spewpa",
    "displayName": "Spewpa",
    "types": [
@@ -9382,6 +12181,8 @@
   },
   {
    "id": 666,
+   "species": 666,
+   "form": null,
    "name": "vivillon",
    "displayName": "Vivillon",
    "types": [
@@ -9396,6 +12197,8 @@
   },
   {
    "id": 667,
+   "species": 667,
+   "form": null,
    "name": "litleo",
    "displayName": "Litleo",
    "types": [
@@ -9410,6 +12213,8 @@
   },
   {
    "id": 668,
+   "species": 668,
+   "form": null,
    "name": "pyroar",
    "displayName": "Pyroar",
    "types": [
@@ -9426,6 +12231,8 @@
   },
   {
    "id": 669,
+   "species": 669,
+   "form": null,
    "name": "flabebe",
    "displayName": "Flabébé",
    "types": [
@@ -9439,6 +12246,8 @@
   },
   {
    "id": 670,
+   "species": 670,
+   "form": null,
    "name": "floette",
    "displayName": "Floette",
    "types": [
@@ -9454,6 +12263,8 @@
   },
   {
    "id": 671,
+   "species": 671,
+   "form": null,
    "name": "florges",
    "displayName": "Florges",
    "types": [
@@ -9467,6 +12278,8 @@
   },
   {
    "id": 672,
+   "species": 672,
+   "form": null,
    "name": "skiddo",
    "displayName": "Skiddo",
    "types": [
@@ -9480,6 +12293,8 @@
   },
   {
    "id": 673,
+   "species": 673,
+   "form": null,
    "name": "gogoat",
    "displayName": "Gogoat",
    "types": [
@@ -9493,6 +12308,8 @@
   },
   {
    "id": 674,
+   "species": 674,
+   "form": null,
    "name": "pancham",
    "displayName": "Pancham",
    "types": [
@@ -9506,6 +12323,8 @@
   },
   {
    "id": 675,
+   "species": 675,
+   "form": null,
    "name": "pangoro",
    "displayName": "Pangoro",
    "types": [
@@ -9520,6 +12339,8 @@
   },
   {
    "id": 676,
+   "species": 676,
+   "form": null,
    "name": "furfrou",
    "displayName": "Furfrou",
    "types": [
@@ -9533,6 +12354,8 @@
   },
   {
    "id": 677,
+   "species": 677,
+   "form": null,
    "name": "espurr",
    "displayName": "Espurr",
    "types": [
@@ -9546,6 +12369,8 @@
   },
   {
    "id": 678,
+   "species": 678,
+   "form": null,
    "name": "meowstic",
    "displayName": "Meowstic",
    "types": [
@@ -9555,10 +12380,14 @@
    "region": "kalos",
    "stage": "final",
    "evoMethod": "level",
-   "flags": []
+   "flags": [
+    "mega"
+   ]
   },
   {
    "id": 679,
+   "species": 679,
+   "form": null,
    "name": "honedge",
    "displayName": "Honedge",
    "types": [
@@ -9573,6 +12402,8 @@
   },
   {
    "id": 680,
+   "species": 680,
+   "form": null,
    "name": "doublade",
    "displayName": "Doublade",
    "types": [
@@ -9587,6 +12418,8 @@
   },
   {
    "id": 681,
+   "species": 681,
+   "form": null,
    "name": "aegislash",
    "displayName": "Aegislash",
    "types": [
@@ -9601,6 +12434,8 @@
   },
   {
    "id": 682,
+   "species": 682,
+   "form": null,
    "name": "spritzee",
    "displayName": "Spritzee",
    "types": [
@@ -9614,6 +12449,8 @@
   },
   {
    "id": 683,
+   "species": 683,
+   "form": null,
    "name": "aromatisse",
    "displayName": "Aromatisse",
    "types": [
@@ -9627,6 +12464,8 @@
   },
   {
    "id": 684,
+   "species": 684,
+   "form": null,
    "name": "swirlix",
    "displayName": "Swirlix",
    "types": [
@@ -9640,6 +12479,8 @@
   },
   {
    "id": 685,
+   "species": 685,
+   "form": null,
    "name": "slurpuff",
    "displayName": "Slurpuff",
    "types": [
@@ -9653,6 +12494,8 @@
   },
   {
    "id": 686,
+   "species": 686,
+   "form": null,
    "name": "inkay",
    "displayName": "Inkay",
    "types": [
@@ -9667,6 +12510,8 @@
   },
   {
    "id": 687,
+   "species": 687,
+   "form": null,
    "name": "malamar",
    "displayName": "Malamar",
    "types": [
@@ -9683,6 +12528,8 @@
   },
   {
    "id": 688,
+   "species": 688,
+   "form": null,
    "name": "binacle",
    "displayName": "Binacle",
    "types": [
@@ -9697,6 +12544,8 @@
   },
   {
    "id": 689,
+   "species": 689,
+   "form": null,
    "name": "barbaracle",
    "displayName": "Barbaracle",
    "types": [
@@ -9712,7 +12561,27 @@
    ]
   },
   {
+   "id": 10298,
+   "species": 689,
+   "form": "Mega",
+   "name": "barbaraclemega",
+   "displayName": "Mega Barbaracle",
+   "types": [
+    "rock",
+    "fighting"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 690,
+   "species": 690,
+   "form": null,
    "name": "skrelp",
    "displayName": "Skrelp",
    "types": [
@@ -9727,6 +12596,8 @@
   },
   {
    "id": 691,
+   "species": 691,
+   "form": null,
    "name": "dragalge",
    "displayName": "Dragalge",
    "types": [
@@ -9743,6 +12614,8 @@
   },
   {
    "id": 692,
+   "species": 692,
+   "form": null,
    "name": "clauncher",
    "displayName": "Clauncher",
    "types": [
@@ -9756,6 +12629,8 @@
   },
   {
    "id": 693,
+   "species": 693,
+   "form": null,
    "name": "clawitzer",
    "displayName": "Clawitzer",
    "types": [
@@ -9769,6 +12644,8 @@
   },
   {
    "id": 694,
+   "species": 694,
+   "form": null,
    "name": "helioptile",
    "displayName": "Helioptile",
    "types": [
@@ -9783,6 +12660,8 @@
   },
   {
    "id": 695,
+   "species": 695,
+   "form": null,
    "name": "heliolisk",
    "displayName": "Heliolisk",
    "types": [
@@ -9797,6 +12676,8 @@
   },
   {
    "id": 696,
+   "species": 696,
+   "form": null,
    "name": "tyrunt",
    "displayName": "Tyrunt",
    "types": [
@@ -9813,6 +12694,8 @@
   },
   {
    "id": 697,
+   "species": 697,
+   "form": null,
    "name": "tyrantrum",
    "displayName": "Tyrantrum",
    "types": [
@@ -9829,6 +12712,8 @@
   },
   {
    "id": 698,
+   "species": 698,
+   "form": null,
    "name": "amaura",
    "displayName": "Amaura",
    "types": [
@@ -9845,6 +12730,8 @@
   },
   {
    "id": 699,
+   "species": 699,
+   "form": null,
    "name": "aurorus",
    "displayName": "Aurorus",
    "types": [
@@ -9861,6 +12748,8 @@
   },
   {
    "id": 700,
+   "species": 700,
+   "form": null,
    "name": "sylveon",
    "displayName": "Sylveon",
    "types": [
@@ -9874,6 +12763,8 @@
   },
   {
    "id": 701,
+   "species": 701,
+   "form": null,
    "name": "hawlucha",
    "displayName": "Hawlucha",
    "types": [
@@ -9890,6 +12781,8 @@
   },
   {
    "id": 702,
+   "species": 702,
+   "form": null,
    "name": "dedenne",
    "displayName": "Dedenne",
    "types": [
@@ -9904,6 +12797,8 @@
   },
   {
    "id": 703,
+   "species": 703,
+   "form": null,
    "name": "carbink",
    "displayName": "Carbink",
    "types": [
@@ -9918,6 +12813,8 @@
   },
   {
    "id": 704,
+   "species": 704,
+   "form": null,
    "name": "goomy",
    "displayName": "Goomy",
    "types": [
@@ -9931,6 +12828,8 @@
   },
   {
    "id": 705,
+   "species": 705,
+   "form": null,
    "name": "sliggoo",
    "displayName": "Sliggoo",
    "types": [
@@ -9943,7 +12842,25 @@
    "flags": []
   },
   {
+   "id": 10241,
+   "species": 705,
+   "form": "Hisui",
+   "name": "sliggoohisui",
+   "displayName": "Hisuian Sliggoo",
+   "types": [
+    "steel",
+    "dragon"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "middle",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 706,
+   "species": 706,
+   "form": null,
    "name": "goodra",
    "displayName": "Goodra",
    "types": [
@@ -9956,7 +12873,25 @@
    "flags": []
   },
   {
+   "id": 10242,
+   "species": 706,
+   "form": "Hisui",
+   "name": "goodrahisui",
+   "displayName": "Hisuian Goodra",
+   "types": [
+    "steel",
+    "dragon"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 707,
+   "species": 707,
+   "form": null,
    "name": "klefki",
    "displayName": "Klefki",
    "types": [
@@ -9971,6 +12906,8 @@
   },
   {
    "id": 708,
+   "species": 708,
+   "form": null,
    "name": "phantump",
    "displayName": "Phantump",
    "types": [
@@ -9985,6 +12922,8 @@
   },
   {
    "id": 709,
+   "species": 709,
+   "form": null,
    "name": "trevenant",
    "displayName": "Trevenant",
    "types": [
@@ -9999,6 +12938,8 @@
   },
   {
    "id": 710,
+   "species": 710,
+   "form": null,
    "name": "pumpkaboo",
    "displayName": "Pumpkaboo",
    "types": [
@@ -10013,6 +12954,8 @@
   },
   {
    "id": 711,
+   "species": 711,
+   "form": null,
    "name": "gourgeist",
    "displayName": "Gourgeist",
    "types": [
@@ -10027,6 +12970,8 @@
   },
   {
    "id": 712,
+   "species": 712,
+   "form": null,
    "name": "bergmite",
    "displayName": "Bergmite",
    "types": [
@@ -10040,6 +12985,8 @@
   },
   {
    "id": 713,
+   "species": 713,
+   "form": null,
    "name": "avalugg",
    "displayName": "Avalugg",
    "types": [
@@ -10052,7 +12999,25 @@
    "flags": []
   },
   {
+   "id": 10243,
+   "species": 713,
+   "form": "Hisui",
+   "name": "avalugghisui",
+   "displayName": "Hisuian Avalugg",
+   "types": [
+    "ice",
+    "rock"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": []
+  },
+  {
    "id": 714,
+   "species": 714,
+   "form": null,
    "name": "noibat",
    "displayName": "Noibat",
    "types": [
@@ -10067,6 +13032,8 @@
   },
   {
    "id": 715,
+   "species": 715,
+   "form": null,
    "name": "noivern",
    "displayName": "Noivern",
    "types": [
@@ -10081,6 +13048,8 @@
   },
   {
    "id": 716,
+   "species": 716,
+   "form": null,
    "name": "xerneas",
    "displayName": "Xerneas",
    "types": [
@@ -10096,6 +13065,8 @@
   },
   {
    "id": 717,
+   "species": 717,
+   "form": null,
    "name": "yveltal",
    "displayName": "Yveltal",
    "types": [
@@ -10112,6 +13083,8 @@
   },
   {
    "id": 718,
+   "species": 718,
+   "form": null,
    "name": "zygarde",
    "displayName": "Zygarde",
    "types": [
@@ -10128,7 +13101,45 @@
    ]
   },
   {
+   "id": 10118,
+   "species": 718,
+   "form": "10%",
+   "name": "zygarde10",
+   "displayName": "Zygarde (10%)",
+   "types": [
+    "dragon",
+    "ground"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
+   "id": 10120,
+   "species": 718,
+   "form": "Complete",
+   "name": "zygardecomplete",
+   "displayName": "Zygarde (Complete)",
+   "types": [
+    "dragon",
+    "ground"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 719,
+   "species": 719,
+   "form": null,
    "name": "diancie",
    "displayName": "Diancie",
    "types": [
@@ -10146,6 +13157,8 @@
   },
   {
    "id": 720,
+   "species": 720,
+   "form": null,
    "name": "hoopa",
    "displayName": "Hoopa",
    "types": [
@@ -10161,7 +13174,27 @@
    ]
   },
   {
+   "id": 10086,
+   "species": 720,
+   "form": "Unbound",
+   "name": "hoopaunbound",
+   "displayName": "Hoopa (Unbound)",
+   "types": [
+    "psychic",
+    "dark"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "mythical"
+   ]
+  },
+  {
    "id": 721,
+   "species": 721,
+   "form": null,
    "name": "volcanion",
    "displayName": "Volcanion",
    "types": [
@@ -10178,6 +13211,8 @@
   },
   {
    "id": 722,
+   "species": 722,
+   "form": null,
    "name": "rowlet",
    "displayName": "Rowlet",
    "types": [
@@ -10194,6 +13229,8 @@
   },
   {
    "id": 723,
+   "species": 723,
+   "form": null,
    "name": "dartrix",
    "displayName": "Dartrix",
    "types": [
@@ -10210,6 +13247,8 @@
   },
   {
    "id": 724,
+   "species": 724,
+   "form": null,
    "name": "decidueye",
    "displayName": "Decidueye",
    "types": [
@@ -10225,7 +13264,27 @@
    ]
   },
   {
+   "id": 10244,
+   "species": 724,
+   "form": "Hisui",
+   "name": "decidueyehisui",
+   "displayName": "Hisuian Decidueye",
+   "types": [
+    "grass",
+    "fighting"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "starter"
+   ]
+  },
+  {
    "id": 725,
+   "species": 725,
+   "form": null,
    "name": "litten",
    "displayName": "Litten",
    "types": [
@@ -10241,6 +13300,8 @@
   },
   {
    "id": 726,
+   "species": 726,
+   "form": null,
    "name": "torracat",
    "displayName": "Torracat",
    "types": [
@@ -10256,6 +13317,8 @@
   },
   {
    "id": 727,
+   "species": 727,
+   "form": null,
    "name": "incineroar",
    "displayName": "Incineroar",
    "types": [
@@ -10272,6 +13335,8 @@
   },
   {
    "id": 728,
+   "species": 728,
+   "form": null,
    "name": "popplio",
    "displayName": "Popplio",
    "types": [
@@ -10287,6 +13352,8 @@
   },
   {
    "id": 729,
+   "species": 729,
+   "form": null,
    "name": "brionne",
    "displayName": "Brionne",
    "types": [
@@ -10302,6 +13369,8 @@
   },
   {
    "id": 730,
+   "species": 730,
+   "form": null,
    "name": "primarina",
    "displayName": "Primarina",
    "types": [
@@ -10318,6 +13387,8 @@
   },
   {
    "id": 731,
+   "species": 731,
+   "form": null,
    "name": "pikipek",
    "displayName": "Pikipek",
    "types": [
@@ -10332,6 +13403,8 @@
   },
   {
    "id": 732,
+   "species": 732,
+   "form": null,
    "name": "trumbeak",
    "displayName": "Trumbeak",
    "types": [
@@ -10346,6 +13419,8 @@
   },
   {
    "id": 733,
+   "species": 733,
+   "form": null,
    "name": "toucannon",
    "displayName": "Toucannon",
    "types": [
@@ -10360,6 +13435,8 @@
   },
   {
    "id": 734,
+   "species": 734,
+   "form": null,
    "name": "yungoos",
    "displayName": "Yungoos",
    "types": [
@@ -10373,6 +13450,8 @@
   },
   {
    "id": 735,
+   "species": 735,
+   "form": null,
    "name": "gumshoos",
    "displayName": "Gumshoos",
    "types": [
@@ -10386,6 +13465,8 @@
   },
   {
    "id": 736,
+   "species": 736,
+   "form": null,
    "name": "grubbin",
    "displayName": "Grubbin",
    "types": [
@@ -10399,6 +13480,8 @@
   },
   {
    "id": 737,
+   "species": 737,
+   "form": null,
    "name": "charjabug",
    "displayName": "Charjabug",
    "types": [
@@ -10413,6 +13496,8 @@
   },
   {
    "id": 738,
+   "species": 738,
+   "form": null,
    "name": "vikavolt",
    "displayName": "Vikavolt",
    "types": [
@@ -10427,6 +13512,8 @@
   },
   {
    "id": 739,
+   "species": 739,
+   "form": null,
    "name": "crabrawler",
    "displayName": "Crabrawler",
    "types": [
@@ -10440,6 +13527,8 @@
   },
   {
    "id": 740,
+   "species": 740,
+   "form": null,
    "name": "crabominable",
    "displayName": "Crabominable",
    "types": [
@@ -10456,6 +13545,8 @@
   },
   {
    "id": 741,
+   "species": 741,
+   "form": null,
    "name": "oricorio",
    "displayName": "Oricorio",
    "types": [
@@ -10469,7 +13560,57 @@
    "flags": []
   },
   {
+   "id": 10123,
+   "species": 741,
+   "form": "Pom-Pom",
+   "name": "oricoriopompom",
+   "displayName": "Oricorio (Pom-Pom)",
+   "types": [
+    "electric",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10124,
+   "species": 741,
+   "form": "Pa'u",
+   "name": "oricoriopau",
+   "displayName": "Oricorio (Pa'u)",
+   "types": [
+    "psychic",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
+   "id": 10125,
+   "species": 741,
+   "form": "Sensu",
+   "name": "oricoriosensu",
+   "displayName": "Oricorio (Sensu)",
+   "types": [
+    "ghost",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": []
+  },
+  {
    "id": 742,
+   "species": 742,
+   "form": null,
    "name": "cutiefly",
    "displayName": "Cutiefly",
    "types": [
@@ -10484,6 +13625,8 @@
   },
   {
    "id": 743,
+   "species": 743,
+   "form": null,
    "name": "ribombee",
    "displayName": "Ribombee",
    "types": [
@@ -10498,6 +13641,8 @@
   },
   {
    "id": 744,
+   "species": 744,
+   "form": null,
    "name": "rockruff",
    "displayName": "Rockruff",
    "types": [
@@ -10511,6 +13656,8 @@
   },
   {
    "id": 745,
+   "species": 745,
+   "form": null,
    "name": "lycanroc",
    "displayName": "Lycanroc",
    "types": [
@@ -10524,6 +13671,8 @@
   },
   {
    "id": 746,
+   "species": 746,
+   "form": null,
    "name": "wishiwashi",
    "displayName": "Wishiwashi",
    "types": [
@@ -10537,6 +13686,8 @@
   },
   {
    "id": 747,
+   "species": 747,
+   "form": null,
    "name": "mareanie",
    "displayName": "Mareanie",
    "types": [
@@ -10551,6 +13702,8 @@
   },
   {
    "id": 748,
+   "species": 748,
+   "form": null,
    "name": "toxapex",
    "displayName": "Toxapex",
    "types": [
@@ -10565,6 +13718,8 @@
   },
   {
    "id": 749,
+   "species": 749,
+   "form": null,
    "name": "mudbray",
    "displayName": "Mudbray",
    "types": [
@@ -10578,6 +13733,8 @@
   },
   {
    "id": 750,
+   "species": 750,
+   "form": null,
    "name": "mudsdale",
    "displayName": "Mudsdale",
    "types": [
@@ -10591,6 +13748,8 @@
   },
   {
    "id": 751,
+   "species": 751,
+   "form": null,
    "name": "dewpider",
    "displayName": "Dewpider",
    "types": [
@@ -10605,6 +13764,8 @@
   },
   {
    "id": 752,
+   "species": 752,
+   "form": null,
    "name": "araquanid",
    "displayName": "Araquanid",
    "types": [
@@ -10619,6 +13780,8 @@
   },
   {
    "id": 753,
+   "species": 753,
+   "form": null,
    "name": "fomantis",
    "displayName": "Fomantis",
    "types": [
@@ -10632,6 +13795,8 @@
   },
   {
    "id": 754,
+   "species": 754,
+   "form": null,
    "name": "lurantis",
    "displayName": "Lurantis",
    "types": [
@@ -10645,6 +13810,8 @@
   },
   {
    "id": 755,
+   "species": 755,
+   "form": null,
    "name": "morelull",
    "displayName": "Morelull",
    "types": [
@@ -10659,6 +13826,8 @@
   },
   {
    "id": 756,
+   "species": 756,
+   "form": null,
    "name": "shiinotic",
    "displayName": "Shiinotic",
    "types": [
@@ -10673,6 +13842,8 @@
   },
   {
    "id": 757,
+   "species": 757,
+   "form": null,
    "name": "salandit",
    "displayName": "Salandit",
    "types": [
@@ -10687,6 +13858,8 @@
   },
   {
    "id": 758,
+   "species": 758,
+   "form": null,
    "name": "salazzle",
    "displayName": "Salazzle",
    "types": [
@@ -10701,6 +13874,8 @@
   },
   {
    "id": 759,
+   "species": 759,
+   "form": null,
    "name": "stufful",
    "displayName": "Stufful",
    "types": [
@@ -10715,6 +13890,8 @@
   },
   {
    "id": 760,
+   "species": 760,
+   "form": null,
    "name": "bewear",
    "displayName": "Bewear",
    "types": [
@@ -10729,6 +13906,8 @@
   },
   {
    "id": 761,
+   "species": 761,
+   "form": null,
    "name": "bounsweet",
    "displayName": "Bounsweet",
    "types": [
@@ -10742,6 +13921,8 @@
   },
   {
    "id": 762,
+   "species": 762,
+   "form": null,
    "name": "steenee",
    "displayName": "Steenee",
    "types": [
@@ -10755,6 +13936,8 @@
   },
   {
    "id": 763,
+   "species": 763,
+   "form": null,
    "name": "tsareena",
    "displayName": "Tsareena",
    "types": [
@@ -10768,6 +13951,8 @@
   },
   {
    "id": 764,
+   "species": 764,
+   "form": null,
    "name": "comfey",
    "displayName": "Comfey",
    "types": [
@@ -10781,6 +13966,8 @@
   },
   {
    "id": 765,
+   "species": 765,
+   "form": null,
    "name": "oranguru",
    "displayName": "Oranguru",
    "types": [
@@ -10795,6 +13982,8 @@
   },
   {
    "id": 766,
+   "species": 766,
+   "form": null,
    "name": "passimian",
    "displayName": "Passimian",
    "types": [
@@ -10808,6 +13997,8 @@
   },
   {
    "id": 767,
+   "species": 767,
+   "form": null,
    "name": "wimpod",
    "displayName": "Wimpod",
    "types": [
@@ -10822,6 +14013,8 @@
   },
   {
    "id": 768,
+   "species": 768,
+   "form": null,
    "name": "golisopod",
    "displayName": "Golisopod",
    "types": [
@@ -10837,7 +14030,27 @@
    ]
   },
   {
+   "id": 10316,
+   "species": 768,
+   "form": "Mega",
+   "name": "golisopodmega",
+   "displayName": "Mega Golisopod",
+   "types": [
+    "bug",
+    "steel"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "final",
+   "evoMethod": "level",
+   "flags": [
+    "mega"
+   ]
+  },
+  {
    "id": 769,
+   "species": 769,
+   "form": null,
    "name": "sandygast",
    "displayName": "Sandygast",
    "types": [
@@ -10852,6 +14065,8 @@
   },
   {
    "id": 770,
+   "species": 770,
+   "form": null,
    "name": "palossand",
    "displayName": "Palossand",
    "types": [
@@ -10866,6 +14081,8 @@
   },
   {
    "id": 771,
+   "species": 771,
+   "form": null,
    "name": "pyukumuku",
    "displayName": "Pyukumuku",
    "types": [
@@ -10879,6 +14096,8 @@
   },
   {
    "id": 772,
+   "species": 772,
+   "form": null,
    "name": "typenull",
    "displayName": "Type: Null",
    "types": [
@@ -10894,6 +14113,8 @@
   },
   {
    "id": 773,
+   "species": 773,
+   "form": null,
    "name": "silvally",
    "displayName": "Silvally",
    "types": [
@@ -10909,6 +14130,8 @@
   },
   {
    "id": 774,
+   "species": 774,
+   "form": null,
    "name": "minior",
    "displayName": "Minior",
    "types": [
@@ -10923,6 +14146,8 @@
   },
   {
    "id": 775,
+   "species": 775,
+   "form": null,
    "name": "komala",
    "displayName": "Komala",
    "types": [
@@ -10936,6 +14161,8 @@
   },
   {
    "id": 776,
+   "species": 776,
+   "form": null,
    "name": "turtonator",
    "displayName": "Turtonator",
    "types": [
@@ -10950,6 +14177,8 @@
   },
   {
    "id": 777,
+   "species": 777,
+   "form": null,
    "name": "togedemaru",
    "displayName": "Togedemaru",
    "types": [
@@ -10964,6 +14193,8 @@
   },
   {
    "id": 778,
+   "species": 778,
+   "form": null,
    "name": "mimikyu",
    "displayName": "Mimikyu",
    "types": [
@@ -10978,6 +14209,8 @@
   },
   {
    "id": 779,
+   "species": 779,
+   "form": null,
    "name": "bruxish",
    "displayName": "Bruxish",
    "types": [
@@ -10992,6 +14225,8 @@
   },
   {
    "id": 780,
+   "species": 780,
+   "form": null,
    "name": "drampa",
    "displayName": "Drampa",
    "types": [
@@ -11008,6 +14243,8 @@
   },
   {
    "id": 781,
+   "species": 781,
+   "form": null,
    "name": "dhelmise",
    "displayName": "Dhelmise",
    "types": [
@@ -11022,6 +14259,8 @@
   },
   {
    "id": 782,
+   "species": 782,
+   "form": null,
    "name": "jangmoo",
    "displayName": "Jangmo-o",
    "types": [
@@ -11035,6 +14274,8 @@
   },
   {
    "id": 783,
+   "species": 783,
+   "form": null,
    "name": "hakamoo",
    "displayName": "Hakamo-o",
    "types": [
@@ -11049,6 +14290,8 @@
   },
   {
    "id": 784,
+   "species": 784,
+   "form": null,
    "name": "kommoo",
    "displayName": "Kommo-o",
    "types": [
@@ -11063,6 +14306,8 @@
   },
   {
    "id": 785,
+   "species": 785,
+   "form": null,
    "name": "tapukoko",
    "displayName": "Tapu Koko",
    "types": [
@@ -11079,6 +14324,8 @@
   },
   {
    "id": 786,
+   "species": 786,
+   "form": null,
    "name": "tapulele",
    "displayName": "Tapu Lele",
    "types": [
@@ -11095,6 +14342,8 @@
   },
   {
    "id": 787,
+   "species": 787,
+   "form": null,
    "name": "tapubulu",
    "displayName": "Tapu Bulu",
    "types": [
@@ -11111,6 +14360,8 @@
   },
   {
    "id": 788,
+   "species": 788,
+   "form": null,
    "name": "tapufini",
    "displayName": "Tapu Fini",
    "types": [
@@ -11127,6 +14378,8 @@
   },
   {
    "id": 789,
+   "species": 789,
+   "form": null,
    "name": "cosmog",
    "displayName": "Cosmog",
    "types": [
@@ -11142,6 +14395,8 @@
   },
   {
    "id": 790,
+   "species": 790,
+   "form": null,
    "name": "cosmoem",
    "displayName": "Cosmoem",
    "types": [
@@ -11157,6 +14412,8 @@
   },
   {
    "id": 791,
+   "species": 791,
+   "form": null,
    "name": "solgaleo",
    "displayName": "Solgaleo",
    "types": [
@@ -11173,6 +14430,8 @@
   },
   {
    "id": 792,
+   "species": 792,
+   "form": null,
    "name": "lunala",
    "displayName": "Lunala",
    "types": [
@@ -11189,6 +14448,8 @@
   },
   {
    "id": 793,
+   "species": 793,
+   "form": null,
    "name": "nihilego",
    "displayName": "Nihilego",
    "types": [
@@ -11205,6 +14466,8 @@
   },
   {
    "id": 794,
+   "species": 794,
+   "form": null,
    "name": "buzzwole",
    "displayName": "Buzzwole",
    "types": [
@@ -11221,6 +14484,8 @@
   },
   {
    "id": 795,
+   "species": 795,
+   "form": null,
    "name": "pheromosa",
    "displayName": "Pheromosa",
    "types": [
@@ -11237,6 +14502,8 @@
   },
   {
    "id": 796,
+   "species": 796,
+   "form": null,
    "name": "xurkitree",
    "displayName": "Xurkitree",
    "types": [
@@ -11252,6 +14519,8 @@
   },
   {
    "id": 797,
+   "species": 797,
+   "form": null,
    "name": "celesteela",
    "displayName": "Celesteela",
    "types": [
@@ -11268,6 +14537,8 @@
   },
   {
    "id": 798,
+   "species": 798,
+   "form": null,
    "name": "kartana",
    "displayName": "Kartana",
    "types": [
@@ -11284,6 +14555,8 @@
   },
   {
    "id": 799,
+   "species": 799,
+   "form": null,
    "name": "guzzlord",
    "displayName": "Guzzlord",
    "types": [
@@ -11300,6 +14573,8 @@
   },
   {
    "id": 800,
+   "species": 800,
+   "form": null,
    "name": "necrozma",
    "displayName": "Necrozma",
    "types": [
@@ -11314,7 +14589,63 @@
    ]
   },
   {
+   "id": 10155,
+   "species": 800,
+   "form": "Dusk-Mane",
+   "name": "necrozmaduskmane",
+   "displayName": "Necrozma (Dusk Mane)",
+   "types": [
+    "psychic",
+    "steel"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
+   "id": 10156,
+   "species": 800,
+   "form": "Dawn-Wings",
+   "name": "necrozmadawnwings",
+   "displayName": "Necrozma (Dawn Wings)",
+   "types": [
+    "psychic",
+    "ghost"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
+   "id": 10157,
+   "species": 800,
+   "form": "Ultra",
+   "name": "necrozmaultra",
+   "displayName": "Necrozma (Ultra)",
+   "types": [
+    "psychic",
+    "dragon"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 801,
+   "species": 801,
+   "form": null,
    "name": "magearna",
    "displayName": "Magearna",
    "types": [
@@ -11332,6 +14663,8 @@
   },
   {
    "id": 802,
+   "species": 802,
+   "form": null,
    "name": "marshadow",
    "displayName": "Marshadow",
    "types": [
@@ -11348,6 +14681,8 @@
   },
   {
    "id": 803,
+   "species": 803,
+   "form": null,
    "name": "poipole",
    "displayName": "Poipole",
    "types": [
@@ -11363,6 +14698,8 @@
   },
   {
    "id": 804,
+   "species": 804,
+   "form": null,
    "name": "naganadel",
    "displayName": "Naganadel",
    "types": [
@@ -11379,6 +14716,8 @@
   },
   {
    "id": 805,
+   "species": 805,
+   "form": null,
    "name": "stakataka",
    "displayName": "Stakataka",
    "types": [
@@ -11395,6 +14734,8 @@
   },
   {
    "id": 806,
+   "species": 806,
+   "form": null,
    "name": "blacephalon",
    "displayName": "Blacephalon",
    "types": [
@@ -11411,6 +14752,8 @@
   },
   {
    "id": 807,
+   "species": 807,
+   "form": null,
    "name": "zeraora",
    "displayName": "Zeraora",
    "types": [
@@ -11427,6 +14770,8 @@
   },
   {
    "id": 808,
+   "species": 808,
+   "form": null,
    "name": "meltan",
    "displayName": "Meltan",
    "types": [
@@ -11442,6 +14787,8 @@
   },
   {
    "id": 809,
+   "species": 809,
+   "form": null,
    "name": "melmetal",
    "displayName": "Melmetal",
    "types": [
@@ -11458,6 +14805,8 @@
   },
   {
    "id": 810,
+   "species": 810,
+   "form": null,
    "name": "grookey",
    "displayName": "Grookey",
    "types": [
@@ -11473,6 +14822,8 @@
   },
   {
    "id": 811,
+   "species": 811,
+   "form": null,
    "name": "thwackey",
    "displayName": "Thwackey",
    "types": [
@@ -11488,6 +14839,8 @@
   },
   {
    "id": 812,
+   "species": 812,
+   "form": null,
    "name": "rillaboom",
    "displayName": "Rillaboom",
    "types": [
@@ -11504,6 +14857,8 @@
   },
   {
    "id": 813,
+   "species": 813,
+   "form": null,
    "name": "scorbunny",
    "displayName": "Scorbunny",
    "types": [
@@ -11519,6 +14874,8 @@
   },
   {
    "id": 814,
+   "species": 814,
+   "form": null,
    "name": "raboot",
    "displayName": "Raboot",
    "types": [
@@ -11534,6 +14891,8 @@
   },
   {
    "id": 815,
+   "species": 815,
+   "form": null,
    "name": "cinderace",
    "displayName": "Cinderace",
    "types": [
@@ -11550,6 +14909,8 @@
   },
   {
    "id": 816,
+   "species": 816,
+   "form": null,
    "name": "sobble",
    "displayName": "Sobble",
    "types": [
@@ -11565,6 +14926,8 @@
   },
   {
    "id": 817,
+   "species": 817,
+   "form": null,
    "name": "drizzile",
    "displayName": "Drizzile",
    "types": [
@@ -11580,6 +14943,8 @@
   },
   {
    "id": 818,
+   "species": 818,
+   "form": null,
    "name": "inteleon",
    "displayName": "Inteleon",
    "types": [
@@ -11596,6 +14961,8 @@
   },
   {
    "id": 819,
+   "species": 819,
+   "form": null,
    "name": "skwovet",
    "displayName": "Skwovet",
    "types": [
@@ -11609,6 +14976,8 @@
   },
   {
    "id": 820,
+   "species": 820,
+   "form": null,
    "name": "greedent",
    "displayName": "Greedent",
    "types": [
@@ -11622,6 +14991,8 @@
   },
   {
    "id": 821,
+   "species": 821,
+   "form": null,
    "name": "rookidee",
    "displayName": "Rookidee",
    "types": [
@@ -11635,6 +15006,8 @@
   },
   {
    "id": 822,
+   "species": 822,
+   "form": null,
    "name": "corvisquire",
    "displayName": "Corvisquire",
    "types": [
@@ -11648,6 +15021,8 @@
   },
   {
    "id": 823,
+   "species": 823,
+   "form": null,
    "name": "corviknight",
    "displayName": "Corviknight",
    "types": [
@@ -11664,6 +15039,8 @@
   },
   {
    "id": 824,
+   "species": 824,
+   "form": null,
    "name": "blipbug",
    "displayName": "Blipbug",
    "types": [
@@ -11677,6 +15054,8 @@
   },
   {
    "id": 825,
+   "species": 825,
+   "form": null,
    "name": "dottler",
    "displayName": "Dottler",
    "types": [
@@ -11691,6 +15070,8 @@
   },
   {
    "id": 826,
+   "species": 826,
+   "form": null,
    "name": "orbeetle",
    "displayName": "Orbeetle",
    "types": [
@@ -11707,6 +15088,8 @@
   },
   {
    "id": 827,
+   "species": 827,
+   "form": null,
    "name": "nickit",
    "displayName": "Nickit",
    "types": [
@@ -11720,6 +15103,8 @@
   },
   {
    "id": 828,
+   "species": 828,
+   "form": null,
    "name": "thievul",
    "displayName": "Thievul",
    "types": [
@@ -11733,6 +15118,8 @@
   },
   {
    "id": 829,
+   "species": 829,
+   "form": null,
    "name": "gossifleur",
    "displayName": "Gossifleur",
    "types": [
@@ -11746,6 +15133,8 @@
   },
   {
    "id": 830,
+   "species": 830,
+   "form": null,
    "name": "eldegoss",
    "displayName": "Eldegoss",
    "types": [
@@ -11759,6 +15148,8 @@
   },
   {
    "id": 831,
+   "species": 831,
+   "form": null,
    "name": "wooloo",
    "displayName": "Wooloo",
    "types": [
@@ -11772,6 +15163,8 @@
   },
   {
    "id": 832,
+   "species": 832,
+   "form": null,
    "name": "dubwool",
    "displayName": "Dubwool",
    "types": [
@@ -11785,6 +15178,8 @@
   },
   {
    "id": 833,
+   "species": 833,
+   "form": null,
    "name": "chewtle",
    "displayName": "Chewtle",
    "types": [
@@ -11798,6 +15193,8 @@
   },
   {
    "id": 834,
+   "species": 834,
+   "form": null,
    "name": "drednaw",
    "displayName": "Drednaw",
    "types": [
@@ -11814,6 +15211,8 @@
   },
   {
    "id": 835,
+   "species": 835,
+   "form": null,
    "name": "yamper",
    "displayName": "Yamper",
    "types": [
@@ -11827,6 +15226,8 @@
   },
   {
    "id": 836,
+   "species": 836,
+   "form": null,
    "name": "boltund",
    "displayName": "Boltund",
    "types": [
@@ -11840,6 +15241,8 @@
   },
   {
    "id": 837,
+   "species": 837,
+   "form": null,
    "name": "rolycoly",
    "displayName": "Rolycoly",
    "types": [
@@ -11853,6 +15256,8 @@
   },
   {
    "id": 838,
+   "species": 838,
+   "form": null,
    "name": "carkol",
    "displayName": "Carkol",
    "types": [
@@ -11867,6 +15272,8 @@
   },
   {
    "id": 839,
+   "species": 839,
+   "form": null,
    "name": "coalossal",
    "displayName": "Coalossal",
    "types": [
@@ -11883,6 +15290,8 @@
   },
   {
    "id": 840,
+   "species": 840,
+   "form": null,
    "name": "applin",
    "displayName": "Applin",
    "types": [
@@ -11897,6 +15306,8 @@
   },
   {
    "id": 841,
+   "species": 841,
+   "form": null,
    "name": "flapple",
    "displayName": "Flapple",
    "types": [
@@ -11913,6 +15324,8 @@
   },
   {
    "id": 842,
+   "species": 842,
+   "form": null,
    "name": "appletun",
    "displayName": "Appletun",
    "types": [
@@ -11929,6 +15342,8 @@
   },
   {
    "id": 843,
+   "species": 843,
+   "form": null,
    "name": "silicobra",
    "displayName": "Silicobra",
    "types": [
@@ -11942,6 +15357,8 @@
   },
   {
    "id": 844,
+   "species": 844,
+   "form": null,
    "name": "sandaconda",
    "displayName": "Sandaconda",
    "types": [
@@ -11957,6 +15374,8 @@
   },
   {
    "id": 845,
+   "species": 845,
+   "form": null,
    "name": "cramorant",
    "displayName": "Cramorant",
    "types": [
@@ -11971,6 +15390,8 @@
   },
   {
    "id": 846,
+   "species": 846,
+   "form": null,
    "name": "arrokuda",
    "displayName": "Arrokuda",
    "types": [
@@ -11984,6 +15405,8 @@
   },
   {
    "id": 847,
+   "species": 847,
+   "form": null,
    "name": "barraskewda",
    "displayName": "Barraskewda",
    "types": [
@@ -11997,6 +15420,8 @@
   },
   {
    "id": 848,
+   "species": 848,
+   "form": null,
    "name": "toxel",
    "displayName": "Toxel",
    "types": [
@@ -12013,6 +15438,8 @@
   },
   {
    "id": 849,
+   "species": 849,
+   "form": null,
    "name": "toxtricity",
    "displayName": "Toxtricity",
    "types": [
@@ -12029,6 +15456,8 @@
   },
   {
    "id": 850,
+   "species": 850,
+   "form": null,
    "name": "sizzlipede",
    "displayName": "Sizzlipede",
    "types": [
@@ -12043,6 +15472,8 @@
   },
   {
    "id": 851,
+   "species": 851,
+   "form": null,
    "name": "centiskorch",
    "displayName": "Centiskorch",
    "types": [
@@ -12059,6 +15490,8 @@
   },
   {
    "id": 852,
+   "species": 852,
+   "form": null,
    "name": "clobbopus",
    "displayName": "Clobbopus",
    "types": [
@@ -12072,6 +15505,8 @@
   },
   {
    "id": 853,
+   "species": 853,
+   "form": null,
    "name": "grapploct",
    "displayName": "Grapploct",
    "types": [
@@ -12085,6 +15520,8 @@
   },
   {
    "id": 854,
+   "species": 854,
+   "form": null,
    "name": "sinistea",
    "displayName": "Sinistea",
    "types": [
@@ -12098,6 +15535,8 @@
   },
   {
    "id": 855,
+   "species": 855,
+   "form": null,
    "name": "polteageist",
    "displayName": "Polteageist",
    "types": [
@@ -12111,6 +15550,8 @@
   },
   {
    "id": 856,
+   "species": 856,
+   "form": null,
    "name": "hatenna",
    "displayName": "Hatenna",
    "types": [
@@ -12124,6 +15565,8 @@
   },
   {
    "id": 857,
+   "species": 857,
+   "form": null,
    "name": "hattrem",
    "displayName": "Hattrem",
    "types": [
@@ -12137,6 +15580,8 @@
   },
   {
    "id": 858,
+   "species": 858,
+   "form": null,
    "name": "hatterene",
    "displayName": "Hatterene",
    "types": [
@@ -12153,6 +15598,8 @@
   },
   {
    "id": 859,
+   "species": 859,
+   "form": null,
    "name": "impidimp",
    "displayName": "Impidimp",
    "types": [
@@ -12167,6 +15614,8 @@
   },
   {
    "id": 860,
+   "species": 860,
+   "form": null,
    "name": "morgrem",
    "displayName": "Morgrem",
    "types": [
@@ -12181,6 +15630,8 @@
   },
   {
    "id": 861,
+   "species": 861,
+   "form": null,
    "name": "grimmsnarl",
    "displayName": "Grimmsnarl",
    "types": [
@@ -12197,6 +15648,8 @@
   },
   {
    "id": 862,
+   "species": 862,
+   "form": null,
    "name": "obstagoon",
    "displayName": "Obstagoon",
    "types": [
@@ -12211,6 +15664,8 @@
   },
   {
    "id": 863,
+   "species": 863,
+   "form": null,
    "name": "perrserker",
    "displayName": "Perrserker",
    "types": [
@@ -12224,6 +15679,8 @@
   },
   {
    "id": 864,
+   "species": 864,
+   "form": null,
    "name": "cursola",
    "displayName": "Cursola",
    "types": [
@@ -12237,6 +15694,8 @@
   },
   {
    "id": 865,
+   "species": 865,
+   "form": null,
    "name": "sirfetchd",
    "displayName": "Sirfetch’d",
    "types": [
@@ -12250,6 +15709,8 @@
   },
   {
    "id": 866,
+   "species": 866,
+   "form": null,
    "name": "mrrime",
    "displayName": "Mr. Rime",
    "types": [
@@ -12264,6 +15725,8 @@
   },
   {
    "id": 867,
+   "species": 867,
+   "form": null,
    "name": "runerigus",
    "displayName": "Runerigus",
    "types": [
@@ -12278,6 +15741,8 @@
   },
   {
    "id": 868,
+   "species": 868,
+   "form": null,
    "name": "milcery",
    "displayName": "Milcery",
    "types": [
@@ -12291,6 +15756,8 @@
   },
   {
    "id": 869,
+   "species": 869,
+   "form": null,
    "name": "alcremie",
    "displayName": "Alcremie",
    "types": [
@@ -12306,6 +15773,8 @@
   },
   {
    "id": 870,
+   "species": 870,
+   "form": null,
    "name": "falinks",
    "displayName": "Falinks",
    "types": [
@@ -12321,6 +15790,8 @@
   },
   {
    "id": 871,
+   "species": 871,
+   "form": null,
    "name": "pincurchin",
    "displayName": "Pincurchin",
    "types": [
@@ -12334,6 +15805,8 @@
   },
   {
    "id": 872,
+   "species": 872,
+   "form": null,
    "name": "snom",
    "displayName": "Snom",
    "types": [
@@ -12348,6 +15821,8 @@
   },
   {
    "id": 873,
+   "species": 873,
+   "form": null,
    "name": "frosmoth",
    "displayName": "Frosmoth",
    "types": [
@@ -12362,6 +15837,8 @@
   },
   {
    "id": 874,
+   "species": 874,
+   "form": null,
    "name": "stonjourner",
    "displayName": "Stonjourner",
    "types": [
@@ -12375,6 +15852,8 @@
   },
   {
    "id": 875,
+   "species": 875,
+   "form": null,
    "name": "eiscue",
    "displayName": "Eiscue",
    "types": [
@@ -12388,6 +15867,8 @@
   },
   {
    "id": 876,
+   "species": 876,
+   "form": null,
    "name": "indeedee",
    "displayName": "Indeedee",
    "types": [
@@ -12402,6 +15883,8 @@
   },
   {
    "id": 877,
+   "species": 877,
+   "form": null,
    "name": "morpeko",
    "displayName": "Morpeko",
    "types": [
@@ -12416,6 +15899,8 @@
   },
   {
    "id": 878,
+   "species": 878,
+   "form": null,
    "name": "cufant",
    "displayName": "Cufant",
    "types": [
@@ -12429,6 +15914,8 @@
   },
   {
    "id": 879,
+   "species": 879,
+   "form": null,
    "name": "copperajah",
    "displayName": "Copperajah",
    "types": [
@@ -12444,6 +15931,8 @@
   },
   {
    "id": 880,
+   "species": 880,
+   "form": null,
    "name": "dracozolt",
    "displayName": "Dracozolt",
    "types": [
@@ -12460,6 +15949,8 @@
   },
   {
    "id": 881,
+   "species": 881,
+   "form": null,
    "name": "arctozolt",
    "displayName": "Arctozolt",
    "types": [
@@ -12476,6 +15967,8 @@
   },
   {
    "id": 882,
+   "species": 882,
+   "form": null,
    "name": "dracovish",
    "displayName": "Dracovish",
    "types": [
@@ -12492,6 +15985,8 @@
   },
   {
    "id": 883,
+   "species": 883,
+   "form": null,
    "name": "arctovish",
    "displayName": "Arctovish",
    "types": [
@@ -12508,6 +16003,8 @@
   },
   {
    "id": 884,
+   "species": 884,
+   "form": null,
    "name": "duraludon",
    "displayName": "Duraludon",
    "types": [
@@ -12524,6 +16021,8 @@
   },
   {
    "id": 885,
+   "species": 885,
+   "form": null,
    "name": "dreepy",
    "displayName": "Dreepy",
    "types": [
@@ -12538,6 +16037,8 @@
   },
   {
    "id": 886,
+   "species": 886,
+   "form": null,
    "name": "drakloak",
    "displayName": "Drakloak",
    "types": [
@@ -12552,6 +16053,8 @@
   },
   {
    "id": 887,
+   "species": 887,
+   "form": null,
    "name": "dragapult",
    "displayName": "Dragapult",
    "types": [
@@ -12566,6 +16069,8 @@
   },
   {
    "id": 888,
+   "species": 888,
+   "form": null,
    "name": "zacian",
    "displayName": "Zacian",
    "types": [
@@ -12580,7 +16085,27 @@
    ]
   },
   {
+   "id": 10188,
+   "species": 888,
+   "form": "Crowned",
+   "name": "zaciancrowned",
+   "displayName": "Zacian (Crowned)",
+   "types": [
+    "fairy",
+    "steel"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 889,
+   "species": 889,
+   "form": null,
    "name": "zamazenta",
    "displayName": "Zamazenta",
    "types": [
@@ -12595,7 +16120,27 @@
    ]
   },
   {
+   "id": 10189,
+   "species": 889,
+   "form": "Crowned",
+   "name": "zamazentacrowned",
+   "displayName": "Zamazenta (Crowned)",
+   "types": [
+    "fighting",
+    "steel"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 890,
+   "species": 890,
+   "form": null,
    "name": "eternatus",
    "displayName": "Eternatus",
    "types": [
@@ -12612,6 +16157,8 @@
   },
   {
    "id": 891,
+   "species": 891,
+   "form": null,
    "name": "kubfu",
    "displayName": "Kubfu",
    "types": [
@@ -12627,6 +16174,8 @@
   },
   {
    "id": 892,
+   "species": 892,
+   "form": null,
    "name": "urshifu",
    "displayName": "Urshifu",
    "types": [
@@ -12643,7 +16192,28 @@
    ]
   },
   {
+   "id": 10191,
+   "species": 892,
+   "form": "Rapid-Strike",
+   "name": "urshifurapidstrike",
+   "displayName": "Urshifu (Rapid Strike)",
+   "types": [
+    "fighting",
+    "water"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "final",
+   "evoMethod": "other",
+   "flags": [
+    "legendary",
+    "gmax"
+   ]
+  },
+  {
    "id": 893,
+   "species": 893,
+   "form": null,
    "name": "zarude",
    "displayName": "Zarude",
    "types": [
@@ -12660,6 +16230,8 @@
   },
   {
    "id": 894,
+   "species": 894,
+   "form": null,
    "name": "regieleki",
    "displayName": "Regieleki",
    "types": [
@@ -12675,6 +16247,8 @@
   },
   {
    "id": 895,
+   "species": 895,
+   "form": null,
    "name": "regidrago",
    "displayName": "Regidrago",
    "types": [
@@ -12690,6 +16264,8 @@
   },
   {
    "id": 896,
+   "species": 896,
+   "form": null,
    "name": "glastrier",
    "displayName": "Glastrier",
    "types": [
@@ -12705,6 +16281,8 @@
   },
   {
    "id": 897,
+   "species": 897,
+   "form": null,
    "name": "spectrier",
    "displayName": "Spectrier",
    "types": [
@@ -12720,6 +16298,8 @@
   },
   {
    "id": 898,
+   "species": 898,
+   "form": null,
    "name": "calyrex",
    "displayName": "Calyrex",
    "types": [
@@ -12735,7 +16315,45 @@
    ]
   },
   {
+   "id": 10193,
+   "species": 898,
+   "form": "Ice",
+   "name": "calyrexice",
+   "displayName": "Calyrex (Ice)",
+   "types": [
+    "psychic",
+    "ice"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
+   "id": 10194,
+   "species": 898,
+   "form": "Shadow",
+   "name": "calyrexshadow",
+   "displayName": "Calyrex (Shadow)",
+   "types": [
+    "psychic",
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 899,
+   "species": 899,
+   "form": null,
    "name": "wyrdeer",
    "displayName": "Wyrdeer",
    "types": [
@@ -12750,6 +16368,8 @@
   },
   {
    "id": 900,
+   "species": 900,
+   "form": null,
    "name": "kleavor",
    "displayName": "Kleavor",
    "types": [
@@ -12764,6 +16384,8 @@
   },
   {
    "id": 901,
+   "species": 901,
+   "form": null,
    "name": "ursaluna",
    "displayName": "Ursaluna",
    "types": [
@@ -12777,7 +16399,25 @@
    "flags": []
   },
   {
+   "id": 10272,
+   "species": 901,
+   "form": "Bloodmoon",
+   "name": "ursalunabloodmoon",
+   "displayName": "Ursaluna (Bloodmoon)",
+   "types": [
+    "ground",
+    "normal"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "final",
+   "evoMethod": "item",
+   "flags": []
+  },
+  {
    "id": 902,
+   "species": 902,
+   "form": null,
    "name": "basculegion",
    "displayName": "Basculegion",
    "types": [
@@ -12792,6 +16432,8 @@
   },
   {
    "id": 903,
+   "species": 903,
+   "form": null,
    "name": "sneasler",
    "displayName": "Sneasler",
    "types": [
@@ -12806,6 +16448,8 @@
   },
   {
    "id": 904,
+   "species": 904,
+   "form": null,
    "name": "overqwil",
    "displayName": "Overqwil",
    "types": [
@@ -12820,6 +16464,8 @@
   },
   {
    "id": 905,
+   "species": 905,
+   "form": null,
    "name": "enamorus",
    "displayName": "Enamorus",
    "types": [
@@ -12836,6 +16482,8 @@
   },
   {
    "id": 906,
+   "species": 906,
+   "form": null,
    "name": "sprigatito",
    "displayName": "Sprigatito",
    "types": [
@@ -12851,6 +16499,8 @@
   },
   {
    "id": 907,
+   "species": 907,
+   "form": null,
    "name": "floragato",
    "displayName": "Floragato",
    "types": [
@@ -12866,6 +16516,8 @@
   },
   {
    "id": 908,
+   "species": 908,
+   "form": null,
    "name": "meowscarada",
    "displayName": "Meowscarada",
    "types": [
@@ -12882,6 +16534,8 @@
   },
   {
    "id": 909,
+   "species": 909,
+   "form": null,
    "name": "fuecoco",
    "displayName": "Fuecoco",
    "types": [
@@ -12897,6 +16551,8 @@
   },
   {
    "id": 910,
+   "species": 910,
+   "form": null,
    "name": "crocalor",
    "displayName": "Crocalor",
    "types": [
@@ -12912,6 +16568,8 @@
   },
   {
    "id": 911,
+   "species": 911,
+   "form": null,
    "name": "skeledirge",
    "displayName": "Skeledirge",
    "types": [
@@ -12928,6 +16586,8 @@
   },
   {
    "id": 912,
+   "species": 912,
+   "form": null,
    "name": "quaxly",
    "displayName": "Quaxly",
    "types": [
@@ -12943,6 +16603,8 @@
   },
   {
    "id": 913,
+   "species": 913,
+   "form": null,
    "name": "quaxwell",
    "displayName": "Quaxwell",
    "types": [
@@ -12958,6 +16620,8 @@
   },
   {
    "id": 914,
+   "species": 914,
+   "form": null,
    "name": "quaquaval",
    "displayName": "Quaquaval",
    "types": [
@@ -12974,6 +16638,8 @@
   },
   {
    "id": 915,
+   "species": 915,
+   "form": null,
    "name": "lechonk",
    "displayName": "Lechonk",
    "types": [
@@ -12987,6 +16653,8 @@
   },
   {
    "id": 916,
+   "species": 916,
+   "form": null,
    "name": "oinkologne",
    "displayName": "Oinkologne",
    "types": [
@@ -13000,6 +16668,8 @@
   },
   {
    "id": 917,
+   "species": 917,
+   "form": null,
    "name": "tarountula",
    "displayName": "Tarountula",
    "types": [
@@ -13013,6 +16683,8 @@
   },
   {
    "id": 918,
+   "species": 918,
+   "form": null,
    "name": "spidops",
    "displayName": "Spidops",
    "types": [
@@ -13026,6 +16698,8 @@
   },
   {
    "id": 919,
+   "species": 919,
+   "form": null,
    "name": "nymble",
    "displayName": "Nymble",
    "types": [
@@ -13039,6 +16713,8 @@
   },
   {
    "id": 920,
+   "species": 920,
+   "form": null,
    "name": "lokix",
    "displayName": "Lokix",
    "types": [
@@ -13053,6 +16729,8 @@
   },
   {
    "id": 921,
+   "species": 921,
+   "form": null,
    "name": "pawmi",
    "displayName": "Pawmi",
    "types": [
@@ -13066,6 +16744,8 @@
   },
   {
    "id": 922,
+   "species": 922,
+   "form": null,
    "name": "pawmo",
    "displayName": "Pawmo",
    "types": [
@@ -13080,6 +16760,8 @@
   },
   {
    "id": 923,
+   "species": 923,
+   "form": null,
    "name": "pawmot",
    "displayName": "Pawmot",
    "types": [
@@ -13094,6 +16776,8 @@
   },
   {
    "id": 924,
+   "species": 924,
+   "form": null,
    "name": "tandemaus",
    "displayName": "Tandemaus",
    "types": [
@@ -13107,6 +16791,8 @@
   },
   {
    "id": 925,
+   "species": 925,
+   "form": null,
    "name": "maushold",
    "displayName": "Maushold",
    "types": [
@@ -13120,6 +16806,8 @@
   },
   {
    "id": 926,
+   "species": 926,
+   "form": null,
    "name": "fidough",
    "displayName": "Fidough",
    "types": [
@@ -13133,6 +16821,8 @@
   },
   {
    "id": 927,
+   "species": 927,
+   "form": null,
    "name": "dachsbun",
    "displayName": "Dachsbun",
    "types": [
@@ -13146,6 +16836,8 @@
   },
   {
    "id": 928,
+   "species": 928,
+   "form": null,
    "name": "smoliv",
    "displayName": "Smoliv",
    "types": [
@@ -13160,6 +16852,8 @@
   },
   {
    "id": 929,
+   "species": 929,
+   "form": null,
    "name": "dolliv",
    "displayName": "Dolliv",
    "types": [
@@ -13174,6 +16868,8 @@
   },
   {
    "id": 930,
+   "species": 930,
+   "form": null,
    "name": "arboliva",
    "displayName": "Arboliva",
    "types": [
@@ -13188,6 +16884,8 @@
   },
   {
    "id": 931,
+   "species": 931,
+   "form": null,
    "name": "squawkabilly",
    "displayName": "Squawkabilly",
    "types": [
@@ -13202,6 +16900,8 @@
   },
   {
    "id": 932,
+   "species": 932,
+   "form": null,
    "name": "nacli",
    "displayName": "Nacli",
    "types": [
@@ -13215,6 +16915,8 @@
   },
   {
    "id": 933,
+   "species": 933,
+   "form": null,
    "name": "naclstack",
    "displayName": "Naclstack",
    "types": [
@@ -13228,6 +16930,8 @@
   },
   {
    "id": 934,
+   "species": 934,
+   "form": null,
    "name": "garganacl",
    "displayName": "Garganacl",
    "types": [
@@ -13241,6 +16945,8 @@
   },
   {
    "id": 935,
+   "species": 935,
+   "form": null,
    "name": "charcadet",
    "displayName": "Charcadet",
    "types": [
@@ -13254,6 +16960,8 @@
   },
   {
    "id": 936,
+   "species": 936,
+   "form": null,
    "name": "armarouge",
    "displayName": "Armarouge",
    "types": [
@@ -13268,6 +16976,8 @@
   },
   {
    "id": 937,
+   "species": 937,
+   "form": null,
    "name": "ceruledge",
    "displayName": "Ceruledge",
    "types": [
@@ -13282,6 +16992,8 @@
   },
   {
    "id": 938,
+   "species": 938,
+   "form": null,
    "name": "tadbulb",
    "displayName": "Tadbulb",
    "types": [
@@ -13295,6 +17007,8 @@
   },
   {
    "id": 939,
+   "species": 939,
+   "form": null,
    "name": "bellibolt",
    "displayName": "Bellibolt",
    "types": [
@@ -13308,6 +17022,8 @@
   },
   {
    "id": 940,
+   "species": 940,
+   "form": null,
    "name": "wattrel",
    "displayName": "Wattrel",
    "types": [
@@ -13322,6 +17038,8 @@
   },
   {
    "id": 941,
+   "species": 941,
+   "form": null,
    "name": "kilowattrel",
    "displayName": "Kilowattrel",
    "types": [
@@ -13336,6 +17054,8 @@
   },
   {
    "id": 942,
+   "species": 942,
+   "form": null,
    "name": "maschiff",
    "displayName": "Maschiff",
    "types": [
@@ -13349,6 +17069,8 @@
   },
   {
    "id": 943,
+   "species": 943,
+   "form": null,
    "name": "mabosstiff",
    "displayName": "Mabosstiff",
    "types": [
@@ -13362,6 +17084,8 @@
   },
   {
    "id": 944,
+   "species": 944,
+   "form": null,
    "name": "shroodle",
    "displayName": "Shroodle",
    "types": [
@@ -13376,6 +17100,8 @@
   },
   {
    "id": 945,
+   "species": 945,
+   "form": null,
    "name": "grafaiai",
    "displayName": "Grafaiai",
    "types": [
@@ -13390,6 +17116,8 @@
   },
   {
    "id": 946,
+   "species": 946,
+   "form": null,
    "name": "bramblin",
    "displayName": "Bramblin",
    "types": [
@@ -13404,6 +17132,8 @@
   },
   {
    "id": 947,
+   "species": 947,
+   "form": null,
    "name": "brambleghast",
    "displayName": "Brambleghast",
    "types": [
@@ -13418,6 +17148,8 @@
   },
   {
    "id": 948,
+   "species": 948,
+   "form": null,
    "name": "toedscool",
    "displayName": "Toedscool",
    "types": [
@@ -13432,6 +17164,8 @@
   },
   {
    "id": 949,
+   "species": 949,
+   "form": null,
    "name": "toedscruel",
    "displayName": "Toedscruel",
    "types": [
@@ -13446,6 +17180,8 @@
   },
   {
    "id": 950,
+   "species": 950,
+   "form": null,
    "name": "klawf",
    "displayName": "Klawf",
    "types": [
@@ -13459,6 +17195,8 @@
   },
   {
    "id": 951,
+   "species": 951,
+   "form": null,
    "name": "capsakid",
    "displayName": "Capsakid",
    "types": [
@@ -13472,6 +17210,8 @@
   },
   {
    "id": 952,
+   "species": 952,
+   "form": null,
    "name": "scovillain",
    "displayName": "Scovillain",
    "types": [
@@ -13488,6 +17228,8 @@
   },
   {
    "id": 953,
+   "species": 953,
+   "form": null,
    "name": "rellor",
    "displayName": "Rellor",
    "types": [
@@ -13501,6 +17243,8 @@
   },
   {
    "id": 954,
+   "species": 954,
+   "form": null,
    "name": "rabsca",
    "displayName": "Rabsca",
    "types": [
@@ -13515,6 +17259,8 @@
   },
   {
    "id": 955,
+   "species": 955,
+   "form": null,
    "name": "flittle",
    "displayName": "Flittle",
    "types": [
@@ -13528,6 +17274,8 @@
   },
   {
    "id": 956,
+   "species": 956,
+   "form": null,
    "name": "espathra",
    "displayName": "Espathra",
    "types": [
@@ -13541,6 +17289,8 @@
   },
   {
    "id": 957,
+   "species": 957,
+   "form": null,
    "name": "tinkatink",
    "displayName": "Tinkatink",
    "types": [
@@ -13555,6 +17305,8 @@
   },
   {
    "id": 958,
+   "species": 958,
+   "form": null,
    "name": "tinkatuff",
    "displayName": "Tinkatuff",
    "types": [
@@ -13569,6 +17321,8 @@
   },
   {
    "id": 959,
+   "species": 959,
+   "form": null,
    "name": "tinkaton",
    "displayName": "Tinkaton",
    "types": [
@@ -13583,6 +17337,8 @@
   },
   {
    "id": 960,
+   "species": 960,
+   "form": null,
    "name": "wiglett",
    "displayName": "Wiglett",
    "types": [
@@ -13596,6 +17352,8 @@
   },
   {
    "id": 961,
+   "species": 961,
+   "form": null,
    "name": "wugtrio",
    "displayName": "Wugtrio",
    "types": [
@@ -13609,6 +17367,8 @@
   },
   {
    "id": 962,
+   "species": 962,
+   "form": null,
    "name": "bombirdier",
    "displayName": "Bombirdier",
    "types": [
@@ -13623,6 +17383,8 @@
   },
   {
    "id": 963,
+   "species": 963,
+   "form": null,
    "name": "finizen",
    "displayName": "Finizen",
    "types": [
@@ -13636,6 +17398,8 @@
   },
   {
    "id": 964,
+   "species": 964,
+   "form": null,
    "name": "palafin",
    "displayName": "Palafin",
    "types": [
@@ -13649,6 +17413,8 @@
   },
   {
    "id": 965,
+   "species": 965,
+   "form": null,
    "name": "varoom",
    "displayName": "Varoom",
    "types": [
@@ -13663,6 +17429,8 @@
   },
   {
    "id": 966,
+   "species": 966,
+   "form": null,
    "name": "revavroom",
    "displayName": "Revavroom",
    "types": [
@@ -13677,6 +17445,8 @@
   },
   {
    "id": 967,
+   "species": 967,
+   "form": null,
    "name": "cyclizar",
    "displayName": "Cyclizar",
    "types": [
@@ -13691,6 +17461,8 @@
   },
   {
    "id": 968,
+   "species": 968,
+   "form": null,
    "name": "orthworm",
    "displayName": "Orthworm",
    "types": [
@@ -13704,6 +17476,8 @@
   },
   {
    "id": 969,
+   "species": 969,
+   "form": null,
    "name": "glimmet",
    "displayName": "Glimmet",
    "types": [
@@ -13718,6 +17492,8 @@
   },
   {
    "id": 970,
+   "species": 970,
+   "form": null,
    "name": "glimmora",
    "displayName": "Glimmora",
    "types": [
@@ -13734,6 +17510,8 @@
   },
   {
    "id": 971,
+   "species": 971,
+   "form": null,
    "name": "greavard",
    "displayName": "Greavard",
    "types": [
@@ -13747,6 +17525,8 @@
   },
   {
    "id": 972,
+   "species": 972,
+   "form": null,
    "name": "houndstone",
    "displayName": "Houndstone",
    "types": [
@@ -13760,6 +17540,8 @@
   },
   {
    "id": 973,
+   "species": 973,
+   "form": null,
    "name": "flamigo",
    "displayName": "Flamigo",
    "types": [
@@ -13774,6 +17556,8 @@
   },
   {
    "id": 974,
+   "species": 974,
+   "form": null,
    "name": "cetoddle",
    "displayName": "Cetoddle",
    "types": [
@@ -13787,6 +17571,8 @@
   },
   {
    "id": 975,
+   "species": 975,
+   "form": null,
    "name": "cetitan",
    "displayName": "Cetitan",
    "types": [
@@ -13800,6 +17586,8 @@
   },
   {
    "id": 976,
+   "species": 976,
+   "form": null,
    "name": "veluza",
    "displayName": "Veluza",
    "types": [
@@ -13814,6 +17602,8 @@
   },
   {
    "id": 977,
+   "species": 977,
+   "form": null,
    "name": "dondozo",
    "displayName": "Dondozo",
    "types": [
@@ -13827,6 +17617,8 @@
   },
   {
    "id": 978,
+   "species": 978,
+   "form": null,
    "name": "tatsugiri",
    "displayName": "Tatsugiri",
    "types": [
@@ -13837,10 +17629,14 @@
    "region": "paldea",
    "stage": "single",
    "evoMethod": null,
-   "flags": []
+   "flags": [
+    "mega"
+   ]
   },
   {
    "id": 979,
+   "species": 979,
+   "form": null,
    "name": "annihilape",
    "displayName": "Annihilape",
    "types": [
@@ -13855,6 +17651,8 @@
   },
   {
    "id": 980,
+   "species": 980,
+   "form": null,
    "name": "clodsire",
    "displayName": "Clodsire",
    "types": [
@@ -13869,6 +17667,8 @@
   },
   {
    "id": 981,
+   "species": 981,
+   "form": null,
    "name": "farigiraf",
    "displayName": "Farigiraf",
    "types": [
@@ -13883,6 +17683,8 @@
   },
   {
    "id": 982,
+   "species": 982,
+   "form": null,
    "name": "dudunsparce",
    "displayName": "Dudunsparce",
    "types": [
@@ -13896,6 +17698,8 @@
   },
   {
    "id": 983,
+   "species": 983,
+   "form": null,
    "name": "kingambit",
    "displayName": "Kingambit",
    "types": [
@@ -13910,6 +17714,8 @@
   },
   {
    "id": 984,
+   "species": 984,
+   "form": null,
    "name": "greattusk",
    "displayName": "Great Tusk",
    "types": [
@@ -13926,6 +17732,8 @@
   },
   {
    "id": 985,
+   "species": 985,
+   "form": null,
    "name": "screamtail",
    "displayName": "Scream Tail",
    "types": [
@@ -13942,6 +17750,8 @@
   },
   {
    "id": 986,
+   "species": 986,
+   "form": null,
    "name": "brutebonnet",
    "displayName": "Brute Bonnet",
    "types": [
@@ -13958,6 +17768,8 @@
   },
   {
    "id": 987,
+   "species": 987,
+   "form": null,
    "name": "fluttermane",
    "displayName": "Flutter Mane",
    "types": [
@@ -13974,6 +17786,8 @@
   },
   {
    "id": 988,
+   "species": 988,
+   "form": null,
    "name": "slitherwing",
    "displayName": "Slither Wing",
    "types": [
@@ -13990,6 +17804,8 @@
   },
   {
    "id": 989,
+   "species": 989,
+   "form": null,
    "name": "sandyshocks",
    "displayName": "Sandy Shocks",
    "types": [
@@ -14006,6 +17822,8 @@
   },
   {
    "id": 990,
+   "species": 990,
+   "form": null,
    "name": "irontreads",
    "displayName": "Iron Treads",
    "types": [
@@ -14022,6 +17840,8 @@
   },
   {
    "id": 991,
+   "species": 991,
+   "form": null,
    "name": "ironbundle",
    "displayName": "Iron Bundle",
    "types": [
@@ -14038,6 +17858,8 @@
   },
   {
    "id": 992,
+   "species": 992,
+   "form": null,
    "name": "ironhands",
    "displayName": "Iron Hands",
    "types": [
@@ -14054,6 +17876,8 @@
   },
   {
    "id": 993,
+   "species": 993,
+   "form": null,
    "name": "ironjugulis",
    "displayName": "Iron Jugulis",
    "types": [
@@ -14070,6 +17894,8 @@
   },
   {
    "id": 994,
+   "species": 994,
+   "form": null,
    "name": "ironmoth",
    "displayName": "Iron Moth",
    "types": [
@@ -14086,6 +17912,8 @@
   },
   {
    "id": 995,
+   "species": 995,
+   "form": null,
    "name": "ironthorns",
    "displayName": "Iron Thorns",
    "types": [
@@ -14102,6 +17930,8 @@
   },
   {
    "id": 996,
+   "species": 996,
+   "form": null,
    "name": "frigibax",
    "displayName": "Frigibax",
    "types": [
@@ -14116,6 +17946,8 @@
   },
   {
    "id": 997,
+   "species": 997,
+   "form": null,
    "name": "arctibax",
    "displayName": "Arctibax",
    "types": [
@@ -14130,6 +17962,8 @@
   },
   {
    "id": 998,
+   "species": 998,
+   "form": null,
    "name": "baxcalibur",
    "displayName": "Baxcalibur",
    "types": [
@@ -14146,6 +17980,8 @@
   },
   {
    "id": 999,
+   "species": 999,
+   "form": null,
    "name": "gimmighoul",
    "displayName": "Gimmighoul",
    "types": [
@@ -14159,6 +17995,8 @@
   },
   {
    "id": 1000,
+   "species": 1000,
+   "form": null,
    "name": "gholdengo",
    "displayName": "Gholdengo",
    "types": [
@@ -14173,6 +18011,8 @@
   },
   {
    "id": 1001,
+   "species": 1001,
+   "form": null,
    "name": "wochien",
    "displayName": "Wo-Chien",
    "types": [
@@ -14189,6 +18029,8 @@
   },
   {
    "id": 1002,
+   "species": 1002,
+   "form": null,
    "name": "chienpao",
    "displayName": "Chien-Pao",
    "types": [
@@ -14205,6 +18047,8 @@
   },
   {
    "id": 1003,
+   "species": 1003,
+   "form": null,
    "name": "tinglu",
    "displayName": "Ting-Lu",
    "types": [
@@ -14221,6 +18065,8 @@
   },
   {
    "id": 1004,
+   "species": 1004,
+   "form": null,
    "name": "chiyu",
    "displayName": "Chi-Yu",
    "types": [
@@ -14237,6 +18083,8 @@
   },
   {
    "id": 1005,
+   "species": 1005,
+   "form": null,
    "name": "roaringmoon",
    "displayName": "Roaring Moon",
    "types": [
@@ -14253,6 +18101,8 @@
   },
   {
    "id": 1006,
+   "species": 1006,
+   "form": null,
    "name": "ironvaliant",
    "displayName": "Iron Valiant",
    "types": [
@@ -14269,6 +18119,8 @@
   },
   {
    "id": 1007,
+   "species": 1007,
+   "form": null,
    "name": "koraidon",
    "displayName": "Koraidon",
    "types": [
@@ -14286,6 +18138,8 @@
   },
   {
    "id": 1008,
+   "species": 1008,
+   "form": null,
    "name": "miraidon",
    "displayName": "Miraidon",
    "types": [
@@ -14303,6 +18157,8 @@
   },
   {
    "id": 1009,
+   "species": 1009,
+   "form": null,
    "name": "walkingwake",
    "displayName": "Walking Wake",
    "types": [
@@ -14319,6 +18175,8 @@
   },
   {
    "id": 1010,
+   "species": 1010,
+   "form": null,
    "name": "ironleaves",
    "displayName": "Iron Leaves",
    "types": [
@@ -14335,6 +18193,8 @@
   },
   {
    "id": 1011,
+   "species": 1011,
+   "form": null,
    "name": "dipplin",
    "displayName": "Dipplin",
    "types": [
@@ -14349,6 +18209,8 @@
   },
   {
    "id": 1012,
+   "species": 1012,
+   "form": null,
    "name": "poltchageist",
    "displayName": "Poltchageist",
    "types": [
@@ -14363,6 +18225,8 @@
   },
   {
    "id": 1013,
+   "species": 1013,
+   "form": null,
    "name": "sinistcha",
    "displayName": "Sinistcha",
    "types": [
@@ -14377,6 +18241,8 @@
   },
   {
    "id": 1014,
+   "species": 1014,
+   "form": null,
    "name": "okidogi",
    "displayName": "Okidogi",
    "types": [
@@ -14393,6 +18259,8 @@
   },
   {
    "id": 1015,
+   "species": 1015,
+   "form": null,
    "name": "munkidori",
    "displayName": "Munkidori",
    "types": [
@@ -14409,6 +18277,8 @@
   },
   {
    "id": 1016,
+   "species": 1016,
+   "form": null,
    "name": "fezandipiti",
    "displayName": "Fezandipiti",
    "types": [
@@ -14425,6 +18295,8 @@
   },
   {
    "id": 1017,
+   "species": 1017,
+   "form": null,
    "name": "ogerpon",
    "displayName": "Ogerpon",
    "types": [
@@ -14439,7 +18311,63 @@
    ]
   },
   {
+   "id": 10273,
+   "species": 1017,
+   "form": "Wellspring",
+   "name": "ogerponwellspring",
+   "displayName": "Ogerpon (Wellspring)",
+   "types": [
+    "grass",
+    "water"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
+   "id": 10274,
+   "species": 1017,
+   "form": "Hearthflame",
+   "name": "ogerponhearthflame",
+   "displayName": "Ogerpon (Hearthflame)",
+   "types": [
+    "grass",
+    "fire"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
+   "id": 10275,
+   "species": 1017,
+   "form": "Cornerstone",
+   "name": "ogerponcornerstone",
+   "displayName": "Ogerpon (Cornerstone)",
+   "types": [
+    "grass",
+    "rock"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "stage": "single",
+   "evoMethod": null,
+   "flags": [
+    "legendary"
+   ]
+  },
+  {
    "id": 1018,
+   "species": 1018,
+   "form": null,
    "name": "archaludon",
    "displayName": "Archaludon",
    "types": [
@@ -14454,6 +18382,8 @@
   },
   {
    "id": 1019,
+   "species": 1019,
+   "form": null,
    "name": "hydrapple",
    "displayName": "Hydrapple",
    "types": [
@@ -14468,6 +18398,8 @@
   },
   {
    "id": 1020,
+   "species": 1020,
+   "form": null,
    "name": "gougingfire",
    "displayName": "Gouging Fire",
    "types": [
@@ -14484,6 +18416,8 @@
   },
   {
    "id": 1021,
+   "species": 1021,
+   "form": null,
    "name": "ragingbolt",
    "displayName": "Raging Bolt",
    "types": [
@@ -14500,6 +18434,8 @@
   },
   {
    "id": 1022,
+   "species": 1022,
+   "form": null,
    "name": "ironboulder",
    "displayName": "Iron Boulder",
    "types": [
@@ -14516,6 +18452,8 @@
   },
   {
    "id": 1023,
+   "species": 1023,
+   "form": null,
    "name": "ironcrown",
    "displayName": "Iron Crown",
    "types": [
@@ -14532,6 +18470,8 @@
   },
   {
    "id": 1024,
+   "species": 1024,
+   "form": null,
    "name": "terapagos",
    "displayName": "Terapagos",
    "types": [
@@ -14547,6 +18487,8 @@
   },
   {
    "id": 1025,
+   "species": 1025,
+   "form": null,
    "name": "pecharunt",
    "displayName": "Pecharunt",
    "types": [

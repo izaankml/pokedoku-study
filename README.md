@@ -4,7 +4,9 @@ A study app for [PokeDoku](https://pokedoku.com): learn every category
 Pokémon fall into — all 18 types, mono/dual typing, the ten regions of
 origin, evolution methods and stages, and the special groups (Legendary,
 Mythical, Ultra Beast, Paradox, fossil, starter lines, babies, Mega,
-Gigantamax) — 47 categories over all 1025 Pokémon.
+Gigantamax) — 47 categories over all 1025 Pokémon plus the alternate
+forms PokeDoku accepts as their own answers (regional variants, Megas,
+Rotom appliances, …) whenever they fit a cell the base species doesn't.
 
 ## Modes
 
@@ -58,8 +60,8 @@ Pushes to `main` deploy to GitHub Pages via `.github/workflows/deploy.yml`.
 [@pkmn/dex](https://www.npmjs.com/package/@pkmn/dex) (Pokémon Showdown's
 data), plus hand-maintained lists in `scripts/manual-lists.mjs` for
 membership the dex data doesn't encode (Ultra Beasts, Paradox, fossils,
-starter lines, babies, Hisui origins, and a few evolution-method
-overrides). To regenerate:
+starter lines, babies, Hisui origins, which alternate forms get a record
+and their PokeAPI ids, and a few evolution-method overrides). To regenerate:
 
 ```
 npm install --no-save @pkmn/dex
@@ -77,6 +79,15 @@ Notes on judgment calls:
   counts for item, Eevee doesn't).
 - Single-stage Pokémon are their own stage — they don't count as "final".
 - Starters cover the whole line (81), excluding the Let's Go partners.
-- "Has a Mega" includes the Legends: Z-A Megas (85 species).
-- Regional forms don't relocate a species (Growlithe is Kanto; only the
-  seven Legends: Arceus originals are Hisui).
+- "Has a Mega" includes the Legends: Z-A Megas (87 species).
+- Forms belong to the region they were introduced in, as in PokeDoku:
+  Growlithe is Kanto and Hisuian Growlithe is Hisui; Red-Striped Basculin
+  is Unova and White-Striped Basculin is Hisui; Bloodmoon Ursaluna is
+  Paldea. Mega and Primal forms are the exception and keep their base
+  species' region (also PokeDoku's rule). Only the seven Legends: Arceus
+  originals are Hisui *species*.
+- A form only gets its own record when it can answer some cell its base
+  species can't (a new type, type count, region, stage, method, or flag).
+  Mega Charizard X (Fire/Dragon) is in; Mega Charizard Y and Gigantamax
+  forms are covered by the base record. Form ids are PokeAPI's, so the
+  same id keys sprites, stats, and PokeDoku's own list.

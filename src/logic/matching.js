@@ -45,12 +45,19 @@ export function normalizeName(s) {
     .replace(/[^a-z0-9]/g, "");
 }
 
-const SEARCH_INDEX = POKEMON.map((p) => ({
-  norm: normalizeName(p.displayName),
-  pokemon: p,
-}));
+// Each Pokémon is searchable by its display name and, for forms, by the
+// dex slug too ("Hisuian Growlithe" / "growlithe hisui", "Mega Charizard X"
+// / "charizard mega x").
+const SEARCH_INDEX = POKEMON.map((p) => {
+  const norms = [normalizeName(p.displayName)];
+  if (p.form && p.name !== norms[0]) norms.push(p.name);
+  return { norms, pokemon: p };
+});
 
-const NORM_TO_POKEMON = new Map(SEARCH_INDEX.map((e) => [e.norm, e.pokemon]));
+const NORM_TO_POKEMON = new Map();
+for (const { norms, pokemon } of SEARCH_INDEX) {
+  for (const norm of norms) NORM_TO_POKEMON.set(norm, pokemon);
+}
 
 export function findByName(query) {
   return NORM_TO_POKEMON.get(normalizeName(query)) || null;
@@ -61,9 +68,9 @@ export function searchNames(query, limit = 8) {
   if (!q) return [];
   const starts = [];
   const contains = [];
-  for (const { norm, pokemon } of SEARCH_INDEX) {
-    if (norm.startsWith(q)) starts.push(pokemon);
-    else if (norm.includes(q)) contains.push(pokemon);
+  for (const { norms, pokemon } of SEARCH_INDEX) {
+    if (norms.some((n) => n.startsWith(q))) starts.push(pokemon);
+    else if (norms.some((n) => n.includes(q))) contains.push(pokemon);
   }
   return starts.concat(contains).slice(0, limit);
 }

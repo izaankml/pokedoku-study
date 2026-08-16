@@ -128,12 +128,15 @@ function evoMethodOf(s) {
 
 // ---- flags --------------------------------------------------------------
 
-// Mega/Gmax come from forme entries; CAP formes (fan-made) are excluded
+// Mega/Gmax come from forme entries; CAP formes (fan-made) are excluded.
+// The dex's isMega flag is missing on some Legends Z-A formes ("Mega-Z",
+// "M-Mega"), so go by the forme name.
+const isMegaForme = (s) => /(^|-)Mega(-|$)/.test(s.forme || "");
 const megaSpecies = new Set();
 const gmaxSpecies = new Set();
 for (const s of all) {
   if (s.isNonstandard === "CAP") continue;
-  if (/^Mega\b/.test(s.forme || "")) megaSpecies.add(s.baseSpecies);
+  if (isMegaForme(s)) megaSpecies.add(s.baseSpecies);
   if (s.forme === "Gmax") gmaxSpecies.add(s.baseSpecies);
 }
 
@@ -199,9 +202,10 @@ const REGIONAL_ADJECTIVE = {
   Paldea: "Paldean",
 };
 
-const isMegaLike = (s) => s.isMega || s.forme === "Primal";
+const isMegaLike = (s) => isMegaForme(s) || s.forme === "Primal";
 
 function formDisplayName(s) {
+  if (DISPLAY_NAME_OVERRIDES[s.id]) return DISPLAY_NAME_OVERRIDES[s.id];
   const base = DISPLAY_NAME_OVERRIDES[Dex.species.get(s.baseSpecies).id] || s.baseSpecies;
   const parts = s.forme.split("-");
   if (parts[0] === "Mega" || parts[0] === "Primal") {
@@ -259,7 +263,7 @@ function formFlags(s) {
   for (const f of ["ultraBeast", "paradox", "fossil", "starter", "baby"]) {
     if (baseFlags.includes(f)) flags.push(f);
   }
-  if (s.isMega) flags.push("mega");
+  if (isMegaForme(s)) flags.push("mega");
   if (s.canGigantamax) flags.push("gmax");
   return flags;
 }
@@ -340,12 +344,12 @@ check(count((r) => r.flags.includes("starter")) === 81, "starter != 81");
 check(count((r) => r.flags.includes("baby")) === 19, "baby != 19");
 check(count((r) => r.region === "hisui") === 7, "hisui species != 7");
 check(count((r) => r.flags.includes("gmax")) === 32, "gmax != 32");
-check(count((r) => r.flags.includes("mega")) === 85, "mega != 85 (incl. Legends Z-A)");
+check(count((r) => r.flags.includes("mega")) === 87, "mega != 87 (incl. Legends Z-A)");
 check(count((r) => r.flags.includes("legendary")) === 71, "legendary != 71");
 check(count((r) => r.flags.includes("mythical")) === 23, "mythical != 23");
 
 // forms
-const EXPECTED_FORM_COUNT = 148;
+const EXPECTED_FORM_COUNT = 113;
 check(
   formRecords.length === EXPECTED_FORM_COUNT,
   `form count ${formRecords.length} != ${EXPECTED_FORM_COUNT}`
@@ -353,10 +357,23 @@ check(
 check(formRecords.every((r) => r.id >= 10000), "form ids must be PokeAPI form ids");
 check(formRecords.every((r) => baseById.has(r.species)), "form without base species");
 const formCount = (pred) => formRecords.filter(pred).length;
-check(formCount((r) => r.region === "alola") === 18, "alolan forms != 18");
-check(formCount((r) => r.region === "galar") === 20, "galarian forms != 20 (19 + Zen)");
-check(formCount((r) => r.region === "hisui") === 20, "hisuian forms != 20 (16 + 4)");
-check(formCount((r) => r.region === "paldea") === 5, "paldean forms != 5 (Tauros x3, Wooper, Bloodmoon)");
+const regional = (name) => (r) => r.form.startsWith(name);
+check(formCount(regional("Alola")) === 18, "alolan forms != 18");
+check(formCount(regional("Galar")) === 20, "galarian forms != 20 (19 + Zen)");
+check(formCount(regional("Hisui")) === 16, "hisuian forms != 16");
+check(formCount(regional("Paldea")) === 4, "paldean forms != 4 (Tauros x3, Wooper)");
+check(
+  formRecords.filter(regional("Alola")).every((r) => r.region === "alola") &&
+    formRecords.filter(regional("Galar")).every((r) => r.region === "galar") &&
+    formRecords.filter(regional("Hisui")).every((r) => r.region === "hisui") &&
+    formRecords.filter(regional("Paldea")).every((r) => r.region === "paldea"),
+  "regional forms must belong to their region"
+);
+check(
+  formRecords.filter((r) => /(^|-)Mega(-|$)/.test(r.form) || r.form === "Primal")
+    .every((r) => r.region === baseById.get(r.species).region),
+  "mega/primal forms must use the base region"
+);
 
 // spot checks
 check(byId.get(65).evoMethod === "trade", "Alakazam should be trade");

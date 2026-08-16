@@ -21,6 +21,15 @@ describe("findByName", () => {
     expect(findByName("flabebe").id).toBe(669);
     expect(findByName("notapokemon")).toBe(null);
   });
+
+  it("resolves forms by display name or dex slug", () => {
+    expect(findByName("Hisuian Growlithe").name).toBe("growlithehisui");
+    expect(findByName("growlithe hisui").name).toBe("growlithehisui");
+    expect(findByName("growlithe").id).toBe(58);
+    expect(findByName("Mega Charizard X").name).toBe("charizardmegax");
+    expect(findByName("charizard mega x").name).toBe("charizardmegax");
+    expect(findByName("basculin white-striped").name).toBe("basculinwhitestriped");
+  });
 });
 
 describe("searchNames", () => {

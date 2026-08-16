@@ -644,6 +644,15 @@ header h1 {
   }
 }
 
+/* Form names ("Hisuian Growlithe", "Mega Charizard X") need a second line */
+.answer-grid .pokemon-card figcaption {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+}
+
 .answer-grid .highlight {
   box-shadow: 0 0 0 2px var(--accent), 0 4px 16px -4px var(--accent-glow);
 }

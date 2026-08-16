@@ -1,17 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { POKEMON, POKEMON_BY_ID } from "./pokedex.js";
 
+const SPECIES = POKEMON.filter((p) => !p.form);
+const FORMS = POKEMON.filter((p) => p.form);
+const byName = new Map(POKEMON.map((p) => [p.name, p]));
+
 // Guards the committed JSON against silent drift or bad regeneration.
 describe("pokedex dataset invariants", () => {
-  it("has all 1025 species exactly once", () => {
-    expect(POKEMON.length).toBe(1025);
-    expect(new Set(POKEMON.map((p) => p.id)).size).toBe(1025);
+  it("has all 1025 species exactly once, plus forms with unique ids", () => {
+    expect(SPECIES.length).toBe(1025);
+    expect(FORMS.length).toBe(113);
+    expect(new Set(POKEMON.map((p) => p.id)).size).toBe(POKEMON.length);
+    expect(new Set(POKEMON.map((p) => p.name)).size).toBe(POKEMON.length);
+    for (const p of SPECIES) expect(p.species).toBe(p.id);
+    for (const p of FORMS) {
+      expect(p.id).toBeGreaterThanOrEqual(10000);
+      expect(POKEMON_BY_ID.get(p.species).form).toBe(null);
+    }
   });
 
   it("has the known per-generation counts", () => {
     const expected = [151, 100, 135, 107, 156, 72, 88, 96, 120];
     for (let gen = 1; gen <= 9; gen++) {
-      expect(POKEMON.filter((p) => p.gen === gen).length).toBe(expected[gen - 1]);
+      expect(SPECIES.filter((p) => p.gen === gen).length).toBe(expected[gen - 1]);
     }
   });
 
@@ -20,21 +31,60 @@ describe("pokedex dataset invariants", () => {
   });
 
   it("has the known special-group sizes", () => {
-    const flagCount = (f) => POKEMON.filter((p) => p.flags.includes(f)).length;
+    const flagCount = (f) => SPECIES.filter((p) => p.flags.includes(f)).length;
     expect(flagCount("ultraBeast")).toBe(11);
     expect(flagCount("paradox")).toBe(22);
     expect(flagCount("fossil")).toBe(25);
     expect(flagCount("starter")).toBe(81);
     expect(flagCount("baby")).toBe(19);
     expect(flagCount("gmax")).toBe(32);
-    expect(flagCount("mega")).toBe(85);
+    expect(flagCount("mega")).toBe(87);
     expect(flagCount("legendary")).toBe(71);
     expect(flagCount("mythical")).toBe(23);
   });
 
   it("assigns Hisui to exactly the Legends: Arceus species", () => {
-    const hisui = POKEMON.filter((p) => p.region === "hisui").map((p) => p.id);
+    const hisui = SPECIES.filter((p) => p.region === "hisui").map((p) => p.id);
     expect(hisui).toEqual([899, 900, 901, 902, 903, 904, 905]);
+  });
+
+  it("puts forms in the region they were introduced in", () => {
+    expect(byName.get("growlithe").region).toBe("kanto");
+    expect(byName.get("growlithehisui").region).toBe("hisui");
+    expect(byName.get("growlithehisui").types).toEqual(["fire", "rock"]);
+    expect(byName.get("basculin").region).toBe("unova");
+    expect(byName.get("basculinwhitestriped").region).toBe("hisui");
+    expect(byName.get("dialgaorigin").region).toBe("hisui");
+    expect(byName.get("raichualola").region).toBe("alola");
+    expect(byName.get("meowthgalar").region).toBe("galar");
+    expect(byName.get("wooperpaldea").region).toBe("paldea");
+    expect(byName.get("ursalunabloodmoon").region).toBe("paldea");
+    const regional = (prefix, region) =>
+      FORMS.filter((p) => p.form.startsWith(prefix)).every((p) => p.region === region);
+    expect(regional("Alola", "alola")).toBe(true);
+    expect(regional("Galar", "galar")).toBe(true);
+    expect(regional("Hisui", "hisui")).toBe(true);
+    expect(regional("Paldea", "paldea")).toBe(true);
+  });
+
+  it("keeps Mega and Primal forms in their base species' region", () => {
+    expect(byName.get("charizardmegax").region).toBe("kanto");
+    expect(byName.get("charizardmegax").types).toEqual(["fire", "dragon"]);
+    expect(byName.get("charizardmegax").flags).toContain("mega");
+    expect(byName.get("groudonprimal").region).toBe("hoenn");
+    // covered entirely by its base species, so no record
+    expect(byName.has("charizardmegay")).toBe(false);
+  });
+
+  it("gives forms sensible evolution data", () => {
+    expect(byName.get("growlithehisui").stage).toBe("first");
+    expect(byName.get("arcaninehisui").evoMethod).toBe("item");
+    expect(byName.get("raichualola").stage).toBe("final");
+    expect(byName.get("meowthgalar").stage).toBe("first"); // -> Perrserker
+    expect(byName.get("mrmimegalar").stage).toBe("middle");
+    expect(byName.get("rotomwash").stage).toBe("single"); // inherits Rotom
+    expect(byName.get("charizardmegax").stage).toBe("final"); // inherits Charizard
+    expect(byName.get("articunogalar").flags).toContain("legendary");
   });
 
   it("gets known evolution facts right", () => {
