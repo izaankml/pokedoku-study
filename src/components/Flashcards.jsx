@@ -199,20 +199,22 @@ function Flashcards() {
       <PokemonCard pokemon={pokemon} eager />
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
-          <>
-            <div className="card-facts">
-              <div className="card-tags">
-                {summaryPills(pokemon).map((c) => (
-                  <CategoryPill key={c.id} cat={c} useShort />
-                ))}
-              </div>
-              <div className="card-tags">
-                {pokemon.abilityList.map((a) => (
-                  <AbilityPill key={a.name} ability={a} />
-                ))}
-              </div>
-              {evolves ? <p className="card-extra">{evolves}</p> : null}
+          <div className="card-facts">
+            <div className="card-tags">
+              {summaryPills(pokemon).map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
             </div>
+            <div className="card-tags">
+              {pokemon.abilityList.map((a) => (
+                <AbilityPill key={a.name} ability={a} />
+              ))}
+            </div>
+            {evolves ? <p className="card-extra">{evolves}</p> : null}
+          </div>
+        ) : null}
+        <div className="answer-body">
+          {answered ? (
             <p
               key={key}
               className={`verdict ${gaveUp ? "revealed" : wasCorrect ? "correct" : "wrong"}`}
@@ -220,16 +222,16 @@ function Flashcards() {
             >
               {gaveUp ? "Revealed." : wasCorrect ? "Correct!" : "Not quite."}
             </p>
-          </>
-        ) : null}
-        <div className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}>
-          {shownOptions.map((option) => (
-            <button key={option.id} className={optionClass(option)} onClick={() => choose(option)}>
-              {option.short}
-            </button>
-          ))}
+          ) : null}
+          <div className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}>
+            {shownOptions.map((option) => (
+              <button key={option.id} className={optionClass(option)} onClick={() => choose(option)}>
+                {option.short}
+              </button>
+            ))}
+          </div>
+          {answered && nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
         </div>
-        {answered && nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
         <div className="card-actions">
           {answered ? (
             <button className="primary" onClick={next}>
