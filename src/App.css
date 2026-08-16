@@ -884,6 +884,22 @@ header h1 {
   animation: pop-in var(--dur-slow) var(--ease-bounce) both;
 }
 
+/* multi-select decks: toggled options before Check */
+.region-btn.selected {
+  background: var(--surface-3);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  color: var(--text-hi);
+}
+
+/* a right answer the player didn't select */
+.region-btn.correct.missed {
+  background: transparent;
+  color: var(--correct-strong);
+  border: 2px dashed var(--correct);
+  animation: none;
+}
+
 .region-btn.wrong {
   background: var(--wrong);
   border-color: var(--wrong);
@@ -899,8 +915,9 @@ header h1 {
   gap: var(--sp-2);
 }
 
-.card-actions .ghost {
-  min-width: 150px; /* Skip and Don't Know the same size */
+.card-actions .ghost,
+.card-actions .primary {
+  min-width: 130px; /* Check / Skip / Don't Know the same size */
 }
 
 /* region / types / group pills shown once a card is answered */
@@ -1071,6 +1088,15 @@ header h1 {
 
   .card-actions {
     min-height: 56px;
+    gap: 6px;
+  }
+
+  .card-actions .ghost,
+  .card-actions .primary {
+    min-width: 0;
+    flex: 1 1 0;
+    max-width: 150px;
+    padding: 0 8px;
   }
 
   /* the Cards tab fills the screen; answers sit centred in the space left

@@ -270,6 +270,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     keeps the fixed-height block. Verified no scrolling in either state
     across all nine decks at the Safari-sized viewport.
 
+40. Type and Region decks are multi-select: tap to toggle, then **Check**;
+    right only when the selection matches exactly (both types of a dual
+    type; both regions of a dual-region form). Wrong picks show red, missed
+    right answers show as a dashed green outline. The in-progress selection
+    survives tab switches. Other decks stay single-tap.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

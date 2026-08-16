@@ -35,6 +35,7 @@ function Flashcards() {
     return session.card;
   });
   const [picked, setPicked] = useState(session.picked);
+  const [selection, setSelection] = useState(session.selection);
 
   function freshCard(forDeck, alsoExclude = []) {
     const { deck, pokemon, param } = pickFlashcard(merged, {
@@ -62,19 +63,39 @@ function Flashcards() {
   const entry = merged.flashcards[key];
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
   const answered = picked !== null;
+  const pickedIds = new Set(Array.isArray(picked) ? picked : picked ? [picked] : []);
+  const multi = Boolean(deck.multi);
 
   function commit(nextCard, nextPicked) {
     session.card = nextCard;
     session.picked = nextPicked;
+    session.selection = [];
     setCard(nextCard);
     setPicked(nextPicked);
+    setSelection([]);
   }
 
   function choose(option) {
     if (answered) return;
+    if (multi) {
+      const next = selection.includes(option.id)
+        ? selection.filter((id) => id !== option.id)
+        : [...selection, option.id];
+      session.selection = next;
+      setSelection(next);
+      return;
+    }
     const correct = answerIds.has(option.id);
     recordAttempt({ categories: recordCategories, speciesId: key, correct });
     commit(card, option.id);
+  }
+
+  // Multi decks: right only when the selection matches every answer
+  function check() {
+    if (answered || !selection.length) return;
+    const correct = selection.length === answerIds.size && selection.every((id) => answerIds.has(id));
+    recordAttempt({ categories: recordCategories, speciesId: key, correct });
+    commit(card, selection);
   }
 
   function giveUp() {
@@ -145,13 +166,15 @@ function Flashcards() {
         className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
       >
         {(answered
-          ? deck.options.filter((o) => answerIds.has(o.id) || o.id === picked)
+          ? deck.options.filter((o) => answerIds.has(o.id) || pickedIds.has(o.id))
           : deck.options
         ).map((option) => {
           let cls = "region-btn";
           if (answered) {
-            if (answerIds.has(option.id)) cls += " correct";
-            else if (option.id === picked) cls += " wrong";
+            if (answerIds.has(option.id)) cls += pickedIds.has(option.id) || !multi ? " correct" : " correct missed";
+            else if (pickedIds.has(option.id)) cls += " wrong";
+          } else if (selection.includes(option.id)) {
+            cls += " selected";
           }
           return (
             <button key={option.id} className={cls} onClick={() => choose(option)}>
@@ -167,6 +190,11 @@ function Flashcards() {
           </button>
         ) : (
           <>
+            {multi ? (
+              <button className="primary" disabled={!selection.length} onClick={check}>
+                Check
+              </button>
+            ) : null}
             <button className="ghost" onClick={next}>
               Skip
             </button>

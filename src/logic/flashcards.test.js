@@ -29,6 +29,10 @@ describe("flashcard decks", () => {
     expect(DECK_BY_ID.get("ability").answers(by("gengar"))).toEqual(["none"]);
   });
 
+  it("marks Type and Region as multi-select (both types / regions needed)", () => {
+    expect(DECKS.filter((d) => d.multi).map((d) => d.id)).toEqual(["region", "type"]);
+  });
+
   it("covers every category group in Stats", () => {
     expect(DECKS.map((d) => d.id)).toEqual([
       "region", "type", "typeCount", "method", "stage", "branched", "special", "move", "ability",

@@ -35,6 +35,7 @@ export const DECKS = [
   {
     id: "region",
     label: "Region",
+    multi: true, // pick every region it counts for, then Check
     questionText: "Which region is this Pokémon from?",
     options: CATEGORIES.filter((c) => c.group === "region"),
     answers: (p) => p.regions.map((r) => `region-${r}`),
@@ -45,6 +46,7 @@ export const DECKS = [
   {
     id: "type",
     label: "Type",
+    multi: true, // both types of a dual type, then Check
     questionText: "What type is this Pokémon?",
     options: CATEGORIES.filter((c) => c.group === "type"),
     answers: (p) => p.types.map((t) => `type-${t}`),
@@ -177,6 +179,7 @@ export const session = {
   deckId: "all",
   card: null, // { deckId, pokemonId, param }
   next: null, // the card after this one, picked early so its sprite can preload
-  picked: null, // option id chosen, "gaveup", or null while unanswered
+  picked: null, // option id (or array of ids for multi decks), "gaveup", or null while unanswered
+  selection: [], // multi decks: options toggled on so far
   recent: [], // last few pokemon ids, to avoid immediate repeats
 };
