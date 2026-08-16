@@ -261,6 +261,15 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     line at that size ("Which region is this Pokémon from?", "How did this
     Pokémon evolve?", …). Skip and Don't Know share a 150px min width.
 
+39. Phone cards no longer reserve a block under the name: 148px sprite,
+    name right under it, options centred in the rest; once answered the
+    option list collapses to the right answers (no reserved rows) and the
+    pills/answer/abilities lines take that room. Positions still match
+    across decks/cards while unanswered; between unanswered and answered
+    the layout reflows (Next Card sits under the remaining option). Desktop
+    keeps the fixed-height block. Verified no scrolling in either state
+    across all nine decks at the Safari-sized viewport.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

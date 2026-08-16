@@ -1040,16 +1040,19 @@ header h1 {
     margin: 10px 0;
   }
 
+  /* no reserved block on phones: the sprite is big, the name hugs it, and
+     the answer/ability lines use the room the shorter answered option list
+     frees up */
   .flashcards .pokemon-card {
     margin: 0;
     gap: 8px;
-    height: 220px;
+    height: auto;
   }
 
   .flashcards .pokemon-card .sprite,
   .flashcards .pokemon-card .sprite-fallback {
-    width: 112px;
-    height: 112px;
+    width: 148px;
+    height: 148px;
   }
 
   .card-tags .pill {
@@ -1095,6 +1098,11 @@ header h1 {
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  /* answered: only the right option(s) remain, so no reserved rows */
+  .region-buttons.answered {
+    min-height: 0;
   }
 }
 
