@@ -26,7 +26,7 @@ import {
 } from "./logic/sync.js";
 
 const TABS = ["Browse", "Drill", "Cards", "Grid", "Stats"];
-const DEFAULT_TAB = "Drill";
+const DEFAULT_TAB = "Browse";
 
 // The active tab lives in the URL hash (#cards) so a refresh, a shared
 // link, or back/forward lands on the same tab.

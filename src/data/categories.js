@@ -149,9 +149,9 @@ export const CATEGORIES = [
 export const CATEGORY_BY_ID = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 export const CATEGORY_GROUPS = [
+  ["region", "Regions"],
   ["type", "Types"],
   ["typeCount", "Type count"],
-  ["region", "Regions"],
   ["evo", "Evolution method"],
   ["stage", "Evolution stage"],
   ["evoLine", "Evolution line"],

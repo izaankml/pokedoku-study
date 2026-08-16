@@ -149,6 +149,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     The QR-handoff hash (`#connect=…`) is consumed and cleared before the
     tab is read, so the two don't collide.
 
+26. Browse: default is Regions → From Kanto; the default tab is Browse;
+    Regions is the first optgroup (CATEGORY_GROUPS reordered, so the Stats
+    tables list Regions first too). Each dropdown disables categories that
+    can't pair with the other side's pick (`pairIsValid`: exclusive group,
+    or no Pokémon fits both — Legendary × Mythical, First × Middle stage,
+    Baby × Dragon); changing the first drops a second that no longer fits.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:
