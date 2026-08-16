@@ -820,14 +820,12 @@ header h1 {
   box-shadow: var(--shadow-1), var(--edge-hi);
 }
 
-/* PokeAPI draws each Pokémon at a different height in its canvas — bottom
-   alignment at least keeps the ones standing on the ground level */
+/* Sprite.jsx centres and scales each Pokémon's visible box in this slot */
 .flashcards .pokemon-card .sprite,
 .flashcards .pokemon-card .sprite-fallback {
   width: 144px;
   height: 144px;
   object-fit: contain;
-  object-position: center bottom;
 }
 
 .flashcards .pokemon-card .sprite {

@@ -18,9 +18,11 @@ export function spriteCandidates(pokemon) {
 }
 
 // Warms the browser cache so a sprite is on screen the moment it's needed.
+// Fetched with CORS like <Sprite> does, so the cached copy is reusable.
 export function preloadSprite(pokemon) {
   for (const url of spriteCandidates(pokemon)) {
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = url;
   }
 }
