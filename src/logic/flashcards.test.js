@@ -16,6 +16,23 @@ describe("flashcard decks", () => {
     expect(special.answers(by("pikachu"))).toEqual(["none"]);
     const method = DECK_BY_ID.get("method");
     expect(method.answers(by("alakazam"))).toEqual(["evo-trade", "evo-item"]);
+    const type = DECK_BY_ID.get("type");
+    expect(type.answers(by("charizardmegax"))).toEqual(["type-fire", "type-dragon"]);
+    expect(DECK_BY_ID.get("typeCount").answers(by("pikachu"))).toEqual(["mono"]);
+    expect(DECK_BY_ID.get("branched").answers(by("eevee"))).toEqual(["yes"]);
+    const move = DECK_BY_ID.get("move");
+    expect(move.answers(by("pikachu"), "surf")).toEqual(["yes"]);
+    expect(move.answers(by("charizard"), "surf")).toEqual(["no"]);
+    expect(move.categories(by("charizard"), "surf")).toEqual(["move-surf"]);
+    expect(move.question("earthquake")).toBe("Can this Pokémon learn Earthquake?");
+    expect(DECK_BY_ID.get("ability").answers(by("gyarados"))).toContain("ability-intimidate");
+    expect(DECK_BY_ID.get("ability").answers(by("gengar"))).toEqual(["none"]);
+  });
+
+  it("covers every category group in Stats", () => {
+    expect(DECKS.map((d) => d.id)).toEqual([
+      "region", "type", "typeCount", "method", "stage", "branched", "special", "move", "ability",
+    ]);
   });
 
   it("only asks about forms whose answer differs from the base species", () => {
@@ -30,6 +47,10 @@ describe("flashcard decks", () => {
     const method = deckPool(DECK_BY_ID.get("method"));
     expect(method).toContain(by("persianalola")); // friendship, unlike Persian
     expect(method).not.toContain(by("eevee")); // nothing to ask
+    const type = deckPool(DECK_BY_ID.get("type"));
+    expect(type).toContain(by("charizardmegax")); // Fire/Dragon, unlike Charizard
+    expect(type).not.toContain(by("charizardmegay")); // same types
+    expect(deckPool(DECK_BY_ID.get("branched"))).not.toContain(by("charizard")); // final stage
   });
 
   it("keeps the region deck's stats keys backwards compatible", () => {
@@ -51,5 +72,8 @@ describe("flashcard decks", () => {
       seen.add(pickFlashcard(merged, { deckId: "all", random: () => i / 40 }).deck.id);
     }
     expect(seen.size).toBeGreaterThan(1);
+    const moveCard = pickFlashcard(merged, { deckId: "move", random: () => 0.3 });
+    expect(typeof moveCard.param).toBe("string");
+    expect(pickFlashcard(merged, { deckId: "region", random: () => 0.3 }).param).toBe(null);
   });
 });

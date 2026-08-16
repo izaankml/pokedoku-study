@@ -67,7 +67,8 @@ export function pickDrillPair(
 
 // Picks a flashcard: a deck (all decks, or the one asked for) and a Pokémon
 // from that deck's pool, weighted by weakness, how due it is, and the deck's
-// own bias. Returns { deck, pokemon }.
+// own bias; decks that ask about one specific thing per card (Moves) also
+// pick that. Returns { deck, pokemon, param }.
 export function pickFlashcard(
   merged,
   { deckId = "all", exclude = new Set(), random = Math.random, now = Date.now() } = {}
@@ -78,7 +79,7 @@ export function pickFlashcard(
       .filter((p) => !exclude.has(p.id))
       .map((pokemon) => ({ deck, pokemon }))
   );
-  return pickWeighted(
+  const pick = pickWeighted(
     cards,
     ({ deck, pokemon }) => {
       const entry = merged.flashcards[cardKey(deck, pokemon)];
@@ -86,6 +87,8 @@ export function pickFlashcard(
     },
     random
   );
+  const param = pick.deck.pickParam ? pick.deck.pickParam(pick.pokemon, random) : null;
+  return { ...pick, param };
 }
 
 // Region deck only — kept for tests and callers that predate decks.

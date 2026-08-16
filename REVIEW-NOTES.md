@@ -206,6 +206,17 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     start over on their next sync). The old button at the very bottom is
     gone.
 
+32. Cards now have a deck per Stats group: Region, Type (18 buttons, any of
+    its types is right; Megas included when their type differs), Type
+    Count, Evolution Method, Evolution Stage, Evolution Line (yes/no
+    "branched?", only Pokémon that can evolve, biased to the few branched
+    ones), Group (was "Special"), Move (yes/no "Can it learn X?" — one move
+    per card, half the time one it does learn; recorded against that
+    move's category), Ability (5 + None). Category labels are Title Case
+    and the "Special" group is "Group" everywhere (dropdowns, Stats). Deck
+    chips scroll horizontally on phones. Stats Answered/Accuracy are
+    left-aligned like Category.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

@@ -20,16 +20,17 @@ function Flashcards() {
   const [picked, setPicked] = useState(session.picked);
 
   function freshCard(forDeck) {
-    const { deck, pokemon } = pickFlashcard(merged, {
+    const { deck, pokemon, param } = pickFlashcard(merged, {
       deckId: forDeck,
       exclude: new Set(session.recent),
     });
-    return { deckId: deck.id, pokemonId: pokemon.id };
+    return { deckId: deck.id, pokemonId: pokemon.id, param };
   }
 
   const deck = DECK_BY_ID.get(card.deckId);
   const pokemon = POKEMON_BY_ID.get(card.pokemonId);
-  const answerIds = new Set(deck.answers(pokemon));
+  const answerIds = new Set(deck.answers(pokemon, card.param));
+  const recordCategories = deck.categories(pokemon, card.param);
   const key = cardKey(deck, pokemon);
   // After answering, merged already reflects this attempt's new streak.
   const entry = merged.flashcards[key];
@@ -46,21 +47,13 @@ function Flashcards() {
   function choose(option) {
     if (answered) return;
     const correct = answerIds.has(option.id);
-    recordAttempt({
-      categories: [...answerIds].filter((id) => id !== "none"),
-      speciesId: key,
-      correct,
-    });
+    recordAttempt({ categories: recordCategories, speciesId: key, correct });
     commit(card, option.id);
   }
 
   function giveUp() {
     if (answered) return;
-    recordAttempt({
-      categories: [...answerIds].filter((id) => id !== "none"),
-      speciesId: key,
-      correct: false,
-    });
+    recordAttempt({ categories: recordCategories, speciesId: key, correct: false });
     commit(card, GAVE_UP);
   }
 
@@ -98,7 +91,7 @@ function Flashcards() {
           </button>
         ))}
       </div>
-      <p className="hint">{deck.question}</p>
+      <p className="hint">{deck.question(card.param)}</p>
       <PokemonCard
         pokemon={pokemon}
         caption={
