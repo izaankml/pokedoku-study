@@ -346,7 +346,9 @@ function StatsView() {
       <ResetPanel />
       <SyncPanel />
 
-      {CATEGORY_GROUPS.map(([group, label]) => {
+      {/* Type count has no deck and the type table says it all; the two
+          categories still count for Drill/Grid weighting behind the scenes */}
+      {CATEGORY_GROUPS.filter(([group]) => group !== "typeCount").map(([group, label]) => {
         const cats = CATEGORIES.filter((c) => c.group === group);
         return (
           <section key={group}>
@@ -367,7 +369,8 @@ function StatsView() {
                   return (
                     <tr key={c.id} className={weak ? "weak" : ""}>
                       <td>
-                        {c.label}
+                        {/* the section heading already says Region / Type */}
+                        {group === "region" || group === "type" ? c.short : c.label}
                         {weak ? <span className="weak-chip">Weak</span> : null}
                       </td>
                       <td>{entry ? entry.a : 0}</td>

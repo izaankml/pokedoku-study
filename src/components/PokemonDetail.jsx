@@ -5,13 +5,17 @@ import CategoryPill from "./CategoryPill.jsx";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
-// Everything a Pokémon counts for, grouped the way the dropdowns are.
+// Everything a Pokémon counts for, grouped the way the dropdowns are —
+// minus type count, which the type pills already show.
+const DETAIL_LABELS = { type: "Type" };
 function categoriesOf(pokemon) {
-  return CATEGORY_GROUPS.map(([group, label]) => ({
-    group,
-    label,
-    cats: CATEGORIES.filter((c) => c.group === group && c.predicate(pokemon)),
-  })).filter((g) => g.cats.length);
+  return CATEGORY_GROUPS.filter(([group]) => group !== "typeCount")
+    .map(([group, label]) => ({
+      group,
+      label: DETAIL_LABELS[group] || label,
+      cats: CATEGORIES.filter((c) => c.group === group && c.predicate(pokemon)),
+    }))
+    .filter((g) => g.cats.length);
 }
 
 function PokemonDetail({ pokemon, onClose }) {
