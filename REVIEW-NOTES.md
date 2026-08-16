@@ -122,7 +122,11 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     (2 rows desktop, 5 rows phone), so the answer buttons and Skip/Give
     up/Next stay in the same place across cards, decks and answer states
     (measured identical in headless Chrome). Method options read
-    Level-up / Item / Stone / Trade / Friendship on cards.
+    Level-up / Item / Stone / Trade / Friendship on cards. On phones the
+    whole card (chips → Skip/Give up) fits above the nav without scrolling
+    in Safari's ~680px of visible height: 128px circle, 3-column option
+    grid reserving 4 rows of 42px, tighter caption. Verified at a 440×744
+    viewport with the 59px status-bar inset emulated.
 22. Stats table on phones: the narrow-column override sat *before* the base
     rules in App.css and never applied; moved after them, header type
     tightened, Accuracy header right-aligned like its values.
