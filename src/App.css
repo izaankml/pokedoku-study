@@ -830,6 +830,7 @@ header h1 {
   grid-auto-rows: 44px;
   align-content: center;
   gap: var(--sp-2);
+  width: 100%; /* auto side margins would shrink it inside the flex column */
   max-width: 480px;
   min-height: calc(3 * 44px + 2 * var(--sp-2)); /* three rows: the Type deck */
   margin: 0 auto var(--sp-2);
@@ -896,6 +897,10 @@ header h1 {
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
+}
+
+.card-actions .ghost {
+  min-width: 150px; /* Skip and Don't Know the same size */
 }
 
 /* region / types / group pills shown once a card is answered */
@@ -983,13 +988,13 @@ header h1 {
   .region-buttons.deck-method,
   .region-buttons.deck-ability {
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 38px;
-    gap: 5px;
-    min-height: calc(5 * 38px + 4 * 5px); /* five rows: the Type deck */
+    grid-auto-rows: 44px;
+    gap: 6px;
+    min-height: calc(4 * 44px + 3 * 6px); /* four rows: Type (5×4) and Region (3×4) */
   }
 
   .region-buttons.deck-type {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 
   .region-buttons.deck-typeCount,
@@ -999,9 +1004,13 @@ header h1 {
   }
 
   .region-btn {
-    min-height: 38px;
-    font-size: 0.84rem;
-    padding: 0 3px;
+    min-height: 44px;
+    font-size: 0.86rem;
+    padding: 0 2px;
+  }
+
+  .region-buttons.deck-type .region-btn {
+    font-size: 0.8rem;
   }
 
   /* one scrollable row of deck chips */
@@ -1010,7 +1019,7 @@ header h1 {
     justify-content: flex-start;
     overflow-x: auto;
     scrollbar-width: none;
-    margin: 0 -16px var(--sp-2);
+    margin: 0 -16px 4px;
     padding: 0 16px;
   }
 
@@ -1027,38 +1036,38 @@ header h1 {
   }
 
   .flashcards .card-question {
-    font-size: 1.05rem;
-    margin: var(--sp-3) 0;
+    font-size: 1.1rem;
+    margin: 10px 0;
   }
 
   .flashcards .pokemon-card {
     margin: 0;
     gap: 8px;
-    height: 206px;
+    height: 220px;
   }
 
   .flashcards .pokemon-card .sprite,
   .flashcards .pokemon-card .sprite-fallback {
-    width: 90px;
-    height: 90px;
+    width: 112px;
+    height: 112px;
   }
 
   .card-tags .pill {
-    padding: 3px 8px;
-    font-size: 0.72rem;
+    padding: 4px 9px;
+    font-size: 0.76rem;
   }
 
   .flashcards .pokemon-card figcaption {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     line-height: 1.2;
   }
 
   .flashcards .card-extra {
-    font-size: 0.72rem;
+    font-size: 0.74rem;
   }
 
   .card-actions {
-    min-height: 52px;
+    min-height: 56px;
   }
 
   /* the Cards tab fills the screen; answers sit centred in the space left

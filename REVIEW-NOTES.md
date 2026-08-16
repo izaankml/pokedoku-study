@@ -254,6 +254,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Evolution Line question shortened to one line ("Does this Pokémon have
     a branched evolution?"). Phone bottom padding trimmed to nav + 12px.
 
+38. Phone cards scaled up: the option grid had shrunk to its content
+    (auto side margins inside a flex column) — now `width: 100%`. Type deck
+    is 5 columns × 4 rows on phones so the reserved area is 4 rows of 44px;
+    sprite 112px, question 1.1rem, name 1.05rem. Questions shortened to one
+    line at that size ("Which region is this Pokémon from?", "How did this
+    Pokémon evolve?", …). Skip and Don't Know share a 150px min width.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

@@ -35,7 +35,7 @@ export const DECKS = [
   {
     id: "region",
     label: "Region",
-    questionText: "Which region is this Pokémon originally from?",
+    questionText: "Which region is this Pokémon from?",
     options: CATEGORIES.filter((c) => c.group === "region"),
     answers: (p) => p.regions.map((r) => `region-${r}`),
     eligible: (p) => p.regions.length > 0 && !isMegaOrGmax(p),
@@ -45,7 +45,7 @@ export const DECKS = [
   {
     id: "type",
     label: "Type",
-    questionText: "What type is this Pokémon? (either type counts)",
+    questionText: "What type is this Pokémon?",
     options: CATEGORIES.filter((c) => c.group === "type"),
     answers: (p) => p.types.map((t) => `type-${t}`),
     // Megas can change type (Mega Charizard X); Gmax never does
@@ -54,7 +54,7 @@ export const DECKS = [
   {
     id: "typeCount",
     label: "Type Count",
-    questionText: "Is this Pokémon mono-type or dual-type?",
+    questionText: "Mono-type or dual-type?",
     options: ["mono", "dual"].map(cat),
     answers: (p) => [p.types.length === 1 ? "mono" : "dual"],
     eligible: (p) => !p.flags.includes("gmax"),
@@ -62,7 +62,7 @@ export const DECKS = [
   {
     id: "method",
     label: "Evolution Method",
-    questionText: "How did this Pokémon evolve from its pre-evolution?",
+    questionText: "How did this Pokémon evolve?",
     options: ["evo-level", "evo-item", "evo-stone", "evo-trade", "evo-friendship"].map((id) => ({
       ...cat(id),
       short: cat(id).short.replace(" Evo", "").replace("Level", "Level-Up"),
@@ -75,7 +75,7 @@ export const DECKS = [
   {
     id: "stage",
     label: "Evolution Stage",
-    questionText: "Where does this Pokémon sit in its evolution line?",
+    questionText: "Where is it in its evolution line?",
     options: ["stage-first", "stage-middle", "stage-final", "stage-single"].map(cat),
     answers: (p) => [`stage-${p.stage}`],
     eligible: (p) => p.stage !== null && !isMegaOrGmax(p),
@@ -83,7 +83,7 @@ export const DECKS = [
   {
     id: "branched",
     label: "Evolution Line",
-    questionText: "Does this Pokémon have a branched evolution?",
+    questionText: "Does it have a branched evolution?",
     options: YES_NO,
     answers: (p) => [p.branched ? "yes" : "no"],
     categories: () => ["branched"],
@@ -127,7 +127,7 @@ export const DECKS = [
   {
     id: "ability",
     label: "Ability",
-    questionText: "Which of these abilities can this Pokémon have?",
+    questionText: "Which of these abilities can it have?",
     options: [
       ...CATEGORIES.filter((c) => c.group === "ability"),
       { id: "none", label: "None of These", short: "None of These" },
