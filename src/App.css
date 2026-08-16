@@ -22,6 +22,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
 .app {
   max-width: 720px;
   margin: 0 auto;
@@ -34,6 +40,8 @@ header h1 {
   padding: 14px 0 10px;
   letter-spacing: 0.02em;
 }
+
+/* ---- tabs ---- */
 
 .tabs {
   display: flex;
@@ -50,8 +58,8 @@ header h1 {
   border: none;
   color: var(--muted);
   font-size: 0.95rem;
-  cursor: pointer;
   border-bottom: 3px solid transparent;
+  white-space: nowrap;
 }
 
 .tab.active {
@@ -59,8 +67,423 @@ header h1 {
   border-bottom-color: var(--accent);
 }
 
-.placeholder {
+/* ---- shared ---- */
+
+.hint {
   color: var(--muted);
-  text-align: center;
-  padding: 40px 0;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
 }
+
+.times {
+  color: var(--muted);
+  padding: 0 6px;
+}
+
+.primary,
+.ghost {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  margin: 8px 0;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.ghost.danger {
+  color: var(--wrong);
+}
+
+.pill {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 12px 0 16px;
+}
+
+.verdict {
+  text-align: center;
+  font-weight: bold;
+  margin: 12px 0;
+}
+
+.verdict.correct {
+  color: var(--correct);
+}
+
+.verdict.wrong {
+  color: var(--wrong);
+}
+
+.streak {
+  color: var(--muted);
+  margin-left: 12px;
+}
+
+/* ---- pokemon cards & answer lists ---- */
+
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.pokemon-card .sprite {
+  width: 72px;
+  height: 72px;
+  image-rendering: pixelated;
+}
+
+.sprite-fallback {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: var(--muted);
+}
+
+.card-caption {
+  display: block;
+  color: var(--muted);
+}
+
+.flashcards .pokemon-card {
+  font-size: 1.05rem;
+  margin: 8px 0 16px;
+}
+
+.flashcards .pokemon-card .sprite,
+.flashcards .sprite-fallback {
+  width: 128px;
+  height: 128px;
+}
+
+.answer-list {
+  margin-top: 16px;
+}
+
+.answer-list h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.answer-list .count {
+  color: var(--muted);
+  font-weight: normal;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 10px;
+}
+
+.answer-grid .highlight {
+  outline: 2px solid var(--accent);
+  border-radius: 8px;
+}
+
+/* ---- autocomplete ---- */
+
+.autocomplete {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.autocomplete input,
+.sync-actions input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  right: 0;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.suggestions img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.suggestions button.highlighted,
+.suggestions button:hover {
+  background: var(--border);
+}
+
+/* ---- browser ---- */
+
+.browser-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.category-select {
+  flex: 1;
+  min-width: 160px;
+  min-height: 44px;
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
+/* ---- drill ---- */
+
+.drill,
+.flashcards,
+.practice {
+  text-align: center;
+}
+
+.drill-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- flashcards ---- */
+
+.region-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  max-width: 480px;
+  margin: 0 auto 8px;
+}
+
+.region-btn {
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.region-btn.correct {
+  background: var(--correct);
+  border-color: var(--correct);
+}
+
+.region-btn.wrong {
+  background: var(--wrong);
+  border-color: var(--wrong);
+}
+
+@media (max-width: 480px) {
+  .region-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- practice grid ---- */
+
+.board {
+  display: grid;
+  grid-template-columns: minmax(64px, 1fr) repeat(3, minmax(72px, 2fr));
+  gap: 6px;
+  margin: 0 auto;
+  max-width: 480px;
+}
+
+.board .header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board .header .pill {
+  font-size: 0.72rem;
+  padding: 6px 8px;
+  width: 100%;
+}
+
+.board .cell {
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 1.4rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board .cell img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.board .cell.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.board .cell.filled {
+  border-color: var(--correct);
+}
+
+.board .cell.revealed {
+  border-color: var(--wrong);
+}
+
+.score {
+  margin: 12px 0 4px;
+  color: var(--muted);
+}
+
+.grid-message {
+  margin-bottom: 8px;
+}
+
+.cell-panel {
+  margin-top: 8px;
+}
+
+/* ---- stats ---- */
+
+.stats {
+  text-align: left;
+}
+
+.stats section {
+  margin-bottom: 24px;
+}
+
+.stats h3 {
+  margin-bottom: 8px;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.stats-table th,
+.stats-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 6px;
+  text-align: left;
+}
+
+.stats-table th {
+  color: var(--muted);
+  font-weight: normal;
+}
+
+.stats-table td:nth-child(2),
+.stats-table td:nth-child(3),
+.stats-table th:nth-child(2),
+.stats-table th:nth-child(3) {
+  text-align: right;
+}
+
+.stats-table tr.weak td {
+  color: var(--wrong);
+}
+
+.sync-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.sync-steps {
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+
+.sync-steps li {
+  margin-bottom: 4px;
+}
+
+.sync-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.meta {
+  margin-top: 12px;
+}
+
+/* ---- type colors (canonical) ---- */
+
+.pill.type-normal { background: #a8a878; border-color: #a8a878; color: #121212; }
+.pill.type-fire { background: #f08030; border-color: #f08030; color: #121212; }
+.pill.type-water { background: #6890f0; border-color: #6890f0; color: #121212; }
+.pill.type-electric { background: #f8d030; border-color: #f8d030; color: #121212; }
+.pill.type-grass { background: #78c850; border-color: #78c850; color: #121212; }
+.pill.type-ice { background: #98d8d8; border-color: #98d8d8; color: #121212; }
+.pill.type-fighting { background: #c03028; border-color: #c03028; color: #fff; }
+.pill.type-poison { background: #a040a0; border-color: #a040a0; color: #fff; }
+.pill.type-ground { background: #e0c068; border-color: #e0c068; color: #121212; }
+.pill.type-flying { background: #a890f0; border-color: #a890f0; color: #121212; }
+.pill.type-psychic { background: #f85888; border-color: #f85888; color: #121212; }
+.pill.type-bug { background: #a8b820; border-color: #a8b820; color: #121212; }
+.pill.type-rock { background: #b8a038; border-color: #b8a038; color: #121212; }
+.pill.type-ghost { background: #705898; border-color: #705898; color: #fff; }
+.pill.type-dragon { background: #7038f8; border-color: #7038f8; color: #fff; }
+.pill.type-dark { background: #705848; border-color: #705848; color: #fff; }
+.pill.type-steel { background: #b8b8d0; border-color: #b8b8d0; color: #121212; }
+.pill.type-fairy { background: #ee99ac; border-color: #ee99ac; color: #121212; }

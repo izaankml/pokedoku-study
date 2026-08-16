@@ -1,6 +1,6 @@
 import { CATEGORIES } from "../data/categories.js";
 import { POKEMON } from "../data/pokedex.js";
-import { pairIsValid } from "./matching.js";
+import { pairIsValid, pairKey } from "./matching.js";
 import { smoothedAccuracy } from "./stats.js";
 
 // Weight grows as accuracy falls; priorWeight biases toward known weak
@@ -25,7 +25,7 @@ export function pickDrillPair(merged, { avoid = null, random = Math.random } = {
     const partners = CATEGORIES.filter((c) => pairIsValid(a.id, c.id, 1));
     if (!partners.length) continue;
     const b = pickWeighted(partners, (c) => categoryWeight(c, merged), random);
-    if (avoid && avoid.has(`${a.id}|${b.id}`)) continue;
+    if (avoid && avoid.has(pairKey(a.id, b.id))) continue;
     return [a, b];
   }
   // practically unreachable; every category has at least one valid partner
