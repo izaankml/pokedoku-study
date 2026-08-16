@@ -156,6 +156,26 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     or no Pokémon fits both — Legendary × Mythical, First × Middle stage,
     Baby × Dragon); changing the first drops a second that no longer fits.
 
+27. Cards & sprites: PokeAPI has no sprite for Partner Pikachu (10158),
+    Partner Eevee (10159) or Mega Zygarde (10301); `Sprite` now falls back
+    to the base species' sprite before the Poké Ball silhouette. Partner
+    Pikachu is a real PokeDoku answer (`pikachu-partner`, id 10158, visible
+    in its list) so it stays. Answer-grid captions reserve three lines at
+    0.76rem (44 names need >2 lines, e.g. "Gigantamax Urshifu (Rapid
+    Strike)"); sprite→name gap 6px; Nidoran's ♀/♂ are wrapped in a
+    `.gender-mark` span (system symbol font, `line-height: 1`) — check the
+    baseline on the phone, it's a font-fallback quirk. Clicking a card
+    opens a detail sheet (bottom sheet on phones, dialog on desktop) with
+    the sprite, dex number, "form of …", and every category it counts for,
+    grouped like the dropdowns; Esc/backdrop/× close it.
+28. Stats: Answered and Accuracy are centred (headers and cells).
+29. `theme-color` is now the tab-bar surface (#1c1b20) instead of the page
+    black, so Safari's toolbar zone under the fixed nav (which the page
+    can't paint) blends with the bar instead of showing as a black band.
+    **Assumption**: iOS Safari tints its bottom (and top status-bar) chrome
+    from theme-color — check on device; if the top now looks wrong, revert
+    index.html's theme-color to #0c0c0f.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

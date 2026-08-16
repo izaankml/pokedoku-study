@@ -596,9 +596,24 @@ header h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 6px;
   text-align: center;
   font-size: 0.8rem;
   min-width: 0;
+}
+
+.pokemon-card.clickable {
+  cursor: pointer;
+}
+
+/* ♀/♂ come from a fallback font with a different baseline */
+.gender-mark {
+  display: inline-block;
+  font-family: "Apple Symbols", "Segoe UI Symbol", system-ui, sans-serif;
+  font-size: 0.95em;
+  line-height: 1;
+  vertical-align: -0.02em;
+  margin-left: 0.05em;
 }
 
 .pokemon-card .sprite,
@@ -678,15 +693,17 @@ header h1 {
   }
 }
 
-/* Form names ("Hisuian Growlithe", "Mega Charizard X") need a second line;
-   every card reserves both lines so rows stay uniform */
+/* Form names ("Gigantamax Urshifu (Rapid Strike)") need up to three
+   lines; every card reserves them so rows stay uniform */
 .answer-grid .pokemon-card figcaption {
   white-space: normal;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  font-size: 0.76rem;
   line-height: 1.2;
-  height: 2.4em;
+  height: 3.6em;
+  overflow-wrap: anywhere;
 }
 
 .answer-grid .highlight {
@@ -1116,8 +1133,9 @@ header h1 {
 
 .stats-table th:nth-child(2),
 .stats-table td:nth-child(2),
-.stats-table th:nth-child(3) {
-  text-align: right;
+.stats-table th:nth-child(3),
+.stats-table td:nth-child(3) {
+  text-align: center;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1159,7 +1177,7 @@ header h1 {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .acc-track {
@@ -1501,4 +1519,122 @@ main > * {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ---- Pokémon detail popup ---- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  padding: 0;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: min(84dvh, 720px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-4) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  box-shadow: var(--shadow-2);
+  animation: modal-in var(--dur-med) var(--ease-out) both;
+}
+
+@keyframes modal-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (min-width: 641px) {
+  .modal-backdrop {
+    align-items: center;
+    padding: var(--sp-4);
+  }
+
+  .modal {
+    border-radius: var(--radius-lg);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--sp-4);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  padding-right: 40px;
+}
+
+.detail-head h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.detail-meta {
+  margin: 2px 0 0;
+}
+
+.detail-sprite,
+.sprite-fallback.detail-sprite {
+  width: 96px;
+  height: 96px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface-2);
+}
+
+.detail-group {
+  margin-top: var(--sp-3);
+}
+
+.detail-group h4 {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-low);
+}
+
+.detail-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-pills .pill {
+  padding: 5px 10px;
+  font-size: 0.82rem;
 }
