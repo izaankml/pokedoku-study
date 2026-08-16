@@ -1000,8 +1000,8 @@ header h1 {
   line-height: 1.4;
 }
 
-.card-facts .due-note {
-  margin: 4px 0 0;
+.answer-area .due-note {
+  margin: 0;
 }
 
 /* deck chips above the card; the width wraps them into two even rows */
@@ -1181,6 +1181,13 @@ header h1 {
     flex: 1;
     justify-content: center;
     padding-bottom: var(--sp-2);
+  }
+
+  /* answered: the facts caption the card from right beneath it, and the
+     verdict / answer / Next sit centred in what's left */
+  .flashcards .answer-area.answered .card-facts,
+  .flashcards .answer-area.answered .card-actions {
+    margin-bottom: auto;
   }
 }
 

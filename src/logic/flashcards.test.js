@@ -13,7 +13,7 @@ describe("flashcard decks", () => {
     expect(region.answers(by("basculinwhitestriped"))).toEqual(["region-unova", "region-hisui"]);
     const special = DECK_BY_ID.get("special");
     expect(special.answers(by("koraidon"))).toEqual(["flag-legendary", "flag-paradox"]);
-    expect(special.answers(by("pikachu"))).toEqual(["none"]);
+    expect(special.eligible(by("pikachu"))).toBe(false); // regular Pokémon aren't asked
     const method = DECK_BY_ID.get("method");
     expect(method.answers(by("alakazam"))).toEqual(["evo-trade", "evo-item"]);
     const type = DECK_BY_ID.get("type");
@@ -46,7 +46,8 @@ describe("flashcard decks", () => {
     expect(region).not.toContain(by("meltan")); // no region at all
     const special = deckPool(DECK_BY_ID.get("special"));
     expect(special).not.toContain(by("typhlosionhisui")); // starter, same as Typhlosion
-    expect(special).toContain(by("greninjaash")); // not a starter, unlike Greninja
+    expect(special).toContain(by("koraidon"));
+    expect(special).not.toContain(by("greninjaash")); // in no group, so never asked
     expect(special).not.toContain(by("charizardgmax")); // Mega/Gmax never asked
     const method = deckPool(DECK_BY_ID.get("method"));
     expect(method).toContain(by("persianalola")); // friendship, unlike Persian

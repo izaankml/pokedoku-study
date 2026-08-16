@@ -11,15 +11,15 @@ import PokemonCard from "./PokemonCard.jsx";
 const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby"];
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
-// Region, typing and group of a Pokémon as pills, shown once a card is
+// Typing, region and group of a Pokémon as pills, shown once a card is
 // answered — a reminder of what else PokeDoku can ask about it. Whatever
 // the card itself asked (its answers) is left out; the buttons show that.
 const abilityText = (p) =>
   p.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ");
 function summaryPills(p, except) {
   return [
-    ...p.regions.map((r) => CAT.get(`region-${r}`)),
     ...p.types.map((t) => CAT.get(`type-${t}`)),
+    ...p.regions.map((r) => CAT.get(`region-${r}`)),
     ...GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
   ].filter((c) => !except.has(c.id));
 }
@@ -204,13 +204,27 @@ function Flashcards() {
       <PokemonCard pokemon={pokemon} eager />
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
-          <p
-            key={key}
-            className={`verdict ${gaveUp ? "revealed" : wasCorrect ? "correct" : "wrong"}`}
-            aria-live="polite"
-          >
-            {gaveUp ? "Revealed." : wasCorrect ? "Correct!" : "Not quite."}
-          </p>
+          <>
+            <div className="card-facts">
+              <div className="card-tags">
+                {summaryPills(pokemon, answerIds).map((c) => (
+                  <CategoryPill key={c.id} cat={c} useShort />
+                ))}
+              </div>
+              {facts.map((line) => (
+                <p key={line} className="card-extra">
+                  {line}
+                </p>
+              ))}
+            </div>
+            <p
+              key={key}
+              className={`verdict ${gaveUp ? "revealed" : wasCorrect ? "correct" : "wrong"}`}
+              aria-live="polite"
+            >
+              {gaveUp ? "Revealed." : wasCorrect ? "Correct!" : "Not quite."}
+            </p>
+          </>
         ) : null}
         <div className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}>
           {shownOptions.map((option) => (
@@ -219,21 +233,7 @@ function Flashcards() {
             </button>
           ))}
         </div>
-        {answered ? (
-          <div className="card-facts">
-            <div className="card-tags">
-              {summaryPills(pokemon, answerIds).map((c) => (
-                <CategoryPill key={c.id} cat={c} useShort />
-              ))}
-            </div>
-            {facts.map((line) => (
-              <p key={line} className="card-extra">
-                {line}
-              </p>
-            ))}
-            {nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
-          </div>
-        ) : null}
+        {answered && nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
         <div className="card-actions">
           {answered ? (
             <button className="primary" onClick={next}>

@@ -97,17 +97,11 @@ export const DECKS = [
     id: "special",
     label: "Group",
     questionText: "Which group is this Pokémon in?",
-    options: [
-      ...SPECIAL_FLAGS.map((f) => cat(`flag-${f}`)),
-      { id: "none", label: "Regular", short: "Regular" },
-    ],
-    answers: (p) => {
-      const hits = SPECIAL_FLAGS.filter((f) => p.flags.includes(f)).map((f) => `flag-${f}`);
-      return hits.length ? hits : ["none"];
-    },
-    eligible: (p) => !isMegaOrGmax(p),
-    // Most Pokémon are "none"; lean towards the ones that aren't
-    bias: (p) => (p.flags.some((f) => SPECIAL_FLAGS.includes(f)) ? 3 : 1),
+    options: SPECIAL_FLAGS.map((f) => cat(`flag-${f}`)),
+    answers: (p) => SPECIAL_FLAGS.filter((f) => p.flags.includes(f)).map((f) => `flag-${f}`),
+    // Only Pokémon that are in a group: the ~900 regular ones would swamp
+    // the deck and teach nothing
+    eligible: (p) => !isMegaOrGmax(p) && p.flags.some((f) => SPECIAL_FLAGS.includes(f)),
   },
   {
     id: "move",
