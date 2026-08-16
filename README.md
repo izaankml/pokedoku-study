@@ -18,8 +18,9 @@ Rotom appliances, …) whenever they fit a cell the base species doesn't.
   answers, which is where the learning happens.
 - **Cards** — flashcards, one deck per category group (or all at once):
   region, type, type count, evolution method/stage/line, group, moves
-  ("can it learn Earthquake?"), abilities. Type and Region are multi-select
-  (pick both types, then Check). Skip or Don't Know on a card; the current
+  ("can it learn Earthquake?"), abilities. Type, Region and Evolution Method are
+  multi-select (pick both types, then Check; Stone implies Item and
+  Friendship implies Level-Up). Skip or Don't Know on a card; the current
   card survives switching tabs.
 - **Grid** — a full 3×3 practice board, generated so every cell is
   solvable with distinct Pokémon.

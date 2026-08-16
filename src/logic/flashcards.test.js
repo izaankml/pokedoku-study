@@ -30,7 +30,8 @@ describe("flashcard decks", () => {
   });
 
   it("marks Type and Region as multi-select (both types / regions needed)", () => {
-    expect(DECKS.filter((d) => d.multi).map((d) => d.id)).toEqual(["region", "type"]);
+    expect(DECKS.filter((d) => d.multi).map((d) => d.id)).toEqual(["region", "type", "method"]);
+    expect(DECK_BY_ID.get("method").implies).toEqual({ "evo-stone": ["evo-item"], "evo-friendship": ["evo-level"] });
   });
 
   it("covers every category group in Stats", () => {

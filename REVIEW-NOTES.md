@@ -274,7 +274,9 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     right only when the selection matches exactly (both types of a dual
     type; both regions of a dual-region form). Wrong picks show red, missed
     right answers show as a dashed green outline. The in-progress selection
-    survives tab switches. Other decks stay single-tap.
+    survives tab switches. Evolution Method is multi-select too, with
+    implied picks (Stone ticks Item, Friendship ticks Level-Up) since those
+    pairs always go together in the data. Other decks stay single-tap.
 
 ## Sync devices (why "5 devices")
 

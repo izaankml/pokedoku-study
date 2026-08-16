@@ -78,9 +78,13 @@ function Flashcards() {
   function choose(option) {
     if (answered) return;
     if (multi) {
-      const next = selection.includes(option.id)
-        ? selection.filter((id) => id !== option.id)
-        : [...selection, option.id];
+      const implied = deck.implies?.[option.id] || [];
+      let next;
+      if (selection.includes(option.id)) {
+        next = selection.filter((id) => id !== option.id);
+      } else {
+        next = [...selection, option.id, ...implied.filter((id) => !selection.includes(id))];
+      }
       session.selection = next;
       setSelection(next);
       return;

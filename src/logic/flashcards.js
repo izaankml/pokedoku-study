@@ -21,7 +21,8 @@ const YES_NO = [
 const SPECIAL_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby"];
 
 // A deck: { id, label, question(param), options, answers(p, param),
-//   eligible(p), bias(p), pickParam?(p, random), categories(p, param) }
+//   eligible(p), bias(p), pickParam?(p, random), categories(p, param),
+//   multi?, implies? (option id -> ids that come with it) }
 // `categories` are the category ids the attempt is recorded against (the
 // answers, unless the answer is yes/no).
 const withDefaults = (deck) => ({
@@ -64,6 +65,10 @@ export const DECKS = [
   {
     id: "method",
     label: "Evolution Method",
+    multi: true, // every method it counts for, then Check
+    // Always-true pairs are ticked for you: a stone is an item, and
+    // friendship evolutions also count as level-up
+    implies: { "evo-stone": ["evo-item"], "evo-friendship": ["evo-level"] },
     questionText: "How did this Pokémon evolve?",
     options: ["evo-level", "evo-item", "evo-stone", "evo-trade", "evo-friendship"].map((id) => ({
       ...cat(id),
