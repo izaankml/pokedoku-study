@@ -882,9 +882,10 @@ header h1 {
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
+  align-self: stretch; /* full card width, so it centres on the same axis as the name */
   gap: 6px;
   min-height: 30px;
-  max-width: 480px;
+  padding: 0 var(--sp-2);
 }
 
 .card-tags .pill {
