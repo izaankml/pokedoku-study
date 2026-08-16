@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickFlashcard } from "../logic/picker.js";
 import { DECKS, DECK_BY_ID, cardKey, session } from "../logic/flashcards.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
-import { POKEMON_BY_ID } from "../data/pokedex.js";
+import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
 import PokemonCard from "./PokemonCard.jsx";
 
 const GAVE_UP = "gaveup";
@@ -19,13 +19,22 @@ function Flashcards() {
   });
   const [picked, setPicked] = useState(session.picked);
 
-  function freshCard(forDeck) {
+  function freshCard(forDeck, alsoExclude = []) {
     const { deck, pokemon, param } = pickFlashcard(merged, {
       deckId: forDeck,
-      exclude: new Set(session.recent),
+      exclude: new Set([...session.recent, ...alsoExclude]),
     });
     return { deckId: deck.id, pokemonId: pokemon.id, param };
   }
+
+  // Line up the following card now and warm its sprite, so "Next" swaps
+  // name and picture together instead of the picture trailing the name.
+  useEffect(() => {
+    const fits = (c) => c && (deckId === "all" || c.deckId === deckId) && c.pokemonId !== card.pokemonId;
+    if (!fits(session.next)) session.next = freshCard(deckId, [card.pokemonId]);
+    preloadSprite(POKEMON_BY_ID.get(session.next.pokemonId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [card, deckId]);
 
   const deck = DECK_BY_ID.get(card.deckId);
   const pokemon = POKEMON_BY_ID.get(card.pokemonId);
@@ -59,7 +68,12 @@ function Flashcards() {
 
   function next() {
     session.recent = [...session.recent, pokemon.id].slice(-10);
-    commit(freshCard(deckId), null);
+    const upcoming =
+      session.next && (deckId === "all" || session.next.deckId === deckId) && session.next.pokemonId !== pokemon.id
+        ? session.next
+        : freshCard(deckId);
+    session.next = null;
+    commit(upcoming, null);
   }
 
   function changeDeck(id) {
@@ -94,6 +108,7 @@ function Flashcards() {
       <p className="hint">{deck.question(card.param)}</p>
       <PokemonCard
         pokemon={pokemon}
+        eager
         caption={
           answered
             ? `${answerLabel}${nextIn ? ` · next in ${nextIn}` : ""}`

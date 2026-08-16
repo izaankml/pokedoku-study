@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { spriteUrl } from "../data/pokedex.js";
+import { spriteCandidates } from "../data/pokedex.js";
 
 // Poké Ball silhouette shown whenever no sprite loads, so the
 // offline/broken state still looks intentional.
@@ -20,18 +20,11 @@ export function PokeballIcon(props) {
   );
 }
 
-// A form whose own sprite is missing upstream (Partner Pikachu, Mega
-// Zygarde) falls back to its base species' sprite before the silhouette.
-function candidates(pokemon) {
-  const ids = [pokemon.id];
-  if (pokemon.species !== pokemon.id) ids.push(pokemon.species);
-  return ids.map(spriteUrl);
-}
-
-function Sprite({ pokemon, className = "sprite" }) {
+// Falls back to the base species' sprite, then the silhouette.
+function Sprite({ pokemon, className = "sprite", eager = false }) {
   const [attempt, setAttempt] = useState(0);
   useEffect(() => setAttempt(0), [pokemon.id]);
-  const urls = candidates(pokemon);
+  const urls = spriteCandidates(pokemon);
   if (attempt >= urls.length) {
     return (
       <div className={`sprite-fallback ${className}`} title={pokemon.displayName}>
@@ -40,11 +33,15 @@ function Sprite({ pokemon, className = "sprite" }) {
     );
   }
   return (
+    // keyed by Pokémon so a change never shows the previous sprite while
+    // the new one loads
     <img
+      key={pokemon.id}
       className={className}
       src={urls[attempt]}
       alt={pokemon.displayName}
-      loading="lazy"
+      loading={eager ? "eager" : "lazy"}
+      decoding="sync"
       onError={() => setAttempt((a) => a + 1)}
     />
   );

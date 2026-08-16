@@ -217,6 +217,11 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     chips scroll horizontally on phones. Stats Answered/Accuracy are
     left-aligned like Category.
 
+33. Cards: the following card is picked as soon as one is shown and its
+    sprite preloaded (`session.next`), so Next/Skip swap name and picture
+    together; the `<img>` is keyed by Pokémon so a stale sprite never
+    lingers, and the flashcard sprite loads eagerly.
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

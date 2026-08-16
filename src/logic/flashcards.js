@@ -176,6 +176,7 @@ export function allCardKeys() {
 export const session = {
   deckId: "all",
   card: null, // { deckId, pokemonId, param }
+  next: null, // the card after this one, picked early so its sprite can preload
   picked: null, // option id chosen, "gaveup", or null while unanswered
   recent: [], // last few pokemon ids, to avoid immediate repeats
 };
