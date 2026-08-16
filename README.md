@@ -2,10 +2,11 @@
 
 A study app for [PokeDoku](https://pokedoku.com): learn every category
 Pokémon fall into — all 18 types, mono/dual typing, the ten regions of
-origin, evolution methods and stages, and the special groups (Legendary,
-Mythical, Ultra Beast, Paradox, fossil, starter lines, babies, Mega,
-Gigantamax) — 47 categories over all 1025 Pokémon plus the alternate
-forms PokeDoku accepts as their own answers (regional variants, Megas,
+origin, evolution methods, stages and branching, the special groups
+(Legendary, Mythical, Ultra Beast, Paradox, fossil, first partners,
+babies, Mega, Gigantamax), the moves and abilities PokeDoku asks about —
+77 categories over all 1025 Pokémon plus the alternate forms PokeDoku
+accepts as their own answers (regional variants, Megas, Gigantamax,
 Rotom appliances, …) whenever they fit a cell the base species doesn't.
 
 ## Modes
@@ -15,7 +16,10 @@ Rotom appliances, …) whenever they fit a cell the base species doesn't.
 - **Drill** — the core PokeDoku skill: given two categories, name any
   Pokémon that fits both. Every answer reveals the full list of valid
   answers, which is where the learning happens.
-- **Cards** — region flashcards: see a Pokémon, answer where it's from.
+- **Cards** — flashcards in four decks (or all at once): which region a
+  Pokémon is from, which special group it's in, its evolution stage, and
+  how it evolved. Skip or give up on a card; the current card survives
+  switching tabs.
 - **Grid** — a full 3×3 practice board, generated so every cell is
   solvable with distinct Pokémon.
 - **Stats** — per-category accuracy, weak spots highlighted.
@@ -76,10 +80,30 @@ runtime from [PokeAPI sprites](https://github.com/PokeAPI/sprites).
 Notes on judgment calls:
 
 - "Evolved by X" means the Pokémon itself evolved that way (Vaporeon
-  counts for item, Eevee doesn't).
-- Single-stage Pokémon are their own stage — they don't count as "final".
-- Starters cover the whole line (81), excluding the Let's Go partners.
-- "Has a Mega" includes the Legends: Z-A Megas (87 species).
+  counts for item, Eevee doesn't), and a Pokémon counts for every method
+  that works in some core game: Alakazam is trade *and* item (Linking
+  Cord), Crobat is friendship *and* level, Steelix is trade *and* item
+  (held Metal Coat). "Stone" is the subset of item where an evolution
+  stone is used. Kingambit/Gholdengo are level (their items aren't
+  used); Sirfetch'd, Runerigus and Wyrdeer count for nothing.
+- Evolution is form-aware: Kantonian Farfetch'd, Corsola, Qwilfish and
+  Red-Striped Basculin have no evolution line (their evolutions belong to
+  regional forms); Kantonian Mr. Mime and Linoone are final stage.
+  "Not fully evolved" = first or middle stage. "Branched" = can evolve
+  into different species (Eevee, Scyther, Cosmoem — not Rockruff, whose
+  Lycanroc forms are one species).
+- Mega Evolution and Gigantamax are answered by the Mega/Gigantamax form
+  records (Mega Charizard X, Gigantamax Charizard), not the base species —
+  PokeDoku lists them as separate answers ("MEGA_EVOLVED"/"GMAX_FORM").
+  Those forms have no evolution categories, keep Legendary/Mythical/
+  Fossil, but are not first partners. Primal forms are not Megas.
+- First partners cover the whole line (81 species) plus the Hisuian
+  starters and the Let's Go Partner Pikachu/Eevee, which are their own
+  no-evolution-line records.
+- Meltan and Melmetal have no region (Pokémon GO / Let's Go).
+- Move categories mean "can learn the move" in some core game by any
+  method except events; forms that change from another (Rotom-Wash) also
+  learn what that form learns; Gigantamax forms have no moves.
 - Regions follow PokeDoku's "How to play": regional forms count only for
   the region they debuted in (Growlithe is Kanto, Hisuian Growlithe is
   Hisui); Mega forms count for the base species' region; any other form
@@ -89,7 +113,11 @@ Notes on judgment calls:
   that count). Primal forms are not Megas and stay in Hoenn. Only the
   seven Legends: Arceus originals are Hisui *species*.
 - A form only gets its own record when it can answer some cell its base
-  species can't (a new type, type count, region, stage, method, or flag).
-  Mega Charizard X (Fire/Dragon) is in; Mega Charizard Y and Gigantamax
-  forms are covered by the base record. Form ids are PokeAPI's, so the
-  same id keys sprites, stats, and PokeDoku's own list.
+  species can't (a new type, type count, region, stage, method, flag, move
+  or ability). Kyurem-Black or Lycanroc Midnight add nothing and are
+  covered by the base record. Form ids are PokeAPI's, so the same id keys
+  sprites, stats, and PokeDoku's own list.
+- `scripts/check-against-helper.mjs` diffs the dataset against
+  [pokedoku-helper.com](https://www.pokedoku-helper.com)'s PokeAPI-derived
+  data; everything but a few dozen move entries (PokeAPI's Mega move lists
+  are patchy) agrees.

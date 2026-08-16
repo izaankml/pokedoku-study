@@ -1,0 +1,116 @@
+# Review notes — 2026-08-16 session
+
+Decisions and assumptions made while working autonomously, for review.
+Delete this file once reviewed; anything worth keeping is in README.md.
+
+## Sources used
+
+- PokeDoku's own answer list: `GET https://api.pokedoku.com/api/pokemon/all`
+  (1,323 visible entries, PokeAPI ids). Its frontend bundle carries the
+  category ids (`MEGA_EVOLVED`, `GMAX_FORM`, `EVOLVED_BY-stone/-item`,
+  `NOT FULLY_EVOLVED`, `HAS_BRANCHED_EVOLUTION`, `LEGENDARY_TRIO`,
+  `POKEMON_MOVE`, `POKEMON_ABILITY`) and rule notes.
+- PokeDoku's "How to play" (pasted by you) — regions and forms rules.
+- pokedoku-helper.com (open source: github.com/jlast/pokedoku-solver): a
+  per-entry category dataset derived from PokeAPI + hand overrides, tuned
+  against real puzzles. Used as the oracle for evolution triggers, stage
+  semantics, per-entry Mega/Gmax, first partners, and validated moves/
+  abilities. `scripts/check-against-helper.mjs` re-runs the diff.
+
+## Decisions (data model)
+
+1. **Mega/Gigantamax are the form records, not the base species.** Base
+   Charizard is no longer "Mega"/"Gmax"; Mega Charizard X/Y and Gigantamax
+   Charizard are (96 Mega + 34 Gmax records). Evidence: PokeDoku's ids
+   `MEGA_EVOLVED`/`GMAX_FORM`, separate answer entries, and helper counts
+   (96/34) that only work per-entry. **Impact on you:** for a Mega cell,
+   type "Mega Charizard X", not "Charizard". If PokeDoku actually accepts
+   plain "Charizard" too, flip `formFlags`/`speciesFlags` in
+   `scripts/build-dataset.mjs`.
+2. Mega/Gmax forms: no evolution stage/method (helper: `IGNORE_EVOLVE_FORMS`),
+   keep Legendary/Mythical/Fossil (Mega Aerodactyl is a Fossil), are **not**
+   First Partners (Mega Venusaur isn't). Ash-Greninja likewise has no stage
+   and isn't a starter. This asymmetry (fossil yes, starter no) is copied
+   from the helper's curated lists, not verified against PokeDoku.
+3. Evolution methods are multi-valued (`evoMethods`), following the
+   helper/PokeAPI: friendship ⇒ also level; held item ⇒ item + level;
+   trade with item ⇒ trade + item; Linking Cord ⇒ Alakazam/Machamp/Golem/
+   Gengar also item; modern-game stones ⇒ Magnezone/Probopass/Vikavolt/
+   Crabominable/Leafeon/Glaceon also item(+stone); "other" methods mapped
+   per PokeAPI trigger names (Shedinja/Kingambit/Gholdengo/Annihilape/…
+   = level; Alcremie/Urshifu = item; Sirfetch'd/Runerigus/Wyrdeer = none;
+   Melmetal = none). Full list: `EVO_METHOD_OVERRIDES` in
+   `scripts/manual-lists.mjs`.
+4. **Added an "Evolved by stone" category** (used evolution stone, not
+   held). PokeDoku's bundle has an `EVOLVED_BY-stone` note ("The stone must
+   be usable not held") but its link map only lists level/item/trade/
+   friendship — so Stone may be dormant. Harmless if so; remove from
+   `src/data/categories.js` if it never shows up in puzzles.
+5. Stage is form-aware (Kantonian Farfetch'd/Corsola/Qwilfish/Red-Striped
+   Basculin = no evolution line; Mr. Mime, Linoone = final). Matches the
+   helper's overrides. Meltan→Melmetal link added by hand.
+6. **Branched** = evolves into ≥2 distinct *species* (Rockruff not, Scyther
+   yes). "Not fully evolved" = first or middle. Both added as categories.
+7. Regions: regional-named forms → debut region only; Mega/Gmax/Primal →
+   base region; other forms debuting elsewhere → both. Overrides for
+   ORAS/FRLG debuts: Hoopa Unbound = Kalos + Hoenn, Deoxys Attack/Defense
+   = Hoenn + Kanto (Speed = Hoenn). Zygarde 10%/Complete and Ash-Greninja
+   = Kalos + Alola. Primal Groudon/Kyogre = Hoenn only. Meltan/Melmetal =
+   no region. All match the helper.
+8. First partners include Hisuian Typhlosion/Samurott/Decidueye and the
+   Let's Go Partner Pikachu/Eevee (own records, no evolution line, Kanto).
+   Manual list comment used to say the opposite; the helper's tip page and
+   PokeDoku's "core-series games" note settled it.
+9. **Moves (22) and abilities (5) added as categories.** Move list = the 21
+   the helper has seen in puzzles + Dragon Rage (in PokeDoku's bundle).
+   Learnsets from @pkmn/dex, any gen/method except events, no pre-evo
+   chaining (mirrors PokeAPI's per-Pokémon lists); 99.5% agreement with the
+   helper. Gmax forms have no moves (PokeAPI has none). PokeDoku can add
+   moves at any time — `src/data/traits.js` is the one place to extend.
+10. Legendary Trio exists in PokeDoku but neither the helper nor this app
+    models it (no clear membership list). Not added.
+11. Form records are only kept when they add a category the base lacks —
+    except Mega/Gmax, which always stay (they carry the flag). 232 form
+    records now; 45 candidates dropped (Kyurem-B/W, Lycanroc forms, …).
+12. Pair validity: same-group pairs are blocked only for type-count and
+    stage. Region×region, method×method, move×move etc. are allowed when
+    the intersection is non-empty (dual-region forms, Alakazam trade×item).
+13. Base Meowstic and Tatsugiri gained the "has a Mega" fact via the new
+    forme-name detection (Z-A "M-Mega"/"Curly-Mega" lack `isMega` in the
+    dex) — now surfaced as Mega Meowstic / Mega Tatsugiri records.
+
+## Decisions (flashcards)
+
+14. Four decks: Region, Special group (Legendary/Mythical/UB/Paradox/Fossil/
+    First partner/Baby/None), Stage, Method. "All" mixes decks. A card with
+    several right answers (Koraidon: Paradox and Legendary; Alakazam: trade
+    and item) accepts any and highlights all.
+15. Only species and forms whose answer differs from their base are asked;
+    Mega/Gmax forms are never asked. Region deck skips Meltan/Melmetal.
+16. Stats keys: region deck keeps the bare id (old history still counts);
+    other decks use `deck:id`. Card categories are recorded against the
+    answer categories (so Special cards feed the flag rows in Stats).
+17. **Skip** moves on without recording; **Give up** records a miss and
+    reveals. Card state lives in a module-level session
+    (`src/logic/flashcards.js`) so tab switches keep it, answered or not.
+    Changing deck replaces an *unanswered* card; an answered one stays
+    until Next.
+
+## Decisions (UI)
+
+18. Mobile nav height 58→54px. The band under the icons on iOS 26 is the
+    safe-area inset Safari reports with its floating toolbar; it's the
+    bar's own padding, not a layout bug. Left as is beyond the trim — check
+    on device; if it still looks detached, options are an opaque bar
+    background or capping `padding-bottom`.
+19. Spaced-review tiles: on ≤520px the row label moves above the tiles and
+    tiles take the full width; "Due now" → "Due".
+20. Answer-grid captions wrap to two lines (form names).
+
+## Not done / open
+
+- Legendary Trio category (see 10).
+- Verifying PokeDoku's Mega/Gmax acceptance of base species (see 1) and
+  Primal/ORAS region handling (see 7) against a live puzzle — the puzzle
+  APIs need a login.
+- Old flashcard history keyed by species id now only feeds the Region deck.

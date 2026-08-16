@@ -86,7 +86,7 @@
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --nav-h: 58px;
+  --nav-h: 54px;
   --font-sans: "Nunito Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
 
   --pokeball-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h6.6M14.4 12H21'/%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3C/svg%3E");
@@ -792,10 +792,58 @@ header h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--sp-2);
+}
+
+/* deck chips above the card */
+.deck-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: var(--sp-3);
+}
+
+.chip {
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-mid);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.chip:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* fewer options: wider buttons */
+.region-buttons.deck-stage {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.region-buttons.deck-method {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.region-buttons.deck-special {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 @media (max-width: 480px) {
-  .region-buttons {
+  .region-buttons,
+  .region-buttons.deck-special,
+  .region-buttons.deck-stage,
+  .region-buttons.deck-method {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -1204,6 +1252,24 @@ tr.weak .acc-fill {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-low);
+  white-space: nowrap;
+}
+
+/* phones: label on its own line, tiles get the full width */
+@media (max-width: 520px) {
+  .srs-label {
+    flex: 1 0 100%;
+  }
+
+  .srs-tiles {
+    flex: 1 1 100%;
+    gap: 6px;
+  }
+
+  .srs-key {
+    font-size: 0.6rem;
+    letter-spacing: 0.03em;
+  }
 }
 
 .srs-tile.due .srs-num {

@@ -6,12 +6,13 @@ import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { smoothedAccuracy } from "../logic/stats.js";
 import { allValidPairs, pairKey } from "../logic/matching.js";
 import { scheduleSummary } from "../logic/schedule.js";
-import { DATA_META, POKEMON } from "../data/pokedex.js";
+import { DATA_META } from "../data/pokedex.js";
+import { allCardKeys } from "../logic/flashcards.js";
 
-const FLASHCARD_KEYS = POKEMON.map((p) => String(p.id));
+const FLASHCARD_KEYS = allCardKeys();
 
 const STATUS_LABELS = [
-  ["due", "Due now"],
+  ["due", "Due"],
   ["learning", "Learning"],
   ["mastered", "Mastered"],
   ["new", "New"],

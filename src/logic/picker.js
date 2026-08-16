@@ -1,5 +1,5 @@
 import { CATEGORIES } from "../data/categories.js";
-import { POKEMON } from "../data/pokedex.js";
+import { DECKS, DECK_BY_ID, cardKey, deckPool } from "./flashcards.js";
 import { allValidPairs, pairKey } from "./matching.js";
 import { dueFactor } from "./schedule.js";
 import { smoothedAccuracy } from "./stats.js";
@@ -65,21 +65,30 @@ export function pickDrillPair(
   return null;
 }
 
-export function pickFlashcardPokemon(
+// Picks a flashcard: a deck (all decks, or the one asked for) and a Pokémon
+// from that deck's pool, weighted by weakness, how due it is, and the deck's
+// own bias. Returns { deck, pokemon }.
+export function pickFlashcard(
   merged,
-  { exclude = new Set(), random = Math.random, now = Date.now() } = {}
+  { deckId = "all", exclude = new Set(), random = Math.random, now = Date.now() } = {}
 ) {
-  const pool = POKEMON.filter((p) => !exclude.has(p.id));
+  const decks = deckId === "all" ? DECKS : [DECK_BY_ID.get(deckId)];
+  const cards = decks.flatMap((deck) =>
+    deckPool(deck)
+      .filter((p) => !exclude.has(p.id))
+      .map((pokemon) => ({ deck, pokemon }))
+  );
   return pickWeighted(
-    pool,
-    (p) => {
-      const entry = merged.flashcards[String(p.id)];
-      return (
-        (p.gen >= 5 ? 2 : 1) *
-        (1.25 - smoothedAccuracy(entry)) *
-        dueFactor(entry, now)
-      );
+    cards,
+    ({ deck, pokemon }) => {
+      const entry = merged.flashcards[cardKey(deck, pokemon)];
+      return deck.bias(pokemon) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
     },
     random
   );
+}
+
+// Region deck only — kept for tests and callers that predate decks.
+export function pickFlashcardPokemon(merged, opts = {}) {
+  return pickFlashcard(merged, { ...opts, deckId: "region" }).pokemon;
 }

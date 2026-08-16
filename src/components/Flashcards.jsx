@@ -1,72 +1,142 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useStats } from "../StatsContext.js";
-import { pickFlashcardPokemon } from "../logic/picker.js";
+import { pickFlashcard } from "../logic/picker.js";
+import { DECKS, DECK_BY_ID, cardKey, session } from "../logic/flashcards.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
-import { CATEGORIES } from "../data/categories.js";
+import { POKEMON_BY_ID } from "../data/pokedex.js";
 import PokemonCard from "./PokemonCard.jsx";
 
-const REGION_CATS = CATEGORIES.filter((c) => c.group === "region");
+const GAVE_UP = "gaveup";
 
 function Flashcards() {
   const { merged, recordAttempt } = useStats();
-  const recent = useRef([]);
-  const [pokemon, setPokemon] = useState(() => pickFlashcardPokemon(merged));
-  const [picked, setPicked] = useState(null); // region id the user chose
+  // The card lives in the module-level session so switching tabs and back
+  // shows the same card, answered or not.
+  const [deckId, setDeckId] = useState(session.deckId);
+  const [card, setCard] = useState(() => {
+    if (!session.card) session.card = freshCard(session.deckId);
+    return session.card;
+  });
+  const [picked, setPicked] = useState(session.picked);
 
-  // A few forms count for two regions (White-Striped Basculin: Unova and
-  // Hisui); either answer is right.
-  const answerCats = REGION_CATS.filter((c) => pokemon.regions.includes(c.id.slice(7)));
-  const answerIds = new Set(answerCats.map((c) => c.id));
+  function freshCard(forDeck) {
+    const { deck, pokemon } = pickFlashcard(merged, {
+      deckId: forDeck,
+      exclude: new Set(session.recent),
+    });
+    return { deckId: deck.id, pokemonId: pokemon.id };
+  }
+
+  const deck = DECK_BY_ID.get(card.deckId);
+  const pokemon = POKEMON_BY_ID.get(card.pokemonId);
+  const answerIds = new Set(deck.answers(pokemon));
+  const key = cardKey(deck, pokemon);
   // After answering, merged already reflects this attempt's new streak.
-  const entry = merged.flashcards[String(pokemon.id)];
+  const entry = merged.flashcards[key];
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
+  const answered = picked !== null;
 
-  function choose(cat) {
-    if (picked) return;
-    const correct = answerIds.has(cat.id);
-    recordAttempt({ categories: [...answerIds], speciesId: pokemon.id, correct });
-    setPicked(cat.id);
+  function commit(nextCard, nextPicked) {
+    session.card = nextCard;
+    session.picked = nextPicked;
+    setCard(nextCard);
+    setPicked(nextPicked);
+  }
+
+  function choose(option) {
+    if (answered) return;
+    const correct = answerIds.has(option.id);
+    recordAttempt({
+      categories: [...answerIds].filter((id) => id !== "none"),
+      speciesId: key,
+      correct,
+    });
+    commit(card, option.id);
+  }
+
+  function giveUp() {
+    if (answered) return;
+    recordAttempt({
+      categories: [...answerIds].filter((id) => id !== "none"),
+      speciesId: key,
+      correct: false,
+    });
+    commit(card, GAVE_UP);
   }
 
   function next() {
-    recent.current = [...recent.current, pokemon.id].slice(-10);
-    setPicked(null);
-    setPokemon(
-      pickFlashcardPokemon(merged, { exclude: new Set(recent.current) })
-    );
+    session.recent = [...session.recent, pokemon.id].slice(-10);
+    commit(freshCard(deckId), null);
   }
+
+  function changeDeck(id) {
+    session.deckId = id;
+    setDeckId(id);
+    // An unanswered card from another deck is replaced; an answered one
+    // stays until "Next" so the result remains visible.
+    if (!answered && id !== "all" && card.deckId !== id) commit(freshCard(id), null);
+  }
+
+  const answerLabel = deck.options
+    .filter((o) => answerIds.has(o.id))
+    .map((o) => o.short)
+    .join(" / ");
 
   return (
     <div className="flashcards">
-      <p className="hint">Which region is this Pokémon originally from?</p>
+      <div className="deck-picker" role="tablist" aria-label="Deck">
+        {[{ id: "all", label: "All" }, ...DECKS].map((d) => (
+          <button
+            key={d.id}
+            role="tab"
+            aria-selected={deckId === d.id}
+            className={`chip${deckId === d.id ? " active" : ""}`}
+            onClick={() => changeDeck(d.id)}
+          >
+            {d.label}
+          </button>
+        ))}
+      </div>
+      <p className="hint">{deck.question}</p>
       <PokemonCard
         pokemon={pokemon}
         caption={
-          picked
-            ? `Gen ${pokemon.gen} — ${answerCats.map((c) => c.short).join(" / ")}${nextIn ? ` · next in ${nextIn}` : ""}`
+          answered
+            ? `${answerLabel}${nextIn ? ` · next in ${nextIn}` : ""}`
             : null
         }
       />
-      <div className={picked ? "region-buttons answered" : "region-buttons"}>
-        {REGION_CATS.map((cat) => {
+      <div
+        className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
+      >
+        {deck.options.map((option) => {
           let cls = "region-btn";
-          if (picked) {
-            if (answerIds.has(cat.id)) cls += " correct";
-            else if (cat.id === picked) cls += " wrong";
+          if (answered) {
+            if (answerIds.has(option.id)) cls += " correct";
+            else if (option.id === picked) cls += " wrong";
           }
           return (
-            <button key={cat.id} className={cls} onClick={() => choose(cat)}>
-              {cat.short}
+            <button key={option.id} className={cls} onClick={() => choose(option)}>
+              {option.short}
             </button>
           );
         })}
       </div>
       <div className="card-actions">
-        {picked ? (
+        {answered ? (
           <button className="primary" onClick={next}>
-            Next Pokémon
+            Next card
           </button>
-        ) : null}
+        ) : (
+          <>
+            <button className="ghost" onClick={next}>
+              Skip
+            </button>
+            <button className="ghost" onClick={giveUp}>
+              Give up
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
