@@ -223,10 +223,10 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     lingers, and the flashcard sprite loads eagerly.
 
 34. After a *correct* card answer, region / type / group pills appear
-    under the name (a "Standard" pill when the Pokémon is in no group);
-    the row keeps its height when empty so the buttons never move. The
-    Group deck's "None of these" is now "Standard"; "Give up" is "Don't
-    know".
+    under the sprite (a "Regular" pill when the Pokémon is in no group —
+    Bulbapedia's term for non-Legendary/Mythical); the row keeps its height
+    when empty so the buttons never move. The Group deck's "None of these"
+    is now "Regular"; "Give up" is "Don't know".
 
 ## Sync devices (why "5 devices")
 

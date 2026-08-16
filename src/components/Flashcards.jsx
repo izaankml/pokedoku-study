@@ -13,13 +13,13 @@ const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Region, typing and group of a Pokémon as pills — the reward for a right
 // answer, and a reminder of what else PokeDoku can ask about it.
-const STANDARD = { id: "standard", short: "Standard", group: "special" };
+const REGULAR = { id: "regular", short: "Regular", group: "special" };
 function summaryPills(p) {
   const groups = GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`));
   return [
     ...p.regions.map((r) => CAT.get(`region-${r}`)),
     ...p.types.map((t) => CAT.get(`type-${t}`)),
-    ...(groups.length ? groups : [STANDARD]),
+    ...(groups.length ? groups : [REGULAR]),
   ];
 }
 

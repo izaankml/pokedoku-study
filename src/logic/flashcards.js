@@ -98,7 +98,7 @@ export const DECKS = [
     questionText: "Which group is this Pokémon in?",
     options: [
       ...SPECIAL_FLAGS.map((f) => cat(`flag-${f}`)),
-      { id: "none", label: "Standard", short: "Standard" },
+      { id: "none", label: "Regular", short: "Regular" },
     ],
     answers: (p) => {
       const hits = SPECIAL_FLAGS.filter((f) => p.flags.includes(f)).map((f) => `flag-${f}`);
