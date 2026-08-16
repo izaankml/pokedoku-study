@@ -24,7 +24,8 @@ const SPECIAL_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil
 
 // A deck: { id, label, question(param), options, answers(p, param),
 //   eligible(p), bias(p), pickParam?(p, random), categories(p, param),
-//   multi?, implies? (option id -> ids that come with it) }
+//   multi? (several options must be picked, not any one), implies?
+//   (option id -> ids that come with it) }
 // `categories` are the category ids the attempt is recorded against (the
 // answers, unless the answer is yes/no).
 const withDefaults = (deck) => ({
@@ -38,7 +39,7 @@ export const DECKS = [
   {
     id: "region",
     label: "Region",
-    multi: true, // pick every region it counts for, then Check
+    multi: true, // pick every region it counts for, then Submit
     questionText: "Which region is this Pokémon from?",
     options: CATEGORIES.filter((c) => c.group === "region"),
     answers: (p) => p.regions.map((r) => `region-${r}`),
@@ -49,7 +50,7 @@ export const DECKS = [
   {
     id: "type",
     label: "Type",
-    multi: true, // both types of a dual type, then Check
+    multi: true, // both types of a dual type, then Submit
     questionText: "What type is this Pokémon?",
     options: CATEGORIES.filter((c) => c.group === "type"),
     answers: (p) => p.types.map((t) => `type-${t}`),
@@ -59,7 +60,7 @@ export const DECKS = [
   {
     id: "method",
     label: "Evolution Method",
-    multi: true, // every method it counts for, then Check
+    multi: true, // every method it counts for, then Submit
     // Always-true pairs are ticked for you: a stone is an item, and
     // friendship evolutions also count as level-up
     implies: { "evo-stone": ["evo-item"], "evo-friendship": ["evo-level"] },
@@ -172,7 +173,7 @@ export const session = {
   deckId: "all",
   card: null, // { deckId, pokemonId, param }
   next: null, // the card after this one, picked early so its sprite can preload
-  picked: null, // option id (or array of ids for multi decks), "gaveup", or null while unanswered
-  selection: [], // multi decks: options toggled on so far
+  picked: null, // submitted option ids, "gaveup", or null while unanswered
+  selection: [], // options toggled on so far, before Submit
   recent: [], // last few pokemon ids, to avoid immediate repeats
 };

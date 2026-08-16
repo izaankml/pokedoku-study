@@ -968,7 +968,7 @@ header h1 {
 
 .card-actions .ghost,
 .card-actions .primary {
-  min-width: 130px; /* Check / Skip / Don't Know the same size */
+  min-width: 130px; /* Skip / Submit / Don't Know the same size */
 }
 
 /* what else PokeDoku can ask about this Pokémon, shown once answered */

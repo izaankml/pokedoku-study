@@ -12,16 +12,16 @@ const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil",
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Typing, region and group of a Pokémon as pills, shown once a card is
-// answered — a reminder of what else PokeDoku can ask about it. Whatever
-// the card itself asked (its answers) is left out; the buttons show that.
+// answered — the same summary strip whatever the deck asked, so the eye
+// always finds the types in the same place.
 const abilityText = (p) =>
   p.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ");
-function summaryPills(p, except) {
+function summaryPills(p) {
   return [
     ...p.types.map((t) => CAT.get(`type-${t}`)),
     ...p.regions.map((r) => CAT.get(`region-${r}`)),
     ...GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
-  ].filter((c) => !except.has(c.id));
+  ];
 }
 
 const GAVE_UP = "gaveup";
@@ -66,7 +66,7 @@ function Flashcards() {
     row.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
   }, [deckId]);
 
-  // Enter moves the card along from the keyboard: Check once something is
+  // Enter moves the card along from the keyboard: Submit once something is
   // selected, Next Card once answered. Cancelling the default keeps a
   // focused option button from also being "clicked".
   useEffect(() => {
@@ -77,9 +77,9 @@ function Flashcards() {
       if (picked !== null) {
         e.preventDefault();
         next();
-      } else if (DECK_BY_ID.get(card.deckId).multi && selection.length) {
+      } else if (selection.length) {
         e.preventDefault();
-        check();
+        submit();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -96,10 +96,13 @@ function Flashcards() {
   const nextIn = picked && entry ? formatInterval(intervalFor(entry.s)) : null;
   const answered = picked !== null;
   const gaveUp = picked === GAVE_UP;
-  const pickedIds = new Set(Array.isArray(picked) ? picked : picked && !gaveUp ? [picked] : []);
+  const pickedIds = new Set(Array.isArray(picked) ? picked : []);
   const multi = Boolean(deck.multi);
-  const wasCorrect =
-    answered && !gaveUp && pickedIds.size === answerIds.size && [...pickedIds].every((id) => answerIds.has(id));
+  // Multi decks need every answer; single-pick decks accept any one of them
+  // (Koraidon is Legendary and Paradox)
+  const isRight = (ids) =>
+    ids.length > 0 && ids.every((id) => answerIds.has(id)) && (!multi || ids.length === answerIds.size);
+  const wasCorrect = answered && !gaveUp && isRight([...pickedIds]);
 
   function commit(nextCard, nextPicked) {
     session.card = nextCard;
@@ -110,30 +113,26 @@ function Flashcards() {
     setSelection([]);
   }
 
+  // Nothing is graded on click: options toggle (multi decks) or swap
+  // (single-pick decks) until Submit.
   function choose(option) {
     if (answered) return;
-    if (multi) {
+    let next;
+    if (selection.includes(option.id)) {
+      next = selection.filter((id) => id !== option.id);
+    } else if (multi) {
       const implied = deck.implies?.[option.id] || [];
-      let next;
-      if (selection.includes(option.id)) {
-        next = selection.filter((id) => id !== option.id);
-      } else {
-        next = [...selection, option.id, ...implied.filter((id) => !selection.includes(id))];
-      }
-      session.selection = next;
-      setSelection(next);
-      return;
+      next = [...selection, option.id, ...implied.filter((id) => !selection.includes(id))];
+    } else {
+      next = [option.id];
     }
-    const correct = answerIds.has(option.id);
-    recordAttempt({ categories: recordCategories, speciesId: key, correct });
-    commit(card, option.id);
+    session.selection = next;
+    setSelection(next);
   }
 
-  // Multi decks: right only when the selection matches every answer
-  function check() {
+  function submit() {
     if (answered || !selection.length) return;
-    const correct = selection.length === answerIds.size && selection.every((id) => answerIds.has(id));
-    recordAttempt({ categories: recordCategories, speciesId: key, correct });
+    recordAttempt({ categories: recordCategories, speciesId: key, correct: isRight(selection) });
     commit(card, selection);
   }
 
@@ -207,7 +206,7 @@ function Flashcards() {
           <>
             <div className="card-facts">
               <div className="card-tags">
-                {summaryPills(pokemon, answerIds).map((c) => (
+                {summaryPills(pokemon).map((c) => (
                   <CategoryPill key={c.id} cat={c} useShort />
                 ))}
               </div>
@@ -241,13 +240,11 @@ function Flashcards() {
             </button>
           ) : (
             <>
-              {multi ? (
-                <button className="primary" disabled={!selection.length} onClick={check}>
-                  Check
-                </button>
-              ) : null}
               <button className="ghost" onClick={next}>
                 Skip
+              </button>
+              <button className="primary" disabled={!selection.length} onClick={submit}>
+                Submit
               </button>
               <button className="ghost" onClick={giveUp}>
                 Don&apos;t Know

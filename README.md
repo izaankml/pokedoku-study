@@ -19,10 +19,11 @@ Rotom appliances, …) whenever they fit a cell the base species doesn't.
 - **Cards** — flashcards, one deck per category group (or all at once):
   region, type, evolution method/stage/line, group, moves ("can it learn
   Earthquake?"), abilities. (No type-count deck: naming both types already
-  says mono or dual.) Type, Region and Evolution Method are multi-select
-  (pick both types, then Check; Stone implies Item and Friendship implies
-  Level-Up). Skip or Don't Know on a card; the current card survives
-  switching tabs. Enter checks / moves on from the keyboard.
+  says mono or dual.) Pick an answer, then Submit; Type, Region and
+  Evolution Method want every answer (both types of a dual type; Stone
+  implies Item and Friendship implies Level-Up). Skip or Don't Know on a
+  card; the current card survives switching tabs. Enter submits / moves
+  on from the keyboard.
 - **Grid** — a full 3×3 practice board, generated so every cell is
   solvable with distinct Pokémon.
 - **Stats** — per-category accuracy, weak spots highlighted.
