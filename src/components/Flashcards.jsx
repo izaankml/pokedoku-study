@@ -206,6 +206,7 @@ function Flashcards() {
               ))}
             </div>
             <div className="card-tags">
+              <span className="tags-label">Abilities</span>
               {pokemon.abilityList.map((a) => (
                 <AbilityPill key={a.name} ability={a} />
               ))}

@@ -1,11 +1,13 @@
 import { ABILITIES } from "../data/traits.js";
 
-// Types carry their canonical colour, regions the colours of their games
-// (see App.css); everything else is a plain pill.
+// Types carry their canonical colour, regions the colours of their games,
+// groups (Legendary, Fossil, …) a tint each (see App.css); everything else
+// is a plain pill.
 function CategoryPill({ cat, useShort = false }) {
   let extra = "";
   if (cat.group === "type") extra = ` type-${cat.id.slice(5)}`;
   else if (cat.group === "region") extra = ` region-${cat.id.slice(7)}`;
+  else if (cat.group === "special") extra = ` group-${cat.id.slice(5)}`;
   return <span className={`pill${extra}`}>{useShort ? cat.short : cat.label}</span>;
 }
 

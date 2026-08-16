@@ -228,9 +228,13 @@ header h1 {
   white-space: nowrap;
 }
 
-.tab:hover {
-  color: var(--text-mid);
-  background: var(--surface-1);
+/* pointer devices only: a tap would otherwise leave the button that
+   appears under the finger next (Next Card → Skip) stuck in :hover */
+@media (hover: hover) {
+  .tab:hover {
+    color: var(--text-mid);
+    background: var(--surface-1);
+  }
 }
 
 .tab::after {
@@ -293,10 +297,6 @@ header h1 {
     justify-content: center;
     font-size: 0.68rem;
     border-radius: 0;
-  }
-
-  .tab:hover {
-    background: none;
   }
 
   .tab::after {
@@ -383,10 +383,13 @@ header h1 {
   box-shadow: var(--shadow-1), var(--edge-hi);
 }
 
-.primary:hover {
-  filter: brightness(1.06);
-  translate: 0 -1px;
-  box-shadow: var(--shadow-2), var(--edge-hi);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .primary:hover {
+    filter: brightness(1.06);
+    translate: 0 -1px;
+    box-shadow: var(--shadow-2), var(--edge-hi);
+  }
 }
 
 .primary:active {
@@ -413,10 +416,13 @@ header h1 {
   color: var(--text-mid);
 }
 
-.ghost:hover {
-  background: var(--surface-2);
-  color: var(--text-hi);
-  border-color: var(--border-strong);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .ghost:hover {
+    background: var(--surface-2);
+    color: var(--text-hi);
+    border-color: var(--border-strong);
+  }
 }
 
 .ghost:active {
@@ -427,10 +433,13 @@ header h1 {
   color: var(--wrong);
 }
 
-.ghost.danger:hover {
-  border-color: var(--wrong);
-  background: var(--wrong-soft);
-  color: var(--wrong);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .ghost.danger:hover {
+    border-color: var(--wrong);
+    background: var(--wrong-soft);
+    color: var(--wrong);
+  }
 }
 
 /* ---- category pills ---- */
@@ -513,27 +522,45 @@ header h1 {
 .region-hisui { --r1: #cfa84f; --r2: #3f938d; }   /* Legends: Arceus */
 .region-paldea { --r1: #dc3f30; --r2: #8047bf; } /* Scarlet / Violet */
 
+/* Groups: a wash of a colour each, with a border to match */
+.pill[class*="group-"] {
+  background: color-mix(in srgb, var(--g) 20%, var(--surface-2));
+  border: 1.5px solid color-mix(in srgb, var(--g) 70%, transparent);
+  color: var(--text-hi);
+}
+
+.group-legendary { --g: #e6b422; }  /* gold */
+.group-mythical { --g: #f27c9c; }   /* rose */
+.group-ultraBeast { --g: #35d0c4; } /* teal */
+.group-paradox { --g: #9b5cf6; }    /* violet */
+.group-fossil { --g: #b98850; }     /* amber */
+.group-starter { --g: #66c26e; }    /* green */
+.group-baby { --g: #7ec2f2; }       /* sky */
+.group-mega { --g: #e050c0; }       /* magenta */
+.group-gmax { --g: #f0603c; }       /* red-orange */
+
 /* Abilities: outlined, quieter than category pills; the ones PokeDoku
    asks about get the accent wash */
 .pill.ability {
   background: transparent;
-  border-color: var(--border-strong);
+  border: 1.5px solid color-mix(in srgb, var(--text-mid) 55%, transparent);
   color: var(--text-mid);
 }
 
 .pill.ability.tracked {
   background: var(--accent-soft);
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-color: var(--accent);
   color: var(--text-hi);
 }
 
+/* "hidden" ability marker */
 .pill-note {
   margin-left: 6px;
   font-size: 0.7em;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--text-low);
+  color: var(--warn);
 }
 
 .question {
@@ -629,11 +656,18 @@ header h1 {
   image-rendering: pixelated;
 }
 
-.suggestions button.highlighted,
-.suggestions button:hover {
+.suggestions button.highlighted {
   background: var(--accent-soft);
   color: var(--text-hi);
   box-shadow: inset 3px 0 0 var(--accent);
+}
+
+@media (hover: hover) {
+  .suggestions button:hover {
+    background: var(--accent-soft);
+    color: var(--text-hi);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
 }
 
 /* ---- sprites, cards, answer lists ---- */
@@ -954,9 +988,12 @@ header h1 {
   font-weight: 600;
 }
 
-.region-btn:hover {
-  background: var(--surface-2);
-  border-color: var(--border-strong);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .region-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
 }
 
 .region-btn:active {
@@ -969,9 +1006,12 @@ header h1 {
   border-color: color-mix(in srgb, var(--type-c) 40%, var(--border));
 }
 
-.region-btn[class*="type-"]:hover {
-  background: color-mix(in srgb, var(--type-c) 26%, var(--surface-1));
-  border-color: color-mix(in srgb, var(--type-c) 70%, var(--border));
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .region-btn[class*="type-"]:hover {
+    background: color-mix(in srgb, var(--type-c) 26%, var(--surface-1));
+    border-color: color-mix(in srgb, var(--type-c) 70%, var(--border));
+  }
 }
 
 /* multi-select decks: toggled options before Check */
@@ -1067,6 +1107,18 @@ header h1 {
   font-size: 0.78rem;
 }
 
+/* small caps caption on a pill row ("Abilities"), styled like the
+   detail sheet's group headings */
+.tags-label {
+  align-self: center;
+  margin-right: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
 .card-extra {
   font-size: 0.82rem;
   color: var(--text-low);
@@ -1098,9 +1150,12 @@ header h1 {
   font-weight: 600;
 }
 
-.chip:hover {
-  background: var(--surface-2);
-  border-color: var(--border-strong);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .chip:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
 }
 
 .chip.active {
@@ -1298,9 +1353,12 @@ header h1 {
   justify-content: center;
 }
 
-.board .cell:hover {
-  border-color: var(--border-strong);
-  background-color: var(--surface-2);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .board .cell:hover {
+    border-color: var(--border-strong);
+    background-color: var(--surface-2);
+  }
 }
 
 .board .cell:active {
@@ -1423,8 +1481,11 @@ header h1 {
   border-bottom: none;
 }
 
-.stats-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .stats-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
 }
 
 .stats-table th {
