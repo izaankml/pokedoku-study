@@ -237,6 +237,14 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Cell", "Spaced Review", "Cross-Device Sync", "Sync Now", "Link Another
     Device", "Reset Stats", …); Ability deck "None of These".
 
+36. Records carry `abilityList` (every ability, hidden/special ones
+    marked). The answered card shows "Abilities: … (hidden)" under the
+    answer line, and the detail sheet lists them. After answering, only the
+    correct option(s) — plus a wrong pick, in red — remain, centred in the
+    same reserved area. No "Regular" pill for Pokémon in no group. Sprites
+    are bottom-aligned (PokeAPI draws each Pokémon at its own height in the
+    canvas; floating ones will still sit higher — that's the artwork).
+
 ## Sync devices (why "5 devices")
 
 23. Every browser storage that ever synced owns a block in the gist forever:

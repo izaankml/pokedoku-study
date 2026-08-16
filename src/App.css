@@ -785,11 +785,15 @@ header h1 {
   gap: var(--sp-3);
 }
 
-/* the sprite stands on its own; pills and the name go underneath */
+/* the sprite stands on its own; pills and the name go underneath.
+   PokeAPI draws each Pokémon at a different height in its canvas — bottom
+   alignment at least keeps the ones standing on the ground level */
 .flashcards .pokemon-card .sprite,
 .flashcards .pokemon-card .sprite-fallback {
   width: 144px;
   height: 144px;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 .flashcards .pokemon-card .sprite {
@@ -839,7 +843,18 @@ header h1 {
   scale: 0.96;
 }
 
+/* once answered only the right options (and a wrong pick) remain; centre
+   them in the same reserved area */
+.region-buttons.answered {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: start;
+}
+
 .region-buttons.answered .region-btn {
+  min-width: 140px;
+  padding: 0 18px;
   opacity: 0.4;
 }
 
@@ -994,8 +1009,12 @@ header h1 {
   }
 
   .flashcards .pokemon-card {
-    margin: 4px 0 var(--sp-2);
-    gap: 10px;
+    margin: 0 0 var(--sp-3);
+    gap: 8px;
+  }
+
+  .flashcards > .hint {
+    margin-bottom: var(--sp-2);
   }
 
   .flashcards .pokemon-card .sprite,

@@ -13,13 +13,13 @@ const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Region, typing and group of a Pokémon as pills, shown once a card is
 // answered — a reminder of what else PokeDoku can ask about it.
-const REGULAR = { id: "regular", short: "Regular", group: "special" };
+const abilityText = (p) =>
+  p.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ");
 function summaryPills(p) {
-  const groups = GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`));
   return [
     ...p.regions.map((r) => CAT.get(`region-${r}`)),
     ...p.types.map((t) => CAT.get(`type-${t}`)),
-    ...(groups.length ? groups : [REGULAR]),
+    ...GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
   ];
 }
 
@@ -138,11 +138,15 @@ function Flashcards() {
             ? `${answerLabel}${nextIn ? ` · next in ${nextIn}` : ""}`
             : null
         }
+        extra={answered ? `Abilities: ${abilityText(pokemon)}` : null}
       />
       <div
         className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}
       >
-        {deck.options.map((option) => {
+        {(answered
+          ? deck.options.filter((o) => answerIds.has(o.id) || o.id === picked)
+          : deck.options
+        ).map((option) => {
           let cls = "region-btn";
           if (answered) {
             if (answerIds.has(option.id)) cls += " correct";

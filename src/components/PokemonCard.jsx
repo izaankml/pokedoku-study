@@ -1,7 +1,7 @@
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
-function PokemonCard({ pokemon, caption, onClick, eager = false, belowSprite = null }) {
+function PokemonCard({ pokemon, caption, extra, onClick, eager = false, belowSprite = null }) {
   const clickable = typeof onClick === "function";
   return (
     <figure
@@ -27,6 +27,7 @@ function PokemonCard({ pokemon, caption, onClick, eager = false, belowSprite = n
           <PokemonName name={pokemon.displayName} />
         </span>
         {caption ? <span className="card-caption">{caption}</span> : null}
+        {extra ? <span className="card-caption card-extra">{extra}</span> : null}
       </figcaption>
     </figure>
   );

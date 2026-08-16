@@ -55,6 +55,9 @@ function PokemonDetail({ pokemon, onClose }) {
               {pokemon.evoDetail ? ` · evolves: ${pokemon.evoDetail}` : ""}
               {pokemon.stage === null ? " · no evolution categories" : ""}
             </p>
+            <p className="hint detail-meta">
+              Abilities: {pokemon.abilityList.map((a) => (a.hidden ? `${a.name} (hidden)` : a.name)).join(" · ")}
+            </p>
           </div>
         </div>
         {groups.map((g) => (

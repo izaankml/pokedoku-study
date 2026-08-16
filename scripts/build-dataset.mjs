@@ -259,12 +259,27 @@ async function learnableMoves(s) {
   return MOVES.map((m) => m.id).filter((id) => learnable.has(id));
 }
 
+function abilitySlots(s) {
+  const own = s.abilities && Object.keys(s.abilities).length ? s.abilities : Dex.species.get(s.baseSpecies).abilities;
+  return own;
+}
+
+// The tracked-ability category ids (Intimidate, Levitate, ...)
 function abilitiesOf(s) {
-  const own = Object.values(s.abilities || {});
-  const names = own.length ? own : Object.values(Dex.species.get(s.baseSpecies).abilities);
+  const names = Object.values(abilitySlots(s));
   return ABILITIES.map((a) => a.id).filter((id) =>
     names.some((n) => ABILITY_NAMES.get(n) === id)
   );
+}
+
+// Every ability, for display: regular slots first, then the hidden ability
+// (H) and any special one (S, e.g. Own Tempo Rockruff) marked as such.
+function abilityListOf(s) {
+  const slots = abilitySlots(s);
+  const list = [];
+  for (const key of ["0", "1"]) if (slots[key]) list.push({ name: slots[key], hidden: false });
+  for (const key of ["H", "S"]) if (slots[key]) list.push({ name: slots[key], hidden: true });
+  return list;
 }
 
 // ---- flags --------------------------------------------------------------
@@ -381,6 +396,7 @@ for (const s of species) {
     flags: speciesFlags(s),
     moves: await learnableMoves(s),
     abilities: abilitiesOf(s),
+    abilityList: abilityListOf(s),
   });
 }
 const baseById = new Map(baseRecords.map((r) => [r.id, r]));
@@ -456,6 +472,7 @@ for (const s of candidateForms) {
     flags: formFlags(s, base),
     moves: isGmaxForme(s) ? [] : await learnableMoves(s),
     abilities: abilitiesOf(s),
+    abilityList: abilityListOf(s),
   };
   if (coversNothingNew(record, base)) droppedForms.push(record);
   else formRecords.push(record);
@@ -619,6 +636,8 @@ check(get("charizard").moves.includes("earthquake") && !get("charizard").moves.i
 check(get("pikachu").moves.includes("surf"), "Pikachu learns Surf");
 check(get("gyarados").abilities.includes("intimidate"), "Gyarados has Intimidate");
 check(get("gengar").abilities.length === 0, "Gengar lost Levitate");
+check(same(get("gyarados").abilityList, [{ name: "Intimidate", hidden: false }, { name: "Moxie", hidden: true }]), "Gyarados abilities");
+check(records.every((r) => r.abilityList.length >= 1), "every record has an ability");
 check(get("rotomwash").moves.includes("hydropump") && get("rotomwash").moves.includes("thunderbolt"), "Rotom-Wash learns Hydro Pump and Thunderbolt");
 
 // spot checks: forms
