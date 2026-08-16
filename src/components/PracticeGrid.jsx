@@ -3,8 +3,8 @@ import { useStats } from "../StatsContext.js";
 import { generateGrid } from "../logic/grid.js";
 import { intersection, pairKey } from "../logic/matching.js";
 import { getCategory } from "../data/categories.js";
-import { spriteUrl } from "../data/pokedex.js";
 import CategoryPill from "./CategoryPill.jsx";
+import Sprite from "./Sprite.jsx";
 import PokemonAutocomplete from "./PokemonAutocomplete.jsx";
 import AnswerList from "./AnswerList.jsx";
 
@@ -110,11 +110,7 @@ function PracticeGrid() {
                 }}
               >
                 {cell.pokemon ? (
-                  <img
-                    src={spriteUrl(cell.pokemon.id)}
-                    alt={cell.pokemon.displayName}
-                    title={cell.pokemon.displayName}
-                  />
+                  <Sprite pokemon={cell.pokemon} />
                 ) : cell.status === "revealed" ? (
                   "✕"
                 ) : (
@@ -125,11 +121,18 @@ function PracticeGrid() {
           }),
         ])}
       </div>
-      <p className="score">
-        {filled}/9 filled · {guesses} guesses
-        {done ? " — done!" : ""}
+      <div className="board-toolbar">
+        <p className="score">
+          {filled}/9 filled · {guesses} guesses
+          {done ? " — done!" : ""}
+        </p>
+        <button className="ghost" onClick={newGame}>
+          New grid
+        </button>
+      </div>
+      <p key={message} className="grid-message">
+        {message || " "}
       </p>
-      {message ? <p className="grid-message">{message}</p> : null}
       {selected !== null && cells[selected].status === "empty" ? (
         <div className="cell-panel">
           <div className="question">
@@ -150,9 +153,6 @@ function PracticeGrid() {
           highlightId={cells[selected].pokemon?.id}
         />
       ) : null}
-      <button className="primary" onClick={newGame}>
-        New grid
-      </button>
     </div>
   );
 }

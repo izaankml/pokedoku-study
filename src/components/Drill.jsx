@@ -56,7 +56,11 @@ function Drill() {
             <button className="ghost" onClick={giveUp}>
               Give up
             </button>
-            {streak > 1 ? <span className="streak">streak {streak}</span> : null}
+            {streak > 1 ? (
+              <span key={streak} className={streak >= 5 ? "streak hot" : "streak"}>
+                streak {streak}
+              </span>
+            ) : null}
           </div>
         </>
       ) : (

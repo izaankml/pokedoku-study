@@ -36,7 +36,7 @@ function Flashcards() {
         pokemon={pokemon}
         caption={picked ? `Gen ${pokemon.gen} — ${answerCat.short}` : null}
       />
-      <div className="region-buttons">
+      <div className={picked ? "region-buttons answered" : "region-buttons"}>
         {REGION_CATS.map((cat) => {
           let cls = "region-btn";
           if (picked) {
@@ -50,11 +50,13 @@ function Flashcards() {
           );
         })}
       </div>
-      {picked ? (
-        <button className="primary" onClick={next}>
-          Next Pokémon
-        </button>
-      ) : null}
+      <div className="card-actions">
+        {picked ? (
+          <button className="primary" onClick={next}>
+            Next Pokémon
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }

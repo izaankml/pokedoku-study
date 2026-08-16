@@ -1,14 +1,19 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { findByName, searchNames } from "../logic/matching.js";
-import { spriteUrl } from "../data/pokedex.js";
+import Sprite from "./Sprite.jsx";
 
 function PokemonAutocomplete({ onSubmit, disabled, placeholder }) {
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(0);
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
+  const highlightedRef = useRef(null);
 
   const suggestions = open && query ? searchNames(query) : [];
+
+  useEffect(() => {
+    highlightedRef.current?.scrollIntoView({ block: "nearest" });
+  }, [highlighted]);
 
   function submit(pokemon) {
     if (!pokemon) return;
@@ -42,6 +47,9 @@ function PokemonAutocomplete({ onSubmit, disabled, placeholder }) {
         inputMode="search"
         autoCapitalize="off"
         autoCorrect="off"
+        role="combobox"
+        aria-expanded={open && suggestions.length > 0}
+        aria-autocomplete="list"
         value={query}
         disabled={disabled}
         placeholder={placeholder || "Type a Pokémon name…"}
@@ -56,13 +64,18 @@ function PokemonAutocomplete({ onSubmit, disabled, placeholder }) {
       {suggestions.length > 0 && (
         <ul className="suggestions" role="listbox">
           {suggestions.map((p, i) => (
-            <li key={p.id}>
+            <li key={p.id} role="presentation">
               <button
+                role="option"
+                aria-selected={i === highlighted}
+                ref={i === highlighted ? highlightedRef : null}
                 className={i === highlighted ? "highlighted" : ""}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => submit(p)}
               >
-                <img src={spriteUrl(p.id)} alt="" loading="lazy" />
+                <span className="suggestion-thumb">
+                  <Sprite pokemon={p} />
+                </span>
                 {p.displayName}
               </button>
             </li>

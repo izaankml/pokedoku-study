@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StatsContext } from "./StatsContext.js";
 import TabNav from "./components/TabNav.jsx";
+import { PokeballIcon } from "./components/Sprite.jsx";
 import Browser from "./components/Browser.jsx";
 import Drill from "./components/Drill.jsx";
 import Flashcards from "./components/Flashcards.jsx";
@@ -86,11 +87,19 @@ function App() {
     [block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal]
   );
 
+  const selectTab = useCallback((t) => {
+    setTab(t);
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="app">
       <header>
-        <h1>PokeDoku Study</h1>
-        <TabNav tabs={TABS} active={tab} onSelect={setTab} />
+        <h1>
+          <PokeballIcon className="pokeball-mark" width="22" height="22" />
+          <span>PokeDoku</span> <span className="h1-sub">Study</span>
+        </h1>
+        <TabNav tabs={TABS} active={tab} onSelect={selectTab} />
       </header>
       <StatsContext.Provider value={stats}>
         <main>
