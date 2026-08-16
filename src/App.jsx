@@ -7,8 +7,23 @@ import Drill from "./components/Drill.jsx";
 import Flashcards from "./components/Flashcards.jsx";
 import PracticeGrid from "./components/PracticeGrid.jsx";
 import StatsView from "./components/StatsView.jsx";
-import { emptyBlock, loadBlock, mergeBlocks, saveBlock, withAttempt } from "./logic/stats.js";
-import { consumeHandoffFromUrl, getToken, setToken, syncBlock } from "./logic/sync.js";
+import {
+  absorbBlock,
+  describeDevice,
+  emptyBlock,
+  loadBlock,
+  mergeBlocks,
+  saveBlock,
+  summarizeBlock,
+  withAttempt,
+} from "./logic/stats.js";
+import {
+  consumeHandoffFromUrl,
+  getToken,
+  removeDeviceBlock,
+  setToken,
+  syncBlock,
+} from "./logic/sync.js";
 
 const TABS = ["Browse", "Drill", "Cards", "Grid", "Stats"];
 const SYNC_DEBOUNCE_MS = 10_000;
@@ -20,7 +35,15 @@ const MIN_REPULL_MS = 60_000;
 
 function App() {
   const [tab, setTab] = useState("Drill");
-  const [block, setBlock] = useState(loadBlock);
+  const [block, setBlock] = useState(() => {
+    const loaded = loadBlock();
+    if (loaded.deviceName) return loaded;
+    // Name the device so the sync panel can tell blocks apart
+    const standalone = window.matchMedia?.("(display-mode: standalone)").matches;
+    const named = { ...loaded, deviceName: describeDevice(navigator.userAgent, standalone) };
+    saveBlock(named);
+    return named;
+  });
   const [remoteBlocks, setRemoteBlocks] = useState([]);
   // A QR handoff link (#connect=…) stores its token before anything else.
   const [token, setTokenState] = useState(() => consumeHandoffFromUrl() || getToken());
@@ -119,12 +142,49 @@ function App() {
     [syncNow]
   );
 
+  // Keeps this device's id and name so the reset doesn't leave a stale
+  // block behind in the gist.
   const resetLocal = useCallback(() => {
-    const fresh = emptyBlock();
+    const fresh = { ...emptyBlock(blockRef.current.deviceId), deviceName: blockRef.current.deviceName };
     saveBlock(fresh);
     setBlock(fresh);
     scheduleSync();
   }, [scheduleSync]);
+
+  // Fold another device's history into this one and drop its block from
+  // the gist (for stale duplicates: reinstalled apps, cleared storage,
+  // private windows).
+  const absorbDevice = useCallback(
+    async (deviceId) => {
+      const other = remoteBlocks.find((b) => b.deviceId === deviceId);
+      if (!other) return;
+      const next = absorbBlock(blockRef.current, other);
+      saveBlock(next);
+      setBlock(next);
+      blockRef.current = next;
+      setSyncState((s) => ({ ...s, status: "syncing" }));
+      try {
+        const blocks = await removeDeviceBlock(deviceId, next);
+        setRemoteBlocks(blocks.filter((b) => b.deviceId !== next.deviceId));
+        lastSyncRef.current = Date.now();
+        setSyncState({ status: "ok", deviceCount: blocks.length, lastSyncedAt: lastSyncRef.current });
+      } catch (err) {
+        setSyncState((s) => ({ ...s, status: "error", lastError: err.message }));
+      }
+    },
+    [remoteBlocks]
+  );
+
+  const devices = useMemo(
+    () =>
+      [block, ...remoteBlocks].map((b) => ({
+        deviceId: b.deviceId,
+        name: b.deviceName || "Unnamed device",
+        isThis: b.deviceId === block.deviceId,
+        ...summarizeBlock(b),
+      })),
+    [block, remoteBlocks]
+  );
 
   const merged = useMemo(
     () => mergeBlocks([...remoteBlocks, block]),
@@ -133,8 +193,19 @@ function App() {
   mergedRef.current = merged;
 
   const stats = useMemo(
-    () => ({ block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal }),
-    [block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal]
+    () => ({
+      block,
+      merged,
+      recordAttempt,
+      syncState,
+      token,
+      saveToken,
+      syncNow,
+      resetLocal,
+      devices,
+      absorbDevice,
+    }),
+    [block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal, devices, absorbDevice]
   );
 
   const selectTab = useCallback((t) => {

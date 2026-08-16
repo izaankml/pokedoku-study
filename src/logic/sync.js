@@ -137,3 +137,25 @@ export async function syncBlock(ownBlock) {
   }
   return Object.values(devices);
 }
+
+// Drops another device's block from the gist (after its history has been
+// absorbed locally — see stats.absorbBlock). Returns the remaining blocks.
+export async function removeDeviceBlock(deviceId, ownBlock) {
+  const gistId = await findGistId();
+  if (!gistId) return [ownBlock];
+  const gist = await api(`/gists/${gistId}`);
+  const file = gist.files && gist.files[GIST_FILENAME];
+  let devices = {};
+  try {
+    devices = file ? parseBlocks(file.content) : {};
+  } catch {
+    devices = {};
+  }
+  delete devices[deviceId];
+  devices[ownBlock.deviceId] = ownBlock;
+  await api(`/gists/${gistId}`, {
+    method: "PATCH",
+    body: { files: { [GIST_FILENAME]: { content: JSON.stringify({ devices }) } } },
+  });
+  return Object.values(devices);
+}

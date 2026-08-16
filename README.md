@@ -39,7 +39,7 @@ devices by QR code (the code encodes the app URL with the token in the
 own stat block, so devices never overwrite each other; counts are summed
 across blocks and review schedules take the most recent answer. Open
 tabs re-pull other devices' progress when they regain focus and every
-few minutes.
+few minutes. Every browser or home-screen app that syncs keeps its own block; the Stats tab lists them and can merge a stale duplicate into the current device.
 
 Answered flashcards and drill pairs are spaced: correct answers push the
 next review out (10 min → 1 → 3 → 7 → 16 → 35 → 80 → 180 days) and a

@@ -42,6 +42,72 @@ export function saveBlock(block) {
   localStorage.setItem(KEY, JSON.stringify(block));
 }
 
+// A readable label for this device ("iPhone · Safari"), used to tell
+// device blocks apart in the sync panel.
+export function describeDevice(ua = navigator.userAgent, standalone = false) {
+  const os = /iPhone/.test(ua)
+    ? "iPhone"
+    : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+      ? "iPad"
+      : /Android/.test(ua)
+        ? "Android"
+        : /Macintosh/.test(ua)
+          ? "Mac"
+          : /Windows/.test(ua)
+            ? "Windows"
+            : /Linux/.test(ua)
+              ? "Linux"
+              : "Device";
+  const browser = standalone
+    ? "Home screen app"
+    : /Edg\//.test(ua)
+      ? "Edge"
+      : /OPR\//.test(ua)
+        ? "Opera"
+        : /Firefox\//.test(ua)
+          ? "Firefox"
+          : /Chrome\//.test(ua) || /CriOS/.test(ua)
+            ? "Chrome"
+            : /Safari\//.test(ua)
+              ? "Safari"
+              : "Browser";
+  return `${os} · ${browser}`;
+}
+
+// What a block amounts to: how many answers it holds and when it was
+// last used (newest schedule timestamp; blocks from before scheduling
+// existed have none).
+export function summarizeBlock(block) {
+  let attempts = 0;
+  let lastActive = 0;
+  for (const entry of Object.values(block.categories || {})) attempts += entry.a;
+  for (const table of SCHEDULED_TABLES) {
+    for (const entry of Object.values(block[table] || {})) {
+      if (entry.t && entry.t > lastActive) lastActive = entry.t;
+    }
+  }
+  return { attempts, lastActive: lastActive || null };
+}
+
+// Folds another device's history into this block (counts add up; the
+// later schedule state wins) so the other block can be dropped without
+// losing anything. Returns a NEW block.
+export function absorbBlock(own, other) {
+  const next = structuredClone(own);
+  for (const table of ["categories", ...SCHEDULED_TABLES]) {
+    for (const [key, entry] of Object.entries(other[table] || {})) {
+      const mine = next[table][key] || (next[table][key] = { a: 0, c: 0 });
+      mine.a += entry.a;
+      mine.c += entry.c;
+      if (SCHEDULED_TABLES.includes(table) && entry.t && entry.t > (mine.t ?? 0)) {
+        mine.s = entry.s ?? 0;
+        mine.t = entry.t;
+      }
+    }
+  }
+  return next;
+}
+
 function bump(table, key, correct) {
   const entry = table[key] || (table[key] = { a: 0, c: 0 });
   entry.a += 1;

@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { emptyBlock, mergeBlocks, smoothedAccuracy, withAttempt } from "./stats.js";
+import {
+  absorbBlock,
+  describeDevice,
+  emptyBlock,
+  mergeBlocks,
+  smoothedAccuracy,
+  summarizeBlock,
+  withAttempt,
+} from "./stats.js";
 
 const T0 = 1_700_000_000_000;
 
@@ -115,5 +123,36 @@ describe("stats", () => {
     }
     // Legacy-only entries simply have no schedule.
     expect(mergeBlocks([legacy]).flashcards["1"]).toEqual({ a: 10, c: 10 });
+  });
+});
+
+describe("device blocks", () => {
+  it("names devices from the user agent", () => {
+    const iphone = "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1";
+    const macChrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
+    expect(describeDevice(iphone)).toBe("iPhone · Safari");
+    expect(describeDevice(iphone, true)).toBe("iPhone · Home screen app");
+    expect(describeDevice(macChrome)).toBe("Mac · Chrome");
+  });
+
+  it("summarizes and absorbs another device's history without losing anything", () => {
+    let a = emptyBlock("a");
+    let b = emptyBlock("b");
+    a = withAttempt(a, { categories: ["type-fire"], pair: "p", speciesId: 4, correct: true }, { now: T0 });
+    b = withAttempt(b, { categories: ["type-fire"], pair: "p", speciesId: 4, correct: false }, { now: T0 + 5 });
+    b = withAttempt(b, { categories: ["type-water"], speciesId: 7, correct: true }, { now: T0 + 6 });
+    expect(summarizeBlock(b)).toEqual({ attempts: 2, lastActive: T0 + 6 });
+    expect(summarizeBlock(emptyBlock("x"))).toEqual({ attempts: 0, lastActive: null });
+
+    const merged = absorbBlock(a, b);
+    expect(merged.deviceId).toBe("a");
+    expect(merged.categories["type-fire"]).toEqual({ a: 2, c: 1 });
+    expect(merged.categories["type-water"]).toEqual({ a: 1, c: 1 });
+    // later schedule state (b's miss) wins for the shared pair
+    expect(merged.pairs.p).toEqual({ a: 2, c: 1, s: 0, t: T0 + 5 });
+    expect(merged.flashcards["7"]).toEqual({ a: 1, c: 1, s: 1, t: T0 + 6 });
+    // and the merge of [merged] equals the merge of [a, b]
+    expect(mergeBlocks([merged])).toEqual(mergeBlocks([a, b]));
+    expect(a.categories["type-fire"]).toEqual({ a: 1, c: 1 }); // a untouched
   });
 });

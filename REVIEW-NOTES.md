@@ -98,14 +98,39 @@ Delete this file once reviewed; anything worth keeping is in README.md.
 
 ## Decisions (UI)
 
-18. Mobile nav height 58→54px. The band under the icons on iOS 26 is the
-    safe-area inset Safari reports with its floating toolbar; it's the
-    bar's own padding, not a layout bug. Left as is beyond the trim — check
-    on device; if it still looks detached, options are an opaque bar
-    background or capping `padding-bottom`.
+18. Bottom nav (phones): now a solid `--surface-1` bar with a `--border`
+    top edge, 54px tall. Safe-area padding is capped at 8px in a browser
+    (Safari's own toolbar already covers the home indicator there) and
+    only the full inset applies as a home-screen app
+    (`@media (display-mode: standalone)`). **Assumption**: iOS 26 Safari
+    keeps content visible in the band it reports as inset — check on device;
+    if the labels sit under the home indicator when the toolbar collapses,
+    raise the 8px cap.
 19. Spaced-review tiles: on ≤520px the row label moves above the tiles and
     tiles take the full width; "Due now" → "Due".
-20. Answer-grid captions wrap to two lines (form names).
+20. Answer-grid cards reserve two caption lines so every row is the same
+    height. The remaining size difference is PokeAPI's sprite framing
+    (classic 96px sprites vs the larger Z-A form renders) — a different
+    sprite set (PokeAPI "home" renders) would fix it at ~10× the bytes.
+21. The top "Pokédex lid" strip is desktop-only now. On phones it painted
+    a 3px line just under Safari's status bar that read as a stray bar.
+22. Stats table on phones: the narrow-column override sat *before* the base
+    rules in App.css and never applied; moved after them, header type
+    tightened, Accuracy header right-aligned like its values.
+
+## Sync devices (why "5 devices")
+
+23. Every browser storage that ever synced owns a block in the gist forever:
+    phone Safari, the home-screen app (separate storage), each desktop
+    browser, private windows — and **"Reset this device's stats" used to
+    mint a new device id**, orphaning the old block. So the count grew with
+    every reset/reinstall. Fixes: reset now keeps the device id; devices are
+    auto-named ("iPhone · Safari", "Mac · Chrome", "iPhone · Home screen
+    app"); the sync panel has a **Devices** list (answers, last active) with
+    **Merge into this device** for stale duplicates — it folds that block's
+    counts/streaks into this device (nothing lost) and removes it from the
+    gist. Merging a device you still use is safe too: it just starts a
+    fresh block on its next sync.
 
 ## Not done / open
 

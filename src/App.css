@@ -100,15 +100,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* "Pokédex lid" strip — also paints the notch area in standalone mode */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0 0 auto;
-  height: calc(3px + env(safe-area-inset-top));
-  background: linear-gradient(90deg, var(--accent), var(--accent-deep) 55%, transparent 95%);
-  z-index: 60;
-  pointer-events: none;
+/* "Pokédex lid" strip along the top edge (desktop only — on phones the
+   status bar owns that edge and the strip read as a stray line) */
+@media (min-width: 641px) {
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep) 55%, transparent 95%);
+    z-index: 60;
+    pointer-events: none;
+  }
 }
 
 button {
@@ -231,15 +234,22 @@ header h1 {
     left: 0;
     right: 0;
     z-index: 50;
-    height: calc(var(--nav-h) + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
+    /* In a browser the toolbar below already covers the home indicator, so
+       only a sliver of inset; a home-screen app gets the full inset. */
+    --nav-inset: min(env(safe-area-inset-bottom), 8px);
+    height: calc(var(--nav-h) + var(--nav-inset));
+    padding-bottom: var(--nav-inset);
     gap: 0;
-    background: color-mix(in srgb, var(--surface-1) 90%, transparent);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    border-top: 1px solid var(--border-subtle);
+    background: var(--surface-1);
+    border-top: 1px solid var(--border);
     border-bottom: none;
     margin-bottom: 0;
+  }
+
+  @media (display-mode: standalone) {
+    .tabs {
+      --nav-inset: env(safe-area-inset-bottom);
+    }
   }
 
   .tab {
@@ -270,6 +280,8 @@ header h1 {
 
   .app {
     padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    /* header sits under the status bar in a browser too; keep it clear */
+    padding-top: calc(10px + env(safe-area-inset-top));
   }
 }
 
@@ -644,13 +656,15 @@ header h1 {
   }
 }
 
-/* Form names ("Hisuian Growlithe", "Mega Charizard X") need a second line */
+/* Form names ("Hisuian Growlithe", "Mega Charizard X") need a second line;
+   every card reserves both lines so rows stay uniform */
 .answer-grid .pokemon-card figcaption {
   white-space: normal;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   line-height: 1.2;
+  height: 2.4em;
 }
 
 .answer-grid .highlight {
@@ -847,15 +861,6 @@ header h1 {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .stats-table th:nth-child(2),
-  .stats-table td:nth-child(2) {
-    width: 84px;
-  }
-
-  .stats-table th:nth-child(3),
-  .stats-table td:nth-child(3) {
-    width: 120px;
-  }
 }
 
 /* ---- practice board ---- */
@@ -1037,9 +1042,33 @@ header h1 {
 }
 
 .stats-table th:nth-child(2),
-.stats-table td:nth-child(2) {
+.stats-table td:nth-child(2),
+.stats-table th:nth-child(3) {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+/* phones: tighter columns and header type (after the base rules so it wins) */
+@media (max-width: 480px) {
+  .stats-table th,
+  .stats-table td {
+    padding: 8px 4px;
+  }
+
+  .stats-table th {
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+  }
+
+  .stats-table th:nth-child(2),
+  .stats-table td:nth-child(2) {
+    width: 76px;
+  }
+
+  .stats-table th:nth-child(3),
+  .stats-table td:nth-child(3) {
+    width: 118px;
+  }
 }
 
 .weak-chip {
@@ -1151,6 +1180,46 @@ tr.weak .acc-fill {
 
 .sync-steps li {
   margin-bottom: var(--sp-1);
+}
+
+.device-list {
+  list-style: none;
+  margin: var(--sp-2) 0;
+  display: grid;
+  gap: 6px;
+}
+
+.device-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--sp-2);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.85rem;
+}
+
+.device-name {
+  font-weight: 600;
+  flex: 1 1 auto;
+}
+
+.device-this {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.device-meta {
+  color: var(--text-low);
+  font-size: 0.8rem;
+}
+
+.ghost.small {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 0.8rem;
 }
 
 .sync-actions {

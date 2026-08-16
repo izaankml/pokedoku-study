@@ -152,10 +152,57 @@ function LinkDeviceQR() {
   );
 }
 
+// Every browser storage that ever synced has its own block: phone Safari,
+// the home-screen app, a desktop browser, a private window… Stale ones
+// (cleared storage, reinstalled app) can be folded into this device.
+function DeviceList({ devices, absorbDevice, now }) {
+  const [busy, setBusy] = useState(null);
+  const others = devices.filter((d) => !d.isThis);
+  if (!others.length) return null;
+  const sorted = [...devices].sort((a, b) => (b.isThis ? 1 : 0) - (a.isThis ? 1 : 0) || (b.lastActive || 0) - (a.lastActive || 0));
+  return (
+    <ul className="device-list">
+      {sorted.map((d) => (
+        <li key={d.deviceId}>
+          <span className="device-name">
+            {d.name}
+            {d.isThis ? <span className="device-this"> · this device</span> : null}
+          </span>
+          <span className="device-meta">
+            {d.attempts} answer{d.attempts === 1 ? "" : "s"}
+            {d.lastActive ? ` · ${timeAgo(d.lastActive, now)}` : ""}
+          </span>
+          {!d.isThis ? (
+            <button
+              className="ghost small"
+              disabled={busy !== null}
+              onClick={async () => {
+                if (
+                  !window.confirm(
+                    `Merge "${d.name}" (${d.attempts} answers) into this device and forget it? ` +
+                      "Do this for stale duplicates only — that device would start over on its next sync."
+                  )
+                )
+                  return;
+                setBusy(d.deviceId);
+                await absorbDevice(d.deviceId);
+                setBusy(null);
+              }}
+            >
+              {busy === d.deviceId ? "Merging…" : "Merge into this device"}
+            </button>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function SyncPanel() {
-  const { syncState, token, saveToken, syncNow } = useStats();
+  const { syncState, token, saveToken, syncNow, devices: deviceList, absorbDevice } = useStats();
   const [draft, setDraft] = useState("");
   const [showQR, setShowQR] = useState(false);
+  const [showDevices, setShowDevices] = useState(false);
   const now = useNow(15_000);
   const devices = `${syncState.deviceCount} device${syncState.deviceCount === 1 ? "" : "s"}`;
   const synced = syncState.lastSyncedAt ? timeAgo(syncState.lastSyncedAt, now) : null;
@@ -185,11 +232,30 @@ function SyncPanel() {
             >
               {showQR ? "Hide QR" : "Link another device"}
             </button>
+            {deviceList.length > 1 ? (
+              <button
+                className="ghost"
+                aria-expanded={showDevices}
+                onClick={() => setShowDevices((v) => !v)}
+              >
+                {showDevices ? "Hide devices" : "Devices"}
+              </button>
+            ) : null}
             <button className="ghost" onClick={() => saveToken("")}>
               Disconnect
             </button>
           </div>
           {showQR ? <LinkDeviceQR /> : null}
+          {showDevices ? (
+            <>
+              <p className="hint">
+                Each browser or home-screen app that has synced keeps its own
+                history here. A duplicate you no longer use (cleared storage,
+                reinstalled app) can be merged into this device.
+              </p>
+              <DeviceList devices={deviceList} absorbDevice={absorbDevice} now={now} />
+            </>
+          ) : null}
         </>
       ) : (
         <>
