@@ -23,6 +23,9 @@ function App() {
   const blockRef = useRef(block);
   blockRef.current = block;
   const timerRef = useRef(null);
+  // The latest cross-device merge; new attempts continue streaks from it
+  // (see stats.withAttempt) so last-writer-wins sync stays correct.
+  const mergedRef = useRef(null);
 
   const syncNow = useCallback(async () => {
     if (!getToken()) return;
@@ -50,7 +53,7 @@ function App() {
   const recordAttempt = useCallback(
     (evt) => {
       setBlock((prev) => {
-        const next = withAttempt(prev, evt);
+        const next = withAttempt(prev, evt, { merged: mergedRef.current });
         saveBlock(next);
         return next;
       });
@@ -81,6 +84,7 @@ function App() {
     () => mergeBlocks([...remoteBlocks, block]),
     [remoteBlocks, block]
   );
+  mergedRef.current = merged;
 
   const stats = useMemo(
     () => ({ block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal }),

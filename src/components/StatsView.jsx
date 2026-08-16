@@ -2,7 +2,53 @@ import { useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { smoothedAccuracy } from "../logic/stats.js";
-import { DATA_META } from "../data/pokedex.js";
+import { allValidPairs, pairKey } from "../logic/matching.js";
+import { scheduleSummary } from "../logic/schedule.js";
+import { DATA_META, POKEMON } from "../data/pokedex.js";
+
+const FLASHCARD_KEYS = POKEMON.map((p) => String(p.id));
+
+const STATUS_LABELS = [
+  ["due", "Due now"],
+  ["learning", "Learning"],
+  ["mastered", "Mastered"],
+  ["new", "New"],
+];
+
+function ReviewRow({ label, summary }) {
+  return (
+    <div className="srs-row">
+      <span className="srs-label">{label}</span>
+      <div className="srs-tiles">
+        {STATUS_LABELS.map(([key, text]) => (
+          <span key={key} className={`srs-tile ${key}`}>
+            <span className="srs-num">{summary[key]}</span>
+            <span className="srs-key">{text}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReviewPanel({ merged }) {
+  const now = Date.now();
+  const cards = scheduleSummary(merged.flashcards, FLASHCARD_KEYS, now);
+  const pairKeys = allValidPairs(CATEGORIES).map(([a, b]) => pairKey(a.id, b.id));
+  const pairs = scheduleSummary(merged.pairs, pairKeys, now);
+  return (
+    <section className="srs-panel">
+      <h3>Spaced review</h3>
+      <p className="hint">
+        Answered items come back on a growing schedule (10 min → 1 → 3 → 7 → 16
+        → 35 → 80 → 180 days) and reset on a miss. Due items are favoured;
+        mastered ones fade out.
+      </p>
+      <ReviewRow label="Flashcards" summary={cards} />
+      <ReviewRow label="Drill pairs" summary={pairs} />
+    </section>
+  );
+}
 
 function AccuracyBar({ entry, weakRow }) {
   if (!entry || !entry.a) {
@@ -124,6 +170,7 @@ function StatsView() {
 
   return (
     <div className="stats">
+      <ReviewPanel merged={merged} />
       <SyncPanel />
 
       {CATEGORY_GROUPS.map(([group, label]) => {

@@ -67,3 +67,21 @@ export function searchNames(query, limit = 8) {
   }
   return starts.concat(contains).slice(0, limit);
 }
+
+// Every valid category pair, as [catA, catB] with catA.id < catB.id.
+// Computed once; used for drill selection and schedule summaries.
+let validPairsCache = null;
+export function allValidPairs(categories) {
+  if (!validPairsCache) {
+    const pairs = [];
+    for (let i = 0; i < categories.length; i++) {
+      for (let j = i + 1; j < categories.length; j++) {
+        const a = categories[i];
+        const b = categories[j];
+        if (pairIsValid(a.id, b.id, 1)) pairs.push(a.id < b.id ? [a, b] : [b, a]);
+      }
+    }
+    validPairsCache = pairs;
+  }
+  return validPairsCache;
+}

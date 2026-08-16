@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickDrillPair } from "../logic/picker.js";
 import { intersection, pairKey } from "../logic/matching.js";
+import { formatInterval, intervalFor } from "../logic/schedule.js";
 import CategoryPill from "./CategoryPill.jsx";
 import PokemonAutocomplete from "./PokemonAutocomplete.jsx";
 import AnswerList from "./AnswerList.jsx";
@@ -14,6 +15,9 @@ function Drill() {
 
   const [a, b] = pair;
   const answers = intersection(a.id, b.id);
+  // After answering, merged already reflects this attempt's new streak.
+  const pairEntry = merged.pairs[pairKey(a.id, b.id)];
+  const nextIn = result && pairEntry ? formatInterval(intervalFor(pairEntry.s)) : null;
 
   function grade(pokemon) {
     const correct = answers.some((p) => p.id === pokemon.id);
@@ -72,6 +76,7 @@ function Drill() {
                 ? `${result.pokemon.displayName} doesn't fit.`
                 : "Revealed."}
           </p>
+          {nextIn ? <p className="due-note">This pair comes back in {nextIn}.</p> : null}
           <button className="primary" onClick={next}>
             Next question
           </button>

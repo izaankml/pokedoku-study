@@ -1114,6 +1114,83 @@ tr.weak .acc-fill {
   font-size: 0.8rem;
 }
 
+/* ---- spaced review ---- */
+
+.srs-panel .hint {
+  margin-bottom: var(--sp-4);
+}
+
+.srs-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.srs-row:last-child {
+  padding-bottom: 0;
+}
+
+.srs-label {
+  flex: 0 0 96px;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.srs-tiles {
+  flex: 1 1 260px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.srs-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 4px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  line-height: 1.2;
+}
+
+.srs-num {
+  font-weight: 800;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-hi);
+}
+
+.srs-key {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-low);
+}
+
+.srs-tile.due .srs-num {
+  color: var(--accent);
+}
+
+.srs-tile.mastered .srs-num {
+  color: var(--correct-strong);
+}
+
+.srs-tile.learning .srs-num {
+  color: var(--warn);
+}
+
+.due-note {
+  text-align: center;
+  color: var(--text-low);
+  font-size: 0.85rem;
+  margin: calc(-1 * var(--sp-2)) 0 var(--sp-3);
+}
+
 /* ---- motion ---- */
 
 main > * {
