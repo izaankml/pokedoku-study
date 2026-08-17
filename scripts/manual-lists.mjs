@@ -496,6 +496,7 @@ export const CLONED_FORMS = [
   { id: 90668, species: 668, name: "pyroarf", form: "F", prevo: 667 },
   { id: 10136, species: 774, name: "miniorred", form: "Red" }, // Minior's red core (the dex's base Minior is the meteor)
   { id: 10257, species: 925, name: "mausholdthree", form: "Three", prevo: 924 }, // Family of Three (PokeAPI's default 925 is Family of Four)
+  { id: 99901, species: 10, name: "caterpiecowboyhat", form: "Cowboy-Hat" }, // PokeDoku's own joke entry — selectable there, so here too
   { id: 91586, species: 586, name: "sawsbucksummer", form: "Summer", prevo: 91585 },
   { id: 90586, species: 586, name: "sawsbuckautumn", form: "Autumn", prevo: 90585 },
   { id: 92586, species: 586, name: "sawsbuckwinter", form: "Winter", prevo: 92585 },

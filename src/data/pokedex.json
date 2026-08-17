@@ -3,7 +3,7 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1324,
+  "count": 1325,
   "answerCount": 1257,
   "speciesCount": 1025
  },
@@ -713,6 +713,41 @@
     }
    ],
    "prevo": null
+  },
+  {
+   "id": 99901,
+   "species": 10,
+   "form": "Cowboy-Hat",
+   "name": "caterpiecowboyhat",
+   "displayName": "Caterpie (Cowboy-Hat)",
+   "types": [
+    "bug"
+   ],
+   "gen": 1,
+   "region": "kanto",
+   "regions": [
+    "kanto"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shield Dust",
+     "hidden": false
+    },
+    {
+     "name": "Run Away",
+     "hidden": true
+    }
+   ],
+   "prevo": null,
+   "answer": false
   },
   {
    "id": 11,
