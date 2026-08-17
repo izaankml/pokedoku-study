@@ -56,9 +56,6 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
   const evoRef = useRef(null);
   useFitRows(evoRef, [pokemon]); // the tree and forms sized together to fit the sheet
 
-  // Types sit under the name; when that row plus the region/groups column
-  // is wider than the header (Koraidon on a phone), the types drop under
-  // the sprite instead (App.css .types-below)
   // A fade with a chevron pinned to the sheet's bottom edge while there's
   // more below to scroll to
   const modalRef = useRef(null);
@@ -78,16 +75,26 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
     };
   }, [pokemon]);
 
+  // Types sit under the name with the groups beside them. When that row
+  // is wider than the header (Koraidon on a phone) the types drop under
+  // the sprite (App.css .types-below); when even that overflows (a long
+  // name beside "Mega Evolution") types and groups share one row across
+  // the header (.tags-row); the name itself only wraps as a last resort
   const headRef = useRef(null);
   useLayoutEffect(() => {
     const head = headRef.current;
     if (!head) return undefined;
+    const overflows = () => head.scrollWidth > head.clientWidth + 1;
     const place = () => {
-      head.classList.remove("types-below"); // measure with the types under the name
+      head.classList.remove("types-below", "tags-row", "name-wraps"); // measure with the types under the name
       const groups = head.querySelector(".detail-groups");
       const pill = groups?.firstElementChild;
       const stacked = pill && groups.offsetHeight > pill.offsetHeight * 1.5; // the groups had to wrap
-      if (stacked || head.scrollWidth > head.clientWidth + 1) head.classList.add("types-below");
+      if (!stacked && !overflows()) return;
+      head.classList.add("types-below");
+      if (!overflows()) return;
+      head.classList.add("tags-row");
+      if (overflows()) head.classList.add("name-wraps"); // a very long name: let it break rather than overflow
     };
     place();
     const ro = new ResizeObserver(place);
@@ -143,15 +150,19 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
               <CategoryPill key={c.id} cat={c} useShort />
             ))}
           </div>
-          <div className="detail-pills detail-types">
-            {types.map((c) => (
-              <CategoryPill key={c.id} cat={c} useShort />
-            ))}
-          </div>
-          <div className="detail-pills detail-groups">
-            {groups.map((c) => (
-              <CategoryPill key={c.id} cat={c} useShort />
-            ))}
+          {/* display: contents normally (types and groups are grid cells);
+              a flex row spanning the header when nothing else fits */}
+          <div className="detail-tags">
+            <div className="detail-pills detail-types">
+              {types.map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
+            </div>
+            <div className="detail-pills detail-groups">
+              {groups.map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
+            </div>
           </div>
         </header>
         <section className="detail-evo" ref={evoRef}>

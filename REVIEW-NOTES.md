@@ -198,8 +198,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     column that starts right after the name column; only when that row
     wouldn't fit — the groups had to stack, or the header overflows:
     Koraidon/Miraidon on a phone — do the types drop under the sprite and
-    span the left columns (measured in PokemonDetail, `.types-below`) —
-    identity, not rows), then
+    span the left columns (measured in PokemonDetail, `.types-below`);
+    when even that overflows (a long name beside "Mega Evolution") types
+    and groups share one row across the header (`.tags-row`), and only
+    then may the name itself wrap (`.name-wraps`). Header pills never
+    wrap their text; the rows under the dex line run under the close
+    button — identity, not rows), then
     Evolution, centred: a tree
     of square tiles (sprite, name, how), each joined by an arrow to its
     own evolutions — one arrow to a lone evolution, one shared arrow into

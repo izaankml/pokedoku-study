@@ -1148,13 +1148,14 @@ header h1 {
   font-size: 0.78rem;
 }
 
-/* types · region · group — the row is split into thirds and each cluster
-   is centred in its own third */
+/* types · region · group — one centred row, an even gap between the
+   clusters (wider than the gap within one) */
 .card-tags-spread {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  column-gap: 8px;
+  gap: 6px 18px;
   width: 100%;
   max-width: 480px;
 }
@@ -1267,7 +1268,7 @@ header h1 {
 
 /* the Forms row sits under the tree and scrolls like it: each stage and
    its forms (stacked in pairs) as a group, groups side by side */
-.detail-forms-head {
+.detail-evo .detail-forms-head {
   margin-top: 20px;
 }
 
@@ -2266,8 +2267,36 @@ main > * {
   align-items: center;
   column-gap: var(--sp-3);
   row-gap: 8px;
-  padding: var(--sp-4) 56px var(--sp-4) var(--sp-4); /* right: clear of the close button */
+  padding: var(--sp-4);
   border-bottom: 1px solid var(--border-subtle);
+}
+
+/* the dex line shares its row with the close button; the rows below run
+   under it */
+.detail-meta {
+  padding-right: 40px;
+}
+
+.detail-head .pill {
+  white-space: nowrap;
+}
+
+.detail-tags {
+  display: contents;
+}
+
+/* nothing else fits: types and groups in one row across the header */
+.detail-head.tags-row .detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px var(--sp-3);
+  grid-column: 1 / -1;
+}
+
+.detail-head.tags-row .detail-types,
+.detail-head.tags-row .detail-groups {
+  grid-column: auto;
 }
 
 .detail-head > .sprite,
@@ -2287,6 +2316,11 @@ main > * {
   margin: 0;
   font-size: 1.35rem;
   line-height: 1.2;
+  white-space: nowrap; /* the layout gives way before the name does … */
+}
+
+.detail-head.name-wraps h3 {
+  white-space: normal; /* … unless nothing else is left to give */
 }
 
 .detail-region,
@@ -2385,7 +2419,7 @@ main > * {
   }
   .detail-head {
     padding-left: var(--sp-3);
-    padding-right: 48px;
+    padding-right: var(--sp-3);
   }
   .detail-head > .sprite,
   .detail-head > .sprite-fallback {
