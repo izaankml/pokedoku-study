@@ -25,10 +25,9 @@ function factsOf(pokemon) {
     .filter((g) => g.cats.length);
 }
 
-// `wide` rows (Moves) drop their pills below the label on narrow screens
-function Fact({ label, wide = false, children }) {
+function Fact({ label, children }) {
   return (
-    <div className={`fact${wide ? " wide" : ""}`}>
+    <div className="fact">
       <dt>{label}</dt>
       <dd className="detail-pills">{children}</dd>
     </div>
@@ -56,7 +55,7 @@ function PokemonDetail({ pokemon, onClose }) {
   const before = facts.filter((f) => f.group !== "move");
   const moves = facts.filter((f) => f.group === "move");
   const renderFact = (f) => (
-    <Fact key={f.group} label={f.label} wide={f.group === "move"}>
+    <Fact key={f.group} label={f.label}>
       {f.cats.map((c) => (
         <CategoryPill key={c.id} cat={c} useShort />
       ))}

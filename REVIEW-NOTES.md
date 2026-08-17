@@ -187,11 +187,10 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     of stage tiles (sprite, name, how) joined by arrows — a level with
     several Pokémon is one column whose tiles wrap, so Wurmple →
     Silcoon/Cascoon → Beautifly/Dustox reads as a tree and Eevee's eight
-    grid — then a left-aligned label/value list of Group, Abilities and
-    Moves with quieter, uniform pills. Not listed (still categories
-    everywhere else): type count, tracked abilities, evolution method,
-    stage and line — the header and tree already show them. Under 480px
-    the Moves row drops its pills under the label.
+    grid — then Group, Abilities and Moves, each a small-caps label with
+    its pills beneath (quieter, uniform pills). Not listed (still
+    categories everywhere else): type count, tracked abilities, evolution
+    method, stage and line — the header and tree already show them.
 
 30. Records carry `evoItem` (the item an item evolution needs: used stone,
     held item, or held-while-trading item). Dex `evoItem` plus overrides for

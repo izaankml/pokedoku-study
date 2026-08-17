@@ -2181,19 +2181,13 @@ main > * {
   font-size: 0.82rem;
 }
 
-/* label column on the left, pills on the right */
+/* each row is a small-caps label with its pills beneath, like the
+   Evolution heading — one rhythm across the sheet */
 .detail-facts {
   margin: 0;
   padding: var(--sp-3) var(--sp-4) var(--sp-4);
   display: grid;
-  gap: 10px;
-}
-
-.fact {
-  display: grid;
-  grid-template-columns: 5.5em 1fr;
-  align-items: baseline;
-  gap: var(--sp-2);
+  gap: var(--sp-3);
 }
 
 .fact dt,
@@ -2204,11 +2198,7 @@ main > * {
   letter-spacing: 0.06em;
   color: var(--text-low);
   line-height: 1.6;
-}
-
-.fact dt {
-  padding-top: 5px; /* optical: level with the first pill's text */
-  align-self: start;
+  margin: 0 0 4px;
 }
 
 .fact dd {
@@ -2237,7 +2227,7 @@ main > * {
 }
 
 .detail-evo h4 {
-  margin: 0 0 8px;
+  margin-bottom: 8px;
 }
 
 @media (max-width: 480px) {
@@ -2257,15 +2247,5 @@ main > * {
   .detail-evo {
     padding-left: var(--sp-3);
     padding-right: var(--sp-3);
-  }
-  .fact {
-    grid-template-columns: 5em 1fr;
-  }
-  .fact.wide {
-    grid-template-columns: 1fr;
-    gap: 2px;
-  }
-  .fact.wide dt {
-    padding-top: 0;
   }
 }
