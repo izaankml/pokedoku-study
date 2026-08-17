@@ -1,6 +1,7 @@
+import { Fragment } from "react";
 import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
-import { formLabel, formTrigger, formsOf, variantNote, variantsOf } from "../logic/forms.js";
+import { formLabel, formTrigger, formsRow, isTransformation, variantNote } from "../logic/forms.js";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
@@ -129,56 +130,51 @@ function EvolutionLine({ pokemon, onOpen }) {
   );
 }
 
-// The other forms of the Pokémon on the sheet — its species' base first,
-// ⇢ the transformations (Charizard ⇢ Mega X / Mega Y / Gigantamax) and
-// ≈ the variants (Lycanroc ≈ Midnight / Dusk, Vulpix ≈ Alolan, Zarude ≈
-// Dada — the same species in another shape), stacked in pairs. The base
-// leads on every form's own sheet, so they all read the same way, the
-// Pokémon itself highlighted wherever it is. Null when there are none.
+// The Forms row: what relates directly to the Pokémon on the sheet
+// (forms.js formsRow), base first — ⇢ transformations, ≈ variants or
+// counterparts — each group stacked in pairs, the Pokémon itself
+// highlighted wherever it is. Null when there's nothing.
 export function FormsRows({ pokemon, onOpen }) {
-  const anchor = POKEMON_BY_ID.get(pokemon.species) || pokemon;
-  const variants = variantsOf(anchor);
-  const forms = [...new Set([anchor, ...variants].flatMap((p) => formsOf(p)))];
-  const groups = forms.length || variants.length ? [[anchor, forms, variants]] : [];
-  if (!groups.length) return null;
+  const segments = formsRow(pokemon);
+  if (!segments.length) return null;
+  const tileOf = (p) => {
+    const transformation = isTransformation(p);
+    const variant = !transformation && p.species !== undefined && p.id !== (POKEMON_BY_ID.get(p.species) || p).id;
+    return (
+      <Tile
+        key={p.id}
+        pokemon={p}
+        form={transformation}
+        variant={variant}
+        note={transformation ? formTrigger(p) : variant && variantNote(p) !== formLabel(p) ? variantNote(p) : null}
+        current={p.id === pokemon.id}
+        onOpen={onOpen}
+      />
+    );
+  };
   return (
     <>
       <h4 className="detail-forms-head">Forms</h4>
       <div className="evo-scroll">
         <div className="evo-line forms-line">
-          {groups.map(([stage, forms, variants]) => (
-            <div key={stage.id} className="evo-node">
-              <Tile pokemon={stage} current={stage.id === pokemon.id} onOpen={onOpen} />
-              {forms.length ? (
-                <>
-                  <Arrow form />
+          <div className="evo-node">
+            {segments.map(([conn, tiles], i) => (
+              <Fragment key={i}>
+                {conn ? <Arrow form={conn === "⇢"} variant={conn === "≈"} /> : null}
+                {conn ? (
                   <div className="evo-tiles">
-                    {pairsOf(forms).map((pair) => (
+                    {pairsOf(tiles).map((pair) => (
                       <div key={pair[0].id} className="evo-col">
-                        {pair.map((f) => (
-                          <Tile key={f.id} pokemon={f} form note={formTrigger(f)} current={f.id === pokemon.id} onOpen={onOpen} />
-                        ))}
+                        {pair.map(tileOf)}
                       </div>
                     ))}
                   </div>
-                </>
-              ) : null}
-              {variants.length ? (
-                <>
-                  <Arrow variant />
-                  <div className="evo-tiles">
-                    {pairsOf(variants).map((pair) => (
-                      <div key={pair[0].id} className="evo-col">
-                        {pair.map((v) => (
-                          <Tile key={v.id} pokemon={v} variant note={variantNote(v) === formLabel(v) ? null : variantNote(v)} current={v.id === pokemon.id} onOpen={onOpen} />
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : null}
-            </div>
-          ))}
+                ) : (
+                  tiles.map((p) => <Tile key={p.id} pokemon={p} current={p.id === pokemon.id} onOpen={onOpen} />)
+                )}
+              </Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </>

@@ -6,7 +6,7 @@
 // evolution line: Charizard ⇢ Mega X / Mega Y / Gigantamax. Regional forms
 // (and Lycanroc's, Toxtricity's) already sit in the tree via `prevo`.
 
-import { ALL_POKEMON, POKEMON_BY_ID, POKEMON_BY_NAME } from "../data/pokedex.js";
+import { ALL_POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
 
 // Mega Stones (Serebii's Legends: Z-A table — the older ones aren't
 // formulaic: Blastoisinite, Alakazite, Lucarionite …), by species name;
@@ -92,10 +92,6 @@ const TRIGGERS = {
   greninjaash: "Battle Bond",
 };
 
-// A form of a form attaches to that form, not the species (Galarian
-// Darmanitan's Zen Mode; Gigantamax Rapid Strike Urshifu).
-const BASE_OF = { darmanitangalarzen: "darmanitangalar", urshifurapidstrikegmax: "urshifurapidstrike" };
-
 const isMega = (p) => /mega$/i.test(p.form || "") || /^Mega-[XYZ]$/.test(p.form || "");
 const isGmax = (p) => /gmax$/i.test(p.form || "");
 
@@ -104,10 +100,30 @@ export function isTransformation(p) {
   return Boolean(p.form) && (isMega(p) || isGmax(p) || p.name in TRIGGERS);
 }
 
-// The Pokémon a transformation is a form of (the record itself otherwise).
+const bySpecies = new Map();
+for (const p of ALL_POKEMON) {
+  if (!bySpecies.has(p.species)) bySpecies.set(p.species, []);
+  bySpecies.get(p.species).push(p);
+}
+
+// The Pokémon a transformation is a form of: the variant whose form its
+// own form extends (Galar-Zen → Galarian Darmanitan, Rapid-Strike-Gmax →
+// Rapid Strike Urshifu, Droopy-Mega → Droopy Tatsugiri), else the species
+// (the record itself when it isn't a transformation).
 export function baseOf(p) {
   if (!isTransformation(p)) return p;
-  return POKEMON_BY_NAME.get(BASE_OF[p.name]) || POKEMON_BY_ID.get(p.species) || p;
+  const owner = (bySpecies.get(p.species) || [])
+    .filter((v) => !isTransformation(v) && v.form && p.form.startsWith(`${v.form}-`))
+    .sort((a, b) => b.form.length - a.form.length)[0];
+  return owner || POKEMON_BY_ID.get(p.species) || p;
+}
+
+// A transformation's kind, without its base's own form: Galar-Zen → Zen,
+// Rapid-Strike-Gmax → Gmax, Mega-X → Mega-X — so Zen and Galar Zen, or
+// the two Gigantamax Urshifu, are counterparts.
+export function formKind(p) {
+  const base = baseOf(p);
+  return base.form && p.form.startsWith(`${base.form}-`) ? p.form.slice(base.form.length + 1) : p.form;
 }
 
 // What switches a Pokémon into this form.
@@ -180,11 +196,40 @@ export function variantNote(p) {
   return "Alternate Form";
 }
 
-const bySpecies = new Map();
-for (const p of ALL_POKEMON) {
-  if (!bySpecies.has(p.species)) bySpecies.set(p.species, []);
-  bySpecies.get(p.species).push(p);
-}
 export function variantsOf(p) {
   return (bySpecies.get(p.species) || []).filter((q) => q.id !== p.id && !isTransformation(q));
+}
+
+// A transformation's counterparts: the same kind of transformation of the
+// species' other variants (Zen ≈ Galar Zen; Single Strike Gmax ≈ Rapid
+// Strike Gmax; Magearna Mega ≈ Original Mega).
+export function counterpartsOf(p) {
+  if (!isTransformation(p)) return [];
+  const kind = formKind(p);
+  const base = baseOf(p);
+  return (bySpecies.get(p.species) || []).filter(
+    (q) => q.id !== p.id && isTransformation(q) && formKind(q) === kind && baseOf(q) !== base
+  );
+}
+
+// The Forms row for a sheet, as segments [connector, tiles] — a chain,
+// base first, of what relates *directly* to the Pokémon:
+//   the species base S:  [S] ⇢ its transformations ≈ its variants
+//   a variant V:         [S] ≈ V and the other variants ⇢ V's transformations
+//   a transformation T:  [B] ⇢ B's transformations ≈ T's counterparts
+// so Darmanitan shows Zen and Galarian Darmanitan (not Galar Zen), Zen
+// shows Galar Zen, Galarian Darmanitan shows Galar Zen and Darmanitan.
+export function formsRow(p) {
+  const S = POKEMON_BY_ID.get(p.species) || p;
+  let segments;
+  if (isTransformation(p)) {
+    const B = baseOf(p);
+    segments = [[null, [B]], ["⇢", formsOf(B)], ["≈", counterpartsOf(p)]];
+  } else if (p === S) {
+    segments = [[null, [S]], ["⇢", formsOf(S)], ["≈", variantsOf(S)]];
+  } else {
+    segments = [[null, [S]], ["≈", [p, ...variantsOf(S).filter((v) => v.id !== p.id)]], ["⇢", formsOf(p)]];
+  }
+  segments = segments.filter(([, tiles]) => tiles.length);
+  return segments.length > 1 ? segments : [];
 }

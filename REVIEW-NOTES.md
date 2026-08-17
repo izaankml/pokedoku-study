@@ -263,12 +263,19 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     of a species — the *variants*: regional forms, Own Tempo Rockruff,
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
     Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted
-    tiles, a word on what it is: `variantNote`). The row is for the
-    sheet's own species only (not every stage of the line) and always
-    leads with the species base — even on a form's own sheet, so Lycanroc,
-    Midnight and Dusk all read "Lycanroc ≈ Midnight / Dusk" with the
-    current one highlighted; tree-mates aren't left out (Raichu ≈ Alola
-    shows even though Alolan Raichu sits in the tree above). Long
+    tiles, a word on what it is: `variantNote`). The row (`formsRow`) is
+    what relates *directly* to the sheet's Pokémon, base first: the
+    species base shows ⇢ its transformations ≈ its variants; a variant
+    shows the base ≈ itself and the other variants ⇢ its own
+    transformations; a transformation shows its base ⇢ that base's
+    transformations ≈ its counterparts (the same kind on the other
+    variants: Zen ≈ Galar Zen, Single Strike Gmax ≈ Rapid Strike Gmax —
+    `formKind`, `counterpartsOf`). So Darmanitan shows Zen and Galarian
+    Darmanitan but not Galar Zen; Zen shows Galar Zen; Galarian Darmanitan
+    shows Galar Zen and Darmanitan; every Lycanroc shows all three. A
+    transformation's base is the variant whose form its own form extends
+    (`baseOf`: Galar-Zen → Galarian Darmanitan, Rapid-Strike-Gmax → Rapid
+    Strike Urshifu, Droopy-Mega → Droopy Tatsugiri), else the species. Long
     one-word names (Meowscarada) shrink to fit a tile rather than break.
     Still absent, on
     purpose: cosmetic forms (Vivillon, Alcremie, Arceus/Silvally plates,

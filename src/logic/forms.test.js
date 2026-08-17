@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
-import { baseOf, formLabel, formTrigger, formsOf, isTransformation, variantNote, variantsOf } from "./forms.js";
+import { baseOf, counterpartsOf, formLabel, formTrigger, formsOf, formsRow, isTransformation, variantNote, variantsOf } from "./forms.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n || p.altName === n);
 
@@ -19,6 +19,8 @@ describe("forms", () => {
   it("attaches forms to their base, a form of a form to that form", () => {
     expect(formsOf(byName("Charizard")).map((p) => p.displayName)).toEqual(["Charizard Mega X", "Charizard Mega Y", "Charizard Gmax"]);
     expect(baseOf(byName("Darmanitan Galar Zen")).displayName).toBe("Darmanitan Galar Standard");
+    expect(baseOf(byName("Urshifu Rapid Strike Gmax")).displayName).toBe("Urshifu Rapid Strike");
+    expect(baseOf(byName("Toxtricity Low Key Gmax")).displayName).toBe("Toxtricity Low Key");
     expect(formsOf(byName("Rotom")).length).toBe(5);
     expect(formsOf(byName("Kyurem")).map((p) => p.displayName)).toEqual(["Kyurem Black", "Kyurem White"]);
     expect(formTrigger(byName("Kyogre Primal"))).toBe("Blue Orb");
@@ -54,5 +56,20 @@ describe("PokeDoku names", () => {
     expect(l.speciesName).toBe("Lycanroc");
     expect(formLabel(byName("Lycanroc Midnight"))).toBe("Midnight");
     expect(byName("Toxtricity").displayName).toBe("Toxtricity Amped");
+  });
+});
+
+describe("formsRow", () => {
+  const names = (p) => formsRow(p).map(([conn, tiles]) => `${conn || ""}${tiles.map((t) => t.displayName).join("/")}`);
+  it("relates only what's direct: Darmanitan", () => {
+    expect(names(byName("Darmanitan Standard"))).toEqual(["Darmanitan Standard", "⇢Darmanitan Zen", "≈Darmanitan Galar Standard"]);
+    expect(names(byName("Darmanitan Zen"))).toEqual(["Darmanitan Standard", "⇢Darmanitan Zen", "≈Darmanitan Galar Zen"]);
+    expect(names(byName("Darmanitan Galar Standard"))).toEqual(["Darmanitan Standard", "≈Darmanitan Galar Standard", "⇢Darmanitan Galar Zen"]);
+    expect(names(byName("Darmanitan Galar Zen"))).toEqual(["Darmanitan Galar Standard", "⇢Darmanitan Galar Zen", "≈Darmanitan Zen"]);
+  });
+  it("shows every Lycanroc on every Lycanroc, and Gigantamax Urshifu as counterparts", () => {
+    expect(names(byName("Lycanroc Midnight"))).toEqual(["Lycanroc Midday", "≈Lycanroc Midnight/Lycanroc Dusk"]);
+    expect(counterpartsOf(byName("Urshifu Rapid Strike Gmax")).map((p) => p.displayName)).toEqual(["Urshifu Single Strike Gmax"]);
+    expect(names(byName("Charmander"))).toEqual([]);
   });
 });
