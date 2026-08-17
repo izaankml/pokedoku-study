@@ -39,6 +39,7 @@ function PokemonDetail({ pokemon, onClose }) {
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
   const groups = categoriesOf(pokemon);
+  const narrow = groups.filter((g) => !g.wide);
   const renderGroup = (g) => (
     <section key={g.group} className={`detail-group${g.wide ? " wide" : ""}`}>
       <h4>{g.label}</h4>
@@ -72,12 +73,12 @@ function PokemonDetail({ pokemon, onClose }) {
               #{String(pokemon.species).padStart(4, "0")}
               {base ? ` · form of ${base.displayName}` : ""}
               {pokemon.evoDetail ? ` · evolves: ${pokemon.evoDetail}` : ""}
-              {pokemon.stage === null ? " · no evolution categories" : ""}
             </p>
           </div>
         </div>
         <div className="detail-grid">
-          {groups.filter((g) => !g.wide).map(renderGroup)}
+          {/* an odd narrow group would sit alone on the left; let it span and centre */}
+          {narrow.map((g, i) => renderGroup(i === narrow.length - 1 && narrow.length % 2 ? { ...g, wide: true } : g))}
           <section className="detail-group wide">
             <h4>Abilities</h4>
             <div className="detail-pills">
