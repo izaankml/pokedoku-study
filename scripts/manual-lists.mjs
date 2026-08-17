@@ -137,6 +137,7 @@ export const EVO_DETAIL_OVERRIDES = {
 // Evolution links the dex is missing (child slug -> parent species name).
 export const PREVO_OVERRIDES = {
   melmetal: "Meltan",
+  lycanrocdusk: "Rockruff-Dusk", // Dusk Lycanroc comes from Own Tempo Rockruff, a form of its own
 };
 
 // Species PokeDoku assigns no region at all (Meltan and Melmetal come from
@@ -160,6 +161,7 @@ export const DISPLAY_NAME_OVERRIDES = {
   basculinwhitestriped: "Basculin (White-Striped)",
   oricoriopompom: "Oricorio (Pom-Pom)",
   greninjaash: "Ash-Greninja",
+  rockruffdusk: "Rockruff (Own Tempo)",
   pikachustarter: "Partner Pikachu",
   eeveestarter: "Partner Eevee",
   toxtricitygmax: "Gigantamax Toxtricity",
@@ -366,6 +368,7 @@ export const FORM_IDS = {
   oricoriopompom: 10123, // Oricorio-Pom-Pom
   oricoriopau: 10124, // Oricorio-Pa'u
   oricoriosensu: 10125, // Oricorio-Sensu
+  rockruffdusk: 10151, // Rockruff-Own-Tempo (the dex calls it Rockruff-Dusk)
   lycanrocmidnight: 10126, // Lycanroc-Midnight
   lycanrocdusk: 10152, // Lycanroc-Dusk
   wishiwashischool: 10127, // Wishiwashi-School

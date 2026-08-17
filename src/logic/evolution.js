@@ -85,7 +85,7 @@ const TERSE = {
   "Land 3 critical hits in 1 battle": "3 crits in one battle",
   "Defeat the Single Strike Tower": "Beat Single Strike Tower",
   "Defeat the Rapid Strike Tower": "Beat Rapid Strike Tower",
-  "Level 25 from a special Rockruff during the evening": "Lv 25, Own Tempo, Dusk",
+  "Level 25 from a special Rockruff during the evening": "Lv 25, Dusk",
 };
 
 // Title Case, leaving the little words alone: "Lv 20, female, cave

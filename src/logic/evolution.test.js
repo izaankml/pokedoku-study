@@ -95,7 +95,9 @@ describe("dex order", () => {
 describe("display-only forms", () => {
   it("draw in the tree but are never answers", () => {
     const { root } = evolutionTree(byName("Rockruff"));
-    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Lycanroc", "Lycanroc Midnight", "Lycanroc Dusk"]);
+    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Lycanroc", "Lycanroc Midnight"]);
+    // Dusk Lycanroc comes from Own Tempo Rockruff, a form of its own
+    expect(evolutionTree(byName("Lycanroc Dusk")).root.pokemon.displayName).toBe("Rockruff Own Tempo");
     expect(byName("Lycanroc Midnight").answer).toBe(false);
     expect(evolutionTree(byName("Toxel")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Toxtricity", "Toxtricity Low Key"]);
     // the female Meowstic is the same Pokémon, not another evolution

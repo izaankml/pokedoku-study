@@ -254,7 +254,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     the builder used to drop as "covered by the base" (Midnight/Dusk
     Lycanroc, Low Key Toxtricity, Black/White Kyurem, the Therians, Blade
     Aegislash, School Wishiwashi, Hero Palafin, Terapagos, Primal Kyogre,
-    Speed Deoxys, Cramorant Gulping/Gorging …) are now written as
+    Speed Deoxys, Cramorant Gulping/Gorging, Own Tempo Rockruff — from which Dusk Lycanroc evolves …) are now written as
     `answer: false` records: `ALL_POKEMON` has them (trees, forms, the
     sheet, URL slugs), `POKEMON` — categories, Browse, Drill, Cards, Grid,
     Stats — doesn't; they're named PokeDoku-style from their form

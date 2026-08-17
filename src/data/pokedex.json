@@ -3,7 +3,7 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1304,
+  "count": 1305,
   "answerCount": 1257,
   "speciesCount": 1025
  },
@@ -41488,6 +41488,40 @@
    "prevo": null
   },
   {
+   "id": 10151,
+   "species": 744,
+   "form": "Own-Tempo",
+   "name": "rockruffdusk",
+   "displayName": "Rockruff (Own Tempo)",
+   "types": [
+    "rock"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "crunch",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Own Tempo",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 745,
    "species": 745,
    "form": null,
@@ -41620,7 +41654,7 @@
     }
    ],
    "answer": false,
-   "prevo": 744
+   "prevo": 10151
   },
   {
    "id": 746,

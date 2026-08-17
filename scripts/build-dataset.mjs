@@ -468,6 +468,8 @@ function coversNothingNew(form, base) {
   );
 }
 
+// the dex's name for a form where it isn't the game's
+const FORM_NAME_OVERRIDES = { rockruffdusk: "Own-Tempo" };
 const candidateForms = formes.filter((s) => s.id in FORM_IDS);
 const droppedForms = [];
 const formRecords = [];
@@ -476,7 +478,7 @@ for (const s of candidateForms) {
   const record = {
     id: FORM_IDS[s.id],
     species: s.num,
-    form: s.forme,
+    form: FORM_NAME_OVERRIDES[s.id] || s.forme,
     name: s.id,
     displayName: formDisplayName(s),
     types: s.types.map((t) => t.toLowerCase()),
