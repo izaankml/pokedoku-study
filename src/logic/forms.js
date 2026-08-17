@@ -192,6 +192,7 @@ const VARIANT_NOTES = {
   basculinbluestriped: "Blue-Striped",
   basculinwhitestriped: "White-Striped",
   dudunsparcethreesegment: "1 in 100",
+  mausholdthree: "1 in 100",
   urshifurapidstrike: "Rapid Strike Style",
   burmysandy: "From Cave Battles",
   burmytrash: "From Indoor Battles",

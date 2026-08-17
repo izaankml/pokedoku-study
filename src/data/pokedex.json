@@ -3,7 +3,7 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1323,
+  "count": 1324,
   "answerCount": 1257,
   "speciesCount": 1025
  },
@@ -52210,6 +52210,50 @@
     }
    ],
    "prevo": 924
+  },
+  {
+   "id": 10257,
+   "species": 925,
+   "form": "Three",
+   "name": "mausholdthree",
+   "displayName": "Maushold (Three)",
+   "types": [
+    "normal"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 25",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "crunch",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Friend Guard",
+     "hidden": false
+    },
+    {
+     "name": "Cheek Pouch",
+     "hidden": false
+    },
+    {
+     "name": "Technician",
+     "hidden": true
+    }
+   ],
+   "prevo": 924,
+   "answer": false
   },
   {
    "id": 926,

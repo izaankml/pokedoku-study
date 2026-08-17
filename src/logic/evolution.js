@@ -177,6 +177,8 @@ const NOTES = {
   toxtricitylowkey: "Low Key natures",
   dudunsparce: "usually",
   dudunsparcethreesegment: "1 in 100",
+  maushold: "usually",
+  mausholdthree: "1 in 100",
 };
 
 // What to add after the method: the region for a regional form, or the
