@@ -2384,8 +2384,16 @@ main > * {
   white-space: nowrap; /* the layout gives way before the name does … */
 }
 
+/* … unless it would push the region pill down: then the name takes two
+   lines and the pill sits centred beside them */
+.detail-head.name-wraps .detail-name-row {
+  flex-wrap: nowrap;
+}
+
 .detail-head.name-wraps h3 {
-  white-space: normal; /* … unless nothing else is left to give */
+  white-space: normal;
+  min-width: 0;
+  flex: 0 1 auto;
 }
 
 .detail-head .pill {

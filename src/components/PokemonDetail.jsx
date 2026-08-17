@@ -77,8 +77,9 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
 
   // Types sit under the name with the groups beside them. When that row
   // can't hold both (Koraidon on a phone) it drops under the sprite and
-  // spans the header (App.css .types-below); the name itself only wraps as
-  // a last resort
+  // spans the header (App.css .types-below); a name long enough to push the
+  // region pill down breaks over two lines with the pill beside them
+  // (.name-wraps)
   const headRef = useRef(null);
   useLayoutEffect(() => {
     const head = headRef.current;
@@ -90,7 +91,21 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
       const pill = tags?.querySelector(".pill");
       const wrapped = pill && tags.offsetHeight > pill.offsetHeight * 1.5; // types and groups no longer share a line
       if (wrapped || overflows()) head.classList.add("types-below");
-      if (overflows()) head.classList.add("name-wraps"); // a very long name: let it break rather than overflow
+      // a long name that would push the region pill onto its own line: the
+      // name breaks over two lines instead, the pill centred beside them
+      const row = head.querySelector(".detail-name-row");
+      const h3 = row?.querySelector("h3");
+      if (h3) h3.style.width = "";
+      const pushed = h3 && row.offsetHeight > h3.offsetHeight * 1.5;
+      if (pushed || overflows()) {
+        head.classList.add("name-wraps");
+        // the wrapped heading would still claim the row's full width; trim
+        // it to its widest line so the pill hugs the text
+        const range = document.createRange();
+        range.selectNodeContents(h3);
+        const widest = Math.max(0, ...[...range.getClientRects()].map((r) => r.width));
+        if (widest) h3.style.width = `${Math.ceil(widest) + 6}px`; // slack: a hair short re-wraps it to three lines
+      }
     };
     place();
     const ro = new ResizeObserver(place);

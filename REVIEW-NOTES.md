@@ -194,8 +194,10 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     fixed backdrop, so a sheet opened by a reload sat thousands of pixels
     down the Browse list for 200ms and then jumped into place. Three blocks divided by
     hairlines: header (a grid of sprite | rows: dex line; the name with
-    the region pill right after it — the same spot on every sheet, wrapping
-    under only for an extreme name; the type pills with the group pills
+    the region pill right after it — the same spot on every sheet; a name
+    long enough to push the pill down instead breaks over two lines,
+    trimmed to its widest line, with the pill centred beside them
+    (`.name-wraps`, measured); the type pills with the group pills
     right after them, one wrapping row; when types and groups can't share
     a line (Koraidon on a phone) that row drops under the sprite and spans
     the header (`.types-below`, measured), and only then may the name
