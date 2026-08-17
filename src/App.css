@@ -1231,13 +1231,13 @@ header h1 {
   padding: 0 1px;
 }
 
-/* square, all the same size: --evo-tile is what the tallest content —
-   a two-line name over a two-line method (Wormadam Sandy, Urshifu Rapid
-   Strike) — needs; anything longer only makes that tile taller */
+/* all one size: --evo-tile is what the tallest content — a two-line name
+   over a two-line method (Wormadam Sandy, Urshifu Rapid Strike) — needs
+   on a desktop; on a phone the tiles are smaller and just grow taller */
 .evo-tile {
   flex: none;
   width: var(--evo-tile);
-  aspect-ratio: 1;
+  min-height: var(--evo-tile); /* square unless its text needs more */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2205,19 +2205,32 @@ main > * {
   flex: none;
 }
 
-/* dex line over the name over the type pills; the region pill to the
-   right, centred on the whole header (its flex row is centre-aligned) */
+/* dex line; then the name with the region pill beside it; then the type
+   pills with the group pills beside them — each row's pills right-aligned */
 .detail-title {
   min-width: 0;
   flex: 1;
 }
 
-.detail-region {
-  flex: none;
+.detail-title-row {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-end;
+  flex-wrap: wrap; /* the right-hand pills drop to their own line when there's no room */
+  align-items: center;
+  gap: 6px var(--sp-2);
+}
+
+.detail-title-row + .detail-title-row {
+  margin-top: 8px;
+}
+
+.detail-title-row .detail-types {
+  flex-wrap: nowrap; /* both types stay side by side */
+}
+
+.detail-side {
+  flex: none;
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .detail-title h3 {
@@ -2232,18 +2245,12 @@ main > * {
   color: var(--text-low);
 }
 
-.detail-types {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.detail-types .pill,
-.detail-region .pill {
+.detail-title-row .detail-pills .pill {
   min-width: 0;
   padding: 4px 12px;
   font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow: var(--edge-hi);
 }
 
 /* each row is a small-caps label with its pills beneath, like the
@@ -2305,8 +2312,12 @@ main > * {
   }
   .detail-sprite,
   .sprite-fallback.detail-sprite {
-    width: 80px;
-    height: 80px;
+    width: 76px;
+    height: 76px;
+  }
+  .detail-title-row .detail-pills .pill {
+    padding: 3px 10px;
+    font-size: 0.78rem;
   }
   .detail-facts,
   .detail-evo {
@@ -2319,9 +2330,32 @@ main > * {
   }
 }
 
-/* three stages plus arrows need ~340px: shave the backdrop so they fit
-   a 375px phone */
-@media (max-width: 400px) {
+/* phones: smaller tiles, so a stage row or a forms row fits the sheet
+   without scrolling (three stages, or a base and three forms) */
+@media (max-width: 480px) {
+  .evo-line,
+  .forms-grid {
+    --evo-tile: 76px;
+  }
+  .evo-tile {
+    padding: 4px 3px;
+    font-size: 0.66rem;
+  }
+  .evo-how {
+    font-size: 0.56rem;
+  }
+  .evo-sprite,
+  .sprite-fallback.evo-sprite {
+    width: 32px;
+    height: 32px;
+  }
+  .evo-tiles,
+  .evo-col {
+    gap: 4px;
+  }
+  .evo-arrow {
+    padding: 0;
+  }
   .modal-backdrop {
     padding: var(--sp-2);
   }

@@ -12,7 +12,7 @@ import Sprite from "./Sprite.jsx";
 // vertical columns — one per generation when three or more span several
 // (Eevee: the Kanto three, the Johto two, the Sinnoh two, Sylveon), else
 // pairs;
-// the tree never wraps, it scrolls sideways when the sheet is narrower —
+// the tree never wraps — it shrinks to fit the sheet, then scrolls —
 // and ones that evolve again get a row each, so Goomy shows Sliggoo →
 // Goodra over Hisuian Sliggoo → Hisuian Goodra, and Applin has Flapple
 // and Appletun paired above Dipplin → Hydrapple. A lone tile sits centred

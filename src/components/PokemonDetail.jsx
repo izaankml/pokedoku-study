@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
@@ -6,17 +6,19 @@ import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 import EvolutionLine, { FormsRows } from "./EvolutionLine.jsx";
+import { useFitRows } from "./useFitRows.js";
 
-// The sheet is three blocks: identity (sprite; dex line over the name over
-// the type pills, the region pill to their right), then the evolution
+// The sheet is three blocks: identity (sprite; dex line, then the name
+// with the region pill beside it, then the type pills with the group
+// pills beside them), then the evolution
 // tree, then a label/value list of
 // everything else the Pokémon counts for. Types and region sit in the
 // header — they are what you recognise a Pokémon by. Dropped from the
 // list (still categories everywhere else): type count (two type pills
 // already say "dual"), the tracked abilities (the full ability row covers
 // them), and evolution method, stage and line (the tree shows all three).
-const FACT_LABELS = { special: "Group", move: "Moves" };
-const SKIP = new Set(["type", "region", "typeCount", "ability", "evo", "stage", "evoLine"]);
+const FACT_LABELS = { move: "Moves" };
+const SKIP = new Set(["type", "region", "special", "typeCount", "ability", "evo", "stage", "evoLine"]);
 function factsOf(pokemon) {
   return CATEGORY_GROUPS.filter(([group]) => !SKIP.has(group))
     .map(([group, label]) => ({
@@ -50,9 +52,14 @@ function PokemonDetail({ pokemon, onClose }) {
     };
   }, [onClose]);
 
+  const evoRef = useRef(null);
+  useFitRows(evoRef); // the tree and forms shrink together to fit the sheet
+
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
-  const types = CATEGORIES.filter((c) => c.group === "type" && c.predicate(pokemon));
-  const regions = CATEGORIES.filter((c) => c.group === "region" && c.predicate(pokemon));
+  const of = (group) => CATEGORIES.filter((c) => c.group === group && c.predicate(pokemon));
+  const types = of("type");
+  const regions = of("region");
+  const groups = of("special");
   const facts = factsOf(pokemon);
   // abilities go after the category rows but before the (long) move row
   const before = facts.filter((f) => f.group !== "move");
@@ -88,22 +95,31 @@ function PokemonDetail({ pokemon, onClose }) {
               #{String(pokemon.species).padStart(4, "0")}
               {base ? ` · Form of ${base.displayName}` : ""}
             </p>
-            <h3 id="pokemon-detail-title">
-              <PokemonName name={pokemon.displayName} />
-            </h3>
-            <div className="detail-types">
-              {types.map((c) => (
-                <CategoryPill key={c.id} cat={c} useShort />
-              ))}
+            <div className="detail-title-row">
+              <h3 id="pokemon-detail-title">
+                <PokemonName name={pokemon.displayName} />
+              </h3>
+              <div className="detail-pills detail-side">
+                {regions.map((c) => (
+                  <CategoryPill key={c.id} cat={c} useShort />
+                ))}
+              </div>
+            </div>
+            <div className="detail-title-row">
+              <div className="detail-pills detail-types">
+                {types.map((c) => (
+                  <CategoryPill key={c.id} cat={c} useShort />
+                ))}
+              </div>
+              <div className="detail-pills detail-side">
+                {groups.map((c) => (
+                  <CategoryPill key={c.id} cat={c} useShort />
+                ))}
+              </div>
             </div>
           </div>
-          <div className="detail-region">
-            {regions.map((c) => (
-              <CategoryPill key={c.id} cat={c} useShort />
-            ))}
-          </div>
         </header>
-        <section className="detail-evo">
+        <section className="detail-evo" ref={evoRef}>
           <h4>Evolution</h4>
           <EvolutionLine pokemon={pokemon} />
           <FormsRows pokemon={pokemon} />
