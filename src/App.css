@@ -524,12 +524,21 @@ header h1 {
 .region-hisui { --r1: #cfa84f; --r2: #3f938d; }   /* Legends: Arceus */
 .region-paldea { --r1: #dc3f30; --r2: #8047bf; } /* Scarlet / Violet */
 
-/* Groups: a wash of a colour each, with a border to match */
-.pill[class*="group-"] {
+/* Groups: a wash of a colour each, with a border to match; the other
+   category families get one colour per family the same way */
+.pill[class*="group-"],
+.pill[class*="cat-"] {
   background: color-mix(in srgb, var(--g) 20%, var(--surface-2));
   border: 1.5px solid color-mix(in srgb, var(--g) 70%, transparent);
   color: var(--text-hi);
 }
+
+.cat-evo { --g: #d98a3a; }       /* evolution method: copper */
+.cat-stage { --g: #5b9bd5; }     /* evolution stage: blue */
+.cat-evoLine { --g: #9ccc3c; }   /* branched: lime */
+.cat-typeCount { --g: #a3a3ad; } /* mono/dual: silver */
+.cat-move { --g: #cf5c9a; }      /* moves: raspberry */
+.cat-ability { --g: #9c8ee0; }   /* the five tracked abilities, as categories */
 
 .group-legendary { --g: #e6b422; }  /* gold */
 .group-mythical { --g: #f27c9c; }   /* rose */
@@ -555,6 +564,12 @@ header h1 {
   background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--text-hi);
+}
+
+/* hidden abilities: gold border to match their marker */
+.pill.ability.hidden {
+  border-color: color-mix(in srgb, var(--warn) 80%, transparent);
+  background: color-mix(in srgb, var(--warn) 10%, transparent);
 }
 
 /* "hidden" ability marker */
@@ -2000,18 +2015,25 @@ main > * {
   line-height: 1;
 }
 
+/* sprite on the left, name and dex line beside it — a short header, so
+   the categories get the room */
 .detail-head {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-3);
-  padding: 0 32px;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+  padding-right: 40px; /* clear of the close button */
+  text-align: left;
+}
+
+.detail-head > div {
+  min-width: 0;
 }
 
 .detail-head h3 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
+  line-height: 1.25;
 }
 
 .detail-meta {
@@ -2020,8 +2042,8 @@ main > * {
 
 .detail-sprite,
 .sprite-fallback.detail-sprite {
-  width: 96px;
-  height: 96px;
+  width: 84px;
+  height: 84px;
   flex: none;
 }
 
