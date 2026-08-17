@@ -7,11 +7,9 @@
 import { ALL_POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
 import { baseOf } from "./forms.js";
 
-// (gender forms — Meowstic F, Indeedee F, Basculegion F, Oinkologne F —
-// aren't a different evolution, just the female; the tree skips them)
 const childrenOf = new Map();
 for (const p of ALL_POKEMON) {
-  if (p.prevo === null || p.prevo === undefined || p.form === "F") continue;
+  if (p.prevo === null || p.prevo === undefined) continue;
   if (!childrenOf.has(p.prevo)) childrenOf.set(p.prevo, []);
   childrenOf.get(p.prevo).push(p);
 }
@@ -156,6 +154,12 @@ const NOTES = {
   froslass: "female",
   salazzle: "female",
   vespiquen: "female",
+  meowstic: "male",
+  meowsticf: "female",
+  oinkologne: "male",
+  oinkolognef: "female",
+  basculegion: "male",
+  basculegionf: "female",
   toxtricity: "Amped natures",
   toxtricitylowkey: "Low Key natures",
   dudunsparce: "usually",

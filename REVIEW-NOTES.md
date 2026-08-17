@@ -260,7 +260,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     sheet, URL slugs), `POKEMON` — categories, Browse, Drill, Cards, Grid,
     Stats — doesn't; they're named PokeDoku-style from their form
     ("Lycanroc Midnight"), and their sprites are on PokeDoku's CDN too.
-    Gender forms (Meowstic F …) are skipped by the tree. Every other form
+    Gender forms (Meowstic Male / Female, Oinkologne, Basculegion) are branches of the tree, "Lv 25, Male / Female". Every other form
     of a species — the *variants*: regional forms, Own Tempo Rockruff,
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
     Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted

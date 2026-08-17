@@ -64,7 +64,7 @@ describe("evoNote", () => {
   });
   it("leaves no branch with two sides reading the same (bar Wurmple's coin toss)", () => {
     const kids = new Map();
-    for (const p of POKEMON) if (p.prevo != null && p.form !== "F") kids.set(p.prevo, [...(kids.get(p.prevo) || []), p]); // gender forms aren't branches
+    for (const p of POKEMON) if (p.prevo != null) kids.set(p.prevo, [...(kids.get(p.prevo) || []), p]);
     for (const [, ks] of kids) {
       const labels = ks.map((k) => shortHow(k.evoDetail) + (evoNote(k) || ""));
       const distinct = new Set(labels).size;
@@ -100,7 +100,7 @@ describe("display-only forms", () => {
     expect(evolutionTree(byName("Lycanroc Dusk")).root.pokemon.displayName).toBe("Rockruff Own Tempo");
     expect(byName("Lycanroc Midnight").answer).toBe(false);
     expect(evolutionTree(byName("Toxel")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Toxtricity Amped", "Toxtricity Low Key"]);
-    // the female Meowstic is the same Pokémon, not another evolution
-    expect(evolutionTree(byName("Espurr")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Meowstic Male"]);
+    // PokeDoku names both Meowstics, so both are branches
+    expect(evolutionTree(byName("Espurr")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Meowstic Male", "Meowstic Female"]);
   });
 });
