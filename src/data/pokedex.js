@@ -13,23 +13,27 @@ export const DATA_META = data.meta;
 export const POKEMON_BY_ID = new Map(ALL_POKEMON.map((p) => [p.id, p]));
 export const POKEMON_BY_NAME = new Map(ALL_POKEMON.map((p) => [p.name, p]));
 
-// Forms are named the way PokeDoku names them — species first, then the
-// form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner") — built
-// from its slug (scripts/build-pokedoku-names.mjs) on the base species'
-// proper name (so "Mr. Mime Galar", not "Mr Mime Galar"). The dataset's
-// own name ("Galarian Zapdos") is kept as `altName`, still searchable.
+// Pokémon are named the way PokeDoku names them — species first, then the
+// form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner"), and base
+// species by their form too where PokeDoku does ("Lycanroc Midday",
+// "Toxtricity Amped", "Meowstic Male") — built from its slug
+// (scripts/build-pokedoku-names.mjs) on the species' proper name (so
+// "Mr. Mime Galar", not "Mr Mime Galar"). The dataset's own name
+// ("Galarian Zapdos", "Lycanroc") is kept as `altName`, still searchable;
+// `speciesName` is the plain species name.
 const cap = (w) => (w ? w[0].toUpperCase() + w.slice(1) : w);
+const SPECIES_NAME = new Map(ALL_POKEMON.filter((p) => !p.form).map((p) => [p.id, p.displayName]));
 for (const p of ALL_POKEMON) {
+  const species = SPECIES_NAME.get(p.species) || cap(POKEDOKU_NAMES[p.id]?.specie || "");
+  p.speciesName = species;
   const pd = POKEDOKU_NAMES[p.id];
-  const base = POKEMON_BY_ID.get(p.species);
   let name;
   if (pd) {
     const rest = pd.name.startsWith(`${pd.specie}-`) ? pd.name.slice(pd.specie.length + 1) : pd.name;
-    name = `${base ? base.displayName : cap(pd.specie)} ${rest.split("-").map(cap).join(" ")}`;
-  } else if (p.form && p.answer === false && base) {
-    // display-only forms aren't PokeDoku answers, so have no PokeDoku name;
-    // name them the same way ("Lycanroc Midnight", "Kyurem Black")
-    name = `${base.displayName} ${p.form.split("-").map(cap).join(" ")}`;
+    name = `${species} ${rest.split("-").map(cap).join(" ")}`;
+  } else if (p.form && p.answer === false) {
+    // a display-only form PokeDoku has no name for: name it the same way
+    name = `${species} ${p.form.split("-").map(cap).join(" ")}`;
   } else continue;
   if (name !== p.displayName) {
     p.altName = p.displayName;

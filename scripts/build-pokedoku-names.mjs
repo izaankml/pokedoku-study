@@ -1,8 +1,11 @@
 // Generates src/data/pokedoku-names.json: PokeDoku's own name slug for every
-// alternate-form record ("zapdos-galar", "charizard-mega-x", "pikachu-partner"),
-// fetched from its public answer list. The app shows forms the way PokeDoku
-// does — species first, form after ("Zapdos Galar", not "Galarian Zapdos") —
-// so what you type here is what you'd type there.
+// record whose name carries a form — the alternate forms ("zapdos-galar",
+// "charizard-mega-x", "pikachu-partner") and the base species PokeDoku names
+// by their form too ("lycanroc-midday", "toxtricity-amped", "meowstic-male")
+// — fetched from its public answer list (which lists its hidden forms as
+// well). The app shows Pokémon the way PokeDoku does — species first, form
+// after ("Zapdos Galar", not "Galarian Zapdos"; "Lycanroc Midday") — so what
+// you type here is what you'd type there.
 //
 //   node scripts/build-pokedoku-names.mjs
 
@@ -22,13 +25,13 @@ const byId = new Map(entries.filter((e) => e.id > 0).map((e) => [e.id, e]));
 const out = {};
 let missing = 0;
 for (const p of pokemon) {
-  if (p.form === null) continue;
   const e = byId.get(p.id);
   if (!e) {
-    missing += 1;
+    if (p.form !== null) missing += 1;
     continue;
   }
+  if (p.form === null && e.name === e.specie) continue; // a plain species: nothing to add
   out[p.id] = { name: e.name, specie: e.specie };
 }
 writeFileSync(join(dataDir, "pokedoku-names.json"), JSON.stringify(out));
-console.log(`${Object.keys(out).length} form names written, ${missing} form records without a PokeDoku entry`);
+console.log(`${Object.keys(out).length} names written, ${missing} form records without a PokeDoku entry`);

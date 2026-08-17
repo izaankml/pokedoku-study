@@ -140,8 +140,7 @@ export function formsOf(p) {
 // The form's own name, without the species it sits beside: "Mega X",
 // "Gmax", "Wash", "Dusk".
 export function formLabel(p) {
-  const species = POKEMON_BY_ID.get(p.species);
-  const prefix = species.displayName + " ";
+  const prefix = p.speciesName + " ";
   return p.displayName.startsWith(prefix) ? p.displayName.slice(prefix.length) : p.displayName;
 }
 
@@ -188,53 +187,4 @@ for (const p of ALL_POKEMON) {
 }
 export function variantsOf(p) {
   return (bySpecies.get(p.species) || []).filter((q) => q.id !== p.id && !isTransformation(q));
-}
-
-// What the base is, where the base itself has a form name the game uses
-// (shown under it in the Forms row beside its variants).
-const BASE_NOTES = {
-  lycanroc: "Midday",
-  toxtricity: "Amped",
-  dudunsparce: "Two-Segment",
-  basculin: "Red-Striped",
-  darmanitan: "Standard",
-  darmanitangalar: "Standard",
-  oricorio: "Baile Style",
-  wormadam: "Plant Cloak",
-  burmy: "Plant Cloak",
-  meowstic: "Male",
-  indeedee: "Male",
-  basculegion: "Male",
-  oinkologne: "Male",
-  tatsugiri: "Curly",
-  squawkabilly: "Green Plumage",
-  pumpkaboo: "Average Size",
-  gourgeist: "Average Size",
-  urshifu: "Single Strike",
-  zygarde: "50%",
-  deoxys: "Normal Forme",
-  giratina: "Altered",
-  shaymin: "Land",
-  tornadus: "Incarnate",
-  thundurus: "Incarnate",
-  landorus: "Incarnate",
-  enamorus: "Incarnate",
-  keldeo: "Ordinary",
-  meloetta: "Aria",
-  hoopa: "Confined",
-  aegislash: "Shield",
-  wishiwashi: "Solo",
-  mimikyu: "Disguised",
-  eiscue: "Ice Face",
-  morpeko: "Full Belly",
-  palafin: "Zero",
-  ogerpon: "Teal Mask",
-  terapagos: "Normal",
-  zacian: "Hero of Many Battles",
-  zamazenta: "Hero of Many Battles",
-  castform: "Normal",
-  gimmighoul: "Chest",
-};
-export function baseNote(p) {
-  return BASE_NOTES[p.name] || null;
 }

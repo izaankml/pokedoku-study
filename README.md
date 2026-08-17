@@ -51,8 +51,9 @@ hash (`#cards/region`, `#browse/type-fire/flag-legendary`,
 (`#browse/region-kanto/pokemon-eevee` — Back closes it), and the current
 flashcard and the Grid board in progress are kept in `localStorage`. Pokémon are named the
 way PokeDoku names them ("Zapdos Galar", "Charizard Mega X", "Pikachu
-Partner"); the conventional names ("Galarian Zapdos") still work in
-search.
+Partner" — and base species by their form where PokeDoku does: "Lycanroc
+Midday", "Toxtricity Amped", "Meowstic Male"); the conventional names
+("Galarian Zapdos", "Lycanroc") still work in search.
 
 ## Cross-device sync
 

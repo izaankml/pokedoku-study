@@ -267,7 +267,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     sheet's own species only (not every stage of the line) and always
     leads with the species base — even on a form's own sheet, so Lycanroc,
     Midnight and Dusk all read "Lycanroc ≈ Midnight / Dusk" with the
-    current one highlighted, and the base names its own form where the games do (`baseNote`: Midday, Amped, Incarnate, Shield …); tree-mates aren't left out (Raichu ≈ Alola
+    current one highlighted; tree-mates aren't left out (Raichu ≈ Alola
     shows even though Alolan Raichu sits in the tree above). Long
     one-word names (Meowscarada) shrink to fit a tile rather than break.
     Still absent, on
@@ -413,3 +413,16 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Long lists render in batches of 60 (`AnswerList`, an
     IntersectionObserver sentinel 600px ahead), so the everyone list
     doesn't lag the tab.
+
+## Names
+
+42. PokeDoku names base species by their form where it has several
+    ("lycanroc-midday", "toxtricity-amped", "meowstic-male",
+    "deoxys-normal", "wormadam-plant", "basculin-red-striped"), and its
+    answer list carries its hidden forms too ("lycanroc-midnight",
+    "rockruff-own-tempo"). `build-pokedoku-names` now writes every record
+    whose PokeDoku name carries a form (326, none missing) and pokedex.js
+    applies them to base species as well — "Lycanroc Midday" on the sheet,
+    in the tree and in the Forms row alike; the plain name stays as
+    `altName` (search, Drill answers) and `speciesName` (what the Forms
+    row strips to label a form "Midnight").

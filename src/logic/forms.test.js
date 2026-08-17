@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
 import { baseOf, formLabel, formTrigger, formsOf, isTransformation, variantNote, variantsOf } from "./forms.js";
 
-const byName = (n) => POKEMON.find((p) => p.displayName === n);
+const byName = (n) => POKEMON.find((p) => p.displayName === n || p.altName === n);
 
 describe("forms", () => {
   it("knows every transformation's trigger", () => {
@@ -43,5 +43,16 @@ describe("variants", () => {
     expect(variantsOf(byName("Charizard"))).toEqual([]); // Megas and Gmax are transformations
     expect(variantNote(byName("Vulpix Alola"))).toBe("Alolan Form");
     expect(variantNote(byName("Zarude Dada"))).toBe("Dada's Cloth");
+  });
+});
+
+describe("PokeDoku names", () => {
+  it("names a base species by its form where PokeDoku does, keeping the plain name searchable", () => {
+    const l = byName("Lycanroc");
+    expect(l.displayName).toBe("Lycanroc Midday");
+    expect(l.altName).toBe("Lycanroc");
+    expect(l.speciesName).toBe("Lycanroc");
+    expect(formLabel(byName("Lycanroc Midnight"))).toBe("Midnight");
+    expect(byName("Toxtricity").displayName).toBe("Toxtricity Amped");
   });
 });

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
 import { evoNote, evoWhere, evolutionLine, evolutionTree, shortHow, titleCase } from "./evolution.js";
 
-const byName = (n) => POKEMON.find((p) => p.displayName === n);
+const byName = (n) => POKEMON.find((p) => p.displayName === n || p.altName === n);
 
 describe("evoWhere", () => {
   it("names the region for a regional form that evolves from another form", () => {
@@ -88,19 +88,19 @@ describe("titleCase", () => {
 describe("dex order", () => {
   it("keeps a form beside its base, not after later species", () => {
     const { root } = evolutionTree(byName("Burmy"));
-    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Wormadam", "Wormadam Sandy", "Wormadam Trash", "Mothim"]);
+    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Wormadam Plant", "Wormadam Sandy", "Wormadam Trash", "Mothim"]);
   });
 });
 
 describe("display-only forms", () => {
   it("draw in the tree but are never answers", () => {
     const { root } = evolutionTree(byName("Rockruff"));
-    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Lycanroc", "Lycanroc Midnight"]);
+    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Lycanroc Midday", "Lycanroc Midnight"]);
     // Dusk Lycanroc comes from Own Tempo Rockruff, a form of its own
     expect(evolutionTree(byName("Lycanroc Dusk")).root.pokemon.displayName).toBe("Rockruff Own Tempo");
     expect(byName("Lycanroc Midnight").answer).toBe(false);
-    expect(evolutionTree(byName("Toxel")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Toxtricity", "Toxtricity Low Key"]);
+    expect(evolutionTree(byName("Toxel")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Toxtricity Amped", "Toxtricity Low Key"]);
     // the female Meowstic is the same Pokémon, not another evolution
-    expect(evolutionTree(byName("Espurr")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Meowstic"]);
+    expect(evolutionTree(byName("Espurr")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Meowstic Male"]);
   });
 });
