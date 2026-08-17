@@ -1295,15 +1295,28 @@ header h1 {
   font-size: 1.15rem;
 }
 
-/* the Forms row sits under the tree and scrolls like it: each stage and
-   its forms (stacked in pairs) as a group, groups side by side */
+/* the Forms row sits under the tree: one flat row of tiles, wrapping and
+   centred, the same tile size as the tree's (it isn't zoomed) */
 .detail-evo .detail-forms-head {
   margin-top: 20px;
 }
 
-.forms-line {
-  align-items: center;
-  gap: var(--sp-4);
+.forms-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.forms-row .evo-tile {
+  --evo-tile: 100px;
+}
+
+@media (max-width: 480px) {
+  .forms-row .evo-tile {
+    --evo-tile: 76px;
+  }
 }
 
 .evo-tile.current {
@@ -2208,7 +2221,7 @@ main > * {
   position: relative;
   width: 100%;
   max-width: 580px; /* Eevee's four generation columns fit beside it */
-  max-height: min(84dvh, 720px);
+  height: min(84dvh, 720px); /* fixed, not fit-to-content: the sheet doesn't jump between Pokémon */
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: var(--sp-4);

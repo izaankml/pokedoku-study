@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
 import { formLabel, formTrigger, formsRow, isTransformation, variantNote } from "../logic/forms.js";
@@ -131,47 +130,31 @@ function EvolutionLine({ pokemon, onOpen }) {
   );
 }
 
-// The Forms row: the other forms that relate directly to the Pokémon on
-// the sheet (forms.js formsRow) — ⇠ its base, ⇢ transformations, ≈
-// variants or counterparts — each group stacked in pairs. Null when
-// there's nothing.
+// The Forms row: the Pokémon and the forms that relate to it directly
+// (forms.js formsRow), one flat wrapping row in dex order, the Pokémon
+// itself highlighted. Null when there's nothing.
 export function FormsRows({ pokemon, onOpen }) {
-  const segments = formsRow(pokemon);
-  if (!segments.length) return null;
-  const tileOf = (p) => {
-    const transformation = isTransformation(p);
-    const variant = !transformation && p.id !== (POKEMON_BY_ID.get(p.species) || p).id;
-    return (
-      <Tile
-        key={p.id}
-        pokemon={p}
-        form={transformation}
-        variant={variant}
-        note={transformation ? formTrigger(p) : variant && variantNote(p) && variantNote(p) !== formLabel(p) ? variantNote(p) : null}
-        onOpen={onOpen}
-      />
-    );
-  };
+  const list = formsRow(pokemon);
+  if (!list.length) return null;
   return (
     <>
       <h4 className="detail-forms-head">Forms</h4>
-      <div className="evo-scroll">
-        <div className="evo-line forms-line">
-          <div className="evo-node">
-            {segments.map(([conn, tiles]) => (
-              <Fragment key={conn}>
-                <Arrow glyph={conn} />
-                <div className="evo-tiles">
-                  {pairsOf(tiles).map((pair) => (
-                    <div key={pair[0].id} className="evo-col">
-                      {pair.map(tileOf)}
-                    </div>
-                  ))}
-                </div>
-              </Fragment>
-            ))}
-          </div>
-        </div>
+      <div className="forms-row">
+        {list.map((p) => {
+          const transformation = isTransformation(p);
+          const variant = !transformation && p.id !== (POKEMON_BY_ID.get(p.species) || p).id;
+          return (
+            <Tile
+              key={p.id}
+              pokemon={p}
+              form={transformation}
+              variant={variant}
+              note={transformation ? formTrigger(p) : variant && variantNote(p) && variantNote(p) !== formLabel(p) ? variantNote(p) : null}
+              current={p.id === pokemon.id}
+              onOpen={onOpen}
+            />
+          );
+        })}
       </div>
     </>
   );

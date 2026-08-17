@@ -17,6 +17,7 @@ export function useFitRows(sectionRef, deps) {
       const scrollTop = scroller ? scroller.scrollTop : 0;
       const rows = [...section.querySelectorAll(".evo-scroll")];
       for (const box of rows) box.firstElementChild.style.zoom = "";
+      for (const row of section.querySelectorAll(".forms-row")) row.style.zoom = "";
       // every tile of the sheet as tall as its tallest (a two-line name
       // over a two-line method), so tree and forms tiles all match
       section.style.removeProperty("--evo-tile-h");
@@ -32,6 +33,9 @@ export function useFitRows(sectionRef, deps) {
         inner.style.minWidth = "";
       }
       for (const box of rows) box.firstElementChild.style.zoom = String(zoom);
+      // the Forms row wraps rather than scrolls, but takes the same zoom so
+      // its tiles match the tree's
+      for (const row of section.querySelectorAll(".forms-row")) row.style.zoom = String(zoom);
       if (scroller) scroller.scrollTop = scrollTop;
     };
     fit();

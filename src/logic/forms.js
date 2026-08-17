@@ -222,25 +222,28 @@ export function counterpartsOf(p) {
   );
 }
 
-// The Forms row for a sheet, as segments [connector, tiles]: the *other*
-// forms that relate directly to the Pokémon (its own tile is the header):
-//   the species base S:  ⇢ its transformations · ≈ its variants
-//   a variant V:         ≈ S and the other variants · ⇢ V's transformations
-//   a transformation T:  ⇠ its base B · ≈ B's other transformations and
-//                        T's counterparts (the same kind on other variants)
+// The Forms row for a sheet: the Pokémon and the forms that relate to it
+// directly, in dex order, as one flat list —
+//   the species base S:  S, its transformations, its variants
+//   a variant V:         S, the variants, V's transformations
+//   a transformation T:  T's base, that base's transformations, T's
+//                        counterparts (the same kind on other variants)
 // so Darmanitan lists Zen and Galarian Darmanitan (not Galar Zen); Zen
 // lists Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
-// Galar Zen; Charizard Mega X lists Charizard, Mega Y and Gigantamax.
+// Galar Zen; Charizard Mega X lists Charizard, Mega X, Mega Y, Gmax;
+// every Lycanroc lists all three. Empty when there's nothing but itself.
 export function formsRow(p) {
   const S = POKEMON_BY_ID.get(p.species) || p;
-  let segments;
+  let list;
   if (isTransformation(p)) {
     const B = baseOf(p);
-    segments = [["⇠", [B]], ["≈", [...formsOf(B).filter((f) => f.id !== p.id), ...counterpartsOf(p)]]];
+    list = [B, ...formsOf(B), ...counterpartsOf(p)];
   } else if (p === S) {
-    segments = [["⇢", formsOf(S)], ["≈", variantsOf(S)]];
+    list = [S, ...formsOf(S), ...variantsOf(S)];
   } else {
-    segments = [["≈", [S, ...variantsOf(S).filter((v) => v.id !== p.id)]], ["⇢", formsOf(p)]];
+    list = [S, ...variantsOf(S), ...formsOf(p)];
   }
-  return segments.filter(([, tiles]) => tiles.length);
+  const seen = new Set();
+  list = list.filter((q) => !seen.has(q.id) && seen.add(q.id)).sort((a, b) => a.id - b.id);
+  return list.length > 1 ? list : [];
 }
