@@ -1,4 +1,4 @@
-import { evolutionTree, evoWhere, shortHow } from "../logic/evolution.js";
+import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
@@ -14,10 +14,10 @@ import Sprite from "./Sprite.jsx";
 // and Appletun paired above Dipplin → Hydrapple. A lone tile sits centred
 // against whatever it's joined to.
 function how(p) {
-  const where = evoWhere(p);
+  const note = evoNote(p);
   return {
-    short: shortHow(p.evoDetail) + (where ? `, ${where}` : ""),
-    full: p.evoDetail + (where ? `, ${where}` : ""),
+    short: shortHow(p.evoDetail) + (note ? `, ${note}` : ""),
+    full: p.evoDetail + (note ? `, ${note}` : ""),
   };
 }
 

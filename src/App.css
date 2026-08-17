@@ -1218,8 +1218,9 @@ header h1 {
   padding: 0 2px;
 }
 
-/* square: sized so a two-line name plus a two-line method still fits;
-   anything longer only makes the tile taller */
+/* square: sized so a two-line name plus a two-line method still fits
+   (Wormadam Sandy: "Lv 20, female, Sandy Cloak"); anything longer only
+   makes the tile taller */
 .evo-tile {
   flex: none;
   width: var(--evo-tile);
@@ -1228,8 +1229,8 @@ header h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 6px 4px;
+  gap: 1px;
+  padding: 5px 4px;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1.5px solid var(--border-subtle);
@@ -1248,8 +1249,8 @@ header h1 {
 
 .evo-sprite,
 .sprite-fallback.evo-sprite {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   flex: none;
   margin-bottom: 2px;
 }
@@ -2261,8 +2262,10 @@ main > * {
   }
 }
 
+/* three 96px stages plus arrows need 330px: shave the backdrop so they
+   fit a 375px phone */
 @media (max-width: 400px) {
-  .evo-line {
-    --evo-tile: 90px; /* three stages plus arrows fit a 375px phone */
+  .modal-backdrop {
+    padding: var(--sp-2);
   }
 }

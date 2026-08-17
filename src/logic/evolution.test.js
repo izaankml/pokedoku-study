@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { POKEMON } from "../data/pokedex.js";
-import { evoWhere, evolutionLine, evolutionTree, shortHow } from "./evolution.js";
+import { evoNote, evoWhere, evolutionLine, evolutionTree, shortHow } from "./evolution.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n);
 
@@ -13,7 +13,7 @@ describe("evoWhere", () => {
   it("says nothing when the whole line is that form, or there is no form", () => {
     expect(evoWhere(byName("Raticate Alola"))).toBeNull();
     expect(evoWhere(byName("Weezing"))).toBeNull();
-    expect(evoWhere(byName("Wormadam Sandy") || byName("Wormadam (Sandy)") || {})).toBeNull();
+    expect(evoWhere(byName("Wormadam Sandy") || byName("Wormadam Sandy") || {})).toBeNull();
   });
 });
 
@@ -47,5 +47,29 @@ describe("shortHow", () => {
   });
   it("phrases Tyrogue's three as Attack against Defense", () => {
     expect(shortHow(byName("Hitmontop").evoDetail)).toBe("Level 20 with Attack = Defense");
+  });
+});
+
+describe("evoNote", () => {
+  it("tells apart every branch whose sides share a dex line", () => {
+    expect(evoNote(byName("Solgaleo"))).toBe("in Sun / Scarlet");
+    expect(evoNote(byName("Lunala"))).toBe("in Moon / Violet");
+    expect(evoNote(byName("Silcoon"))).toBe("random");
+    expect(evoNote(byName("Wormadam Sandy"))).toBe("female, Sandy Cloak");
+    expect(evoNote(byName("Mothim"))).toBe("male");
+    expect(evoNote(byName("Gallade"))).toBe("male");
+    expect(evoNote(byName("Froslass"))).toBe("female");
+    expect(evoNote(byName("Weezing Galar"))).toBe("in Galar");
+    expect(evoNote(byName("Goodra"))).toBeNull();
+  });
+  it("leaves no branch with two sides reading the same (bar Wurmple's coin toss)", () => {
+    const kids = new Map();
+    for (const p of POKEMON) if (p.prevo != null) kids.set(p.prevo, [...(kids.get(p.prevo) || []), p]);
+    for (const [, ks] of kids) {
+      const labels = ks.map((k) => shortHow(k.evoDetail) + (evoNote(k) || ""));
+      const distinct = new Set(labels).size;
+      const names = ks.map((k) => k.displayName).join("/");
+      expect(distinct, names).toBe(names === "Silcoon/Cascoon" ? 1 : ks.length);
+    }
   });
 });

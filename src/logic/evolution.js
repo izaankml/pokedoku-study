@@ -120,3 +120,26 @@ export function evoWhere(pokemon) {
   if (!prevo || prevo.form === pokemon.form) return null;
   return `in ${pokemon.form}`;
 }
+
+// What the dex line leaves out — the sides of a branch that share one
+// line, and the gender an evolution needs (keyed by the record's slug).
+const NOTES = {
+  solgaleo: "in Sun / Scarlet",
+  lunala: "in Moon / Violet",
+  silcoon: "random",
+  cascoon: "random",
+  wormadam: "female, Plant Cloak",
+  wormadamsandy: "female, Sandy Cloak",
+  wormadamtrash: "female, Trash Cloak",
+  mothim: "male",
+  gallade: "male",
+  froslass: "female",
+  salazzle: "female",
+  vespiquen: "female",
+};
+
+// What to add after the method: the region for a regional form, or the
+// note above. Null when nothing needs saying.
+export function evoNote(pokemon) {
+  return evoWhere(pokemon) || NOTES[pokemon.name] || null;
+}

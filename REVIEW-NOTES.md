@@ -198,7 +198,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     form that evolves from a different form (Koffing → Galarian Weezing,
     Pikachu → Alolan Raichu, the Hisuian evolutions) says "in Galar" etc.
     after the method (`evoWhere`) — the dex line alone reads the same as
-    the usual form's
+    the usual form's — and the other branches whose sides share a line
+    get what tells them apart (`NOTES`: Solgaleo/Lunala by version,
+    Silcoon/Cascoon random, Wormadam cloaks vs Mothim), as do the gendered
+    evolutions (Gallade male, Froslass/Salazzle/Vespiquen female). Every
+    branch was audited: all 30 now read distinctly, Wurmple's coin toss
+    aside (a test keeps it so)
     — then Group, Abilities and Moves, each a small-caps label with
     its pills beneath (quieter, uniform pills). Not listed (still
     categories everywhere else): type count, tracked abilities, evolution
