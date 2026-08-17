@@ -6,22 +6,33 @@ import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 import EvolutionLine from "./EvolutionLine.jsx";
 
-// Everything a Pokémon counts for, grouped the way the dropdowns are —
-// minus type count (the type pills already show it) and the tracked
-// abilities (the full ability list below covers them). Small groups sit
-// two abreast so the sheet rarely needs scrolling; Moves take a full row.
-const DETAIL_LABELS = { type: "Type", region: "Region", special: "Group" };
-const SKIP = new Set(["typeCount", "ability"]);
-const WIDE = new Set(["move"]);
-function categoriesOf(pokemon) {
+// The sheet is three blocks: identity (sprite, name, dex line, types),
+// then a label/value list of everything else the Pokémon counts for, then
+// its evolution line. Types sit in the header rather than the list — they
+// are what you recognise a Pokémon by. Dropped from the list (still
+// categories everywhere else): type count (two type pills already say
+// "dual"), the tracked abilities (the full ability row covers them) and
+// evolution stage and line (the evolution tree below shows both).
+const FACT_LABELS = { region: "Region", special: "Group", move: "Moves" };
+const SKIP = new Set(["type", "typeCount", "ability", "stage", "evoLine"]);
+function factsOf(pokemon) {
   return CATEGORY_GROUPS.filter(([group]) => !SKIP.has(group))
     .map(([group, label]) => ({
       group,
-      label: DETAIL_LABELS[group] || label,
-      wide: WIDE.has(group),
+      label: FACT_LABELS[group] || label,
       cats: CATEGORIES.filter((c) => c.group === group && c.predicate(pokemon)),
     }))
     .filter((g) => g.cats.length);
+}
+
+// `wide` rows (Moves) drop their pills below the label on narrow screens
+function Fact({ label, wide = false, children }) {
+  return (
+    <div className={`fact${wide ? " wide" : ""}`}>
+      <dt>{label}</dt>
+      <dd className="detail-pills">{children}</dd>
+    </div>
+  );
 }
 
 function PokemonDetail({ pokemon, onClose }) {
@@ -39,23 +50,23 @@ function PokemonDetail({ pokemon, onClose }) {
   }, [onClose]);
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
-  const groups = categoriesOf(pokemon);
-  const narrow = groups.filter((g) => !g.wide);
-  const renderGroup = (g) => (
-    <section key={g.group} className={`detail-group${g.wide ? " wide" : ""}`}>
-      <h4>{g.label}</h4>
-      <div className="detail-pills">
-        {g.cats.map((c) => (
-          <CategoryPill key={c.id} cat={c} useShort />
-        ))}
-      </div>
-    </section>
+  const types = CATEGORIES.filter((c) => c.group === "type" && c.predicate(pokemon));
+  const facts = factsOf(pokemon);
+  // abilities go after the category rows but before the (long) move row
+  const before = facts.filter((f) => f.group !== "move");
+  const moves = facts.filter((f) => f.group === "move");
+  const renderFact = (f) => (
+    <Fact key={f.group} label={f.label} wide={f.group === "move"}>
+      {f.cats.map((c) => (
+        <CategoryPill key={c.id} cat={c} useShort />
+      ))}
+    </Fact>
   );
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div
-        className="modal"
+        className="modal detail"
         role="dialog"
         aria-modal="true"
         aria-labelledby="pokemon-detail-title"
@@ -64,37 +75,38 @@ function PokemonDetail({ pokemon, onClose }) {
         <button className="modal-close" aria-label="Close" onClick={onClose}>
           ×
         </button>
-        <div className="detail-head">
-          <Sprite pokemon={pokemon} className="sprite detail-sprite" />
-          <div>
+        <header className="detail-head">
+          <div className={`detail-well type-${pokemon.types[0]}`}>
+            <Sprite pokemon={pokemon} className="sprite detail-sprite" />
+          </div>
+          <div className="detail-title">
             <h3 id="pokemon-detail-title">
               <PokemonName name={pokemon.displayName} />
             </h3>
-            <p className="hint detail-meta">
+            <p className="detail-meta">
               #{String(pokemon.species).padStart(4, "0")}
               {base ? ` · Form of ${base.displayName}` : ""}
             </p>
-          </div>
-        </div>
-        <div className="detail-grid">
-          {/* an odd narrow group would sit alone on the left; let it span and centre */}
-          {narrow.map((g, i) => renderGroup(i === narrow.length - 1 && narrow.length % 2 ? { ...g, wide: true } : g))}
-          <section className="detail-group wide">
-            <h4>Abilities</h4>
-            <div className="detail-pills">
-              {pokemon.abilityList.map((a) => (
-                <AbilityPill key={a.name} ability={a} />
+            <div className="detail-types">
+              {types.map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
               ))}
             </div>
-          </section>
-          <section className="detail-group wide">
-            <h4>Evolution</h4>
-            <div className="detail-pills">
-              <EvolutionLine pokemon={pokemon} />
-            </div>
-          </section>
-          {groups.filter((g) => g.wide).map(renderGroup)}
-        </div>
+          </div>
+        </header>
+        <dl className="detail-facts">
+          {before.map(renderFact)}
+          <Fact label="Abilities">
+            {pokemon.abilityList.map((a) => (
+              <AbilityPill key={a.name} ability={a} />
+            ))}
+          </Fact>
+          {moves.map(renderFact)}
+        </dl>
+        <section className="detail-evo">
+          <h4>Evolution</h4>
+          <EvolutionLine pokemon={pokemon} />
+        </section>
       </div>
     </div>
   );

@@ -180,9 +180,18 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     band is *still* black on device, Safari isn't showing the canvas there
     at all and the strip is Safari's own — nothing on our side can paint it.
 30b. Detail card: centred dialog on all sizes (was a bottom sheet on
-    phones), content centred, no circle behind the sprite; the page behind
-    it can't scroll (`#root` overflow locked while open, backdrop
-    `touch-action: none`).
+    phones); the page behind it can't scroll (`#root` overflow locked
+    while open, backdrop `touch-action: none`). Laid out as three blocks
+    divided by hairlines, everything left-aligned: header (sprite in a
+    well washed with its first type's colour; name, dex line and the type
+    pills — types are identity, not a row), then a label/value list
+    (Region, Group, Abilities, Moves — no Stage or Line rows, the evolution
+    tree below shows both; the categories are untouched) with quieter, uniform
+    pills, then Evolution as a row of stage tiles (sprite, name, how)
+    joined by arrows — a level with several Pokémon is one column that
+    stacks or grids its tiles, so Wurmple → Silcoon/Cascoon →
+    Beautifly/Dustox reads as a tree and Eevee's eight sit in a 4×2 grid.
+    On phones the Moves row drops its pills under the label.
 
 30. Records carry `evoItem` (the item an item evolution needs: used stone,
     held item, or held-while-trading item). Dex `evoItem` plus overrides for

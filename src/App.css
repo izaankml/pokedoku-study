@@ -1167,83 +1167,95 @@ header h1 {
   min-width: 0;
 }
 
-/* ---- evolution line: chips joined by arrows ---- */
+/* ---- evolution line: stage tiles joined by arrows ---- */
 
 .evo-line {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 6px 4px;
-}
-
-.evo-level-wrap {
-  display: inline-flex;
-  align-items: center;
+  align-items: stretch; /* every stage as tall as the tallest, so the row reads as one band */
   gap: 4px;
 }
 
-/* a branch (several evolutions) takes its own row under a ↓ */
-.evo-level-wrap.branch {
-  flex-basis: 100%;
-  flex-direction: column;
-  gap: 2px;
+.evo-level {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
 }
 
-.evo-level {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
+/* a level with several Pokémon shares the leftover width; its tiles stack
+   in as many columns as fit (Wurmple's cocoons stack, Eevee's eight grid) */
+.evo-level.branch {
+  flex: 1 1 0;
+}
+
+.evo-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
   gap: 6px;
+  min-width: 0;
+}
+
+.evo-level:not(.branch) .evo-tiles {
+  width: 84px;
+  flex: none;
+}
+
+.evo-level.branch .evo-tiles {
+  flex: 1;
 }
 
 .evo-arrow {
+  align-self: center;
   color: var(--text-low);
-  font-size: 1rem;
-  padding: 0 2px;
+  font-size: 1.05rem;
+  flex: none;
 }
 
-.evo-chip {
-  display: inline-flex;
+.evo-tile {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 3px 9px 3px 4px;
-  border-radius: var(--radius-full);
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 4px 7px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
-  border: 1.5px solid var(--border);
-  font-size: 0.76rem;
+  border: 1.5px solid var(--border-subtle);
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--text-hi);
-  text-align: left;
   line-height: 1.15;
+  color: var(--text-hi);
+  text-align: center;
+  min-width: 0;
 }
 
-.evo-chip.current {
+.evo-tile.current {
   border-color: var(--accent);
   background: var(--accent-soft);
 }
 
 .evo-sprite,
 .sprite-fallback.evo-sprite {
-  width: 26px;
-  height: 26px;
+  width: 40px;
+  height: 40px;
   flex: none;
+  margin-bottom: 2px;
 }
 
-.evo-text {
-  display: flex;
-  flex-direction: column;
+.evo-name,
+.evo-how {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .evo-how {
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 600;
   color: var(--text-low);
-  white-space: nowrap;
 }
 
 .evo-none {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-low);
 }
 
@@ -2105,81 +2117,171 @@ main > * {
 
 .modal-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   background: var(--surface-2);
-  font-size: 1.3rem;
+  color: var(--text-mid);
+  font-size: 1.2rem;
   line-height: 1;
 }
 
-/* sprite on the left, name and dex line beside it — a short header, so
-   the categories get the room */
-.detail-head {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-2);
-  padding-right: 40px; /* clear of the close button */
+/* three blocks — identity, facts, evolution — divided by hairlines,
+   everything left-aligned so labels and values line up */
+.modal.detail {
+  padding: 0;
   text-align: left;
 }
 
-.detail-head > div {
-  min-width: 0;
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4) 56px var(--sp-4) var(--sp-4); /* right: clear of the close button */
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.detail-head h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  line-height: 1.25;
-}
-
-.detail-meta {
-  margin: 2px 0 0;
+/* the sprite sits in a well washed with its first type's colour */
+.detail-well {
+  flex: none;
+  width: 92px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--type-c) 32%, transparent), transparent 72%),
+    var(--surface-2);
+  border: 1px solid color-mix(in srgb, var(--type-c) 30%, var(--border-subtle));
 }
 
 .detail-sprite,
 .sprite-fallback.detail-sprite {
-  width: 84px;
-  height: 84px;
-  flex: none;
+  width: 76px;
+  height: 76px;
 }
 
-.detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-4) var(--sp-3);
-  margin-top: var(--sp-4);
-}
-
-.detail-group {
+.detail-title {
   min-width: 0;
 }
 
-.detail-group.wide {
-  grid-column: 1 / -1;
+.detail-title h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
 }
 
-.detail-group h4 {
-  margin: 0 0 6px;
-  font-size: 0.72rem;
+.detail-meta {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-low);
+}
+
+.detail-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.detail-types .pill {
+  min-width: 0;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+}
+
+/* label column on the left, pills on the right */
+.detail-facts {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  display: grid;
+  gap: 10px;
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 5.5em 1fr;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.fact dt,
+.detail-evo h4 {
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-low);
+  line-height: 1.6;
+}
+
+.fact dt {
+  padding-top: 5px; /* optical: level with the first pill's text */
+  align-self: start;
+}
+
+.fact dd {
+  margin: 0;
+  min-width: 0;
 }
 
 .detail-pills {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 
+/* quieter pills in the sheet: smaller, and no minimum width to pad out */
 .detail-pills .pill {
-  padding: 5px 10px;
-  font-size: 0.82rem;
+  min-width: 0;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.detail-evo {
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.detail-evo h4 {
+  margin: 0 0 8px;
+}
+
+@media (max-width: 420px) {
+  .modal-backdrop {
+    padding: var(--sp-3);
+  }
+  .detail-head {
+    gap: var(--sp-3);
+    padding-left: var(--sp-3);
+  }
+  .detail-well {
+    width: 80px;
+    height: 80px;
+  }
+  .detail-sprite,
+  .sprite-fallback.detail-sprite {
+    width: 66px;
+    height: 66px;
+  }
+  .detail-facts,
+  .detail-evo {
+    padding-left: var(--sp-3);
+    padding-right: var(--sp-3);
+  }
+  .fact {
+    grid-template-columns: 5em 1fr;
+  }
+  .fact.wide {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .fact.wide dt {
+    padding-top: 0;
+  }
 }
