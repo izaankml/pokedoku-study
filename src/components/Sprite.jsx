@@ -82,12 +82,13 @@ function fitTransform(box, slot) {
 // Falls back to the base species' sprite, then the silhouette.
 function Sprite({ pokemon, className = "sprite", eager = false }) {
   const [attempt, setAttempt] = useState(0);
-  const urls = spriteCandidates(pokemon);
-  const src = urls[Math.min(attempt, urls.length - 1)];
-  // The measured box is remembered with the src it belongs to, so a new
-  // Pokémon never borrows the previous one's box for a frame.
+  const candidates = spriteCandidates(pokemon);
+  const cand = candidates[Math.min(attempt, candidates.length - 1)];
+  const src = cand.url;
+  // A box measured at runtime is remembered with the src it belongs to, so
+  // a new Pokémon never borrows the previous one's box for a frame.
   const [measured, setMeasured] = useState({ src: null, box: undefined });
-  const box = measured.src === src ? measured.box : boxCache.get(src);
+  const box = cand.box ?? (measured.src === src ? measured.box : boxCache.get(src));
   const [fit, setFit] = useState(null); // transform, "" for as-drawn, null until placed
   const imgRef = useRef(null);
   useEffect(() => setAttempt(0), [pokemon.id]);
@@ -97,7 +98,7 @@ function Sprite({ pokemon, className = "sprite", eager = false }) {
     else setFit(box ? fitTransform(box, imgRef.current.clientWidth) : "");
   }, [box, src]);
 
-  if (attempt >= urls.length) {
+  if (attempt >= candidates.length) {
     return (
       <div className={`sprite-fallback ${className}`} title={pokemon.displayName}>
         <PokeballIcon />
@@ -115,9 +116,12 @@ function Sprite({ pokemon, className = "sprite", eager = false }) {
       alt={pokemon.displayName}
       loading={eager ? "eager" : "lazy"}
       decoding="sync"
-      crossOrigin="anonymous"
+      crossOrigin={cand.cors ? "anonymous" : undefined}
       style={fit === null ? { visibility: "hidden" } : fit ? { transform: fit } : undefined}
-      onLoad={(e) => setMeasured({ src, box: measureBox(e.currentTarget) })}
+      onLoad={(e) => {
+        // sprites without a prebuilt box are measured here (CORS hosts only)
+        if (!cand.box) setMeasured({ src, box: cand.cors ? measureBox(e.currentTarget) : null });
+      }}
       onError={() => setAttempt((a) => a + 1)}
     />
   );

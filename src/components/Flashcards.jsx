@@ -12,14 +12,14 @@ const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil",
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Typing, region and group of a Pokémon as pills, shown once a card is
-// answered — the same summary strip whatever the deck asked, so the eye
-// always finds the types in the same place. Abilities follow as their own
-// row of pills.
+// answered — the same strip whatever the deck asked: types on the left,
+// region in the middle, group on the right, so the eye always finds each
+// in the same place. Abilities follow as their own row of pills.
 function summaryPills(p) {
   return [
-    ...p.types.map((t) => CAT.get(`type-${t}`)),
-    ...p.regions.map((r) => CAT.get(`region-${r}`)),
-    ...GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
+    p.types.map((t) => CAT.get(`type-${t}`)),
+    p.regions.map((r) => CAT.get(`region-${r}`)),
+    GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
   ];
 }
 
@@ -201,9 +201,13 @@ function Flashcards() {
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
           <div className="card-facts">
-            <div className="card-tags">
-              {summaryPills(pokemon).map((c) => (
-                <CategoryPill key={c.id} cat={c} useShort />
+            <div className="card-tags card-tags-spread">
+              {summaryPills(pokemon).map((cats, i) => (
+                <span key={i} className="tag-group">
+                  {cats.map((c) => (
+                    <CategoryPill key={c.id} cat={c} useShort />
+                  ))}
+                </span>
               ))}
             </div>
             <div className="card-tags">

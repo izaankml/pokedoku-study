@@ -542,9 +542,10 @@ header h1 {
 /* Abilities: outlined, quieter than category pills; the ones PokeDoku
    asks about get the accent wash */
 .pill.ability {
-  background: transparent;
-  border: 1.5px solid color-mix(in srgb, var(--text-mid) 55%, transparent);
-  color: var(--text-mid);
+  --ability-c: #9c8ee0; /* lilac: no type owns it */
+  background: color-mix(in srgb, var(--ability-c) 10%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--ability-c) 75%, transparent);
+  color: var(--text-hi);
 }
 
 .pill.ability.tracked {
@@ -1090,6 +1091,7 @@ header h1 {
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  width: 100%; /* as wide as the card, so the spread row aligns with its edges */
   max-width: 480px;
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
@@ -1105,6 +1107,29 @@ header h1 {
 .card-tags .pill {
   padding: 4px 10px;
   font-size: 0.78rem;
+}
+
+/* types | region | group — three cells, the middle one truly centred */
+.card-tags-spread {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+}
+
+.tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-tags-spread .tag-group:first-child {
+  justify-content: flex-start;
+}
+
+.card-tags-spread .tag-group:last-child {
+  justify-content: flex-end;
 }
 
 /* small caps caption on a pill row ("Abilities"), styled like the
