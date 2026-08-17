@@ -72,10 +72,11 @@ function Tile({ pokemon: p, evolved, current, note, form = false, variant = fals
   );
 }
 
-// → evolves into · ⇢ becomes, for a while · ≈ another form of the same
-const Arrow = ({ form = false, variant = false }) => (
-  <span className={`evo-arrow${form ? " form" : ""}${variant ? " variant" : ""}`} aria-hidden="true">
-    {variant ? "≈" : form ? "⇢" : "→"}
+// → evolves into · ⇢ becomes, for a while · ⇠ is a form of · ≈ another
+// form of the same
+const Arrow = ({ glyph = "→" }) => (
+  <span className={`evo-arrow${glyph === "→" ? "" : " form"}`} aria-hidden="true">
+    {glyph}
   </span>
 );
 
@@ -130,24 +131,23 @@ function EvolutionLine({ pokemon, onOpen }) {
   );
 }
 
-// The Forms row: what relates directly to the Pokémon on the sheet
-// (forms.js formsRow), base first — ⇢ transformations, ≈ variants or
-// counterparts — each group stacked in pairs, the Pokémon itself
-// highlighted wherever it is. Null when there's nothing.
+// The Forms row: the other forms that relate directly to the Pokémon on
+// the sheet (forms.js formsRow) — ⇠ its base, ⇢ transformations, ≈
+// variants or counterparts — each group stacked in pairs. Null when
+// there's nothing.
 export function FormsRows({ pokemon, onOpen }) {
   const segments = formsRow(pokemon);
   if (!segments.length) return null;
   const tileOf = (p) => {
     const transformation = isTransformation(p);
-    const variant = !transformation && p.species !== undefined && p.id !== (POKEMON_BY_ID.get(p.species) || p).id;
+    const variant = !transformation && p.id !== (POKEMON_BY_ID.get(p.species) || p).id;
     return (
       <Tile
         key={p.id}
         pokemon={p}
         form={transformation}
         variant={variant}
-        note={transformation ? formTrigger(p) : variant && variantNote(p) !== formLabel(p) ? variantNote(p) : null}
-        current={p.id === pokemon.id}
+        note={transformation ? formTrigger(p) : variant && variantNote(p) && variantNote(p) !== formLabel(p) ? variantNote(p) : null}
         onOpen={onOpen}
       />
     );
@@ -158,20 +158,16 @@ export function FormsRows({ pokemon, onOpen }) {
       <div className="evo-scroll">
         <div className="evo-line forms-line">
           <div className="evo-node">
-            {segments.map(([conn, tiles], i) => (
-              <Fragment key={i}>
-                {conn ? <Arrow form={conn === "⇢"} variant={conn === "≈"} /> : null}
-                {conn ? (
-                  <div className="evo-tiles">
-                    {pairsOf(tiles).map((pair) => (
-                      <div key={pair[0].id} className="evo-col">
-                        {pair.map(tileOf)}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  tiles.map((p) => <Tile key={p.id} pokemon={p} current={p.id === pokemon.id} onOpen={onOpen} />)
-                )}
+            {segments.map(([conn, tiles]) => (
+              <Fragment key={conn}>
+                <Arrow glyph={conn} />
+                <div className="evo-tiles">
+                  {pairsOf(tiles).map((pair) => (
+                    <div key={pair[0].id} className="evo-col">
+                      {pair.map(tileOf)}
+                    </div>
+                  ))}
+                </div>
               </Fragment>
             ))}
           </div>

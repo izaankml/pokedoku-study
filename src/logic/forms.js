@@ -119,9 +119,12 @@ export function baseOf(p) {
 }
 
 // A transformation's kind, without its base's own form: Galar-Zen → Zen,
-// Rapid-Strike-Gmax → Gmax, Mega-X → Mega-X — so Zen and Galar Zen, or
-// the two Gigantamax Urshifu, are counterparts.
+// Rapid-Strike-Gmax → Gmax, Curly-Mega / M-Mega → Mega, Mega-X → Mega-X —
+// so Zen and Galar Zen, the two Gigantamax Urshifu, or Tatsugiri's three
+// Megas are counterparts.
 export function formKind(p) {
+  if (isMega(p)) return p.form.match(/Mega(-[XYZ])?$/)[0];
+  if (isGmax(p)) return "Gmax";
   const base = baseOf(p);
   return base.form && p.form.startsWith(`${base.form}-`) ? p.form.slice(base.form.length + 1) : p.form;
 }
@@ -132,7 +135,8 @@ export function formTrigger(p) {
     const species = POKEMON_BY_ID.get(p.species);
     if (species.name === "rayquaza") return "Dragon Ascent";
     const letter = (p.form.match(/-([XYZ])$/) || [])[1];
-    return MEGA_STONES[species.displayName] + (letter ? ` ${letter}` : "");
+    const stone = MEGA_STONES[p.speciesName || species.displayName];
+    return stone ? stone + (letter ? ` ${letter}` : "") : "Mega Stone";
   }
   if (isGmax(p)) return "Gigantamax Factor";
   return TRIGGERS[p.name];
@@ -179,21 +183,27 @@ const VARIANT_NOTES = {
   magearnaoriginal: "Original Colour",
   basculinbluestriped: "Blue-Striped",
   basculinwhitestriped: "White-Striped",
-  dudunsparcethreesegment: "Three-Segment",
+  dudunsparcethreesegment: "1 in 100",
+  urshifurapidstrike: "Rapid Strike Style",
+  wormadamsandy: "Sandy Cloak",
+  wormadamtrash: "Trash Cloak",
 };
+// by species (slug prefix) → note, or null when the label says it all
 const VARIANT_KINDS = [
-  [/^(alola|galar|hisui|paldea)/i, (form) => `${{ alola: "Alolan", galar: "Galarian", hisui: "Hisuian", paldea: "Paldean" }[form.split("-")[0].toLowerCase()]} Form`],
-  [/^(pom-pom|pa'u|sensu)$/i, () => "Nectar Style"],
-  [/^(blue|yellow|white)$/i, () => "Plumage"],
-  [/^(orange|yellow|green|blue|indigo|violet)$/i, () => "Core Colour"],
-  [/^(small|large|super)$/i, () => "Size"],
-  [/^(droopy|stretchy|curly)$/i, () => "Form"],
-  [/^f$/i, () => "Female"],
+  [/^oricorio/, "Nectar Style"],
+  [/^squawkabilly/, null],
+  [/^minior/, "Core Colour"],
+  [/^(pumpkaboo|gourgeist)/, null],
+  [/^tatsugiri/, null],
+  [/^tauros/, null],
 ];
+const REGION_ADJ = { Alola: "Alolan", Galar: "Galarian", Hisui: "Hisuian", Paldea: "Paldean" };
 export function variantNote(p) {
   if (VARIANT_NOTES[p.name]) return VARIANT_NOTES[p.name];
-  for (const [re, note] of VARIANT_KINDS) if (re.test(p.form)) return note(p.form);
-  return "Alternate Form";
+  if (p.form === "F") return "Female";
+  if (REGION_ADJ[p.form]) return `${REGION_ADJ[p.form]} Form`;
+  for (const [re, note] of VARIANT_KINDS) if (re.test(p.name)) return note;
+  return null;
 }
 
 export function variantsOf(p) {
@@ -212,24 +222,25 @@ export function counterpartsOf(p) {
   );
 }
 
-// The Forms row for a sheet, as segments [connector, tiles] — a chain,
-// base first, of what relates *directly* to the Pokémon:
-//   the species base S:  [S] ⇢ its transformations ≈ its variants
-//   a variant V:         [S] ≈ V and the other variants ⇢ V's transformations
-//   a transformation T:  [B] ⇢ B's transformations ≈ T's counterparts
-// so Darmanitan shows Zen and Galarian Darmanitan (not Galar Zen), Zen
-// shows Galar Zen, Galarian Darmanitan shows Galar Zen and Darmanitan.
+// The Forms row for a sheet, as segments [connector, tiles]: the *other*
+// forms that relate directly to the Pokémon (its own tile is the header):
+//   the species base S:  ⇢ its transformations · ≈ its variants
+//   a variant V:         ≈ S and the other variants · ⇢ V's transformations
+//   a transformation T:  ⇠ its base B · ≈ B's other transformations and
+//                        T's counterparts (the same kind on other variants)
+// so Darmanitan lists Zen and Galarian Darmanitan (not Galar Zen); Zen
+// lists Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
+// Galar Zen; Charizard Mega X lists Charizard, Mega Y and Gigantamax.
 export function formsRow(p) {
   const S = POKEMON_BY_ID.get(p.species) || p;
   let segments;
   if (isTransformation(p)) {
     const B = baseOf(p);
-    segments = [[null, [B]], ["⇢", formsOf(B)], ["≈", counterpartsOf(p)]];
+    segments = [["⇠", [B]], ["≈", [...formsOf(B).filter((f) => f.id !== p.id), ...counterpartsOf(p)]]];
   } else if (p === S) {
-    segments = [[null, [S]], ["⇢", formsOf(S)], ["≈", variantsOf(S)]];
+    segments = [["⇢", formsOf(S)], ["≈", variantsOf(S)]];
   } else {
-    segments = [[null, [S]], ["≈", [p, ...variantsOf(S).filter((v) => v.id !== p.id)]], ["⇢", formsOf(p)]];
+    segments = [["≈", [S, ...variantsOf(S).filter((v) => v.id !== p.id)]], ["⇢", formsOf(p)]];
   }
-  segments = segments.filter(([, tiles]) => tiles.length);
-  return segments.length > 1 ? segments : [];
+  return segments.filter(([, tiles]) => tiles.length);
 }

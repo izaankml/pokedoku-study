@@ -6,7 +6,7 @@ const byName = (n) => POKEMON.find((p) => p.displayName === n || p.altName === n
 
 describe("forms", () => {
   it("knows every transformation's trigger", () => {
-    for (const p of POKEMON) if (isTransformation(p)) expect(formTrigger(p), p.displayName).toBeTruthy();
+    for (const p of POKEMON) if (isTransformation(p)) expect(formTrigger(p), p.displayName).toMatch(/^(?!.*undefined).+/);
   });
   it("names Mega Stones, old and Z-A", () => {
     expect(formTrigger(byName("Charizard Mega X"))).toBe("Charizardite X");
@@ -45,6 +45,9 @@ describe("variants", () => {
     expect(variantsOf(byName("Charizard"))).toEqual([]); // Megas and Gmax are transformations
     expect(variantNote(byName("Vulpix Alola"))).toBe("Alolan Form");
     expect(variantNote(byName("Zarude Dada"))).toBe("Dada's Cloth");
+    expect(formTrigger(byName("Meowstic Mega"))).toBe("Meowsticite");
+    expect(formTrigger(byName("Tatsugiri Droopy Mega"))).toBe("Tatsugirinite");
+    expect(counterpartsOf(byName("Tatsugiri Curly Mega")).map((p) => p.displayName)).toEqual(["Tatsugiri Droopy Mega", "Tatsugiri Stretchy Mega"]);
   });
 });
 
@@ -60,16 +63,37 @@ describe("PokeDoku names", () => {
 });
 
 describe("formsRow", () => {
-  const names = (p) => formsRow(p).map(([conn, tiles]) => `${conn || ""}${tiles.map((t) => t.displayName).join("/")}`);
-  it("relates only what's direct: Darmanitan", () => {
-    expect(names(byName("Darmanitan Standard"))).toEqual(["Darmanitan Standard", "⇢Darmanitan Zen", "≈Darmanitan Galar Standard"]);
-    expect(names(byName("Darmanitan Zen"))).toEqual(["Darmanitan Standard", "⇢Darmanitan Zen", "≈Darmanitan Galar Zen"]);
-    expect(names(byName("Darmanitan Galar Standard"))).toEqual(["Darmanitan Standard", "≈Darmanitan Galar Standard", "⇢Darmanitan Galar Zen"]);
-    expect(names(byName("Darmanitan Galar Zen"))).toEqual(["Darmanitan Galar Standard", "⇢Darmanitan Galar Zen", "≈Darmanitan Zen"]);
+  const names = (p) => formsRow(p).map(([conn, tiles]) => `${conn}${tiles.map((t) => t.displayName).join("/")}`);
+  it("relates only what's direct, without the sheet's own Pokémon: Darmanitan", () => {
+    expect(names(byName("Darmanitan Standard"))).toEqual(["⇢Darmanitan Zen", "≈Darmanitan Galar Standard"]);
+    expect(names(byName("Darmanitan Zen"))).toEqual(["⇠Darmanitan Standard", "≈Darmanitan Galar Zen"]);
+    expect(names(byName("Darmanitan Galar Standard"))).toEqual(["≈Darmanitan Standard", "⇢Darmanitan Galar Zen"]);
+    expect(names(byName("Darmanitan Galar Zen"))).toEqual(["⇠Darmanitan Galar Standard", "≈Darmanitan Zen"]);
+    expect(names(byName("Venusaur"))).toEqual(["⇢Venusaur Mega/Venusaur Gmax"]);
+    expect(names(byName("Charizard Mega X"))).toEqual(["⇠Charizard", "≈Charizard Mega Y/Charizard Gmax"]);
   });
-  it("shows every Lycanroc on every Lycanroc, and Gigantamax Urshifu as counterparts", () => {
-    expect(names(byName("Lycanroc Midnight"))).toEqual(["Lycanroc Midday", "≈Lycanroc Midnight/Lycanroc Dusk"]);
+  it("shows the other Lycanrocs on every Lycanroc, and Gigantamax Urshifu as counterparts", () => {
+    expect(names(byName("Lycanroc Midnight"))).toEqual(["≈Lycanroc Midday/Lycanroc Dusk"]);
     expect(counterpartsOf(byName("Urshifu Rapid Strike Gmax")).map((p) => p.displayName)).toEqual(["Urshifu Single Strike Gmax"]);
     expect(names(byName("Charmander"))).toEqual([]);
+  });
+});
+
+describe("Forms rows hang together", () => {
+  it("are symmetric: whoever a sheet shows, shows that sheet back", () => {
+    for (const p of POKEMON) {
+      const shown = formsRow(p).flatMap(([, tiles]) => tiles).filter((t) => t.id !== p.id);
+      for (const t of shown) {
+        const back = formsRow(t).flatMap(([, tiles]) => tiles).map((x) => x.id);
+        expect(back, `${t.displayName} should show ${p.displayName} back`).toContain(p.id);
+      }
+    }
+  });
+  it("never repeat a tile nor show the sheet's own Pokémon", () => {
+    for (const p of POKEMON) {
+      const ids = formsRow(p).flatMap(([, tiles]) => tiles).map((t) => t.id);
+      expect(new Set(ids).size, p.displayName).toBe(ids.length);
+      expect(ids, p.displayName).not.toContain(p.id);
+    }
   });
 });

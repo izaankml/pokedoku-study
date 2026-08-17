@@ -264,18 +264,23 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
     Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted
     tiles, a word on what it is: `variantNote`). The row (`formsRow`) is
-    what relates *directly* to the sheet's Pokémon, base first: the
-    species base shows ⇢ its transformations ≈ its variants; a variant
-    shows the base ≈ itself and the other variants ⇢ its own
-    transformations; a transformation shows its base ⇢ that base's
-    transformations ≈ its counterparts (the same kind on the other
-    variants: Zen ≈ Galar Zen, Single Strike Gmax ≈ Rapid Strike Gmax —
-    `formKind`, `counterpartsOf`). So Darmanitan shows Zen and Galarian
-    Darmanitan but not Galar Zen; Zen shows Galar Zen; Galarian Darmanitan
-    shows Galar Zen and Darmanitan; every Lycanroc shows all three. A
-    transformation's base is the variant whose form its own form extends
-    (`baseOf`: Galar-Zen → Galarian Darmanitan, Rapid-Strike-Gmax → Rapid
-    Strike Urshifu, Droopy-Mega → Droopy Tatsugiri), else the species. Long
+    the *other* forms that relate directly to the sheet's Pokémon (its own
+    tile is the header): the species base lists ⇢ its transformations and
+    ≈ its variants; a variant lists ≈ the base and the other variants and
+    ⇢ its own transformations; a transformation lists ⇠ its base and ≈ the
+    base's other transformations plus its counterparts (the same kind on
+    the other variants: Zen ≈ Galar Zen, Single Strike Gmax ≈ Rapid Strike
+    Gmax, Tatsugiri's three Megas — `formKind`, `counterpartsOf`). So
+    Darmanitan lists Zen and Galarian Darmanitan (not Galar Zen); Zen lists
+    Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
+    Galar Zen; Charizard Mega X lists Charizard, Mega Y, Gmax; every
+    Lycanroc lists the other two. A transformation's base is the variant
+    whose form its own form extends (`baseOf`: Galar-Zen → Galarian
+    Darmanitan, Rapid-Strike-Gmax → Rapid Strike Urshifu, Droopy-Mega →
+    Droopy Tatsugiri), else the species. Tests keep the rows symmetric
+    (whoever a sheet lists, lists it back), duplicate-free and free of the
+    sheet's own Pokémon; every row and every tree was dumped and read
+    through once by hand. Long
     one-word names (Meowscarada) shrink to fit a tile rather than break.
     Still absent, on
     purpose: cosmetic forms (Vivillon, Alcremie, Arceus/Silvally plates,

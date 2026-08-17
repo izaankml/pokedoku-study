@@ -21,7 +21,9 @@ export const POKEMON_BY_NAME = new Map(ALL_POKEMON.map((p) => [p.name, p]));
 // "Mr. Mime Galar", not "Mr Mime Galar"). The dataset's own name
 // ("Galarian Zapdos", "Lycanroc") is kept as `altName`, still searchable;
 // `speciesName` is the plain species name.
+const SMALL = new Set(["of", "the", "and", "de"]);
 const cap = (w) => (w ? w[0].toUpperCase() + w.slice(1) : w);
+const words = (slug) => slug.split("-").map((w, i) => (i > 0 && SMALL.has(w) ? w : cap(w))).join(" ");
 const SPECIES_NAME = new Map(ALL_POKEMON.filter((p) => !p.form).map((p) => [p.id, p.displayName]));
 for (const p of ALL_POKEMON) {
   const species = SPECIES_NAME.get(p.species) || cap(POKEDOKU_NAMES[p.id]?.specie || "");
@@ -30,10 +32,10 @@ for (const p of ALL_POKEMON) {
   let name;
   if (pd) {
     const rest = pd.name.startsWith(`${pd.specie}-`) ? pd.name.slice(pd.specie.length + 1) : pd.name;
-    name = `${species} ${rest.split("-").map(cap).join(" ")}`;
+    name = `${species} ${words(rest)}`;
   } else if (p.form && p.answer === false) {
     // a display-only form PokeDoku has no name for: name it the same way
-    name = `${species} ${p.form.split("-").map(cap).join(" ")}`;
+    name = `${species} ${words(p.form)}`;
   } else continue;
   if (name !== p.displayName) {
     p.altName = p.displayName;
