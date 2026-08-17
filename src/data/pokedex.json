@@ -3,8 +3,8 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1324,
-  "answerCount": 1258,
+  "count": 1323,
+  "answerCount": 1257,
   "speciesCount": 1025
  },
  "pokemon": [
@@ -38241,45 +38241,6 @@
    "form": "M-Mega",
    "name": "meowsticmmega",
    "displayName": "Meowstic (M Mega)",
-   "types": [
-    "psychic"
-   ],
-   "gen": 6,
-   "region": "kalos",
-   "regions": [
-    "kalos"
-   ],
-   "stage": null,
-   "evoMethods": [],
-   "evoItem": null,
-   "evoDetail": null,
-   "branched": false,
-   "flags": [
-    "mega"
-   ],
-   "moves": [
-    "calmmind",
-    "protect",
-    "psychic",
-    "shadowball",
-    "tailslap",
-    "thunderbolt"
-   ],
-   "abilities": [],
-   "abilityList": [
-    {
-     "name": "Trace",
-     "hidden": false
-    }
-   ],
-   "prevo": null
-  },
-  {
-   "id": 10326,
-   "species": 678,
-   "form": "F-Mega",
-   "name": "meowsticfmega",
-   "displayName": "Meowstic (F Mega)",
    "types": [
     "psychic"
    ],

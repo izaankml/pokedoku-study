@@ -266,10 +266,9 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     record since the dex's base Minior is the meteor), while Cramorant's
     battle forms stay in `ALL_POKEMON` only (trees, forms, the sheet, URL
     slugs). A gender form shares its base's transformations in the Forms
-    row (Pyroar Female lists Pyroar Mega, and vice versa) unless it has
-    its own of that kind — Meowstic's genders Mega Evolve differently, so
-    Meowstic Female Mega (Z-A; PokeDoku lists it hidden, no sprite: the
-    female's stands in) is a record and each gender lists its own. Checked:
+    row (Pyroar Female lists Pyroar Mega, Meowstic Female lists Meowstic
+    Mega, and vice versa) unless it has its own of that kind (none does;
+    PokeDoku's hidden `meowstic-female-mega` isn't real yet). Checked:
     no gender form in the data is a one-gender evolution (Combee, Salandit,
     Kirlia, Snorunt, Burmy — where only one gender evolves — aren't split
     by gender in PokeDoku; the tree labels those Male/Female). Names come PokeDoku-style ("Lycanroc Midnight"), sprites from

@@ -360,8 +360,7 @@ export const FORM_IDS = {
   floetteeternal: 10061, // Floette-Eternal
   floettemega: 10296, // Floette-Mega
   meowsticf: 10025, // Meowstic-F
-  meowsticmmega: 10314, // Meowstic-M-Mega
-  meowsticfmega: 10326, // Meowstic-F-Mega (Legends Z-A; PokeDoku lists it hidden)
+  meowsticmmega: 10314, // Meowstic-M-Mega (both genders Mega Evolve into it; PokeDoku's hidden meowstic-female-mega isn't a thing yet)
   aegislashblade: 10026, // Aegislash-Blade
   malamarmega: 10297, // Malamar-Mega
   barbaraclemega: 10298, // Barbaracle-Mega

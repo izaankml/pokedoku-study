@@ -240,9 +240,9 @@ export function counterpartsOf(p) {
 // lists Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
 // Galar Zen; Charizard Mega X lists Charizard, Mega X, Mega Y, Gmax;
 // every Lycanroc lists all three. Empty when there's nothing but itself.
-// A gender form (Pyroar Female) shares its base's transformations — she
-// Mega Evolves into the same Mega Pyroar — unless she has her own of that
-// kind (Meowstic Female has her own Mega); those rows list each other.
+// A gender form (Pyroar Female, Meowstic Female) shares its base's
+// transformations — she Mega Evolves into the same Mega — unless she has
+// her own of that kind; those rows list each other.
 const sharedFormsOf = (female, base) => {
   const own = new Set(formsOf(female).map(formKind));
   return formsOf(base).filter((f) => !own.has(formKind(f)));

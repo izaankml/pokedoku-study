@@ -72,9 +72,7 @@ describe("formsRow", () => {
     expect(names(byName("Venusaur"))).toEqual(["Venusaur", "Venusaur Mega", "Venusaur Gmax"]);
     expect(names(byName("Pyroar Female"))).toEqual(["Pyroar Male", "Pyroar Mega", "Pyroar Female"]);
     expect(names(byName("Pyroar Mega"))).toEqual(["Pyroar Male", "Pyroar Mega", "Pyroar Female"]);
-    // Meowstic's genders Mega Evolve differently: each lists its own Mega
-    expect(names(byName("Meowstic Female"))).toEqual(["Meowstic Male", "Meowstic Female", "Meowstic Female Mega"]);
-    expect(names(byName("Meowstic Mega"))).toEqual(["Meowstic Male", "Meowstic Mega", "Meowstic Female Mega"]);
+    expect(names(byName("Meowstic Female"))).toEqual(["Meowstic Male", "Meowstic Female", "Meowstic Mega"]);
     expect(names(byName("Minior Meteor")).slice(0, 3)).toEqual(["Minior Meteor", "Minior Red", "Minior Orange"]);
     expect(names(byName("Charizard Mega X"))).toEqual(["Charizard", "Charizard Mega X", "Charizard Mega Y", "Charizard Gmax"]);
   });
