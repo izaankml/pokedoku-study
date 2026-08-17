@@ -40,20 +40,18 @@ function columnsOf(leaves) {
 // its type colours (split for a dual type — the thing that changes along
 // a line: Charmander → Charizard gains Flying, Eevee's eight differ).
 // `note` (a form's trigger) replaces the evolution method; `form` tiles
-// are dashed to read as "becomes, for a while" rather than "evolves into",
-// and name just the form ("Mega X") since the base sits beside them.
+// are dashed to read as "becomes, for a while" rather than "evolves into".
 // Tapping a tile opens that Pokémon's own sheet (`onOpen`); the current
 // one is inert.
 function Tile({ pokemon: p, evolved, current, note, form = false, variant = false, onOpen }) {
   const h = note ? { short: note, full: note } : evolved && p.evoDetail ? how(p) : null;
   const [t1, t2 = t1] = p.types;
-  const label = form || variant ? formLabel(p) : p.displayName;
+  const label = p.displayName; // the full PokeDoku name, forms included ("Lycanroc Dusk", "Venusaur Mega")
   const Tag = onOpen && !current ? "button" : "div";
   return (
     <Tag
       type={Tag === "button" ? "button" : undefined}
       className={`evo-tile${current ? " current" : ""}${form ? " form" : ""}${variant ? " variant" : ""}`}
-      title={form || variant ? p.displayName : undefined}
       onClick={Tag === "button" ? () => onOpen(p) : undefined}
       style={{ "--t1": `var(--type-${t1})`, "--t2": `var(--type-${t2})` }}
     >
