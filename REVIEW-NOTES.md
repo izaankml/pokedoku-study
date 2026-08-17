@@ -183,14 +183,20 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     phones); the page behind it can't scroll (`#root` overflow locked
     while open, backdrop `touch-action: none`). Three blocks divided by
     hairlines: header (plain sprite; name, dex line, and the type and
-    region pills — identity, not rows), then Evolution, centred, as a row
-    of stage tiles (sprite, name, how) joined by arrows — a level with
-    several Pokémon stacks its tiles in a column (a second column past
-    four), so Wurmple → Silcoon/Cascoon → Beautifly/Dustox reads as a
-    tree and Eevee's eight sit 4 × 2. A regional form that evolves from
-    a different form (Koffing → Galarian Weezing, Pikachu → Alolan
-    Raichu, the Hisuian evolutions) says "in Galar" etc. after the method
-    (`evoWhere`) — the dex line alone reads the same as the usual form's
+    region pills — identity, not rows), then Evolution, centred: a tree
+    of square tiles (sprite, name, how), each joined by an arrow to its
+    own evolutions — one arrow to a lone evolution, one shared arrow into
+    a column where it branches (`evolutionTree`). In a branch, evolutions
+    that go no further pack into vertical pairs that wrap (Eevee's eight:
+    four pairs on a desktop, two rows of two on a phone) and ones that
+    evolve again get a row each — Goomy shows Sliggoo → Goodra over
+    Hisuian Sliggoo → Hisuian Goodra, Applin has Flapple/Appletun paired
+    above Dipplin → Hydrapple. Methods stay under ~30 characters (`TERSE`
+    overrides for the long dex lines) so tiles stay square. A regional
+    form that evolves from a different form (Koffing → Galarian Weezing,
+    Pikachu → Alolan Raichu, the Hisuian evolutions) says "in Galar" etc.
+    after the method (`evoWhere`) — the dex line alone reads the same as
+    the usual form's
     — then Group, Abilities and Moves, each a small-caps label with
     its pills beneath (quieter, uniform pills). Not listed (still
     categories everywhere else): type count, tracked abilities, evolution

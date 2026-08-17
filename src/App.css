@@ -1167,31 +1167,47 @@ header h1 {
   min-width: 0;
 }
 
-/* ---- evolution line: stage tiles joined by arrows ---- */
+/* ---- evolution line: square stage tiles joined by arrows ---- */
 
 .evo-line {
+  --evo-tile: 96px;
   display: flex;
   justify-content: center;
-  align-items: stretch; /* every stage as tall as the tallest, so the row reads as one band */
-  gap: 4px;
 }
 
-.evo-level {
+/* a tile, its arrow and what it evolves into, in a row */
+.evo-node {
   display: flex;
-  align-items: stretch;
-  gap: 4px;
-  flex: none;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
 }
 
-/* a level's tiles: one, or (a branch) a column of up to four — the
-   template rows come inline from EvolutionLine — that spills into a
-   second column past that (Eevee's eight sit 4 × 2) */
-.evo-tiles {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 84px;
+/* a branch: a column of rows — the pair-packed leaves, then each further
+   chain — that gives way and wraps before its parent does */
+.evo-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 6px;
-  align-content: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.evo-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* a vertical pair; a lone tile (odd level) is centred on the row */
+.evo-pair {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
 }
 
 .evo-arrow {
@@ -1199,19 +1215,25 @@ header h1 {
   color: var(--text-low);
   font-size: 1.05rem;
   flex: none;
+  padding: 0 2px;
 }
 
+/* square: sized so a two-line name plus a two-line method still fits;
+   anything longer only makes the tile taller */
 .evo-tile {
+  flex: none;
+  width: var(--evo-tile);
+  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  padding: 8px 4px 7px;
+  padding: 6px 4px;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1.5px solid var(--border-subtle);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   line-height: 1.15;
   color: var(--text-hi);
@@ -1226,8 +1248,8 @@ header h1 {
 
 .evo-sprite,
 .sprite-fallback.evo-sprite {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   flex: none;
   margin-bottom: 2px;
 }
@@ -1239,7 +1261,7 @@ header h1 {
 }
 
 .evo-how {
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 600;
   color: var(--text-low);
 }
@@ -2081,7 +2103,7 @@ main > * {
 .modal {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
   max-height: min(84dvh, 720px);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -2236,5 +2258,11 @@ main > * {
   .detail-evo {
     padding-left: var(--sp-3);
     padding-right: var(--sp-3);
+  }
+}
+
+@media (max-width: 400px) {
+  .evo-line {
+    --evo-tile: 90px; /* three stages plus arrows fit a 375px phone */
   }
 }

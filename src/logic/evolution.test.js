@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { POKEMON } from "../data/pokedex.js";
-import { evoWhere, evolutionLine } from "./evolution.js";
+import { evoWhere, evolutionLine, evolutionTree, shortHow } from "./evolution.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n);
 
@@ -21,5 +21,31 @@ describe("evolutionLine", () => {
   it("lists both Weezings under Koffing", () => {
     const line = evolutionLine(byName("Koffing"));
     expect(line.levels[1].map((p) => p.displayName)).toEqual(["Weezing", "Weezing Galar"]);
+  });
+});
+
+describe("evolutionTree", () => {
+  it("joins each Pokémon to its own evolutions", () => {
+    const { root } = evolutionTree(byName("Goomy"));
+    const names = (n) => [n.pokemon.displayName, n.children.map(names)];
+    expect(names(root)).toEqual([
+      "Goomy",
+      [
+        ["Sliggoo", [["Goodra", []]]],
+        ["Sliggoo Hisui", [["Goodra Hisui", []]]],
+      ],
+    ]);
+  });
+  it("is null for a Pokémon that doesn't evolve", () => {
+    expect(evolutionTree(byName("Ditto"))).toBeNull();
+  });
+});
+
+describe("shortHow", () => {
+  it("keeps every method short enough for a square tile", () => {
+    for (const p of POKEMON) if (p.evoDetail) expect(shortHow(p.evoDetail).length, p.displayName).toBeLessThanOrEqual(31);
+  });
+  it("phrases Tyrogue's three as Attack against Defense", () => {
+    expect(shortHow(byName("Hitmontop").evoDetail)).toBe("Level 20 with Attack = Defense");
   });
 });
