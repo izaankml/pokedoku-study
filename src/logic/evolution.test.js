@@ -55,7 +55,7 @@ describe("evoNote", () => {
     expect(evoNote(byName("Solgaleo"))).toBe("in Sun / Scarlet");
     expect(evoNote(byName("Lunala"))).toBe("in Moon / Violet");
     expect(evoNote(byName("Silcoon"))).toBe("Random");
-    expect(evoNote(byName("Wormadam Sandy"))).toBe("Female, Cave Battle");
+    expect(evoNote(byName("Wormadam Sandy"))).toBe("Female");
     expect(evoNote(byName("Mothim"))).toBe("Male");
     expect(evoNote(byName("Gallade"))).toBe("Male");
     expect(evoNote(byName("Froslass"))).toBe("Female");
@@ -88,7 +88,9 @@ describe("titleCase", () => {
 describe("dex order", () => {
   it("keeps a form beside its base, not after later species", () => {
     const { root } = evolutionTree(byName("Burmy"));
-    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Wormadam Plant", "Wormadam Sandy", "Wormadam Trash", "Mothim"]);
+    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Wormadam Plant", "Mothim"]); // each cloak is its own Burmy
+    expect(evolutionTree(byName("Wormadam Sandy")).root.pokemon.displayName).toBe("Burmy Sandy Cloak");
+    expect(evolutionTree(byName("Litleo")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Pyroar Male", "Pyroar Female"]);
   });
 });
 

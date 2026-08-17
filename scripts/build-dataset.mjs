@@ -49,6 +49,7 @@ import {
   EVO_DETAIL_OVERRIDES,
   PREVO_OVERRIDES,
   DISPLAY_NAME_OVERRIDES,
+  CLONED_FORMS,
 } from "./manual-lists.mjs";
 import { MOVES, ABILITIES } from "../src/data/traits.js";
 
@@ -495,7 +496,12 @@ for (const s of candidateForms) {
     abilities: abilitiesOf(s),
     abilityList: abilityListOf(s),
   };
-  if (coversNothingNew(record, base)) droppedForms.push({ ...record, answer: false });
+  if (record.id >= 90000) {
+    // PokeDoku's own cosmetic entries: never answers; a Deerling season has
+    // no dex children of its own, so its evolution fields are its base's
+    const { stage, evoMethods, evoItem, evoDetail, branched } = base;
+    droppedForms.push({ ...record, stage, evoMethods, evoItem, evoDetail, branched, answer: false });
+  } else if (coversNothingNew(record, base)) droppedForms.push({ ...record, answer: false });
   else formRecords.push(record);
 }
 
@@ -513,6 +519,21 @@ const poolById = new Map(pool.map((s) => [s.id, s]));
 for (const r of baseRecords) r.prevo = prevoIdOf(poolById.get(r.name));
 for (const r of formRecords) r.prevo = prevoIdOf(poolById.get(r.name));
 for (const r of droppedForms) r.prevo = prevoIdOf(poolById.get(r.name));
+
+// The entries PokeDoku lists on its own with no dex forme behind them:
+// clones of the species record, display-only (see CLONED_FORMS)
+for (const g of CLONED_FORMS) {
+  const base = baseById.get(g.species);
+  droppedForms.push({
+    ...base,
+    id: g.id,
+    form: g.form,
+    name: g.name,
+    displayName: `${base.displayName} (${g.form})`,
+    prevo: g.prevo ?? null,
+    answer: false,
+  });
+}
 
 // Base species first, then its forms, in dex order.
 const records = baseRecords

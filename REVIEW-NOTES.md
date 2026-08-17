@@ -284,10 +284,19 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     sheet's own Pokémon; every row and every tree was dumped and read
     through once by hand. Long
     one-word names (Meowscarada) shrink to fit a tile rather than break.
-    Still absent, on
-    purpose: cosmetic forms (Vivillon, Alcremie, Arceus/Silvally plates,
-    caps, totems) and Cherrim Sunshine / Minior Meteor, which have no
-    PokeAPI id of their own to hang a sprite on. Every tile carries a
+    PokeDoku's own custom entries (ids 90000 + dex number: Burmy Sandy /
+    Trash Cloak, Cherrim Sunshine, Shellos / Gastrodon East, Deerling /
+    Sawsbuck seasons, and the female Pyroar, Hippopotas, Hippowdon,
+    Unfezant, Frillish, Jellicent) are display-only records too — dex
+    formes where the dex has them (`FORM_IDS`), clones of the species
+    record where it doesn't (`CLONED_FORMS`: the females, Sawsbuck's
+    seasons) — with PokeDoku's names and CDN sprites, and a form keeps its
+    form up the line (Burmy Sandy → Wormadam Sandy, Shellos East →
+    Gastrodon East, Deerling Summer → Sawsbuck Summer, Litleo → Pyroar Male
+    / Female). Still absent, on purpose: cosmetic forms PokeDoku doesn't
+    list either (Vivillon, Alcremie, Arceus/Silvally plates, caps, totems,
+    its cowboy-hat Caterpie), and Minior Meteor (PokeAPI's default id *is*
+    the Meteor). Every tile carries a
     strip along its bottom edge in its type colours (split for a dual
     type) — the thing that changes along a line — and tapping a tile
     opens that Pokémon's own sheet, pushed on top: Back returns to the

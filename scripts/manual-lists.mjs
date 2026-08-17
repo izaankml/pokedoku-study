@@ -138,6 +138,11 @@ export const EVO_DETAIL_OVERRIDES = {
 export const PREVO_OVERRIDES = {
   melmetal: "Meltan",
   lycanrocdusk: "Rockruff-Dusk", // Dusk Lycanroc comes from Own Tempo Rockruff, a form of its own
+  // a form keeps its form when it evolves (PokeDoku lists these Burmy, Shellos
+  // and Deerling forms as entries of their own — see POKEDOKU_FORM_IDS)
+  wormadamsandy: "Burmy-Sandy",
+  wormadamtrash: "Burmy-Trash",
+  gastrodoneast: "Shellos-East",
 };
 
 // Species PokeDoku assigns no region at all (Meltan and Melmetal come from
@@ -243,6 +248,18 @@ export const FORM_IDS = {
   feraligatrmega: 10283, // Feraligatr-Mega
   ampharosmega: 10045, // Ampharos-Mega
   wooperpaldea: 10253, // Wooper-Paldea
+  // PokeDoku's own entries (ids 90000 + dex number) for cosmetic forms
+  // PokeAPI doesn't split out; they cover nothing new, so they're
+  // display-only records, sprites from PokeDoku's CDN
+  burmysandy: 90412, // burmy-sandy-cloak
+  burmytrash: 91412, // burmy-trash-cloak
+  cherrimsunshine: 90421, // cherrim-sunshine
+  shelloseast: 90422, // shellos-east
+  gastrodoneast: 90423, // gastrodon-east
+  deerlingsummer: 91585, // deerling-summer
+  deerlingautumn: 90585, // deerling-autumn
+  deerlingwinter: 92585, // deerling-winter (Sawsbuck's seasons aren't dex formes: see CLONED_FORMS)
+
   slowkinggalar: 10172, // Slowking-Galar
   steelixmega: 10072, // Steelix-Mega
   qwilfishhisui: 10234, // Qwilfish-Hisui
@@ -463,3 +480,21 @@ export const FORM_IDS = {
   urshifurapidstrikegmax: 10227, // Urshifu-Rapid-Strike-Gmax
   urshifugmax: 10226, // Urshifu-Gmax (Single Strike)
 };
+
+// PokeDoku also lists, as entries of its own (ids 90000 + dex number), the
+// female of the gender-dimorphic species and Sawsbuck's seasons; the dex
+// has no forme for these, so the builder clones the species record — same
+// everything, with this form — as a display-only record. `prevo` is the
+// record id of the pre-evolution's matching form where there is one, else
+// the species' own pre-evolution.
+export const CLONED_FORMS = [
+  { id: 90449, species: 449, name: "hippopotasf", form: "F" },
+  { id: 90450, species: 450, name: "hippowdonf", form: "F", prevo: 90449 },
+  { id: 90521, species: 521, name: "unfezantf", form: "F", prevo: 520 },
+  { id: 90592, species: 592, name: "frillishf", form: "F" },
+  { id: 90593, species: 593, name: "jellicentf", form: "F", prevo: 90592 },
+  { id: 90668, species: 668, name: "pyroarf", form: "F", prevo: 667 },
+  { id: 91586, species: 586, name: "sawsbucksummer", form: "Summer", prevo: 91585 },
+  { id: 90586, species: 586, name: "sawsbuckautumn", form: "Autumn", prevo: 90585 },
+  { id: 92586, species: 586, name: "sawsbuckwinter", form: "Winter", prevo: 92585 },
+];

@@ -3,7 +3,7 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1305,
+  "count": 1322,
   "answerCount": 1257,
   "speciesCount": 1025
  },
@@ -23448,6 +23448,80 @@
    "prevo": null
   },
   {
+   "id": 90412,
+   "species": 412,
+   "form": "Sandy",
+   "name": "burmysandy",
+   "displayName": "Burmy (Sandy)",
+   "types": [
+    "bug"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": true,
+   "flags": [],
+   "moves": [
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shed Skin",
+     "hidden": false
+    },
+    {
+     "name": "Overcoat",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 91412,
+   "species": 412,
+   "form": "Trash",
+   "name": "burmytrash",
+   "displayName": "Burmy (Trash)",
+   "types": [
+    "bug"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": true,
+   "flags": [],
+   "moves": [
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shed Skin",
+     "hidden": false
+    },
+    {
+     "name": "Overcoat",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 413,
    "species": 413,
    "form": null,
@@ -23529,7 +23603,7 @@
      "hidden": true
     }
    ],
-   "prevo": 412
+   "prevo": 90412
   },
   {
    "id": 10005,
@@ -23570,7 +23644,7 @@
      "hidden": true
     }
    ],
-   "prevo": 412
+   "prevo": 91412
   },
   {
    "id": 414,
@@ -23893,6 +23967,42 @@
    "prevo": 420
   },
   {
+   "id": 90421,
+   "species": 421,
+   "form": "Sunshine",
+   "name": "cherrimsunshine",
+   "displayName": "Cherrim (Sunshine)",
+   "types": [
+    "grass"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 25",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "dazzlinggleam",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Flower Gift",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 422,
    "species": 422,
    "form": null,
@@ -23933,6 +24043,50 @@
      "hidden": true
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 90422,
+   "species": 422,
+   "form": "East",
+   "name": "shelloseast",
+   "displayName": "Shellos (East)",
+   "types": [
+    "water"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "hydropump",
+    "icebeam",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Sticky Hold",
+     "hidden": false
+    },
+    {
+     "name": "Storm Drain",
+     "hidden": false
+    },
+    {
+     "name": "Sand Force",
+     "hidden": true
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -23982,6 +24136,55 @@
     }
    ],
    "prevo": 422
+  },
+  {
+   "id": 90423,
+   "species": 423,
+   "form": "East",
+   "name": "gastrodoneast",
+   "displayName": "Gastrodon (East)",
+   "types": [
+    "water",
+    "ground"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 30",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "earthquake",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "sludgebomb",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Sticky Hold",
+     "hidden": false
+    },
+    {
+     "name": "Storm Drain",
+     "hidden": false
+    },
+    {
+     "name": "Sand Force",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 90422
   },
   {
    "id": 424,
@@ -25390,6 +25593,45 @@
    "prevo": null
   },
   {
+   "id": 90449,
+   "species": 449,
+   "form": "F",
+   "name": "hippopotasf",
+   "displayName": "Hippopotas (F)",
+   "types": [
+    "ground"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "crunch",
+    "earthquake",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Sand Stream",
+     "hidden": false
+    },
+    {
+     "name": "Sand Force",
+     "hidden": true
+    }
+   ],
+   "prevo": null,
+   "answer": false
+  },
+  {
    "id": 450,
    "species": 450,
    "form": null,
@@ -25428,6 +25670,47 @@
     }
    ],
    "prevo": 449
+  },
+  {
+   "id": 90450,
+   "species": 450,
+   "form": "F",
+   "name": "hippowdonf",
+   "displayName": "Hippowdon (F)",
+   "types": [
+    "ground"
+   ],
+   "gen": 4,
+   "region": "sinnoh",
+   "regions": [
+    "sinnoh"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 34",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "crunch",
+    "earthquake",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Sand Stream",
+     "hidden": false
+    },
+    {
+     "name": "Sand Force",
+     "hidden": true
+    }
+   ],
+   "prevo": 90449,
+   "answer": false
   },
   {
    "id": 451,
@@ -29234,6 +29517,51 @@
    "prevo": 520
   },
   {
+   "id": 90521,
+   "species": 521,
+   "form": "F",
+   "name": "unfezantf",
+   "displayName": "Unfezant (F)",
+   "types": [
+    "normal",
+    "flying"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 32",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "fly",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Big Pecks",
+     "hidden": false
+    },
+    {
+     "name": "Super Luck",
+     "hidden": false
+    },
+    {
+     "name": "Rivalry",
+     "hidden": true
+    }
+   ],
+   "prevo": 520,
+   "answer": false
+  },
+  {
    "id": 522,
    "species": 522,
    "form": null,
@@ -32703,6 +33031,135 @@
    "prevo": null
   },
   {
+   "id": 91585,
+   "species": 585,
+   "form": "Summer",
+   "name": "deerlingsummer",
+   "displayName": "Deerling (Summer)",
+   "types": [
+    "normal",
+    "grass"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Chlorophyll",
+     "hidden": false
+    },
+    {
+     "name": "Sap Sipper",
+     "hidden": false
+    },
+    {
+     "name": "Serene Grace",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 90585,
+   "species": 585,
+   "form": "Autumn",
+   "name": "deerlingautumn",
+   "displayName": "Deerling (Autumn)",
+   "types": [
+    "normal",
+    "grass"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Chlorophyll",
+     "hidden": false
+    },
+    {
+     "name": "Sap Sipper",
+     "hidden": false
+    },
+    {
+     "name": "Serene Grace",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 92585,
+   "species": 585,
+   "form": "Winter",
+   "name": "deerlingwinter",
+   "displayName": "Deerling (Winter)",
+   "types": [
+    "normal",
+    "grass"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Chlorophyll",
+     "hidden": false
+    },
+    {
+     "name": "Sap Sipper",
+     "hidden": false
+    },
+    {
+     "name": "Serene Grace",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 586,
    "species": 586,
    "form": null,
@@ -32745,6 +33202,141 @@
     }
    ],
    "prevo": 585
+  },
+  {
+   "id": 91586,
+   "species": 586,
+   "form": "Summer",
+   "name": "sawsbucksummer",
+   "displayName": "Sawsbuck (Summer)",
+   "types": [
+    "normal",
+    "grass"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 34",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Chlorophyll",
+     "hidden": false
+    },
+    {
+     "name": "Sap Sipper",
+     "hidden": false
+    },
+    {
+     "name": "Serene Grace",
+     "hidden": true
+    }
+   ],
+   "prevo": 91585,
+   "answer": false
+  },
+  {
+   "id": 90586,
+   "species": 586,
+   "form": "Autumn",
+   "name": "sawsbuckautumn",
+   "displayName": "Sawsbuck (Autumn)",
+   "types": [
+    "normal",
+    "grass"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 34",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Chlorophyll",
+     "hidden": false
+    },
+    {
+     "name": "Sap Sipper",
+     "hidden": false
+    },
+    {
+     "name": "Serene Grace",
+     "hidden": true
+    }
+   ],
+   "prevo": 90585,
+   "answer": false
+  },
+  {
+   "id": 92586,
+   "species": 586,
+   "form": "Winter",
+   "name": "sawsbuckwinter",
+   "displayName": "Sawsbuck (Winter)",
+   "types": [
+    "normal",
+    "grass"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 34",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Chlorophyll",
+     "hidden": false
+    },
+    {
+     "name": "Sap Sipper",
+     "hidden": false
+    },
+    {
+     "name": "Serene Grace",
+     "hidden": true
+    }
+   ],
+   "prevo": 92585,
+   "answer": false
   },
   {
    "id": 587,
@@ -32996,6 +33588,55 @@
    "prevo": null
   },
   {
+   "id": 90592,
+   "species": 592,
+   "form": "F",
+   "name": "frillishf",
+   "displayName": "Frillish (F)",
+   "types": [
+    "water",
+    "ghost"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "dazzlinggleam",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "psychic",
+    "shadowball",
+    "sludgebomb",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Water Absorb",
+     "hidden": false
+    },
+    {
+     "name": "Cursed Body",
+     "hidden": false
+    },
+    {
+     "name": "Damp",
+     "hidden": true
+    }
+   ],
+   "prevo": null,
+   "answer": false
+  },
+  {
    "id": 593,
    "species": 593,
    "form": null,
@@ -33044,6 +33685,57 @@
     }
    ],
    "prevo": 592
+  },
+  {
+   "id": 90593,
+   "species": 593,
+   "form": "F",
+   "name": "jellicentf",
+   "displayName": "Jellicent (F)",
+   "types": [
+    "water",
+    "ghost"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 40",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "dazzlinggleam",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "psychic",
+    "shadowball",
+    "sludgebomb",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Water Absorb",
+     "hidden": false
+    },
+    {
+     "name": "Cursed Body",
+     "hidden": false
+    },
+    {
+     "name": "Damp",
+     "hidden": true
+    }
+   ],
+   "prevo": 90592,
+   "answer": false
   },
   {
    "id": 594,
@@ -36987,6 +37679,53 @@
     }
    ],
    "prevo": null
+  },
+  {
+   "id": 90668,
+   "species": 668,
+   "form": "F",
+   "name": "pyroarf",
+   "displayName": "Pyroar (F)",
+   "types": [
+    "fire",
+    "normal"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 35",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "crunch",
+    "flamethrower",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Rivalry",
+     "hidden": false
+    },
+    {
+     "name": "Unnerve",
+     "hidden": false
+    },
+    {
+     "name": "Moxie",
+     "hidden": true
+    }
+   ],
+   "prevo": 667,
+   "answer": false
   },
   {
    "id": 669,

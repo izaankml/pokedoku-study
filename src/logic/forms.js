@@ -52,6 +52,7 @@ const TRIGGERS = {
   mimikyubusted: "Disguise Broken",
   eiscuenoice: "Ice Face Broken",
   morpekohangry: "Hunger Switch, Each Turn",
+  cherrimsunshine: "Flower Gift, Harsh Sunlight",
   cramorantgulping: "Gulp Missile, after Surf / Dive",
   cramorantgorging: "Gulp Missile, under ½ HP",
   palafinhero: "Zero to Hero, Switch Out",
@@ -185,8 +186,8 @@ const VARIANT_NOTES = {
   basculinwhitestriped: "White-Striped",
   dudunsparcethreesegment: "1 in 100",
   urshifurapidstrike: "Rapid Strike Style",
-  wormadamsandy: "Sandy Cloak",
-  wormadamtrash: "Trash Cloak",
+  burmysandy: "From Cave Battles",
+  burmytrash: "From Indoor Battles",
 };
 // by species (slug prefix) → note, or null when the label says it all
 const VARIANT_KINDS = [
