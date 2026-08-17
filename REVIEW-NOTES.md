@@ -202,13 +202,16 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     when three or more span several (Eevee: the Kanto three, the Johto
     two, the Sinnoh two, Sylveon), else pairs — and ones that evolve
     again get a row each. The tree never wraps: laid out at its natural
-    width (the sheet is 580px so Eevee's fits), it scrolls sideways within
-    its section on a phone — Goomy shows Sliggoo → Goodra over
+    width (the sheet is 580px so Eevee's fits); on a phone the tiles are
+    76px and the section's rows (tree and forms) are zoomed down by one
+    factor (`useFitRows`, floor 0.7) until the widest fits, past which it
+    scrolls sideways — Goomy shows Sliggoo → Goodra over
     Hisuian Sliggoo → Hisuian Goodra, Applin has Flapple/Appletun paired
-    above Dipplin → Hydrapple. Tiles are all one size, 100px — what the
-    tallest content (a two-line name over a two-line method: Wormadam
-    Sandy, Urshifu Rapid Strike) needs; every tile of every line was
-    measured square in headless Chrome. Methods stay under ~30 characters
+    above Dipplin → Hydrapple. Tiles are all one size: 100px on a desktop
+    (what the tallest content — a two-line name over a two-line method:
+    Wormadam Sandy, Urshifu Rapid Strike — needs, so they're square) and
+    76px on a phone, where a tile just grows taller if its text needs to.
+    Methods stay under ~30 characters
     (`TERSE` overrides for the long dex lines) and are Title Case, small
     words aside (`titleCase`). A regional
     form that evolves from a different form (Koffing → Galarian Weezing,
@@ -233,8 +236,8 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Tauros breeds, Oricorio, Partner Pikachu, Bloodmoon Ursaluna … — are
     not forms of this kind. A test checks every transformation has a
     trigger; all 318 form tiles measured square.
-    — then Group, Abilities and Moves, each a small-caps label with
-    its pills beneath (quieter, uniform pills). Not listed (still
+    — then Abilities and Moves, each a small-caps label with its pills
+    beneath (quieter, uniform pills). Not listed (still
     categories everywhere else): type count, tracked abilities, evolution
     method, stage and line — the header and tree already show them.
 
