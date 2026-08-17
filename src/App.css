@@ -1169,10 +1169,27 @@ header h1 {
 
 /* ---- evolution line: square stage tiles joined by arrows ---- */
 
+/* the tree is laid out at its natural width and never wraps; when that
+   is wider than the sheet (Eevee on a phone) it scrolls sideways within
+   its section, centred when it fits */
+.evo-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  margin: 0 calc(-1 * var(--sp-4));
+  padding: 0 var(--sp-4);
+  scrollbar-width: none;
+}
+
+.evo-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 .evo-line {
   --evo-tile: 100px; /* the largest any tile needs (a two-line name over a two-line method) — so all match */
   display: flex;
   justify-content: center;
+  width: max-content;
+  min-width: 100%;
 }
 
 /* a tile, its arrow and what it evolves into, in a row */
@@ -1180,26 +1197,22 @@ header h1 {
   display: flex;
   align-items: center;
   gap: 2px;
-  min-width: 0;
+  flex: none;
 }
 
-/* a branch: a column of rows — the pair-packed leaves, then each further
-   chain — that gives way and wraps before its parent does */
+/* a branch: a column of rows — the leaf columns, then each further chain */
 .evo-branch {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: none;
 }
 
 .evo-tiles {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  min-width: 0;
 }
 
 /* a column of leaves; a lone tile (odd level) is centred on the row */
@@ -2104,7 +2117,7 @@ main > * {
 .modal {
   position: relative;
   width: 100%;
-  max-width: 560px;
+  max-width: 580px; /* Eevee's four generation columns fit beside it */
   max-height: min(84dvh, 720px);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -2259,6 +2272,10 @@ main > * {
   .detail-evo {
     padding-left: var(--sp-3);
     padding-right: var(--sp-3);
+  }
+  .evo-scroll {
+    margin: 0 calc(-1 * var(--sp-3));
+    padding: 0 var(--sp-3);
   }
 }
 
