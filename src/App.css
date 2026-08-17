@@ -1285,6 +1285,16 @@ header h1 {
   font-size: 1.2rem;
 }
 
+/* a variant (another form of the same species): dotted, ≈ */
+.evo-tile.variant {
+  border-style: dotted;
+  border-color: var(--border);
+}
+
+.evo-arrow.variant {
+  font-size: 1.15rem;
+}
+
 /* the Forms row sits under the tree and scrolls like it: each stage and
    its forms (stacked in pairs) as a group, groups side by side */
 .detail-evo .detail-forms-head {
@@ -1345,6 +1355,12 @@ button.evo-tile:active {
 .evo-how {
   max-width: 100%;
   overflow-wrap: anywhere;
+}
+
+/* a name's longest word (--len, from the tile) shrinks the font just
+   enough to fit the tile's inner width instead of breaking mid-word */
+.evo-name {
+  font-size: min(1em, calc((var(--evo-tile) - 14px) / (var(--len, 8) * 0.62)));
 }
 
 .evo-how {

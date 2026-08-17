@@ -144,3 +144,46 @@ export function formLabel(p) {
   const prefix = species.displayName + " ";
   return p.displayName.startsWith(prefix) ? p.displayName.slice(prefix.length) : p.displayName;
 }
+
+// The *variants* of a Pokémon: the other records of its species that
+// aren't transformations — regional forms, Own Tempo Rockruff, Partner
+// Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude Dada, the
+// female Meowstic … A stage's tree-mates (Alolan Raichu beside Raichu) are
+// left out by the caller. What each one is, in a word or two:
+const VARIANT_NOTES = {
+  pikachustarter: "Let's Go Partner",
+  eeveestarter: "Let's Go Partner",
+  zarudedada: "Dada's Cloth",
+  rockruffdusk: "Own Tempo",
+  lycanrocdusk: "From Own Tempo Rockruff",
+  ursalunabloodmoon: "Bloodmoon",
+  gimmighoulroaming: "Roaming",
+  floetteeternal: "Eternal Flower",
+  magearnaoriginal: "Original Colour",
+  basculinbluestriped: "Blue-Striped",
+  basculinwhitestriped: "White-Striped",
+  dudunsparcethreesegment: "Three-Segment",
+};
+const VARIANT_KINDS = [
+  [/^(alola|galar|hisui|paldea)/i, (form) => `${{ alola: "Alolan", galar: "Galarian", hisui: "Hisuian", paldea: "Paldean" }[form.split("-")[0].toLowerCase()]} Form`],
+  [/^(pom-pom|pa'u|sensu)$/i, () => "Nectar Style"],
+  [/^(blue|yellow|white)$/i, () => "Plumage"],
+  [/^(orange|yellow|green|blue|indigo|violet)$/i, () => "Core Colour"],
+  [/^(small|large|super)$/i, () => "Size"],
+  [/^(droopy|stretchy|curly)$/i, () => "Form"],
+  [/^f$/i, () => "Female"],
+];
+export function variantNote(p) {
+  if (VARIANT_NOTES[p.name]) return VARIANT_NOTES[p.name];
+  for (const [re, note] of VARIANT_KINDS) if (re.test(p.form)) return note(p.form);
+  return "Alternate Form";
+}
+
+const bySpecies = new Map();
+for (const p of ALL_POKEMON) {
+  if (!bySpecies.has(p.species)) bySpecies.set(p.species, []);
+  bySpecies.get(p.species).push(p);
+}
+export function variantsOf(p) {
+  return (bySpecies.get(p.species) || []).filter((q) => q.id !== p.id && !isTransformation(q));
+}

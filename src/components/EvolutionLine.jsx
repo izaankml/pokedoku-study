@@ -1,5 +1,5 @@
 import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
-import { baseOf, formLabel, formTrigger, formsOf } from "../logic/forms.js";
+import { baseOf, formLabel, formTrigger, formsOf, variantNote, variantsOf } from "../logic/forms.js";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
@@ -16,6 +16,10 @@ import Sprite from "./Sprite.jsx";
 // Goodra over Hisuian Sliggoo → Hisuian Goodra, and Applin has Flapple
 // and Appletun paired above Dipplin → Hydrapple. A lone tile sits centred
 // against whatever it's joined to.
+// the longest word of a name — the tile shrinks the name's font just
+// enough for it to fit (App.css .evo-name), so "Meowscarada" never breaks
+const longestWord = (name) => Math.max(...name.split(/[\s-]+/).map((w) => w.length));
+
 function how(p) {
   const note = evoNote(p);
   return {
@@ -39,21 +43,22 @@ function columnsOf(leaves) {
 // and name just the form ("Mega X") since the base sits beside them.
 // Tapping a tile opens that Pokémon's own sheet (`onOpen`); the current
 // one is inert.
-function Tile({ pokemon: p, evolved, current, note, form = false, onOpen }) {
+function Tile({ pokemon: p, evolved, current, note, form = false, variant = false, onOpen }) {
   const h = note ? { short: note, full: note } : evolved && p.evoDetail ? how(p) : null;
   const [t1, t2 = t1] = p.types;
+  const label = form || variant ? formLabel(p) : p.displayName;
   const Tag = onOpen && !current ? "button" : "div";
   return (
     <Tag
       type={Tag === "button" ? "button" : undefined}
-      className={`evo-tile${current ? " current" : ""}${form ? " form" : ""}`}
-      title={form ? p.displayName : undefined}
+      className={`evo-tile${current ? " current" : ""}${form ? " form" : ""}${variant ? " variant" : ""}`}
+      title={form || variant ? p.displayName : undefined}
       onClick={Tag === "button" ? () => onOpen(p) : undefined}
       style={{ "--t1": `var(--type-${t1})`, "--t2": `var(--type-${t2})` }}
     >
       <Sprite pokemon={p} className="sprite evo-sprite" />
-      <span className="evo-name">
-        <PokemonName name={form ? formLabel(p) : p.displayName} />
+      <span className="evo-name" style={{ "--len": longestWord(label) }}>
+        <PokemonName name={label} />
       </span>
       {h ? (
         <span className="evo-how" title={h.full}>
@@ -65,9 +70,10 @@ function Tile({ pokemon: p, evolved, current, note, form = false, onOpen }) {
   );
 }
 
-const Arrow = ({ form = false }) => (
-  <span className={`evo-arrow${form ? " form" : ""}`} aria-hidden="true">
-    {form ? "⇢" : "→"}
+// → evolves into · ⇢ becomes, for a while · ≈ another form of the same
+const Arrow = ({ form = false, variant = false }) => (
+  <span className={`evo-arrow${form ? " form" : ""}${variant ? " variant" : ""}`} aria-hidden="true">
+    {variant ? "≈" : form ? "⇢" : "→"}
   </span>
 );
 
@@ -122,11 +128,13 @@ function EvolutionLine({ pokemon, onOpen }) {
   );
 }
 
-// The transformations (forms.js) of every stage of a Pokémon's line —
-// Charizard ⇢ Mega X / Mega Y / Gigantamax — laid out like the tree, in
-// one row: each stage that has any, then its forms stacked in pairs
-// (Pikachu ⇢ Gmax, then Raichu ⇢ Mega X over Mega Y), the Pokémon itself
-// highlighted when it is one of them. Null when the line has none.
+// The other forms of every stage of a Pokémon's line, laid out like the
+// tree in one row: each stage that has any, ⇢ its transformations
+// (Charizard ⇢ Mega X / Mega Y / Gigantamax) and ≈ its variants (Rockruff
+// ≈ Own Tempo, Vulpix ≈ Alolan, Zarude ≈ Dada — the same species in
+// another shape that isn't already in the tree), stacked in pairs, the
+// Pokémon itself highlighted when it is one of them. Null when the line
+// has none.
 export function FormsRows({ pokemon, onOpen }) {
   const tree = evolutionTree(pokemon);
   const stages = [];
@@ -136,26 +144,52 @@ export function FormsRows({ pokemon, onOpen }) {
   };
   if (tree) walk(tree.root);
   else stages.push(baseOf(pokemon));
-  const groups = stages.map((s) => [s, formsOf(s)]).filter(([, forms]) => forms.length);
+  const inTree = new Set(stages.map((s) => s.id));
+  const seen = new Set(); // a species' variants show once, at its first stage in the tree
+  const groups = stages
+    .map((s) => {
+      const variants = variantsOf(s).filter((v) => !inTree.has(v.id) && !seen.has(v.id));
+      variants.forEach((v) => seen.add(v.id));
+      return [s, formsOf(s), variants];
+    })
+    .filter(([, forms, variants]) => forms.length || variants.length);
   if (!groups.length) return null;
   return (
     <>
       <h4 className="detail-forms-head">Forms</h4>
       <div className="evo-scroll">
         <div className="evo-line forms-line">
-          {groups.map(([stage, forms]) => (
+          {groups.map(([stage, forms, variants]) => (
             <div key={stage.id} className="evo-node">
               <Tile pokemon={stage} current={stage.id === pokemon.id} onOpen={onOpen} />
-              <Arrow form />
-              <div className="evo-tiles">
-                {pairsOf(forms).map((pair) => (
-                  <div key={pair[0].id} className="evo-col">
-                    {pair.map((f) => (
-                      <Tile key={f.id} pokemon={f} form note={formTrigger(f)} current={f.id === pokemon.id} onOpen={onOpen} />
+              {forms.length ? (
+                <>
+                  <Arrow form />
+                  <div className="evo-tiles">
+                    {pairsOf(forms).map((pair) => (
+                      <div key={pair[0].id} className="evo-col">
+                        {pair.map((f) => (
+                          <Tile key={f.id} pokemon={f} form note={formTrigger(f)} current={f.id === pokemon.id} onOpen={onOpen} />
+                        ))}
+                      </div>
                     ))}
                   </div>
-                ))}
-              </div>
+                </>
+              ) : null}
+              {variants.length ? (
+                <>
+                  <Arrow variant />
+                  <div className="evo-tiles">
+                    {pairsOf(variants).map((pair) => (
+                      <div key={pair[0].id} className="evo-col">
+                        {pair.map((v) => (
+                          <Tile key={v.id} pokemon={v} variant note={variantNote(v) === formLabel(v) ? null : variantNote(v)} current={v.id === pokemon.id} onOpen={onOpen} />
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : null}
             </div>
           ))}
         </div>

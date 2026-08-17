@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
-import { baseOf, formLabel, formTrigger, formsOf, isTransformation } from "./forms.js";
+import { baseOf, formLabel, formTrigger, formsOf, isTransformation, variantNote, variantsOf } from "./forms.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n);
 
@@ -32,5 +32,16 @@ describe("forms", () => {
     for (const n of ["Rattata Alola", "Wormadam Sandy", "Pikachu Partner", "Ursaluna Bloodmoon", "Urshifu Rapid Strike"]) {
       expect(isTransformation(byName(n)), n).toBe(false);
     }
+  });
+});
+
+describe("variants", () => {
+  it("are the species' other non-transformation forms", () => {
+    expect(variantsOf(byName("Zarude")).map((p) => p.displayName)).toEqual(["Zarude Dada"]);
+    expect(variantsOf(byName("Rockruff")).map((p) => p.displayName)).toEqual(["Rockruff Own Tempo"]);
+    expect(variantsOf(byName("Vulpix")).map((p) => p.displayName)).toEqual(["Vulpix Alola"]);
+    expect(variantsOf(byName("Charizard"))).toEqual([]); // Megas and Gmax are transformations
+    expect(variantNote(byName("Vulpix Alola"))).toBe("Alolan Form");
+    expect(variantNote(byName("Zarude Dada"))).toBe("Dada's Cloth");
   });
 });

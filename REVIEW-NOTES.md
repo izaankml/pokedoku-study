@@ -259,7 +259,15 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     sheet, URL slugs), `POKEMON` — categories, Browse, Drill, Cards, Grid,
     Stats — doesn't; they're named PokeDoku-style from their form
     ("Lycanroc Midnight"), and their sprites are on PokeDoku's CDN too.
-    Gender forms (Meowstic F …) are skipped by the tree. Still absent, on
+    Gender forms (Meowstic F …) are skipped by the tree. Every other form
+    of a species — the *variants*: regional forms, Own Tempo Rockruff,
+    Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
+    Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted
+    tiles, a word on what it is: `variantNote`), once per species at its
+    first stage in the tree, tree-mates left out; so Rockruff's sheet
+    reaches Own Tempo Rockruff and Vulpix's the Alolan line. Long
+    one-word names (Meowscarada) shrink to fit a tile rather than break.
+    Still absent, on
     purpose: cosmetic forms (Vivillon, Alcremie, Arceus/Silvally plates,
     caps, totems) and Cherrim Sunshine / Minior Meteor, which have no
     PokeAPI id of their own to hang a sprite on. Every tile carries a
