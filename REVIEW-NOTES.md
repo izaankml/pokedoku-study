@@ -187,9 +187,11 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     of square tiles (sprite, name, how), each joined by an arrow to its
     own evolutions — one arrow to a lone evolution, one shared arrow into
     a column where it branches (`evolutionTree`). In a branch, evolutions
-    that go no further pack into vertical pairs that wrap (Eevee's eight:
-    four pairs on a desktop, two rows of two on a phone) and ones that
-    evolve again get a row each — Goomy shows Sliggoo → Goodra over
+    that go no further pack into vertical columns that wrap — one per
+    generation when they span several (Eevee: the Kanto three, the Johto
+    two, the Sinnoh two, Sylveon; four columns on a desktop, two rows of
+    two on a phone), else pairs — and ones that evolve again get a row
+    each — Goomy shows Sliggoo → Goodra over
     Hisuian Sliggoo → Hisuian Goodra, Applin has Flapple/Appletun paired
     above Dipplin → Hydrapple. Methods stay under ~30 characters (`TERSE`
     overrides for the long dex lines) so tiles stay square. A regional

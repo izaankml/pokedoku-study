@@ -7,11 +7,12 @@ import Sprite from "./Sprite.jsx";
 // highlighted. Each tile is joined by an arrow to its own evolutions:
 // one arrow to a lone evolution, one shared arrow into a column when it
 // branches. Within a branch, evolutions that go no further pack into
-// vertical pairs (Eevee's eight: four pairs on a desktop, two rows of two
-// on a phone) and ones that evolve again get a row each, so Goomy shows
-// Sliggoo → Goodra over Hisuian Sliggoo → Hisuian Goodra, and Applin has
-// Flapple and Appletun paired above Dipplin → Hydrapple. A lone tile sits
-// centred against whatever it's joined to.
+// vertical columns — one per generation when they span several (Eevee:
+// the Kanto three, the Johto two, the Sinnoh two, Sylveon), else pairs —
+// and ones that evolve again get a row each, so Goomy shows Sliggoo →
+// Goodra over Hisuian Sliggoo → Hisuian Goodra, and Applin has Flapple
+// and Appletun paired above Dipplin → Hydrapple. A lone tile sits centred
+// against whatever it's joined to.
 function how(p) {
   const where = evoWhere(p);
   return {
@@ -21,6 +22,10 @@ function how(p) {
 }
 
 const pairsOf = (list) => list.reduce((acc, p, i) => (i % 2 ? acc[acc.length - 1].push(p) : acc.push([p]), acc), []);
+function columnsOf(leaves) {
+  const gens = [...new Set(leaves.map((c) => c.pokemon.gen))];
+  return gens.length > 1 ? gens.map((g) => leaves.filter((c) => c.pokemon.gen === g)) : pairsOf(leaves);
+}
 
 function Tile({ pokemon: p, evolved, current }) {
   const h = evolved && p.evoDetail ? how(p) : null;
@@ -67,9 +72,9 @@ function Node({ node, evolved, focusId }) {
       <div className="evo-branch">
         {leaves.length ? (
           <div className="evo-tiles">
-            {pairsOf(leaves).map((pair) => (
-              <div key={pair[0].pokemon.id} className="evo-pair">
-                {pair.map((c) => (
+            {columnsOf(leaves).map((col) => (
+              <div key={col[0].pokemon.id} className="evo-col">
+                {col.map((c) => (
                   <Tile key={c.pokemon.id} pokemon={c.pokemon} evolved current={c.pokemon.id === focusId} />
                 ))}
               </div>

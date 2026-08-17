@@ -1202,8 +1202,8 @@ header h1 {
   min-width: 0;
 }
 
-/* a vertical pair; a lone tile (odd level) is centred on the row */
-.evo-pair {
+/* a column of leaves; a lone tile (odd level) is centred on the row */
+.evo-col {
   display: flex;
   flex-direction: column;
   justify-content: center;
