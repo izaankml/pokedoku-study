@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickDrillPair } from "../logic/picker.js";
-import { intersection, pairIsValid, pairKey } from "../logic/matching.js";
+import { guessFilterFor, intersection, pairIsValid, pairKey } from "../logic/matching.js";
 import { CATEGORY_BY_ID, whyNot } from "../data/categories.js";
 import { hashStateFor, writeHash } from "../logic/hashState.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
@@ -70,7 +70,7 @@ function Drill() {
       </div>
       {result === null ? (
         <>
-          <PokemonAutocomplete onSubmit={grade} />
+          <PokemonAutocomplete onSubmit={grade} eligible={guessFilterFor([a.id, b.id])} />
           <div className="action-row">
             <button className="ghost" onClick={giveUp}>
               Don&apos;t Know

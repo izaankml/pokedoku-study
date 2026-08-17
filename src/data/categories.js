@@ -162,6 +162,17 @@ export const CATEGORY_BY_ID = new Map(CATEGORIES.map((c) => [c.id, c]));
 
 // Why a Pokémon fails a cell: "isn't Fire-type and isn't from Galar".
 // Each category's `miss` is the clause for a Pokémon that fails it alone.
+// Whether a category is decided by a Pokémon's evolution line — its stage,
+// how it evolved, whether the line branches, whether it's a First Partner
+// or Baby line. Mega and Gigantamax forms sit outside every line (no
+// stage, no method), so they are never answers there and needn't be
+// offered as guesses.
+const EVOLUTION_LINE_GROUPS = new Set(["evo", "stage", "evoLine"]);
+const EVOLUTION_LINE_FLAGS = new Set(["flag-starter", "flag-baby"]);
+export function considersEvolutionLine(catId) {
+  return EVOLUTION_LINE_GROUPS.has(getCategory(catId).group) || EVOLUTION_LINE_FLAGS.has(catId);
+}
+
 export function whyNot(pokemon, catIds) {
   const clauses = catIds
     .map((id) => getCategory(id))

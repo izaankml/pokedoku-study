@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { generateGrid } from "../logic/grid.js";
-import { intersection, pairKey } from "../logic/matching.js";
+import { guessFilterFor, intersection, pairKey } from "../logic/matching.js";
 import { CATEGORY_BY_ID, getCategory, whyNot } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
 import { loadJson, saveJson } from "../logic/hashState.js";
@@ -177,7 +177,7 @@ function PracticeGrid() {
             <span className="times">×</span>
             <CategoryPill cat={getCategory(cellCats(selected)[1])} />
           </div>
-          <PokemonAutocomplete onSubmit={guess} />
+          <PokemonAutocomplete onSubmit={guess} eligible={guessFilterFor(cellCats(selected))} />
           <div className="action-row">
             <button className="ghost" onClick={revealCell}>
               Reveal This Cell

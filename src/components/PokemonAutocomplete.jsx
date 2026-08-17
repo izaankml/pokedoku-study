@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { findByName, searchNames } from "../logic/matching.js";
 import Sprite from "./Sprite.jsx";
 
-function PokemonAutocomplete({ onSubmit, disabled, placeholder }) {
+// `eligible` (optional) narrows what can be picked: suggestions and the
+// Enter-to-submit exact match both skip Pokémon it rejects.
+function PokemonAutocomplete({ onSubmit, disabled, placeholder, eligible = null }) {
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(0);
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const highlightedRef = useRef(null);
 
-  const suggestions = open && query ? searchNames(query) : [];
+  const suggestions = open && query ? searchNames(query, 8, eligible) : [];
 
   useEffect(() => {
     highlightedRef.current?.scrollIntoView({ block: "nearest" });
@@ -33,7 +35,7 @@ function PokemonAutocomplete({ onSubmit, disabled, placeholder }) {
       setHighlighted((h) => Math.max(h - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      submit(findByName(query) || suggestions[highlighted] || suggestions[0]);
+      submit(findByName(query, eligible) || suggestions[highlighted] || suggestions[0]);
     } else if (e.key === "Escape") {
       setOpen(false);
     }

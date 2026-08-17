@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findByName, normalizeName, pairIsValid, searchNames } from "./matching.js";
+import { findByName, guessFilterFor, normalizeName, pairIsValid, searchNames } from "./matching.js";
 
 describe("normalizeName", () => {
   it("strips diacritics and punctuation", () => {
@@ -62,5 +62,21 @@ describe("pairIsValid", () => {
     expect(pairIsValid("flag-ultraBeast", "flag-legendary")).toBe(false);
     // no baby is a fossil
     expect(pairIsValid("flag-baby", "flag-fossil")).toBe(false);
+  });
+});
+
+describe("guessFilterFor", () => {
+  it("drops Mega and Gigantamax forms when a category considers the evolution line", () => {
+    for (const ids of [["type-fire", "stage-final"], ["evo-level", "type-water"], ["branched", "region-kanto"], ["flag-starter", "type-grass"], ["flag-baby", "type-normal"]]) {
+      const eligible = guessFilterFor(ids);
+      expect(eligible).toBeTypeOf("function");
+      expect(searchNames("charizard", 8, eligible).map((p) => p.displayName)).toEqual(["Charizard"]);
+      expect(findByName("Charizard Mega X", eligible)).toBeNull();
+      expect(findByName("Charizard", eligible)?.displayName).toBe("Charizard");
+    }
+  });
+  it("offers everyone otherwise", () => {
+    expect(guessFilterFor(["type-fire", "flag-mega"])).toBeNull();
+    expect(searchNames("charizard mega x", 8, null).map((p) => p.displayName)).toContain("Charizard Mega X");
   });
 });

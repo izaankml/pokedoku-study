@@ -1,5 +1,5 @@
 import { POKEMON } from "../data/pokedex.js";
-import { EXCLUSIVE_GROUPS, getCategory } from "../data/categories.js";
+import { EXCLUSIVE_GROUPS, considersEvolutionLine, getCategory } from "../data/categories.js";
 
 const membersCache = new Map();
 const intersectionCache = new Map();
@@ -56,16 +56,19 @@ for (const { norms, pokemon } of SEARCH_INDEX) {
   for (const norm of norms) NORM_TO_POKEMON.set(norm, pokemon);
 }
 
-export function findByName(query) {
-  return NORM_TO_POKEMON.get(normalizeName(query)) || null;
+// `eligible`, when given, keeps only the Pokémon it accepts.
+export function findByName(query, eligible = null) {
+  const p = NORM_TO_POKEMON.get(normalizeName(query)) || null;
+  return p && (!eligible || eligible(p)) ? p : null;
 }
 
-export function searchNames(query, limit = 8) {
+export function searchNames(query, limit = 8, eligible = null) {
   const q = normalizeName(query);
   if (!q) return [];
   const starts = [];
   const contains = [];
   for (const { norms, pokemon } of SEARCH_INDEX) {
+    if (eligible && !eligible(pokemon)) continue;
     if (norms.some((n) => n.startsWith(q))) starts.push(pokemon);
     else if (norms.some((n) => n.includes(q))) contains.push(pokemon);
   }
@@ -75,6 +78,14 @@ export function searchNames(query, limit = 8) {
 // Every valid category pair, as [catA, catB] with catA.id < catB.id.
 // Computed once; used for drill selection and schedule summaries.
 let validPairsCache = null;
+// Mega and Gigantamax forms sit outside every evolution line, so a
+// question or cell that considers the line never has them as answers:
+// don't offer them as guesses there.
+const isMegaOrGmax = (p) => p.flags.includes("mega") || p.flags.includes("gmax");
+export function guessFilterFor(catIds) {
+  return catIds.some(considersEvolutionLine) ? (p) => !isMegaOrGmax(p) : null;
+}
+
 export function allValidPairs(categories) {
   if (!validPairsCache) {
     const pairs = [];
