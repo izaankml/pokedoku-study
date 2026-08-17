@@ -84,27 +84,23 @@ function PokemonDetail({ pokemon, onClose }) {
         <header className="detail-head">
           <Sprite pokemon={pokemon} className="sprite detail-sprite" />
           <div className="detail-title">
-            <div className="detail-title-row">
-              <div className="detail-title-main">
-                <p className="detail-meta">
-                  #{String(pokemon.species).padStart(4, "0")}
-                  {base ? ` · Form of ${base.displayName}` : ""}
-                </p>
-                <h3 id="pokemon-detail-title">
-                  <PokemonName name={pokemon.displayName} />
-                </h3>
-              </div>
-              <div className="detail-region">
-                {regions.map((c) => (
-                  <CategoryPill key={c.id} cat={c} useShort />
-                ))}
-              </div>
-            </div>
+            <p className="detail-meta">
+              #{String(pokemon.species).padStart(4, "0")}
+              {base ? ` · Form of ${base.displayName}` : ""}
+            </p>
+            <h3 id="pokemon-detail-title">
+              <PokemonName name={pokemon.displayName} />
+            </h3>
             <div className="detail-types">
               {types.map((c) => (
                 <CategoryPill key={c.id} cat={c} useShort />
               ))}
             </div>
+          </div>
+          <div className="detail-region">
+            {regions.map((c) => (
+              <CategoryPill key={c.id} cat={c} useShort />
+            ))}
           </div>
         </header>
         <section className="detail-evo">
