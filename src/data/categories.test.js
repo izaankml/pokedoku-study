@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CATEGORIES, getCategory } from "./categories.js";
+import { CATEGORIES, getCategory, whyNot } from "./categories.js";
 import { POKEMON_BY_ID } from "./pokedex.js";
 import { intersection, membersOf, pairIsValid } from "../logic/matching.js";
 
@@ -68,5 +68,15 @@ describe("categories", () => {
     for (const cat of CATEGORIES) {
       expect(membersOf(cat.id).length, cat.id).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("whyNot", () => {
+  it("names each failed category as a clause", () => {
+    const pikachu = p(25);
+    expect(whyNot(pikachu, ["type-fire", "region-kanto"])).toBe("isn't Fire-type");
+    expect(whyNot(pikachu, ["type-fire", "region-galar"])).toBe("isn't Fire-type and isn't from Galar");
+    expect(whyNot(pikachu, ["type-electric", "region-kanto"])).toBe("");
+    expect(whyNot(pikachu, ["move-razorleaf", "flag-legendary"])).toBe("can't learn Razor Leaf and isn't Legendary");
   });
 });

@@ -1,7 +1,8 @@
 // Every category a PokeDoku row or column can ask for, as predicates over
 // dataset records. `group` drives pair-validity rules, weighting, and the
 // stats table. `priorWeight` biases question selection before any answer
-// history exists (3 = the user's known weak spots).
+// history exists (3 = the user's known weak spots). `miss` is the clause
+// shown when a guess fails the category ("isn't Fire-type").
 
 import { ABILITIES, MOVES } from "./traits.js";
 
@@ -34,6 +35,7 @@ export const CATEGORIES = [
     group: "type",
     priorWeight: 1,
     predicate: (p) => p.types.includes(t),
+    miss: `isn't ${cap(t)}-type`,
   })),
   {
     id: "mono",
@@ -42,6 +44,7 @@ export const CATEGORIES = [
     group: "typeCount",
     priorWeight: 1,
     predicate: (p) => p.types.length === 1,
+    miss: "has two types",
   },
   {
     id: "dual",
@@ -50,6 +53,7 @@ export const CATEGORIES = [
     group: "typeCount",
     priorWeight: 1,
     predicate: (p) => p.types.length === 2,
+    miss: "has only one type",
   },
   ...REGIONS.map(([id, label, priorWeight]) => ({
     id: `region-${id}`,
@@ -61,36 +65,39 @@ export const CATEGORIES = [
     // or for a form that debuted elsewhere, both (White-Striped Basculin is
     // Unova and Hisui) — see scripts/build-dataset.mjs
     predicate: (p) => p.regions.includes(id),
+    miss: `isn't from ${label}`,
   })),
   // A Pokémon counts for every method that evolves it in some core game
   // (Alakazam: trade and item, via the Linking Cord). Stone is the subset
   // of item where an evolution stone is used, not held.
   ...[
-    ["level", "Evolved by Level-Up", "Level Evo", 2],
-    ["item", "Evolved by Item", "Item Evo", 2],
-    ["stone", "Evolved by Stone", "Stone Evo", 2],
-    ["trade", "Evolved by Trade", "Trade Evo", 2],
-    ["friendship", "Evolved by Friendship", "Friendship Evo", 2],
-  ].map(([m, label, short, priorWeight]) => ({
+    ["level", "Evolved by Level-Up", "Level Evo", 2, "didn't evolve by levelling up"],
+    ["item", "Evolved by Item", "Item Evo", 2, "didn't evolve with an item"],
+    ["stone", "Evolved by Stone", "Stone Evo", 2, "didn't evolve with a stone"],
+    ["trade", "Evolved by Trade", "Trade Evo", 2, "didn't evolve by trade"],
+    ["friendship", "Evolved by Friendship", "Friendship Evo", 2, "didn't evolve by friendship"],
+  ].map(([m, label, short, priorWeight, miss]) => ({
     id: `evo-${m}`,
     label,
     short,
     group: "evo",
     priorWeight,
     predicate: (p) => p.evoMethods.includes(m),
+    miss,
   })),
   ...[
-    ["first", "First Stage", "First Stage"],
-    ["middle", "Middle Stage", "Middle Stage"],
-    ["final", "Final Stage", "Final Stage"],
-    ["single", "No Evolution Line", "No Evo Line"],
-  ].map(([st, label, short]) => ({
+    ["first", "First Stage", "First Stage", "isn't a first-stage Pokémon"],
+    ["middle", "Middle Stage", "Middle Stage", "isn't a middle-stage Pokémon"],
+    ["final", "Final Stage", "Final Stage", "isn't a final-stage Pokémon"],
+    ["single", "No Evolution Line", "No Evo Line", "has an evolution line"],
+  ].map(([st, label, short, miss]) => ({
     id: `stage-${st}`,
     label,
     short,
     group: "stage",
     priorWeight: 1,
     predicate: (p) => p.stage === st,
+    miss,
   })),
   {
     id: "stage-notFully",
@@ -99,6 +106,7 @@ export const CATEGORIES = [
     group: "stage",
     priorWeight: 1,
     predicate: (p) => p.stage === "first" || p.stage === "middle",
+    miss: "is fully evolved",
   },
   {
     id: "branched",
@@ -107,26 +115,28 @@ export const CATEGORIES = [
     group: "evoLine",
     priorWeight: 2,
     predicate: (p) => p.branched,
+    miss: "doesn't have a branched evolution",
   },
   // Mega and Gigantamax are the Mega/Gigantamax form records themselves
   // (Mega Charizard X, Gigantamax Charizard), not the base species.
   ...[
-    ["legendary", "Legendary", 1],
-    ["mythical", "Mythical", 1],
-    ["ultraBeast", "Ultra Beast", 2],
-    ["paradox", "Paradox", 2],
-    ["fossil", "Fossil", 1],
-    ["starter", "First Partner (Starter Line)", 1],
-    ["baby", "Baby", 1],
-    ["mega", "Mega Evolution", 2],
-    ["gmax", "Gigantamax", 2],
-  ].map(([f, label, priorWeight]) => ({
+    ["legendary", "Legendary", 1, "isn't Legendary"],
+    ["mythical", "Mythical", 1, "isn't Mythical"],
+    ["ultraBeast", "Ultra Beast", 2, "isn't an Ultra Beast"],
+    ["paradox", "Paradox", 2, "isn't a Paradox Pokémon"],
+    ["fossil", "Fossil", 1, "isn't a Fossil Pokémon"],
+    ["starter", "First Partner (Starter Line)", 1, "isn't in a First Partner line"],
+    ["baby", "Baby", 1, "isn't a Baby Pokémon"],
+    ["mega", "Mega Evolution", 2, "isn't a Mega Evolution"],
+    ["gmax", "Gigantamax", 2, "isn't a Gigantamax form"],
+  ].map(([f, label, priorWeight, miss]) => ({
     id: `flag-${f}`,
     label,
     short: label.replace(" (Starter Line)", ""),
     group: "special",
     priorWeight,
     predicate: (p) => p.flags.includes(f),
+    miss,
   })),
   ...MOVES.map((m) => ({
     id: `move-${m.id}`,
@@ -135,6 +145,7 @@ export const CATEGORIES = [
     group: "move",
     priorWeight: 2,
     predicate: (p) => p.moves.includes(m.id),
+    miss: `can't learn ${m.name}`,
   })),
   ...ABILITIES.map((a) => ({
     id: `ability-${a.id}`,
@@ -143,10 +154,21 @@ export const CATEGORIES = [
     group: "ability",
     priorWeight: 2,
     predicate: (p) => p.abilities.includes(a.id),
+    miss: `doesn't have ${a.name}`,
   })),
 ];
 
 export const CATEGORY_BY_ID = new Map(CATEGORIES.map((c) => [c.id, c]));
+
+// Why a Pokémon fails a cell: "isn't Fire-type and isn't from Galar".
+// Each category's `miss` is the clause for a Pokémon that fails it alone.
+export function whyNot(pokemon, catIds) {
+  const clauses = catIds
+    .map((id) => getCategory(id))
+    .filter((c) => !c.predicate(pokemon))
+    .map((c) => c.miss);
+  return clauses.length ? clauses.join(" and ") : "";
+}
 
 export const CATEGORY_GROUPS = [
   ["region", "Regions"],

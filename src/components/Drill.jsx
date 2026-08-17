@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickDrillPair } from "../logic/picker.js";
 import { intersection, pairIsValid, pairKey } from "../logic/matching.js";
-import { CATEGORY_BY_ID } from "../data/categories.js";
+import { CATEGORY_BY_ID, whyNot } from "../data/categories.js";
 import { hashStateFor, writeHash } from "../logic/hashState.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
 import CategoryPill from "./CategoryPill.jsx";
@@ -90,7 +90,7 @@ function Drill() {
             {result.correct
               ? `Correct — ${result.pokemon.displayName}!`
               : result.pokemon
-                ? `${result.pokemon.displayName} doesn't fit.`
+                ? `${result.pokemon.displayName} doesn't fit — it ${whyNot(result.pokemon, [a.id, b.id])}.`
                 : "Revealed."}
           </p>
           {nextIn ? <p className="due-note">This pair comes back in {nextIn}.</p> : null}

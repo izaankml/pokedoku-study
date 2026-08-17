@@ -41,12 +41,13 @@ export function normalizeName(s) {
     .replace(/[^a-z0-9]/g, "");
 }
 
-// Each Pokémon is searchable by its display name and, for forms, by the
-// dex slug too ("Hisuian Growlithe" / "growlithe hisui", "Mega Charizard X"
-// / "charizard mega x").
+// Each Pokémon is searchable by its display name ("Growlithe Hisui", as
+// PokeDoku names it), the dataset's own name ("Hisuian Growlithe") and,
+// for forms, the dex slug too ("growlithehisui").
 const SEARCH_INDEX = POKEMON.map((p) => {
   const norms = [normalizeName(p.displayName)];
-  if (p.form && p.name !== norms[0]) norms.push(p.name);
+  if (p.altName) norms.push(normalizeName(p.altName));
+  if (p.form && !norms.includes(p.name)) norms.push(p.name);
   return { norms, pokemon: p };
 });
 

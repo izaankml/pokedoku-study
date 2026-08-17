@@ -1,10 +1,29 @@
 import data from "./pokedex.json";
 import SPRITES from "./sprites.json";
+import POKEDOKU_NAMES from "./pokedoku-names.json";
 
 export const POKEMON = data.pokemon;
 export const DATA_META = data.meta;
 
 export const POKEMON_BY_ID = new Map(POKEMON.map((p) => [p.id, p]));
+
+// Forms are named the way PokeDoku names them — species first, then the
+// form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner") — built
+// from its slug (scripts/build-pokedoku-names.mjs) on the base species'
+// proper name (so "Mr. Mime Galar", not "Mr Mime Galar"). The dataset's
+// own name ("Galarian Zapdos") is kept as `altName`, still searchable.
+const cap = (w) => (w ? w[0].toUpperCase() + w.slice(1) : w);
+for (const p of POKEMON) {
+  const pd = POKEDOKU_NAMES[p.id];
+  if (!pd) continue;
+  const rest = pd.name.startsWith(`${pd.specie}-`) ? pd.name.slice(pd.specie.length + 1) : pd.name;
+  const base = POKEMON_BY_ID.get(p.species);
+  const name = `${base ? base.displayName : cap(pd.specie)} ${rest.split("-").map(cap).join(" ")}`;
+  if (name !== p.displayName) {
+    p.altName = p.displayName;
+    p.displayName = name;
+  }
+}
 
 const POKEDOKU_SPRITES = "https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon";
 const POKEAPI_SPRITES = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";

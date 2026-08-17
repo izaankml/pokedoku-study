@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { generateGrid } from "../logic/grid.js";
 import { intersection, pairKey } from "../logic/matching.js";
-import { CATEGORY_BY_ID, getCategory } from "../data/categories.js";
+import { CATEGORY_BY_ID, getCategory, whyNot } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
 import { loadJson, saveJson } from "../logic/hashState.js";
 import CategoryPill from "./CategoryPill.jsx";
@@ -87,7 +87,7 @@ function PracticeGrid() {
       setMessage(`${pokemon.displayName} fits!`);
       setSelected(null);
     } else {
-      setMessage(`${pokemon.displayName} doesn't fit that cell.`);
+      setMessage(`${pokemon.displayName} doesn't fit — it ${whyNot(pokemon, [rowId, colId])}.`);
     }
   }
 
