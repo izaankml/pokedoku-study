@@ -161,30 +161,6 @@ button {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
-/* "a newer build is deployed" — a slim bar at the top of the app */
-.update-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sp-3);
-  margin: 0 0 var(--sp-2);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--accent-soft);
-  border: 1px solid var(--accent);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.update-banner button {
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  border: none;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-weight: 700;
-}
-
 .app {
   max-width: 720px;
   margin: 0 auto;
@@ -539,23 +515,6 @@ header h1 .home-link:focus-visible {
 .pill.type-dark {
   color: #fff;
   text-shadow: none;
-}
-
-/* The type's symbol sits before the name, in the text colour */
-.pill .type-icon {
-  width: 1.1em;
-  height: 1.1em;
-  vertical-align: -0.2em;
-  margin: 0 0.35em 0 -0.2em;
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.15));
-}
-
-.pill.type-fighting .type-icon,
-.pill.type-poison .type-icon,
-.pill.type-ghost .type-icon,
-.pill.type-dragon .type-icon,
-.pill.type-dark .type-icon {
-  filter: none;
 }
 
 /* Regions: a two-tone fill in the colours of the region's games (Red /
