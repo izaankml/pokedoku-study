@@ -263,9 +263,14 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Female, Lycanroc Midnight, the Burmy cloaks … are in Browse/Drill/Grid
     like PokeDoku's own lists (Minior's seven cores included — Meteor ⇢
     them, "Shields Down, ½ HP"; the red core, `minior-red`, is a cloned
-    record since the dex's base Minior is the meteor), while Cramorant's
+    record since the dex's base Minior is the meteor; so is Maushold Family
+    of Three, PokeAPI's default 925 being Family of Four), while Cramorant's
     battle forms stay in `ALL_POKEMON` only (trees, forms, the sheet, URL
-    slugs). A gender form shares its base's transformations in the Forms
+    slugs). `scripts/check-against-pokedoku.mjs` compares the two lists
+    both ways: as of Aug 2026 the 1323 entries PokeDoku shows are exactly
+    the app's 1322 answers plus its joke cowboy-hat Caterpie (Zygarde 50%
+    is the same Pokémon under PokeDoku's own id 10119 vs the species 718).
+    A gender form shares its base's transformations in the Forms
     row (Pyroar Female lists Pyroar Mega, Meowstic Female lists Meowstic
     Mega, and vice versa) unless it has its own of that kind (none does;
     PokeDoku's hidden `meowstic-female-mega` isn't real yet). Checked:
