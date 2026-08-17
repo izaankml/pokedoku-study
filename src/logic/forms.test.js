@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
-import { baseOf, counterpartsOf, formLabel, formTrigger, formsOf, formsRow, isTransformation, variantNote, variantsOf } from "./forms.js";
+import { baseOf, counterpartsOf, formLabel, formRank, formTrigger, formsOf, formsRow, isTransformation, variantNote, variantsOf } from "./forms.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n || p.altName === n);
 
@@ -65,13 +65,14 @@ describe("PokeDoku names", () => {
 describe("formsRow", () => {
   const names = (p) => formsRow(p).map((t) => t.displayName);
   it("relates only what's direct, the Pokémon itself included once: Darmanitan", () => {
-    expect(names(byName("Darmanitan Standard"))).toEqual(["Darmanitan Standard", "Darmanitan Zen", "Darmanitan Galar Standard"]);
     expect(names(byName("Darmanitan Zen"))).toEqual(["Darmanitan Standard", "Darmanitan Zen", "Darmanitan Galar Zen"]);
     expect(names(byName("Darmanitan Galar Standard"))).toEqual(["Darmanitan Standard", "Darmanitan Galar Standard", "Darmanitan Galar Zen"]);
-    expect(names(byName("Darmanitan Galar Zen"))).toEqual(["Darmanitan Zen", "Darmanitan Galar Standard", "Darmanitan Galar Zen"]);
+    expect(names(byName("Darmanitan Galar Zen"))).toEqual(["Darmanitan Galar Standard", "Darmanitan Zen", "Darmanitan Galar Zen"]);
     expect(names(byName("Venusaur"))).toEqual(["Venusaur", "Venusaur Mega", "Venusaur Gmax"]);
-    expect(names(byName("Pyroar Female"))).toEqual(["Pyroar Male", "Pyroar Mega", "Pyroar Female"]);
-    expect(names(byName("Pyroar Mega"))).toEqual(["Pyroar Male", "Pyroar Mega", "Pyroar Female"]);
+    expect(names(byName("Pyroar Female"))).toEqual(["Pyroar Male", "Pyroar Female", "Pyroar Mega"]);
+    expect(names(byName("Pyroar Mega"))).toEqual(["Pyroar Male", "Pyroar Female", "Pyroar Mega"]);
+    expect(names(byName("Slowbro"))).toEqual(["Slowbro", "Slowbro Galar", "Slowbro Mega"]);
+    expect(names(byName("Darmanitan Standard"))).toEqual(["Darmanitan Standard", "Darmanitan Galar Standard", "Darmanitan Zen"]);
     expect(names(byName("Meowstic Female"))).toEqual(["Meowstic Male", "Meowstic Female", "Meowstic Mega"]);
     expect(names(byName("Minior Meteor")).slice(0, 3)).toEqual(["Minior Meteor", "Minior Red", "Minior Orange"]);
     expect(names(byName("Charizard Mega X"))).toEqual(["Charizard", "Charizard Mega X", "Charizard Mega Y", "Charizard Gmax"]);
@@ -91,12 +92,13 @@ describe("Forms rows hang together", () => {
       }
     }
   });
-  it("show the sheet's own Pokémon exactly once, in dex order", () => {
+  it("show the sheet's own Pokémon exactly once, base forms → transformations → Megas → Gigantamax", () => {
     for (const p of POKEMON) {
-      const ids = formsRow(p).map((t) => t.id);
-      if (!ids.length) continue;
-      expect(ids.filter((id) => id === p.id).length, p.displayName).toBe(1);
-      expect([...ids].sort((a, b) => a - b), p.displayName).toEqual(ids);
+      const row = formsRow(p);
+      if (!row.length) continue;
+      expect(row.filter((t) => t.id === p.id).length, p.displayName).toBe(1);
+      const keys = row.map((t) => [formRank(t), t.id]);
+      expect([...keys].sort((a, b) => a[0] - b[0] || a[1] - b[1]), p.displayName).toEqual(keys);
     }
   });
 });

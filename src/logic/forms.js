@@ -230,7 +230,8 @@ export function counterpartsOf(p) {
 }
 
 // The Forms row for a sheet: the Pokémon and the forms that relate to it
-// directly, in dex order, as one flat list —
+// directly, as one flat list (base forms, then transformations, Megas,
+// Gigantamax — see formRank) —
 //   the species base S:  S, its transformations, its variants
 //   a variant V:         S, the variants, V's transformations (a gender
 //                        form shares S's: Pyroar Female lists Pyroar Mega)
@@ -263,6 +264,16 @@ export function formsRow(p) {
     list = [S, ...variantsOf(S), ...formsOf(p), ...(p.form === "F" ? sharedFormsOf(p, S) : [])];
   }
   const seen = new Set();
-  list = list.filter((q) => !seen.has(q.id) && seen.add(q.id)).sort((a, b) => a.id - b.id);
+  list = list.filter((q) => !seen.has(q.id) && seen.add(q.id)).sort((a, b) => formRank(a) - formRank(b) || a.id - b.id);
   return list.length > 1 ? list : [];
+}
+
+// Row order: base forms (the species and its variants), then the other
+// transformations (Zen, Primal, Origin …), then Megas, then Gigantamax —
+// dex order within each.
+export function formRank(p) {
+  if (!isTransformation(p)) return 0;
+  if (isMega(p)) return 2;
+  if (isGmax(p)) return 3;
+  return 1;
 }

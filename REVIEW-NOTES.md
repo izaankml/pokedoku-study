@@ -278,7 +278,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
     Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted
     tiles, a word on what it is: `variantNote`). The row (`formsRow`) is
-    one flat, wrapping row in dex order, no connectors: the Pokémon itself
+    one flat, wrapping row — base forms, then other transformations, then Megas, then Gigantamax (`formRank`), dex order within each — no connectors: the Pokémon itself
     (once, highlighted) and the forms that relate to it directly — the
     species base with its transformations and its variants; a variant with
     the base, the other variants and its own transformations; a
