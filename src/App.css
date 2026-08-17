@@ -1219,7 +1219,7 @@ header h1 {
 }
 
 /* square: sized so a two-line name plus a two-line method still fits
-   (Wormadam Sandy: "Lv 20, female, Sandy Cloak"); anything longer only
+   (Wormadam Sandy: "Lv 20, female, cave battle"); anything longer only
    makes the tile taller */
 .evo-tile {
   flex: none;

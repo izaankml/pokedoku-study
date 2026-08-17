@@ -200,7 +200,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     after the method (`evoWhere`) — the dex line alone reads the same as
     the usual form's — and the other branches whose sides share a line
     get what tells them apart (`NOTES`: Solgaleo/Lunala by version,
-    Silcoon/Cascoon random, Wormadam cloaks vs Mothim), as do the gendered
+    Silcoon/Cascoon random, Wormadam by where Burmy last fought vs Mothim male), as do the gendered
     evolutions (Gallade male, Froslass/Salazzle/Vespiquen female). Every
     branch was audited: all 30 now read distinctly, Wurmple's coin toss
     aside (a test keeps it so)

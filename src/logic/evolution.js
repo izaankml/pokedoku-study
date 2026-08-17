@@ -123,14 +123,16 @@ export function evoWhere(pokemon) {
 
 // What the dex line leaves out — the sides of a branch that share one
 // line, and the gender an evolution needs (keyed by the record's slug).
+// Burmy's cloak, and so its Wormadam, follows where it last battled:
+// grass and outdoors, caves and sand, or inside a building.
 const NOTES = {
   solgaleo: "in Sun / Scarlet",
   lunala: "in Moon / Violet",
   silcoon: "random",
   cascoon: "random",
-  wormadam: "female, Plant Cloak",
-  wormadamsandy: "female, Sandy Cloak",
-  wormadamtrash: "female, Trash Cloak",
+  wormadam: "female, outdoor battle",
+  wormadamsandy: "female, cave battle",
+  wormadamtrash: "female, indoor battle",
   mothim: "male",
   gallade: "male",
   froslass: "female",

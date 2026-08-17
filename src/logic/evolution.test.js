@@ -55,7 +55,7 @@ describe("evoNote", () => {
     expect(evoNote(byName("Solgaleo"))).toBe("in Sun / Scarlet");
     expect(evoNote(byName("Lunala"))).toBe("in Moon / Violet");
     expect(evoNote(byName("Silcoon"))).toBe("random");
-    expect(evoNote(byName("Wormadam Sandy"))).toBe("female, Sandy Cloak");
+    expect(evoNote(byName("Wormadam Sandy"))).toBe("female, cave battle");
     expect(evoNote(byName("Mothim"))).toBe("male");
     expect(evoNote(byName("Gallade"))).toBe("male");
     expect(evoNote(byName("Froslass"))).toBe("female");
