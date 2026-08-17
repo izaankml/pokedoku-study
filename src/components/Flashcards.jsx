@@ -8,7 +8,7 @@ import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
 import { CATEGORIES } from "../data/categories.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonCard from "./PokemonCard.jsx";
-import EvolutionLine from "./EvolutionLine.jsx";
+import PokemonDetail from "./PokemonDetail.jsx";
 
 const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby", "mega", "gmax"];
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
@@ -58,6 +58,7 @@ function Flashcards() {
   });
   const [picked, setPicked] = useState(session.picked);
   const [selection, setSelection] = useState(session.selection);
+  const [showDetail, setShowDetail] = useState(false);
   const pickerRef = useRef(null);
 
   function freshCard(forDeck, alsoExclude = []) {
@@ -101,11 +102,13 @@ function Flashcards() {
   useEffect(() => {
     const onKey = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      // a focused tab or deck chip keeps its own keyboard behaviour
-      if (document.activeElement?.closest(".tabs, .deck-picker")) return;
+      // a focused tab or deck chip keeps its own keyboard behaviour; with
+      // the detail sheet open, keys belong to it (Escape closes)
+      if (showDetail || document.activeElement?.closest(".tabs, .deck-picker")) return;
       if (e.key === "Enter") {
         if (picked !== null) {
           e.preventDefault();
+          e.stopPropagation(); // even with the card itself focused (Space opens it)
           next();
         } else if (selection.length) {
           e.preventDefault();
@@ -125,8 +128,9 @@ function Flashcards() {
       const to = at < 0 ? (step > 0 ? 0 : buttons.length - 1) : Math.min(buttons.length - 1, Math.max(0, at + step));
       buttons[to].focus();
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    // capture phase: runs before the focused element's own handler
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   });
 
   const deck = DECK_BY_ID.get(card.deckId);
@@ -148,6 +152,7 @@ function Flashcards() {
   const wasCorrect = answered && !gaveUp && isRight([...pickedIds]);
 
   function commit(nextCard, nextPicked) {
+    setShowDetail(false);
     session.card = nextCard;
     session.picked = nextPicked;
     session.selection = [];
@@ -243,7 +248,10 @@ function Flashcards() {
         ))}
       </div>
       <p className="hint card-question">{deck.question(card.param)}</p>
-      <PokemonCard pokemon={pokemon} eager />
+      {/* once answered, the card opens the detail sheet (evolution line and
+          all); before that it stays inert so nothing gives the answer away */}
+      <PokemonCard pokemon={pokemon} eager onClick={answered ? () => setShowDetail(true) : undefined} />
+      {showDetail ? <PokemonDetail pokemon={pokemon} onClose={() => setShowDetail(false)} /> : null}
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
           <div className="card-facts">
@@ -262,10 +270,7 @@ function Flashcards() {
                 <AbilityPill key={a.name} ability={a} />
               ))}
             </div>
-            <div className="card-tags">
-              <span className="tags-label">Evolution</span>
-              <EvolutionLine pokemon={pokemon} />
-            </div>
+
           </div>
         ) : null}
         <div className="answer-body">

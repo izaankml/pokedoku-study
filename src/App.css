@@ -950,6 +950,22 @@ header h1 {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
 }
 
+/* answered: the card is a button into the detail sheet */
+.flashcards .pokemon-card.clickable {
+  transition: border-color var(--dur-fast), background-color var(--dur-fast), scale var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .flashcards .pokemon-card.clickable:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
+  }
+}
+
+.flashcards .pokemon-card.clickable:active {
+  scale: 0.985;
+}
+
 .flashcards .pokemon-card figcaption {
   font-size: 1.15rem;
   font-weight: 700;
