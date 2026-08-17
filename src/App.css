@@ -1170,7 +1170,7 @@ header h1 {
 /* ---- evolution line: square stage tiles joined by arrows ---- */
 
 .evo-line {
-  --evo-tile: 96px;
+  --evo-tile: 100px; /* the largest any tile needs (a two-line name over a two-line method) — so all match */
   display: flex;
   justify-content: center;
 }
@@ -1215,12 +1215,12 @@ header h1 {
   color: var(--text-low);
   font-size: 1.05rem;
   flex: none;
-  padding: 0 2px;
+  padding: 0 1px;
 }
 
-/* square: sized so a two-line name plus a two-line method still fits
-   (Wormadam Sandy: "Lv 20, female, cave battle"); anything longer only
-   makes the tile taller */
+/* square, all the same size: --evo-tile is what the tallest content —
+   a two-line name over a two-line method (Wormadam Sandy, Urshifu Rapid
+   Strike) — needs; anything longer only makes that tile taller */
 .evo-tile {
   flex: none;
   width: var(--evo-tile);
@@ -2262,8 +2262,8 @@ main > * {
   }
 }
 
-/* three 96px stages plus arrows need 330px: shave the backdrop so they
-   fit a 375px phone */
+/* three stages plus arrows need ~340px: shave the backdrop so they fit
+   a 375px phone */
 @media (max-width: 400px) {
   .modal-backdrop {
     padding: var(--sp-2);

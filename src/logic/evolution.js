@@ -81,7 +81,18 @@ const TERSE = {
   "Defeat the Rapid Strike Tower": "Beat Rapid Strike Tower",
 };
 
+// Title Case, leaving the little words alone: "Lv 20, female, cave
+// battle" → "Lv 20, Female, Cave Battle", "Trade + Metal Coat", "in Galar".
+const SMALL = new Set(["a", "an", "the", "and", "or", "in", "at", "on", "of", "with", "its", "per", "vs"]);
+export function titleCase(text, mid = false) {
+  return text.replace(/[A-Za-zÀ-ÿ'’]+/g, (w, i) => ((mid || i > 0) && SMALL.has(w) ? w : w[0].toUpperCase() + w.slice(1)));
+}
+
 export function shortHow(detail) {
+  return titleCase(shortHowRaw(detail));
+}
+
+function shortHowRaw(detail) {
   if (TERSE[detail]) return TERSE[detail];
   return detail
     .replace(/^Use an? /, "")
@@ -143,5 +154,6 @@ const NOTES = {
 // What to add after the method: the region for a regional form, or the
 // note above. Null when nothing needs saying.
 export function evoNote(pokemon) {
-  return evoWhere(pokemon) || NOTES[pokemon.name] || null;
+  const note = evoWhere(pokemon) || NOTES[pokemon.name] || null;
+  return note && titleCase(note, true); // it follows the method mid-line
 }

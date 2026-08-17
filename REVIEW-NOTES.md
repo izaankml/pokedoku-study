@@ -193,8 +193,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     two on a phone), else pairs — and ones that evolve again get a row
     each — Goomy shows Sliggoo → Goodra over
     Hisuian Sliggoo → Hisuian Goodra, Applin has Flapple/Appletun paired
-    above Dipplin → Hydrapple. Methods stay under ~30 characters (`TERSE`
-    overrides for the long dex lines) so tiles stay square. A regional
+    above Dipplin → Hydrapple. Tiles are all one size, 100px — what the
+    tallest content (a two-line name over a two-line method: Wormadam
+    Sandy, Urshifu Rapid Strike) needs; every tile of every line was
+    measured square in headless Chrome. Methods stay under ~30 characters
+    (`TERSE` overrides for the long dex lines) and are Title Case, small
+    words aside (`titleCase`). A regional
     form that evolves from a different form (Koffing → Galarian Weezing,
     Pikachu → Alolan Raichu, the Hisuian evolutions) says "in Galar" etc.
     after the method (`evoWhere`) — the dex line alone reads the same as

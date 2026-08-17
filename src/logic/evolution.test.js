@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { POKEMON } from "../data/pokedex.js";
-import { evoNote, evoWhere, evolutionLine, evolutionTree, shortHow } from "./evolution.js";
+import { evoNote, evoWhere, evolutionLine, evolutionTree, shortHow, titleCase } from "./evolution.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n);
 
@@ -54,11 +54,11 @@ describe("evoNote", () => {
   it("tells apart every branch whose sides share a dex line", () => {
     expect(evoNote(byName("Solgaleo"))).toBe("in Sun / Scarlet");
     expect(evoNote(byName("Lunala"))).toBe("in Moon / Violet");
-    expect(evoNote(byName("Silcoon"))).toBe("random");
-    expect(evoNote(byName("Wormadam Sandy"))).toBe("female, cave battle");
-    expect(evoNote(byName("Mothim"))).toBe("male");
-    expect(evoNote(byName("Gallade"))).toBe("male");
-    expect(evoNote(byName("Froslass"))).toBe("female");
+    expect(evoNote(byName("Silcoon"))).toBe("Random");
+    expect(evoNote(byName("Wormadam Sandy"))).toBe("Female, Cave Battle");
+    expect(evoNote(byName("Mothim"))).toBe("Male");
+    expect(evoNote(byName("Gallade"))).toBe("Male");
+    expect(evoNote(byName("Froslass"))).toBe("Female");
     expect(evoNote(byName("Weezing Galar"))).toBe("in Galar");
     expect(evoNote(byName("Goodra"))).toBeNull();
   });
@@ -71,5 +71,16 @@ describe("evoNote", () => {
       const names = ks.map((k) => k.displayName).join("/");
       expect(distinct, names).toBe(names === "Silcoon/Cascoon" ? 1 : ks.length);
     }
+  });
+});
+
+describe("titleCase", () => {
+  it("capitalises the words that matter", () => {
+    expect(titleCase("Lv 20, female, cave battle")).toBe("Lv 20, Female, Cave Battle");
+    expect(titleCase("Leaf Stone / Moss Rock")).toBe("Leaf Stone / Moss Rock");
+    expect(titleCase("Level 20 with Attack > Defense")).toBe("Level 20 with Attack > Defense");
+    expect(titleCase("in Galar", true)).toBe("in Galar");
+    expect(titleCase("Friendship + Fairy move")).toBe("Friendship + Fairy Move");
+    expect(titleCase("Trade with a Karrablast")).toBe("Trade with a Karrablast");
   });
 });
