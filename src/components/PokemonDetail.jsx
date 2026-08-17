@@ -10,7 +10,7 @@ import { useFitRows } from "./useFitRows.js";
 
 // The sheet is three blocks: identity (sprite; dex line, then the name
 // with the region pill beside it, then the type pills with the group
-// pills beside them), then the evolution
+// pills beside them — region and groups in one column), then the evolution
 // tree, then a label/value list of
 // everything else the Pokémon counts for. Types and region sit in the
 // header — they are what you recognise a Pokémon by. Dropped from the
@@ -90,34 +90,27 @@ function PokemonDetail({ pokemon, onClose }) {
         </button>
         <header className="detail-head">
           <Sprite pokemon={pokemon} className="sprite detail-sprite" />
-          <div className="detail-title">
-            <p className="detail-meta">
-              #{String(pokemon.species).padStart(4, "0")}
-              {base ? ` · Form of ${base.displayName}` : ""}
-            </p>
-            <div className="detail-title-row">
-              <h3 id="pokemon-detail-title">
-                <PokemonName name={pokemon.displayName} />
-              </h3>
-              <div className="detail-pills detail-side">
-                {regions.map((c) => (
-                  <CategoryPill key={c.id} cat={c} useShort />
-                ))}
-              </div>
-            </div>
+          <p className="detail-meta">
+            #{String(pokemon.species).padStart(4, "0")}
+            {base ? ` · Form of ${base.displayName}` : ""}
+          </p>
+          <h3 id="pokemon-detail-title">
+            <PokemonName name={pokemon.displayName} />
+          </h3>
+          <div className="detail-pills detail-region">
+            {regions.map((c) => (
+              <CategoryPill key={c.id} cat={c} useShort />
+            ))}
           </div>
-          {/* beside the sprite on a desktop; under it, full width, on a phone */}
-          <div className="detail-title-row detail-tags">
-            <div className="detail-pills detail-types">
-              {types.map((c) => (
-                <CategoryPill key={c.id} cat={c} useShort />
-              ))}
-            </div>
-            <div className="detail-pills detail-side">
-              {groups.map((c) => (
-                <CategoryPill key={c.id} cat={c} useShort />
-              ))}
-            </div>
+          <div className="detail-pills detail-types">
+            {types.map((c) => (
+              <CategoryPill key={c.id} cat={c} useShort />
+            ))}
+          </div>
+          <div className="detail-pills detail-groups">
+            {groups.map((c) => (
+              <CategoryPill key={c.id} cat={c} useShort />
+            ))}
           </div>
         </header>
         <section className="detail-evo" ref={evoRef}>
