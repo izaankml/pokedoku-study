@@ -214,7 +214,9 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     above Dipplin → Hydrapple. Tiles are all one size: 100px on a desktop
     (what the tallest content — a two-line name over a two-line method:
     Wormadam Sandy, Urshifu Rapid Strike — needs, so they're square) and
-    76px on a phone, where a tile just grows taller if its text needs to.
+    76px on a phone; on any sheet every tile is as tall as that sheet's
+    tallest (`useFitRows` sets `--evo-tile-h`), so tree and forms tiles
+    match.
     Methods stay under ~30 characters
     (`TERSE` overrides for the long dex lines) and are Title Case, small
     words aside (`titleCase`). A regional

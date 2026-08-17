@@ -1237,7 +1237,7 @@ header h1 {
 .evo-tile {
   flex: none;
   width: var(--evo-tile);
-  min-height: var(--evo-tile); /* square unless its text needs more */
+  min-height: var(--evo-tile-h, var(--evo-tile)); /* square unless a tile of the sheet needs more — then all match (useFitRows) */
   display: flex;
   flex-direction: column;
   align-items: center;
