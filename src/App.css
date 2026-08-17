@@ -2177,13 +2177,16 @@ main > * {
   flex: none;
 }
 
-/* dex line, name and types on the left; the region pill to their right,
-   level with the dex line */
+/* dex line over the name, the region pill to their right and centred on
+   the pair; the type pills beneath */
 .detail-title {
   min-width: 0;
   flex: 1;
+}
+
+.detail-title-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--sp-2);
 }
 
