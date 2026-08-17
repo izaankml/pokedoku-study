@@ -530,6 +530,10 @@ header h1 .home-link:focus-visible {
    Blue, Gold / Silver, …), dark text like the type pills */
 .pill[class*="region-"] {
   background: linear-gradient(135deg, var(--r1), var(--r2));
+  /* size the gradient to the border box too, else the strip under the
+     border is a repeat of it: the far end's colour bleeds out at the
+     other edge (a white sliver on Unova's dark left) */
+  background-origin: border-box;
   border: 1px solid rgba(0, 0, 0, 0.35);
   color: #16130f;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
