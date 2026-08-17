@@ -59,6 +59,8 @@ describe("PokeDoku names", () => {
     expect(l.speciesName).toBe("Lycanroc");
     expect(formLabel(byName("Lycanroc Midnight"))).toBe("Midnight");
     expect(byName("Toxtricity").displayName).toBe("Toxtricity Amped");
+    expect(byName("Galarian Mr. Mime").displayName).toBe("Mr. Mime Galar");
+    expect(byName("Caterpie (Cowboy-Hat)").displayName).toBe("Caterpie Cowboy Hat");
   });
 });
 

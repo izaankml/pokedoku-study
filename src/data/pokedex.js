@@ -35,9 +35,13 @@ for (const p of ALL_POKEMON) {
   const pd = POKEDOKU_NAMES[p.id];
   let name;
   if (pd) {
-    // the slug is species-then-form ("lycanroc-midday"), bar PokeDoku's own
-    // "cowboy-hat-caterpie": drop the species token wherever it sits
-    const rest = pd.name.split("-").filter((w) => w !== pd.specie).join("-");
+    // the slug is species-then-form ("lycanroc-midday", "mr-mime-galar"),
+    // bar PokeDoku's own "cowboy-hat-caterpie", where the species comes last
+    const rest = pd.name.startsWith(`${pd.specie}-`)
+      ? pd.name.slice(pd.specie.length + 1)
+      : pd.name.endsWith(`-${pd.specie}`)
+        ? pd.name.slice(0, -pd.specie.length - 1)
+        : pd.name;
     name = `${species} ${words(rest)}`;
   } else if (p.form && p.answer === false) {
     // a display-only form PokeDoku has no name for: name it the same way
