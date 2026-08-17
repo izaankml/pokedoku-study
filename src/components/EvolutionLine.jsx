@@ -1,4 +1,6 @@
+import { Fragment } from "react";
 import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
+import { baseOf, formLabel, formTrigger, formsOf } from "../logic/forms.js";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
@@ -30,13 +32,16 @@ function columnsOf(leaves) {
   return leaves.length > 2 && gens.length > 1 ? gens.map((g) => leaves.filter((c) => c.pokemon.gen === g)) : pairsOf(leaves);
 }
 
-function Tile({ pokemon: p, evolved, current }) {
-  const h = evolved && p.evoDetail ? how(p) : null;
+// `note` (a form's trigger) replaces the evolution method; `form` tiles
+// are dashed to read as "becomes, for a while" rather than "evolves into",
+// and name just the form ("Mega X") since the base sits beside them
+function Tile({ pokemon: p, evolved, current, note, form = false }) {
+  const h = note ? { short: note, full: note } : evolved && p.evoDetail ? how(p) : null;
   return (
-    <div className={`evo-tile${current ? " current" : ""}`}>
+    <div className={`evo-tile${current ? " current" : ""}${form ? " form" : ""}`} title={form ? p.displayName : undefined}>
       <Sprite pokemon={p} className="sprite evo-sprite" />
       <span className="evo-name">
-        <PokemonName name={p.displayName} />
+        <PokemonName name={form ? formLabel(p) : p.displayName} />
       </span>
       {h ? (
         <span className="evo-how" title={h.full}>
@@ -47,9 +52,9 @@ function Tile({ pokemon: p, evolved, current }) {
   );
 }
 
-const Arrow = () => (
-  <span className="evo-arrow" aria-hidden="true">
-    →
+const Arrow = ({ form = false }) => (
+  <span className={`evo-arrow${form ? " form" : ""}`} aria-hidden="true">
+    {form ? "⇢" : "→"}
   </span>
 );
 
@@ -101,6 +106,44 @@ function EvolutionLine({ pokemon }) {
         <Node node={tree.root} evolved={false} focusId={tree.focusId} />
       </div>
     </div>
+  );
+}
+
+// The transformations (forms.js) of every stage of a Pokémon's line —
+// Charizard ⇢ Mega X / Mega Y / Gigantamax — one row per stage that has
+// any, the Pokémon itself highlighted when it is one of them. Null when
+// the line has none.
+export function FormsRows({ pokemon }) {
+  const tree = evolutionTree(pokemon);
+  const stages = [];
+  const walk = (n) => {
+    stages.push(n.pokemon);
+    n.children.forEach(walk);
+  };
+  if (tree) walk(tree.root);
+  else stages.push(baseOf(pokemon));
+  const rows = stages.map((s) => [s, formsOf(s)]).filter(([, forms]) => forms.length);
+  if (!rows.length) return null;
+  return (
+    <>
+      <h4 className="detail-forms-head">Forms</h4>
+      <div className="evo-scroll">
+        {/* one grid, so the bases line up when several stages have forms */}
+        <div className="forms-grid">
+          {rows.map(([stage, forms]) => (
+            <Fragment key={stage.id}>
+              <Tile pokemon={stage} />
+              <Arrow form />
+              <div className="evo-tiles">
+                {forms.map((f) => (
+                  <Tile key={f.id} pokemon={f} form note={formTrigger(f)} current={f.id === pokemon.id} />
+                ))}
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
 

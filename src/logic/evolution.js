@@ -1,10 +1,11 @@
 // Evolution lines, drawn from each record's `prevo` (the record it evolved
 // from). A line is a list of levels — [[Eevee], [Vaporeon, Jolteon, …]] —
-// walked from the root of whatever line the Pokémon belongs to. Mega and
-// Gigantamax forms have no evolution of their own, so they show their base
-// species' line.
+// walked from the root of whatever line the Pokémon belongs to. Mega,
+// Gigantamax and the other transformations (forms.js) have no evolution
+// of their own, so they show their base's line.
 
 import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
+import { baseOf } from "./forms.js";
 
 const childrenOf = new Map();
 for (const p of POKEMON) {
@@ -17,9 +18,10 @@ for (const p of POKEMON) {
 for (const kids of childrenOf.values()) kids.sort((a, b) => a.species - b.species || a.id - b.id);
 
 // The root of the line a Pokémon belongs to, and the record to highlight
-// (the Pokémon itself, or its base species for Mega/Gigantamax).
+// (the Pokémon itself, or what it's a transformation of — Charizard for
+// Mega Charizard X; see forms.js).
 function rootOf(pokemon) {
-  let focus = pokemon;
+  let focus = baseOf(pokemon);
   if (focus.stage === null && focus.species !== focus.id) focus = POKEMON_BY_ID.get(focus.species) || focus;
   let root = focus;
   const seen = new Set([root.id]);

@@ -5,7 +5,7 @@ import { POKEMON_BY_ID } from "../data/pokedex.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
-import EvolutionLine from "./EvolutionLine.jsx";
+import EvolutionLine, { FormsRows } from "./EvolutionLine.jsx";
 
 // The sheet is three blocks: identity (sprite; dex line over the name over
 // the type pills, the region pill to their right), then the evolution
@@ -106,6 +106,7 @@ function PokemonDetail({ pokemon, onClose }) {
         <section className="detail-evo">
           <h4>Evolution</h4>
           <EvolutionLine pokemon={pokemon} />
+          <FormsRows pokemon={pokemon} />
         </section>
         <dl className="detail-facts">
           {before.map(renderFact)}

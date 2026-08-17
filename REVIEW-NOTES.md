@@ -219,7 +219,20 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Silcoon/Cascoon random, Wormadam by where Burmy last fought vs Mothim male), as do the gendered
     evolutions (Gallade male, Froslass/Salazzle/Vespiquen female). Every
     branch was audited: all 30 now read distinctly, Wurmple's coin toss
-    aside (a test keeps it so)
+    aside (a test keeps it so). Under the tree, a **Forms** block
+    (`forms.js`, `FormsRows`): the line's transformations — Mega,
+    Gigantamax, Primal, Origin, Crowned, Necrozma's fusions, Hoopa
+    Unbound, Zygarde, Calyrex riders, Ogerpon masks, Rotom appliances,
+    Sky Shaymin, Therian Landorus, Pirouette Meloetta, Zen Mode, Castform,
+    Deoxys, Ash-Greninja — one row per stage that has any (Pikachu ⇢
+    Gmax; Raichu ⇢ Mega X / Mega Y), dashed tiles and a ⇢ arrow so they
+    read as "becomes, for a while", each with its trigger (Mega Stones
+    from Serebii's Legends: Z-A table, incl. Absolite Z, Garchompite Z,
+    Lucarionite Z, Raichunite X/Y; Rayquaza's is Dragon Ascent). Variants
+    that are different individuals — regional forms (already in the tree),
+    Tauros breeds, Oricorio, Partner Pikachu, Bloodmoon Ursaluna … — are
+    not forms of this kind. A test checks every transformation has a
+    trigger; all 318 form tiles measured square.
     — then Group, Abilities and Moves, each a small-caps label with
     its pills beneath (quieter, uniform pills). Not listed (still
     categories everywhere else): type count, tracked abilities, evolution

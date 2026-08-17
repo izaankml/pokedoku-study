@@ -1255,6 +1255,33 @@ header h1 {
   min-width: 0;
 }
 
+/* a transformation (Mega, Gigantamax, Primal …): dashed, like its arrow */
+.evo-tile.form {
+  border-style: dashed;
+  border-color: var(--border);
+}
+
+.evo-arrow.form {
+  font-size: 1.2rem;
+}
+
+/* the Forms block sits under the tree and scrolls like it: a grid of
+   base | ⇢ | forms rows, centred as a whole, bases in one column */
+.detail-forms-head {
+  margin-top: var(--sp-3);
+}
+
+.forms-grid {
+  --evo-tile: 100px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 2px;
+  width: max-content;
+  min-width: 100%;
+}
+
 .evo-tile.current {
   border-color: var(--accent);
   background: var(--accent-soft);
@@ -1281,6 +1308,7 @@ header h1 {
 }
 
 .evo-none {
+  margin-bottom: var(--sp-2);
   font-size: 0.85rem;
   color: var(--text-low);
 }

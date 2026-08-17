@@ -14,8 +14,9 @@ Rotom appliances, …) whenever they fit a cell the base species doesn't.
 - **Browse** — pick one category, or a pair like a PokeDoku cell, and see
   every Pokémon that qualifies. Tap any Pokémon (here or in a Drill/Grid
   answer list) for its detail sheet: every category it counts for, its
-  abilities (hidden one marked) and its whole evolution line with how
-  each stage evolves.
+  abilities (hidden one marked), its whole evolution line with how each
+  stage evolves, and the line's Mega, Gigantamax and other
+  transformations with what triggers them.
 - **Drill** — the core PokeDoku skill: given two categories, name any
   Pokémon that fits both. A miss says why ("Pikachu doesn't fit — it isn't
   Fire-type and isn't from Galar"), and every answer reveals the full
