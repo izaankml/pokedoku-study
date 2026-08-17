@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickFlashcard } from "../logic/picker.js";
 import { DECKS, DECK_BY_ID, cardKey, saveSession, session } from "../logic/flashcards.js";
-import { hashStateFor, writeHash } from "../logic/hashState.js";
+import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
 import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
 import { CATEGORIES } from "../data/categories.js";
@@ -58,8 +58,14 @@ function Flashcards() {
   });
   const [picked, setPicked] = useState(session.picked);
   const [selection, setSelection] = useState(session.selection);
-  const [showDetail, setShowDetail] = useState(false);
   const pickerRef = useRef(null);
+  const deck = DECK_BY_ID.get(card.deckId);
+  const pokemon = POKEMON_BY_ID.get(card.pokemonId);
+
+  // The open sheet lives in the URL (#cards/region/pokemon-eevee) — only
+  // for this card once answered, so nothing gives the answer away
+  const resolve = useCallback((slug) => (picked !== null && slug === pokemon.name ? pokemon : null), [picked, pokemon]);
+  const [showDetail, openDetail, closeDetail] = useDetailHash(resolve);
 
   function freshCard(forDeck, alsoExclude = []) {
     const { deck, pokemon, param } = pickFlashcard(merged, {
@@ -133,8 +139,6 @@ function Flashcards() {
     return () => window.removeEventListener("keydown", onKey, true);
   });
 
-  const deck = DECK_BY_ID.get(card.deckId);
-  const pokemon = POKEMON_BY_ID.get(card.pokemonId);
   const answerIds = new Set(deck.answers(pokemon, card.param));
   const recordCategories = deck.categories(pokemon, card.param);
   const key = cardKey(deck, pokemon);
@@ -152,7 +156,6 @@ function Flashcards() {
   const wasCorrect = answered && !gaveUp && isRight([...pickedIds]);
 
   function commit(nextCard, nextPicked) {
-    setShowDetail(false);
     session.card = nextCard;
     session.picked = nextPicked;
     session.selection = [];
@@ -250,8 +253,8 @@ function Flashcards() {
       <p className="hint card-question">{deck.question(card.param)}</p>
       {/* once answered, the card opens the detail sheet (evolution line and
           all); before that it stays inert so nothing gives the answer away */}
-      <PokemonCard pokemon={pokemon} eager onClick={answered ? () => setShowDetail(true) : undefined} />
-      {showDetail ? <PokemonDetail pokemon={pokemon} onClose={() => setShowDetail(false)} /> : null}
+      <PokemonCard pokemon={pokemon} eager onClick={answered ? () => openDetail(pokemon) : undefined} />
+      {showDetail ? <PokemonDetail pokemon={pokemon} onClose={closeDetail} /> : null}
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
           <div className="card-facts">

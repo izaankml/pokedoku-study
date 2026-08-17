@@ -42,8 +42,9 @@ Galar, Hisui, Paldea).
 
 Where you are survives a reload: the tab and its state live in the URL
 hash (`#cards/region`, `#browse/type-fire/flag-legendary`,
-`#drill/type-fire/flag-legendary`), and the current flashcard and the
-Grid board in progress are kept in `localStorage`. Pokémon are named the
+`#drill/type-fire/flag-legendary`), as does an open detail sheet
+(`#browse/region-kanto/pokemon-eevee` — Back closes it), and the current
+flashcard and the Grid board in progress are kept in `localStorage`. Pokémon are named the
 way PokeDoku names them ("Zapdos Galar", "Charizard Mega X", "Pikachu
 Partner"); the conventional names ("Galarian Zapdos") still work in
 search.

@@ -181,7 +181,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     at all and the strip is Safari's own — nothing on our side can paint it.
 30b. Detail card: centred dialog on all sizes (was a bottom sheet on
     phones); the page behind it can't scroll (`#root` overflow locked
-    while open, backdrop `touch-action: none`). Three blocks divided by
+    while open, backdrop `touch-action: none`). An open sheet is a
+    trailing `pokemon-<slug>` hash segment (`useDetailHash`): opening
+    pushes a history entry so Back closes it, ×/Esc/backdrop pop that
+    entry so Back never reopens a closed sheet, a pasted or reloaded link
+    opens it (only if the Pokémon is in that view — a stale slug is
+    dropped), and switching tabs drops it. The `#` itself stays: GitHub
+    Pages serves static files, so a real path would 404 on refresh. Three blocks divided by
     hairlines: header (plain sprite; name, dex line, and the type and
     region pills — identity, not rows), then Evolution, centred: a tree
     of square tiles (sprite, name, how), each joined by an arrow to its

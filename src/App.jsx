@@ -240,7 +240,7 @@ function App() {
 
   const selectTab = useCallback((t) => {
     setTab(t);
-    if (tabFromHash() !== t) writeHash(t, [], { push: true });
+    if (tabFromHash() !== t) writeHash(t, [], { push: true, detail: null });
     // #root is the scroll container (see App.css)
     document.getElementById("root")?.scrollTo(0, 0);
     window.scrollTo(0, 0);
