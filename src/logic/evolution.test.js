@@ -84,3 +84,10 @@ describe("titleCase", () => {
     expect(titleCase("Trade with a Karrablast")).toBe("Trade with a Karrablast");
   });
 });
+
+describe("dex order", () => {
+  it("keeps a form beside its base, not after later species", () => {
+    const { root } = evolutionTree(byName("Burmy"));
+    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Wormadam", "Wormadam Sandy", "Wormadam Trash", "Mothim"]);
+  });
+});

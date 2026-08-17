@@ -12,7 +12,9 @@ for (const p of POKEMON) {
   if (!childrenOf.has(p.prevo)) childrenOf.set(p.prevo, []);
   childrenOf.get(p.prevo).push(p);
 }
-for (const kids of childrenOf.values()) kids.sort((a, b) => a.id - b.id);
+// dex order: by species number, forms after their base (a form's own id
+// is beyond the dex, so Wormadam Sandy would otherwise trail Mothim)
+for (const kids of childrenOf.values()) kids.sort((a, b) => a.species - b.species || a.id - b.id);
 
 // The root of the line a Pokémon belongs to, and the record to highlight
 // (the Pokémon itself, or its base species for Mega/Gigantamax).
