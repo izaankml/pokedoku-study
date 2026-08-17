@@ -1243,7 +1243,7 @@ header h1 {
   align-items: center;
   justify-content: center;
   gap: 1px;
-  padding: 5px 4px 8px; /* room above the type strip */
+  padding: 5px 4px 10px; /* text clear of the type strip */
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1.5px solid var(--border-subtle);
@@ -2378,7 +2378,7 @@ main > * {
     --evo-tile: 76px;
   }
   .evo-tile {
-    padding: 4px 3px;
+    padding: 4px 3px 9px; /* text clear of the type strip */
     font-size: 0.66rem;
   }
   .evo-how {
