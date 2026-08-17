@@ -440,3 +440,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     in the tree and in the Forms row alike; the plain name stays as
     `altName` (search, Drill answers) and `speciesName` (what the Forms
     row strips to label a form "Midnight").
+
+## Deploy
+
+43. GitHub Pages serves index.html with `cache-control: max-age=600`, so a
+    phone can run the old build for up to ten minutes after a deploy (the
+    hashed bundle itself is fine — it's the html that points at it that
+    goes stale). `UpdateBanner` fetches index.html fresh (`cache:
+    "no-store"`) whenever the tab is opened or comes back into view (and
+    every five minutes), compares the bundle it names with the one running,
+    and offers a Reload when they differ. Production only.

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import UpdateBanner from "./components/UpdateBanner.jsx";
 import { StatsContext } from "./StatsContext.js";
 import { readHash, writeHash } from "./logic/hashState.js";
 import TabNav from "./components/TabNav.jsx";
@@ -271,6 +272,7 @@ function App() {
 
   return (
     <div className="app">
+      <UpdateBanner />
       <header>
         <h1>
           <a className="home-link" href={"#" + DEFAULT_TAB.toLowerCase()} onClick={goHome} aria-label="PokeDoku Study — home">
