@@ -9,7 +9,7 @@ const byName = new Map(POKEMON.map((p) => [p.name, p]));
 describe("pokedex dataset invariants", () => {
   it("has all 1025 species exactly once, plus forms with unique ids", () => {
     expect(SPECIES.length).toBe(1025);
-    expect(FORMS.length).toBe(295); // the forms PokeDoku lists as answers of their own
+    expect(FORMS.length).toBe(296); // the forms PokeDoku lists as answers of their own
     expect(new Set(POKEMON.map((p) => p.id)).size).toBe(POKEMON.length);
     expect(new Set(POKEMON.map((p) => p.name)).size).toBe(POKEMON.length);
     for (const p of SPECIES) expect(p.species).toBe(p.id);

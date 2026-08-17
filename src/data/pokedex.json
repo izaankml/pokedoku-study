@@ -3,7 +3,7 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1322,
+  "count": 1323,
   "answerCount": 1257,
   "speciesCount": 1025
  },
@@ -43909,6 +43909,45 @@
    ],
    "answer": false,
    "prevo": null
+  },
+  {
+   "id": 10136,
+   "species": 774,
+   "form": "Red",
+   "name": "miniorred",
+   "displayName": "Minior (Red)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "prevo": null,
+   "answer": false
   },
   {
    "id": 775,

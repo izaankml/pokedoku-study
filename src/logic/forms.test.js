@@ -70,6 +70,9 @@ describe("formsRow", () => {
     expect(names(byName("Darmanitan Galar Standard"))).toEqual(["Darmanitan Standard", "Darmanitan Galar Standard", "Darmanitan Galar Zen"]);
     expect(names(byName("Darmanitan Galar Zen"))).toEqual(["Darmanitan Zen", "Darmanitan Galar Standard", "Darmanitan Galar Zen"]);
     expect(names(byName("Venusaur"))).toEqual(["Venusaur", "Venusaur Mega", "Venusaur Gmax"]);
+    expect(names(byName("Pyroar Female"))).toEqual(["Pyroar Male", "Pyroar Mega", "Pyroar Female"]);
+    expect(names(byName("Pyroar Mega"))).toEqual(["Pyroar Male", "Pyroar Mega", "Pyroar Female"]);
+    expect(names(byName("Minior Meteor")).slice(0, 3)).toEqual(["Minior Meteor", "Minior Red", "Minior Orange"]);
     expect(names(byName("Charizard Mega X"))).toEqual(["Charizard", "Charizard Mega X", "Charizard Mega Y", "Charizard Gmax"]);
   });
   it("shows every Lycanroc on every Lycanroc, and Gigantamax Urshifu as counterparts", () => {

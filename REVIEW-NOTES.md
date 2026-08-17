@@ -261,9 +261,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     PokeDoku instead: its list flags entries `hidden`, and pokedex.js makes
     a form an answer exactly when PokeDoku shows it (`POKEMON`), so Pyroar
     Female, Lycanroc Midnight, the Burmy cloaks … are in Browse/Drill/Grid
-    like PokeDoku's own lists, while Cramorant's battle forms and Minior's
-    colours stay in `ALL_POKEMON` only (trees, forms, the sheet, URL
-    slugs). Names come PokeDoku-style ("Lycanroc Midnight"), sprites from
+    like PokeDoku's own lists (Minior's seven cores included — Meteor ⇢
+    them, "Shields Down, ½ HP"; the red core, `minior-red`, is a cloned
+    record since the dex's base Minior is the meteor), while Cramorant's
+    battle forms stay in `ALL_POKEMON` only (trees, forms, the sheet, URL
+    slugs). A gender form shares its base's transformations in the Forms
+    row (Pyroar Female lists Pyroar Mega, and vice versa). Names come PokeDoku-style ("Lycanroc Midnight"), sprites from
     PokeDoku's CDN.
     Gender forms (Meowstic Male / Female, Oinkologne, Basculegion) are branches of the tree, "Lv 25, Male / Female". Every other form
     of a species — the *variants*: regional forms, Own Tempo Rockruff,

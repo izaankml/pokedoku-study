@@ -53,6 +53,13 @@ const TRIGGERS = {
   eiscuenoice: "Ice Face Broken",
   morpekohangry: "Hunger Switch, Each Turn",
   cherrimsunshine: "Flower Gift, Harsh Sunlight",
+  miniorred: "Shields Down, ½ HP",
+  miniororange: "Shields Down, ½ HP",
+  minioryellow: "Shields Down, ½ HP",
+  miniorgreen: "Shields Down, ½ HP",
+  miniorblue: "Shields Down, ½ HP",
+  miniorindigo: "Shields Down, ½ HP",
+  miniorviolet: "Shields Down, ½ HP",
   cramorantgulping: "Gulp Missile, after Surf / Dive",
   cramorantgorging: "Gulp Missile, under ½ HP",
   palafinhero: "Zero to Hero, Switch Out",
@@ -193,7 +200,6 @@ const VARIANT_NOTES = {
 const VARIANT_KINDS = [
   [/^oricorio/, "Nectar Style"],
   [/^squawkabilly/, null],
-  [/^minior/, "Core Colour"],
   [/^(pumpkaboo|gourgeist)/, null],
   [/^tatsugiri/, null],
   [/^tauros/, null],
@@ -226,23 +232,27 @@ export function counterpartsOf(p) {
 // The Forms row for a sheet: the Pokémon and the forms that relate to it
 // directly, in dex order, as one flat list —
 //   the species base S:  S, its transformations, its variants
-//   a variant V:         S, the variants, V's transformations
+//   a variant V:         S, the variants, V's transformations (a gender
+//                        form shares S's: Pyroar Female lists Pyroar Mega)
 //   a transformation T:  T's base, that base's transformations, T's
 //                        counterparts (the same kind on other variants)
 // so Darmanitan lists Zen and Galarian Darmanitan (not Galar Zen); Zen
 // lists Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
 // Galar Zen; Charizard Mega X lists Charizard, Mega X, Mega Y, Gmax;
 // every Lycanroc lists all three. Empty when there's nothing but itself.
+// A gender form (Pyroar Female) shares its base's transformations — she
+// Mega Evolves into the same Mega Pyroar — so those rows list each other.
+const genderMatesOf = (base) => variantsOf(base).filter((v) => v.form === "F");
 export function formsRow(p) {
   const S = POKEMON_BY_ID.get(p.species) || p;
   let list;
   if (isTransformation(p)) {
     const B = baseOf(p);
-    list = [B, ...formsOf(B), ...counterpartsOf(p)];
+    list = [B, ...formsOf(B), ...counterpartsOf(p), ...genderMatesOf(B)];
   } else if (p === S) {
     list = [S, ...formsOf(S), ...variantsOf(S)];
   } else {
-    list = [S, ...variantsOf(S), ...formsOf(p)];
+    list = [S, ...variantsOf(S), ...formsOf(p), ...(p.form === "F" ? formsOf(S) : [])];
   }
   const seen = new Set();
   list = list.filter((q) => !seen.has(q.id) && seen.add(q.id)).sort((a, b) => a.id - b.id);

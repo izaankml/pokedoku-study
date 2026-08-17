@@ -494,6 +494,7 @@ export const CLONED_FORMS = [
   { id: 90592, species: 592, name: "frillishf", form: "F" },
   { id: 90593, species: 593, name: "jellicentf", form: "F", prevo: 90592 },
   { id: 90668, species: 668, name: "pyroarf", form: "F", prevo: 667 },
+  { id: 10136, species: 774, name: "miniorred", form: "Red" }, // Minior's red core (the dex's base Minior is the meteor)
   { id: 91586, species: 586, name: "sawsbucksummer", form: "Summer", prevo: 91585 },
   { id: 90586, species: 586, name: "sawsbuckautumn", form: "Autumn", prevo: 90585 },
   { id: 92586, species: 586, name: "sawsbuckwinter", form: "Winter", prevo: 92585 },
