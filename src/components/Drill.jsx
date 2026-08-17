@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickDrillPair } from "../logic/picker.js";
-import { intersection, pairKey } from "../logic/matching.js";
+import { intersection, pairIsValid, pairKey } from "../logic/matching.js";
+import { CATEGORY_BY_ID } from "../data/categories.js";
+import { hashStateFor, writeHash } from "../logic/hashState.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
 import CategoryPill from "./CategoryPill.jsx";
 import PokemonAutocomplete from "./PokemonAutocomplete.jsx";
 import AnswerList from "./AnswerList.jsx";
 
+// The current question lives in the URL (#drill/type-fire/flag-legendary),
+// so a reload asks the same one.
+function pairFromHash() {
+  const [a, b] = hashStateFor("drill") || [];
+  if (CATEGORY_BY_ID.has(a) && CATEGORY_BY_ID.has(b) && a !== b && pairIsValid(a, b)) {
+    return [CATEGORY_BY_ID.get(a), CATEGORY_BY_ID.get(b)];
+  }
+  return null;
+}
+
 function Drill() {
   const { merged, recordAttempt } = useStats();
-  const [pair, setPair] = useState(() => pickDrillPair(merged));
+  const [pair, setPair] = useState(() => pairFromHash() || pickDrillPair(merged));
+  useEffect(() => {
+    writeHash("drill", [pair[0].id, pair[1].id]);
+  }, [pair]);
   const [result, setResult] = useState(null); // {pokemon|null, correct}
   const [streak, setStreak] = useState(0);
 

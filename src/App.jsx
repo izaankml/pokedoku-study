@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StatsContext } from "./StatsContext.js";
+import { readHash, writeHash } from "./logic/hashState.js";
 import TabNav from "./components/TabNav.jsx";
 import { PokeballIcon } from "./components/Sprite.jsx";
 import Browser from "./components/Browser.jsx";
@@ -29,10 +30,11 @@ import {
 const TABS = ["Browse", "Drill", "Cards", "Grid", "Stats"];
 const DEFAULT_TAB = "Browse";
 
-// The active tab lives in the URL hash (#cards) so a refresh, a shared
-// link, or back/forward lands on the same tab.
+// The active tab is the first hash segment (#cards/region — see
+// logic/hashState.js) so a refresh, a shared link, or back/forward lands
+// on the same tab; each tab keeps its own state after the slash.
 function tabFromHash() {
-  const slug = window.location.hash.replace(/^#\/?/, "").toLowerCase();
+  const slug = readHash().tab;
   return TABS.find((t) => t.toLowerCase() === slug) || null;
 }
 const SYNC_DEBOUNCE_MS = 10_000;
@@ -238,7 +240,7 @@ function App() {
 
   const selectTab = useCallback((t) => {
     setTab(t);
-    if (tabFromHash() !== t) window.history.pushState(null, "", `#${t.toLowerCase()}`);
+    if (tabFromHash() !== t) writeHash(t, [], { push: true });
     // #root is the scroll container (see App.css)
     document.getElementById("root")?.scrollTo(0, 0);
     window.scrollTo(0, 0);

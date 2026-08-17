@@ -1,18 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CategorySelect from "./CategorySelect.jsx";
 import AnswerList from "./AnswerList.jsx";
 import { intersection, membersOf, pairIsValid } from "../logic/matching.js";
-import { getCategory } from "../data/categories.js";
+import { CATEGORY_BY_ID, getCategory } from "../data/categories.js";
+import { hashStateFor, writeHash } from "../logic/hashState.js";
+
+// The picked categories live in the URL (#browse/region-kanto/type-fire).
+function initialPick() {
+  const [a, b] = hashStateFor("browse") || [];
+  const first = CATEGORY_BY_ID.has(a) ? a : "region-kanto";
+  const second = CATEGORY_BY_ID.has(b) && pairIsValid(first, b) ? b : "";
+  return { first, second };
+}
 
 function Browser() {
-  const [first, setFirst] = useState("region-kanto");
-  const [second, setSecond] = useState("");
+  const [{ first, second }, setPick] = useState(initialPick);
+  const setSecond = (id) => setPick((p) => ({ ...p, second: id }));
+  useEffect(() => {
+    writeHash("browse", second ? [first, second] : [first]);
+  }, [first, second]);
 
   // The second dropdown only offers categories that pair with the first;
   // changing the first drops a second that no longer works with it.
   const changeFirst = (id) => {
-    setFirst(id);
-    if (second && !pairIsValid(id, second)) setSecond("");
+    setPick((p) => ({ first: id, second: p.second && pairIsValid(id, p.second) ? p.second : "" }));
   };
 
   const pokemon = second ? intersection(first, second) : membersOf(first);

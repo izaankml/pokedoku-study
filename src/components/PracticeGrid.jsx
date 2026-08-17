@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { generateGrid } from "../logic/grid.js";
 import { intersection, pairKey } from "../logic/matching.js";
-import { getCategory } from "../data/categories.js";
+import { CATEGORY_BY_ID, getCategory } from "../data/categories.js";
+import { POKEMON_BY_ID } from "../data/pokedex.js";
+import { loadJson, saveJson } from "../logic/hashState.js";
 import CategoryPill from "./CategoryPill.jsx";
 import Sprite from "./Sprite.jsx";
 import PokemonAutocomplete from "./PokemonAutocomplete.jsx";
@@ -11,18 +13,48 @@ import AnswerList from "./AnswerList.jsx";
 const emptyCells = () =>
   Array.from({ length: 9 }, () => ({ status: "empty", pokemon: null }));
 
+// The board in progress survives a reload (cells hold Pokémon ids on disk).
+const BOARD_KEY = "pokedoku-study:grid:v1";
+function loadBoard() {
+  const b = loadJson(BOARD_KEY);
+  const ok =
+    b &&
+    Array.isArray(b.rows) && b.rows.length === 3 && b.rows.every((id) => CATEGORY_BY_ID.has(id)) &&
+    Array.isArray(b.cols) && b.cols.length === 3 && b.cols.every((id) => CATEGORY_BY_ID.has(id)) &&
+    Array.isArray(b.cells) && b.cells.length === 9;
+  if (!ok) return null;
+  return {
+    grid: { rows: b.rows, cols: b.cols },
+    cells: b.cells.map((c) => ({
+      status: c.status === "filled" || c.status === "revealed" ? c.status : "empty",
+      pokemon: c.status === "filled" && POKEMON_BY_ID.has(c.pokemon) ? POKEMON_BY_ID.get(c.pokemon) : null,
+    })),
+    guesses: Number(b.guesses) || 0,
+  };
+}
+function saveBoard(grid, cells, guesses) {
+  saveJson(BOARD_KEY, {
+    rows: grid.rows,
+    cols: grid.cols,
+    cells: cells.map((c) => ({ status: c.status, pokemon: c.pokemon ? c.pokemon.id : null })),
+    guesses,
+  });
+}
+
 function PracticeGrid() {
   const { merged, recordAttempt } = useStats();
-  const [grid, setGrid] = useState(() => generateGrid(merged));
-  const [cells, setCells] = useState(emptyCells);
+  const [saved] = useState(loadBoard);
+  const [grid, setGrid] = useState(() => saved?.grid || generateGrid(merged));
+  const [cells, setCells] = useState(() => saved?.cells || emptyCells());
   const [selected, setSelected] = useState(null);
   // On phones the answer panel sits below the board; bring it into view
   const panelRef = useRef(null);
   useEffect(() => {
     if (selected !== null) panelRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
   }, [selected]);
-  const [guesses, setGuesses] = useState(0);
+  const [guesses, setGuesses] = useState(saved?.guesses || 0);
   const [message, setMessage] = useState("");
+  useEffect(() => saveBoard(grid, cells, guesses), [grid, cells, guesses]);
 
   const usedIds = useMemo(
     () => new Set(cells.filter((c) => c.pokemon).map((c) => c.pokemon.id)),

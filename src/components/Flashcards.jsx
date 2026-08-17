@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { pickFlashcard } from "../logic/picker.js";
-import { DECKS, DECK_BY_ID, cardKey, session } from "../logic/flashcards.js";
+import { DECKS, DECK_BY_ID, cardKey, saveSession, session } from "../logic/flashcards.js";
+import { hashStateFor, writeHash } from "../logic/hashState.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
 import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
 import { CATEGORIES } from "../data/categories.js";
@@ -25,13 +26,31 @@ function summaryPills(p) {
 
 const GAVE_UP = "gaveup";
 
+// A deck named in the URL (#cards/region) wins over the remembered one.
+function initialDeck() {
+  const fromHash = hashStateFor("cards")?.[0];
+  return fromHash === "all" || DECK_BY_ID.has(fromHash) ? fromHash : session.deckId;
+}
+
 function Flashcards() {
   const { merged, recordAttempt } = useStats();
-  // The card lives in the module-level session so switching tabs and back
-  // shows the same card, answered or not.
-  const [deckId, setDeckId] = useState(session.deckId);
+  // The card lives in the module-level session (mirrored to localStorage)
+  // so switching tabs and back, or reloading, shows the same card.
+  const [deckId, setDeckId] = useState(() => {
+    const id = initialDeck();
+    if (id !== session.deckId) {
+      session.deckId = id;
+      // a remembered card from another deck gives way to the URL's deck
+      if (id !== "all" && session.card && session.card.deckId !== id) session.card = null;
+    }
+    return id;
+  });
   const [card, setCard] = useState(() => {
-    if (!session.card) session.card = freshCard(session.deckId);
+    if (!session.card) {
+      session.card = freshCard(session.deckId);
+      session.picked = null;
+      session.selection = [];
+    }
     return session.card;
   });
   const [picked, setPicked] = useState(session.picked);
@@ -54,6 +73,12 @@ function Flashcards() {
     preloadSprite(POKEMON_BY_ID.get(session.next.pokemonId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card, deckId]);
+
+  // The deck lives in the URL (#cards/region) — replaced, not pushed, so
+  // Back still leaves the tab
+  useEffect(() => {
+    writeHash("cards", deckId === "all" ? [] : [deckId]);
+  }, [deckId]);
 
   // On phones the deck row scrolls sideways; keep the active chip in view
   // (coming back to the tab with "Ability" selected shouldn't hide it).
@@ -107,6 +132,7 @@ function Flashcards() {
     session.card = nextCard;
     session.picked = nextPicked;
     session.selection = [];
+    saveSession();
     setCard(nextCard);
     setPicked(nextPicked);
     setSelection([]);
@@ -126,6 +152,7 @@ function Flashcards() {
       next = [option.id];
     }
     session.selection = next;
+    saveSession();
     setSelection(next);
   }
 
@@ -153,6 +180,7 @@ function Flashcards() {
 
   function changeDeck(id) {
     session.deckId = id;
+    saveSession();
     setDeckId(id);
     // Switching decks moves on: an answered card is done, and an
     // unanswered one is replaced unless it already fits the new deck.

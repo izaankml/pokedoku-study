@@ -10,6 +10,7 @@
 import { CATEGORIES } from "../data/categories.js";
 import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
 import { MOVES } from "../data/traits.js";
+import { loadJson, saveJson } from "./hashState.js";
 
 const cat = (id) => CATEGORIES.find((c) => c.id === id);
 const isMegaOrGmax = (p) => p.flags.includes("mega") || p.flags.includes("gmax");
@@ -167,8 +168,11 @@ export function allCardKeys() {
   return DECKS.flatMap((deck) => deckPool(deck).map((p) => cardKey(deck, p)));
 }
 
-// The current card survives tab switches: the Cards tab reads its initial
-// state from here and writes every change back.
+// The current card survives tab switches and reloads: the Cards tab reads
+// its initial state from here, writes every change back, and saveSession
+// mirrors it to localStorage (all but `next`, which is cheap to re-pick).
+const SESSION_KEY = "pokedoku-study:cards:v1";
+const stored = loadJson(SESSION_KEY);
 export const session = {
   deckId: "all",
   card: null, // { deckId, pokemonId, param }
@@ -176,4 +180,10 @@ export const session = {
   picked: null, // submitted option ids, "gaveup", or null while unanswered
   selection: [], // options toggled on so far, before Submit
   recent: [], // last few pokemon ids, to avoid immediate repeats
+  ...(stored && DECK_BY_ID.has(stored.card?.deckId) ? stored : {}),
 };
+
+export function saveSession() {
+  const { deckId, card, picked, selection, recent } = session;
+  saveJson(SESSION_KEY, { deckId, card, picked, selection, recent });
+}
