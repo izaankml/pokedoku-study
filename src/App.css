@@ -787,6 +787,11 @@ header h1 {
   gap: var(--sp-2);
 }
 
+/* the sentinel that fetches the next batch of a long list */
+.answer-more {
+  height: 1px;
+}
+
 .answer-grid > div {
   border-radius: var(--radius-md);
   min-width: 0;

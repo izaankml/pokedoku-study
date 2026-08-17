@@ -399,3 +399,6 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     `#browse/region-kanto/type-fire`). A search box under the dropdowns
     narrows the current list by name — display name, the dataset's own
     name and the dex slug, like the answer boxes — and isn't in the hash.
+    Long lists render in batches of 60 (`AnswerList`, an
+    IntersectionObserver sentinel 600px ahead), so the everyone list
+    doesn't lag the tab.
