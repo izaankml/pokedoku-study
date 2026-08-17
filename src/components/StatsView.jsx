@@ -6,7 +6,7 @@ import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { smoothedAccuracy } from "../logic/stats.js";
 import { allValidPairs, pairKey } from "../logic/matching.js";
 import { scheduleSummary } from "../logic/schedule.js";
-import { DATA_META } from "../data/pokedex.js";
+import { DATA_META, POKEMON } from "../data/pokedex.js";
 import { allCardKeys } from "../logic/flashcards.js";
 
 const FLASHCARD_KEYS = allCardKeys();
@@ -389,7 +389,7 @@ function StatsView() {
       <section>
         <p className="hint meta">
           Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
-          {DATA_META.answerCount} answers · generated {DATA_META.generatedAt}
+          {POKEMON.length} answers · generated {DATA_META.generatedAt}
         </p>
       </section>
     </div>

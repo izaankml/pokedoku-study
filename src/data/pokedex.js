@@ -2,12 +2,16 @@ import data from "./pokedex.json";
 import SPRITES from "./sprites.json";
 import POKEDOKU_NAMES from "./pokedoku-names.json";
 
-// Every record, answers and the display-only forms (`answer: false`:
-// forms PokeDoku doesn't tell from their base — Midnight Lycanroc, Black
-// Kyurem — kept so the detail sheet can draw a whole line). Categories,
-// Browse, Drill, Cards and Grid use POKEMON, the answers only.
+// Every record, answers and the display-only forms. A species is always an
+// answer; a form is an answer exactly when PokeDoku lists it as one — its
+// answer list shows Pyroar Female, Lycanroc Midnight, the Burmy cloaks …
+// as entries of their own, and hides a few (Cramorant's battle forms,
+// Minior's colours) that stay in the data only so the detail sheet can
+// draw a whole line. Categories, Browse, Drill, Cards and Grid use
+// POKEMON, the answers only.
 export const ALL_POKEMON = data.pokemon;
-export const POKEMON = ALL_POKEMON.filter((p) => p.answer !== false);
+const isAnswer = (p) => !p.form || (POKEDOKU_NAMES[p.id] ? !POKEDOKU_NAMES[p.id].hidden : p.answer !== false);
+export const POKEMON = ALL_POKEMON.filter(isAnswer);
 export const DATA_META = data.meta;
 
 export const POKEMON_BY_ID = new Map(ALL_POKEMON.map((p) => [p.id, p]));

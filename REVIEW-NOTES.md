@@ -256,10 +256,15 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Lycanroc, Low Key Toxtricity, Black/White Kyurem, the Therians, Blade
     Aegislash, School Wishiwashi, Hero Palafin, Terapagos, Primal Kyogre,
     Speed Deoxys, Cramorant Gulping/Gorging, Own Tempo Rockruff — from which Dusk Lycanroc evolves …) are now written as
-    `answer: false` records: `ALL_POKEMON` has them (trees, forms, the
-    sheet, URL slugs), `POKEMON` — categories, Browse, Drill, Cards, Grid,
-    Stats — doesn't; they're named PokeDoku-style from their form
-    ("Lycanroc Midnight"), and their sprites are on PokeDoku's CDN too.
+    `answer: false` records (the builder's "covers nothing new" verdict,
+    kept for reference). Whether a form is an *answer in the app* follows
+    PokeDoku instead: its list flags entries `hidden`, and pokedex.js makes
+    a form an answer exactly when PokeDoku shows it (`POKEMON`), so Pyroar
+    Female, Lycanroc Midnight, the Burmy cloaks … are in Browse/Drill/Grid
+    like PokeDoku's own lists, while Cramorant's battle forms and Minior's
+    colours stay in `ALL_POKEMON` only (trees, forms, the sheet, URL
+    slugs). Names come PokeDoku-style ("Lycanroc Midnight"), sprites from
+    PokeDoku's CDN.
     Gender forms (Meowstic Male / Female, Oinkologne, Basculegion) are branches of the tree, "Lv 25, Male / Female". Every other form
     of a species — the *variants*: regional forms, Own Tempo Rockruff,
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude

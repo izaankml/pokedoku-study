@@ -9,7 +9,7 @@ const byName = new Map(POKEMON.map((p) => [p.name, p]));
 describe("pokedex dataset invariants", () => {
   it("has all 1025 species exactly once, plus forms with unique ids", () => {
     expect(SPECIES.length).toBe(1025);
-    expect(FORMS.length).toBe(232);
+    expect(FORMS.length).toBe(295); // the forms PokeDoku lists as answers of their own
     expect(new Set(POKEMON.map((p) => p.id)).size).toBe(POKEMON.length);
     expect(new Set(POKEMON.map((p) => p.name)).size).toBe(POKEMON.length);
     for (const p of SPECIES) expect(p.species).toBe(p.id);
@@ -97,8 +97,8 @@ describe("pokedex dataset invariants", () => {
     expect(byName.get("groudonprimal").flags).not.toContain("mega"); // PokeDoku: Primal is not Mega
     expect(byName.get("mewtwomegax").flags).toEqual(["legendary", "mega"]);
     expect(byName.get("pikachustarter").flags).toEqual(["starter"]); // Let's Go partner
-    // covered entirely by its base species, so no record
-    expect(byName.has("kyuremblack")).toBe(false);
+    // an answer because PokeDoku lists it, though its base covers every cell it could
+    expect(byName.get("kyuremblack").answer).toBe(false); // the builder's own verdict, kept for reference
   });
 
   it("gives forms sensible evolution data", () => {

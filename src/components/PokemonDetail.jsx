@@ -140,7 +140,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
           <Sprite pokemon={pokemon} className="sprite detail-sprite" />
           <p className="detail-meta">
             #{String(pokemon.species).padStart(4, "0")}
-            {base ? ` · Form of ${base.displayName}` : ""}
+            {base ? ` · Form of ${pokemon.speciesName || base.displayName}` : ""}
           </p>
           <h3 id="pokemon-detail-title">
             <PokemonName name={pokemon.displayName} />

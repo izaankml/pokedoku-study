@@ -5,9 +5,9 @@ Pokémon fall into — all 18 types, mono/dual typing, the ten regions of
 origin, evolution methods, stages and branching, the special groups
 (Legendary, Mythical, Ultra Beast, Paradox, fossil, first partners,
 babies, Mega, Gigantamax), the moves and abilities PokeDoku asks about —
-77 categories over all 1025 Pokémon plus the alternate forms PokeDoku
-accepts as their own answers (regional variants, Megas, Gigantamax,
-Rotom appliances, …) whenever they fit a cell the base species doesn't.
+77 categories over all 1025 Pokémon plus every alternate form PokeDoku
+lists as an answer of its own (regional variants, Megas, Gigantamax,
+Rotom appliances, Lycanroc's three, the female Pyroar, …).
 
 ## Modes
 
@@ -17,10 +17,10 @@ Rotom appliances, …) whenever they fit a cell the base species doesn't.
   answer list) for its detail sheet: every category it counts for, its
   abilities (hidden one marked), its whole evolution line with how each
   stage evolves (tap a stage for its own sheet), and the line's Mega,
-  Gigantamax and other transformations with what triggers them. Forms
-  PokeDoku doesn't tell from their base (Midnight Lycanroc, Black Kyurem,
-  Low Key Toxtricity …) are in the data as display-only records — drawn
-  in the sheet, never an answer anywhere.
+  Gigantamax and other transformations with what triggers them. A form is
+  an answer exactly when PokeDoku lists it as one; the few it hides
+  (Cramorant's battle forms, Minior's colours) are in the data only so the
+  sheet can draw a whole line.
 - **Drill** — the core PokeDoku skill: given two categories, name any
   Pokémon that fits both. A miss says why ("Pikachu doesn't fit — it isn't
   Fire-type and isn't from Galar"), and every answer reveals the full

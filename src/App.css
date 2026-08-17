@@ -472,6 +472,15 @@ header h1 .home-link:focus-visible {
   box-shadow: var(--edge-hi);
 }
 
+/* the type's in-game symbol before its name (CategoryPill TypeIcon) */
+.type-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  margin-right: 0.35em;
+  flex: none;
+}
+
 .pill[class*="type-"] {
   background: var(--type-c);
   background: linear-gradient(

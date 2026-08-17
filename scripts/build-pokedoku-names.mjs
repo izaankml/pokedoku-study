@@ -3,9 +3,10 @@
 // "charizard-mega-x", "pikachu-partner") and the base species PokeDoku names
 // by their form too ("lycanroc-midday", "toxtricity-amped", "meowstic-male")
 // — fetched from its public answer list (which lists its hidden forms as
-// well). The app shows Pokémon the way PokeDoku does — species first, form
-// after ("Zapdos Galar", not "Galarian Zapdos"; "Lycanroc Midday") — so what
-// you type here is what you'd type there.
+// well, flagged `hidden`). The app shows Pokémon the way PokeDoku does —
+// species first, form after ("Zapdos Galar", not "Galarian Zapdos";
+// "Lycanroc Midday") — so what you type here is what you'd type there; and
+// a form is an answer in the app exactly when PokeDoku shows it (pokedex.js).
 //
 //   node scripts/build-pokedoku-names.mjs
 
@@ -30,8 +31,8 @@ for (const p of pokemon) {
     if (p.form !== null) missing += 1;
     continue;
   }
-  if (p.form === null && e.name === e.specie) continue; // a plain species: nothing to add
-  out[p.id] = { name: e.name, specie: e.specie };
+  if (p.form === null && e.name === e.specie && !e.hidden) continue; // a plain species: nothing to add
+  out[p.id] = { name: e.name, specie: e.specie, ...(e.hidden ? { hidden: true } : {}) };
 }
 writeFileSync(join(dataDir, "pokedoku-names.json"), JSON.stringify(out));
 console.log(`${Object.keys(out).length} names written, ${missing} form records without a PokeDoku entry`);
