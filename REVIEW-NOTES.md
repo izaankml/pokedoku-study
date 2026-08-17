@@ -192,8 +192,9 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     (`main > *`, a translate) made them the containing block for the
     fixed backdrop, so a sheet opened by a reload sat thousands of pixels
     down the Browse list for 200ms and then jumped into place. Three blocks divided by
-    hairlines: header (plain sprite; name, dex line, and the type and
-    region pills — identity, not rows), then Evolution, centred: a tree
+    hairlines: header (plain sprite; dex line over the name over the type
+    pills, the region pill to their right — identity, not rows), then
+    Evolution, centred: a tree
     of square tiles (sprite, name, how), each joined by an arrow to its
     own evolutions — one arrow to a lone evolution, one shared arrow into
     a column where it branches (`evolutionTree`). In a branch, evolutions

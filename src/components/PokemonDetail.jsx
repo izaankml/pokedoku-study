@@ -7,8 +7,9 @@ import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 import EvolutionLine from "./EvolutionLine.jsx";
 
-// The sheet is three blocks: identity (sprite, name, dex line, type and
-// region pills), then the evolution tree, then a label/value list of
+// The sheet is three blocks: identity (sprite; dex line over the name over
+// the type pills, the region pill to their right), then the evolution
+// tree, then a label/value list of
 // everything else the Pokémon counts for. Types and region sit in the
 // header — they are what you recognise a Pokémon by. Dropped from the
 // list (still categories everywhere else): type count (two type pills
@@ -50,7 +51,8 @@ function PokemonDetail({ pokemon, onClose }) {
   }, [onClose]);
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
-  const identity = CATEGORIES.filter((c) => (c.group === "type" || c.group === "region") && c.predicate(pokemon));
+  const types = CATEGORIES.filter((c) => c.group === "type" && c.predicate(pokemon));
+  const regions = CATEGORIES.filter((c) => c.group === "region" && c.predicate(pokemon));
   const facts = factsOf(pokemon);
   // abilities go after the category rows but before the (long) move row
   const before = facts.filter((f) => f.group !== "move");
@@ -82,15 +84,22 @@ function PokemonDetail({ pokemon, onClose }) {
         <header className="detail-head">
           <Sprite pokemon={pokemon} className="sprite detail-sprite" />
           <div className="detail-title">
-            <h3 id="pokemon-detail-title">
-              <PokemonName name={pokemon.displayName} />
-            </h3>
-            <p className="detail-meta">
-              #{String(pokemon.species).padStart(4, "0")}
-              {base ? ` · Form of ${base.displayName}` : ""}
-            </p>
-            <div className="detail-types">
-              {identity.map((c) => (
+            <div className="detail-title-main">
+              <p className="detail-meta">
+                #{String(pokemon.species).padStart(4, "0")}
+                {base ? ` · Form of ${base.displayName}` : ""}
+              </p>
+              <h3 id="pokemon-detail-title">
+                <PokemonName name={pokemon.displayName} />
+              </h3>
+              <div className="detail-types">
+                {types.map((c) => (
+                  <CategoryPill key={c.id} cat={c} useShort />
+                ))}
+              </div>
+            </div>
+            <div className="detail-region">
+              {regions.map((c) => (
                 <CategoryPill key={c.id} cat={c} useShort />
               ))}
             </div>

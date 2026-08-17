@@ -2177,8 +2177,27 @@ main > * {
   flex: none;
 }
 
+/* dex line, name and types on the left; the region pill to their right,
+   level with the dex line */
 .detail-title {
   min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+
+.detail-title-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.detail-region {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
 }
 
 .detail-title h3 {
@@ -2188,7 +2207,7 @@ main > * {
 }
 
 .detail-meta {
-  margin: 2px 0 0;
+  margin: 0 0 1px;
   font-size: 0.82rem;
   color: var(--text-low);
 }
@@ -2200,7 +2219,8 @@ main > * {
   margin-top: 8px;
 }
 
-.detail-types .pill {
+.detail-types .pill,
+.detail-region .pill {
   min-width: 0;
   padding: 4px 12px;
   font-size: 0.82rem;
