@@ -389,7 +389,7 @@ function StatsView() {
       <section>
         <p className="hint meta">
           Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
-          {DATA_META.count} Pokémon · generated {DATA_META.generatedAt}
+          {DATA_META.answerCount} answers · generated {DATA_META.generatedAt}
         </p>
       </section>
     </div>

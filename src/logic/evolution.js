@@ -4,12 +4,14 @@
 // Gigantamax and the other transformations (forms.js) have no evolution
 // of their own, so they show their base's line.
 
-import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
+import { ALL_POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
 import { baseOf } from "./forms.js";
 
+// (gender forms — Meowstic F, Indeedee F, Basculegion F, Oinkologne F —
+// aren't a different evolution, just the female; the tree skips them)
 const childrenOf = new Map();
-for (const p of POKEMON) {
-  if (p.prevo === null || p.prevo === undefined) continue;
+for (const p of ALL_POKEMON) {
+  if (p.prevo === null || p.prevo === undefined || p.form === "F") continue;
   if (!childrenOf.has(p.prevo)) childrenOf.set(p.prevo, []);
   childrenOf.get(p.prevo).push(p);
 }
@@ -83,6 +85,7 @@ const TERSE = {
   "Land 3 critical hits in 1 battle": "3 crits in one battle",
   "Defeat the Single Strike Tower": "Beat Single Strike Tower",
   "Defeat the Rapid Strike Tower": "Beat Rapid Strike Tower",
+  "Level 25 from a special Rockruff during the evening": "Lv 25, Own Tempo, Dusk",
 };
 
 // Title Case, leaving the little words alone: "Lv 20, female, cave
@@ -153,6 +156,10 @@ const NOTES = {
   froslass: "female",
   salazzle: "female",
   vespiquen: "female",
+  toxtricity: "Amped natures",
+  toxtricitylowkey: "Low Key natures",
+  dudunsparce: "usually",
+  dudunsparcethreesegment: "1 in 100",
 };
 
 // What to add after the method: the region for a regional form, or the

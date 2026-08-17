@@ -3,7 +3,8 @@
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
   "generatedAt": "2026-08-17",
-  "count": 1257,
+  "count": 1304,
+  "answerCount": 1257,
   "speciesCount": 1025
  },
  "pokemon": [
@@ -21855,6 +21856,48 @@
    "prevo": null
   },
   {
+   "id": 10077,
+   "species": 382,
+   "form": "Primal",
+   "name": "kyogreprimal",
+   "displayName": "Primal Kyogre",
+   "types": [
+    "water"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "regions": [
+    "hoenn"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "brickbreak",
+    "calmmind",
+    "earthquake",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "surf",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Primordial Sea",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 383,
    "species": 383,
    "form": null,
@@ -22187,6 +22230,48 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10003,
+   "species": 386,
+   "form": "Speed",
+   "name": "deoxysspeed",
+   "displayName": "Deoxys (Speed)",
+   "types": [
+    "psychic"
+   ],
+   "gen": 3,
+   "region": "hoenn",
+   "regions": [
+    "hoenn"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "mythical"
+   ],
+   "moves": [
+    "brickbreak",
+    "calmmind",
+    "icebeam",
+    "icepunch",
+    "protect",
+    "psychic",
+    "shadowball",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pressure",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -30661,6 +30746,51 @@
    "prevo": null
   },
   {
+   "id": 10016,
+   "species": 550,
+   "form": "Blue-Striped",
+   "name": "basculinbluestriped",
+   "displayName": "Basculin (Blue Striped)",
+   "types": [
+    "water"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "crunch",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Rock Head",
+     "hidden": false
+    },
+    {
+     "name": "Adaptability",
+     "hidden": false
+    },
+    {
+     "name": "Mold Breaker",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 551,
    "species": 551,
    "form": null,
@@ -35196,6 +35326,48 @@
    "prevo": null
   },
   {
+   "id": 10019,
+   "species": 641,
+   "form": "Therian",
+   "name": "tornadustherian",
+   "displayName": "Tornadus (Therian)",
+   "types": [
+    "flying"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "acrobatics",
+    "brickbreak",
+    "crunch",
+    "fly",
+    "metronome",
+    "protect",
+    "psychic",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Regenerator",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 642,
    "species": 642,
    "form": null,
@@ -35239,6 +35411,49 @@
      "hidden": true
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10020,
+   "species": 642,
+   "form": "Therian",
+   "name": "thundurustherian",
+   "displayName": "Thundurus (Therian)",
+   "types": [
+    "electric",
+    "flying"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "acrobatics",
+    "brickbreak",
+    "crunch",
+    "fly",
+    "protect",
+    "psychic",
+    "sludgebomb",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Volt Absorb",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -35455,6 +35670,88 @@
    "prevo": null
   },
   {
+   "id": 10022,
+   "species": 646,
+   "form": "Black",
+   "name": "kyuremblack",
+   "displayName": "Kyurem (Black)",
+   "types": [
+    "dragon",
+    "ice"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "dragonrage",
+    "fly",
+    "icebeam",
+    "protect",
+    "psychic",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Teravolt",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10023,
+   "species": 646,
+   "form": "White",
+   "name": "kyuremwhite",
+   "displayName": "Kyurem (White)",
+   "types": [
+    "dragon",
+    "ice"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "dragonrage",
+    "fly",
+    "icebeam",
+    "protect",
+    "psychic",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Turboblaze",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 647,
    "species": 647,
    "form": null,
@@ -35492,6 +35789,47 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10024,
+   "species": 647,
+   "form": "Resolute",
+   "name": "keldeoresolute",
+   "displayName": "Keldeo (Resolute)",
+   "types": [
+    "water",
+    "fighting"
+   ],
+   "gen": 5,
+   "region": "unova",
+   "regions": [
+    "unova"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "mythical"
+   ],
+   "moves": [
+    "brickbreak",
+    "calmmind",
+    "closecombat",
+    "hydropump",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Justified",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -37198,6 +37536,56 @@
    "prevo": null
   },
   {
+   "id": 10025,
+   "species": 678,
+   "form": "F",
+   "name": "meowsticf",
+   "displayName": "Meowstic (F)",
+   "types": [
+    "psychic"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 25",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "calmmind",
+    "protect",
+    "psychic",
+    "shadowball",
+    "tailslap",
+    "thunderbolt"
+   ],
+   "abilities": [
+    "keeneye"
+   ],
+   "abilityList": [
+    {
+     "name": "Keen Eye",
+     "hidden": false
+    },
+    {
+     "name": "Infiltrator",
+     "hidden": false
+    },
+    {
+     "name": "Competitive",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 677
+  },
+  {
    "id": 679,
    "species": 679,
    "form": null,
@@ -37307,6 +37695,46 @@
     }
    ],
    "prevo": 680
+  },
+  {
+   "id": 10026,
+   "species": 681,
+   "form": "Blade",
+   "name": "aegislashblade",
+   "displayName": "Aegislash (Blade)",
+   "types": [
+    "steel",
+    "ghost"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "item",
+    "stone"
+   ],
+   "evoItem": "Dusk Stone",
+   "evoDetail": "Use a Dusk Stone",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "brickbreak",
+    "closecombat",
+    "protect",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Stance Change",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
   },
   {
    "id": 682,
@@ -38842,6 +39270,147 @@
    "prevo": null
   },
   {
+   "id": 10027,
+   "species": 710,
+   "form": "Small",
+   "name": "pumpkaboosmall",
+   "displayName": "Pumpkaboo (Small)",
+   "types": [
+    "ghost",
+    "grass"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "flamethrower",
+    "protect",
+    "psychic",
+    "razorleaf",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pickup",
+     "hidden": false
+    },
+    {
+     "name": "Frisk",
+     "hidden": false
+    },
+    {
+     "name": "Insomnia",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10028,
+   "species": 710,
+   "form": "Large",
+   "name": "pumpkaboolarge",
+   "displayName": "Pumpkaboo (Large)",
+   "types": [
+    "ghost",
+    "grass"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "flamethrower",
+    "protect",
+    "psychic",
+    "razorleaf",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pickup",
+     "hidden": false
+    },
+    {
+     "name": "Frisk",
+     "hidden": false
+    },
+    {
+     "name": "Insomnia",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10029,
+   "species": 710,
+   "form": "Super",
+   "name": "pumpkaboosuper",
+   "displayName": "Pumpkaboo (Super)",
+   "types": [
+    "ghost",
+    "grass"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "first",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "flamethrower",
+    "protect",
+    "psychic",
+    "razorleaf",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pickup",
+     "hidden": false
+    },
+    {
+     "name": "Frisk",
+     "hidden": false
+    },
+    {
+     "name": "Insomnia",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 711,
    "species": 711,
    "form": null,
@@ -38888,6 +39457,153 @@
     }
    ],
    "prevo": 710
+  },
+  {
+   "id": 10030,
+   "species": 711,
+   "form": "Small",
+   "name": "gourgeistsmall",
+   "displayName": "Gourgeist (Small)",
+   "types": [
+    "ghost",
+    "grass"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "trade"
+   ],
+   "evoItem": null,
+   "evoDetail": "Trade",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "flamethrower",
+    "protect",
+    "psychic",
+    "razorleaf",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pickup",
+     "hidden": false
+    },
+    {
+     "name": "Frisk",
+     "hidden": false
+    },
+    {
+     "name": "Insomnia",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 10027
+  },
+  {
+   "id": 10031,
+   "species": 711,
+   "form": "Large",
+   "name": "gourgeistlarge",
+   "displayName": "Gourgeist (Large)",
+   "types": [
+    "ghost",
+    "grass"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "trade"
+   ],
+   "evoItem": null,
+   "evoDetail": "Trade",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "flamethrower",
+    "protect",
+    "psychic",
+    "razorleaf",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pickup",
+     "hidden": false
+    },
+    {
+     "name": "Frisk",
+     "hidden": false
+    },
+    {
+     "name": "Insomnia",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 10028
+  },
+  {
+   "id": 10032,
+   "species": 711,
+   "form": "Super",
+   "name": "gourgeistsuper",
+   "displayName": "Gourgeist (Super)",
+   "types": [
+    "ghost",
+    "grass"
+   ],
+   "gen": 6,
+   "region": "kalos",
+   "regions": [
+    "kalos"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "trade"
+   ],
+   "evoItem": null,
+   "evoDetail": "Trade",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "flamethrower",
+    "protect",
+    "psychic",
+    "razorleaf",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pickup",
+     "hidden": false
+    },
+    {
+     "name": "Frisk",
+     "hidden": false
+    },
+    {
+     "name": "Insomnia",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 10029
   },
   {
    "id": 712,
@@ -40820,6 +41536,93 @@
    "prevo": 744
   },
   {
+   "id": 10126,
+   "species": 745,
+   "form": "Midnight",
+   "name": "lycanrocmidnight",
+   "displayName": "Lycanroc (Midnight)",
+   "types": [
+    "rock"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 25 at night",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "brickbreak",
+    "closecombat",
+    "crunch",
+    "protect"
+   ],
+   "abilities": [
+    "keeneye"
+   ],
+   "abilityList": [
+    {
+     "name": "Keen Eye",
+     "hidden": false
+    },
+    {
+     "name": "Vital Spirit",
+     "hidden": false
+    },
+    {
+     "name": "No Guard",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 744
+  },
+  {
+   "id": 10152,
+   "species": 745,
+   "form": "Dusk",
+   "name": "lycanrocdusk",
+   "displayName": "Lycanroc (Dusk)",
+   "types": [
+    "rock"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 25 from a special Rockruff during the evening",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "brickbreak",
+    "closecombat",
+    "crunch",
+    "protect",
+    "tailslap"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Tough Claws",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": 744
+  },
+  {
    "id": 746,
    "species": 746,
    "form": null,
@@ -40853,6 +41656,43 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10127,
+   "species": 746,
+   "form": "School",
+   "name": "wishiwashischool",
+   "displayName": "Wishiwashi (School)",
+   "types": [
+    "water"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "earthquake",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Schooling",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -42068,6 +42908,240 @@
    "prevo": null
   },
   {
+   "id": 10137,
+   "species": 774,
+   "form": "Orange",
+   "name": "miniororange",
+   "displayName": "Minior (Orange)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10138,
+   "species": 774,
+   "form": "Yellow",
+   "name": "minioryellow",
+   "displayName": "Minior (Yellow)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10139,
+   "species": 774,
+   "form": "Green",
+   "name": "miniorgreen",
+   "displayName": "Minior (Green)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10140,
+   "species": 774,
+   "form": "Blue",
+   "name": "miniorblue",
+   "displayName": "Minior (Blue)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10141,
+   "species": 774,
+   "form": "Indigo",
+   "name": "miniorindigo",
+   "displayName": "Minior (Indigo)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10142,
+   "species": 774,
+   "form": "Violet",
+   "name": "miniorviolet",
+   "displayName": "Minior (Violet)",
+   "types": [
+    "rock",
+    "flying"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "calmmind",
+    "dazzlinggleam",
+    "earthquake",
+    "protect",
+    "psychic"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Shields Down",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 775,
    "species": 775,
    "form": null,
@@ -42217,6 +43291,44 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10143,
+   "species": 778,
+   "form": "Busted",
+   "name": "mimikyubusted",
+   "displayName": "Mimikyu (Busted)",
+   "types": [
+    "ghost",
+    "fairy"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "dazzlinggleam",
+    "protect",
+    "psychic",
+    "shadowball",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Disguise",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -43422,6 +44534,49 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10147,
+   "species": 801,
+   "form": "Original",
+   "name": "magearnaoriginal",
+   "displayName": "Magearna (Original)",
+   "types": [
+    "steel",
+    "fairy"
+   ],
+   "gen": 7,
+   "region": "alola",
+   "regions": [
+    "alola"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "mythical"
+   ],
+   "moves": [
+    "brickbreak",
+    "calmmind",
+    "dazzlinggleam",
+    "icebeam",
+    "protect",
+    "psychic",
+    "shadowball",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Soul-Heart",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -45720,6 +46875,84 @@
    "prevo": null
   },
   {
+   "id": 10182,
+   "species": 845,
+   "form": "Gulping",
+   "name": "cramorantgulping",
+   "displayName": "Cramorant (Gulping)",
+   "types": [
+    "flying",
+    "water"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "fly",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Gulp Missile",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10183,
+   "species": 845,
+   "form": "Gorging",
+   "name": "cramorantgorging",
+   "displayName": "Cramorant (Gorging)",
+   "types": [
+    "flying",
+    "water"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "fly",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Gulp Missile",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 846,
    "species": 846,
    "form": null,
@@ -45979,6 +47212,54 @@
     }
    ],
    "prevo": null
+  },
+  {
+   "id": 10184,
+   "species": 849,
+   "form": "Low-Key",
+   "name": "toxtricitylowkey",
+   "displayName": "Toxtricity (Low Key)",
+   "types": [
+    "electric",
+    "poison"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 30",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "brickbreak",
+    "metronome",
+    "protect",
+    "sludgebomb",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Punk Rock",
+     "hidden": false
+    },
+    {
+     "name": "Minus",
+     "hidden": false
+    },
+    {
+     "name": "Technician",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 848
   },
   {
    "id": 850,
@@ -47277,6 +48558,43 @@
    "prevo": null
   },
   {
+   "id": 10185,
+   "species": 875,
+   "form": "Noice",
+   "name": "eiscuenoice",
+   "displayName": "Eiscue (Noice)",
+   "types": [
+    "ice"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "hydropump",
+    "icebeam",
+    "icepunch",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Ice Face",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 876,
    "species": 876,
    "form": null,
@@ -47323,6 +48641,53 @@
    "prevo": null
   },
   {
+   "id": 10186,
+   "species": 876,
+   "form": "F",
+   "name": "indeedeef",
+   "displayName": "Indeedee (F)",
+   "types": [
+    "psychic",
+    "normal"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "calmmind",
+    "dazzlinggleam",
+    "metronome",
+    "protect",
+    "psychic",
+    "shadowball"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Own Tempo",
+     "hidden": false
+    },
+    {
+     "name": "Synchronize",
+     "hidden": false
+    },
+    {
+     "name": "Psychic Surge",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 877,
    "species": 877,
    "form": null,
@@ -47356,6 +48721,43 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10187,
+   "species": 877,
+   "form": "Hangry",
+   "name": "morpekohangry",
+   "displayName": "Morpeko (Hangry)",
+   "types": [
+    "electric",
+    "dark"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "brickbreak",
+    "crunch",
+    "protect",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Hunger Switch",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -48081,6 +49483,46 @@
    "prevo": null
   },
   {
+   "id": 10190,
+   "species": 890,
+   "form": "Eternamax",
+   "name": "eternatuseternamax",
+   "displayName": "Eternatus (Eternamax)",
+   "types": [
+    "poison",
+    "dragon"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": null,
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "flamethrower",
+    "fly",
+    "protect",
+    "shadowball",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Pressure",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 891,
    "species": 891,
    "form": null,
@@ -48306,6 +49748,46 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10192,
+   "species": 893,
+   "form": "Dada",
+   "name": "zarudedada",
+   "displayName": "Zarude (Dada)",
+   "types": [
+    "dark",
+    "grass"
+   ],
+   "gen": 8,
+   "region": "galar",
+   "regions": [
+    "galar"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "mythical"
+   ],
+   "moves": [
+    "acrobatics",
+    "brickbreak",
+    "closecombat",
+    "crunch",
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Leaf Guard",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -48807,6 +50289,57 @@
    "prevo": 10247
   },
   {
+   "id": 10248,
+   "species": 902,
+   "form": "F",
+   "name": "basculegionf",
+   "displayName": "Basculegion (F)",
+   "types": [
+    "water",
+    "ghost"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "regions": [
+    "hisui"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Receive 294+ recoil without fainting",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "crunch",
+    "hydropump",
+    "icebeam",
+    "protect",
+    "shadowball",
+    "surf"
+   ],
+   "abilities": [
+    "swiftswim"
+   ],
+   "abilityList": [
+    {
+     "name": "Swift Swim",
+     "hidden": false
+    },
+    {
+     "name": "Adaptability",
+     "hidden": false
+    },
+    {
+     "name": "Mold Breaker",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": 10247
+  },
+  {
    "id": 903,
    "species": 903,
    "form": null,
@@ -48950,6 +50483,47 @@
      "hidden": true
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10249,
+   "species": 905,
+   "form": "Therian",
+   "name": "enamorustherian",
+   "displayName": "Enamorus (Therian)",
+   "types": [
+    "fairy",
+    "flying"
+   ],
+   "gen": 8,
+   "region": "hisui",
+   "regions": [
+    "hisui"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "calmmind",
+    "dazzlinggleam",
+    "fly",
+    "protect",
+    "psychic",
+    "sludgebomb"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Overcoat",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -49413,6 +50987,49 @@
      "hidden": true
     }
    ],
+   "prevo": 915
+  },
+  {
+   "id": 10254,
+   "species": 916,
+   "form": "F",
+   "name": "oinkolognef",
+   "displayName": "Oinkologne (F)",
+   "types": [
+    "normal"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 18",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "protect"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Aroma Veil",
+     "hidden": false
+    },
+    {
+     "name": "Gluttony",
+     "hidden": false
+    },
+    {
+     "name": "Thick Fat",
+     "hidden": true
+    }
+   ],
+   "answer": false,
    "prevo": 915
   },
   {
@@ -50026,6 +51643,141 @@
      "hidden": true
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10260,
+   "species": 931,
+   "form": "Blue",
+   "name": "squawkabillyblue",
+   "displayName": "Squawkabilly (Blue)",
+   "types": [
+    "normal",
+    "flying"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "fly",
+    "protect"
+   ],
+   "abilities": [
+    "intimidate"
+   ],
+   "abilityList": [
+    {
+     "name": "Intimidate",
+     "hidden": false
+    },
+    {
+     "name": "Hustle",
+     "hidden": false
+    },
+    {
+     "name": "Guts",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10261,
+   "species": 931,
+   "form": "Yellow",
+   "name": "squawkabillyyellow",
+   "displayName": "Squawkabilly (Yellow)",
+   "types": [
+    "normal",
+    "flying"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "fly",
+    "protect"
+   ],
+   "abilities": [
+    "intimidate"
+   ],
+   "abilityList": [
+    {
+     "name": "Intimidate",
+     "hidden": false
+    },
+    {
+     "name": "Hustle",
+     "hidden": false
+    },
+    {
+     "name": "Sheer Force",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10262,
+   "species": 931,
+   "form": "White",
+   "name": "squawkabillywhite",
+   "displayName": "Squawkabilly (White)",
+   "types": [
+    "normal",
+    "flying"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "fly",
+    "protect"
+   ],
+   "abilities": [
+    "intimidate"
+   ],
+   "abilityList": [
+    {
+     "name": "Intimidate",
+     "hidden": false
+    },
+    {
+     "name": "Hustle",
+     "hidden": false
+    },
+    {
+     "name": "Sheer Force",
+     "hidden": true
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -51468,6 +53220,47 @@
    "prevo": 963
   },
   {
+   "id": 10256,
+   "species": 964,
+   "form": "Hero",
+   "name": "palafinhero",
+   "displayName": "Palafin (Hero)",
+   "types": [
+    "water"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level 38",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "acrobatics",
+    "closecombat",
+    "hydropump",
+    "icebeam",
+    "icepunch",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Zero to Hero",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 965,
    "species": 965,
    "form": null,
@@ -52198,6 +53991,86 @@
    "prevo": null
   },
   {
+   "id": 10258,
+   "species": 978,
+   "form": "Droopy",
+   "name": "tatsugiridroopy",
+   "displayName": "Tatsugiri (Droopy)",
+   "types": [
+    "dragon",
+    "water"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "hydropump",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Commander",
+     "hidden": false
+    },
+    {
+     "name": "Storm Drain",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10259,
+   "species": 978,
+   "form": "Stretchy",
+   "name": "tatsugiristretchy",
+   "displayName": "Tatsugiri (Stretchy)",
+   "types": [
+    "dragon",
+    "water"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "hydropump",
+    "protect",
+    "surf"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Commander",
+     "hidden": false
+    },
+    {
+     "name": "Storm Drain",
+     "hidden": true
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
    "id": 979,
    "species": 979,
    "form": null,
@@ -52391,6 +54264,55 @@
      "hidden": true
     }
    ],
+   "prevo": 206
+  },
+  {
+   "id": 10255,
+   "species": 982,
+   "form": "Three-Segment",
+   "name": "dudunsparcethreesegment",
+   "displayName": "Dudunsparce (Three Segment)",
+   "types": [
+    "normal"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "final",
+   "evoMethods": [
+    "level"
+   ],
+   "evoItem": null,
+   "evoDetail": "Level up knowing Hyper Drill",
+   "branched": false,
+   "flags": [],
+   "moves": [
+    "calmmind",
+    "earthquake",
+    "flamethrower",
+    "icebeam",
+    "protect",
+    "shadowball",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Serene Grace",
+     "hidden": false
+    },
+    {
+     "name": "Run Away",
+     "hidden": false
+    },
+    {
+     "name": "Rattled",
+     "hidden": true
+    }
+   ],
+   "answer": false,
    "prevo": 206
   },
   {
@@ -54261,6 +56183,92 @@
      "hidden": false
     }
    ],
+   "prevo": null
+  },
+  {
+   "id": 10276,
+   "species": 1024,
+   "form": "Terastal",
+   "name": "terapagosterastal",
+   "displayName": "Terapagos (Terastal)",
+   "types": [
+    "normal"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "calmmind",
+    "crunch",
+    "dazzlinggleam",
+    "earthquake",
+    "flamethrower",
+    "icebeam",
+    "protect",
+    "surf",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Tera Shell",
+     "hidden": false
+    }
+   ],
+   "answer": false,
+   "prevo": null
+  },
+  {
+   "id": 10277,
+   "species": 1024,
+   "form": "Stellar",
+   "name": "terapagosstellar",
+   "displayName": "Terapagos (Stellar)",
+   "types": [
+    "normal"
+   ],
+   "gen": 9,
+   "region": "paldea",
+   "regions": [
+    "paldea"
+   ],
+   "stage": "single",
+   "evoMethods": [],
+   "evoItem": null,
+   "evoDetail": null,
+   "branched": false,
+   "flags": [
+    "legendary"
+   ],
+   "moves": [
+    "calmmind",
+    "crunch",
+    "dazzlinggleam",
+    "earthquake",
+    "flamethrower",
+    "icebeam",
+    "protect",
+    "surf",
+    "thunderbolt"
+   ],
+   "abilities": [],
+   "abilityList": [
+    {
+     "name": "Teraform Zero",
+     "hidden": false
+    }
+   ],
+   "answer": false,
    "prevo": null
   },
   {

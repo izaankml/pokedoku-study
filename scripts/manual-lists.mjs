@@ -389,6 +389,8 @@ export const FORM_IDS = {
   falinksmega: 10303, // Falinks-Mega
   eiscuenoice: 10185, // Eiscue-Noice
   indeedeef: 10186, // Indeedee-F
+  cramorantgulping: 10182, // Cramorant-Gulping
+  cramorantgorging: 10183, // Cramorant-Gorging
   morpekohangry: 10187, // Morpeko-Hangry
   zaciancrowned: 10188, // Zacian-Crowned
   zamazentacrowned: 10189, // Zamazenta-Crowned

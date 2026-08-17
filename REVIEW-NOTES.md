@@ -250,7 +250,19 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     that are different individuals — regional forms (already in the tree),
     Tauros breeds, Oricorio, Partner Pikachu, Bloodmoon Ursaluna … — are
     not forms of this kind. A test checks every transformation has a
-    trigger; all 318 form tiles measured square. Every tile carries a
+    trigger; all 318 form tiles measured square. The 47 candidate forms
+    the builder used to drop as "covered by the base" (Midnight/Dusk
+    Lycanroc, Low Key Toxtricity, Black/White Kyurem, the Therians, Blade
+    Aegislash, School Wishiwashi, Hero Palafin, Terapagos, Primal Kyogre,
+    Speed Deoxys, Cramorant Gulping/Gorging …) are now written as
+    `answer: false` records: `ALL_POKEMON` has them (trees, forms, the
+    sheet, URL slugs), `POKEMON` — categories, Browse, Drill, Cards, Grid,
+    Stats — doesn't; they're named PokeDoku-style from their form
+    ("Lycanroc Midnight"), and their sprites are on PokeDoku's CDN too.
+    Gender forms (Meowstic F …) are skipped by the tree. Still absent, on
+    purpose: cosmetic forms (Vivillon, Alcremie, Arceus/Silvally plates,
+    caps, totems) and Cherrim Sunshine / Minior Meteor, which have no
+    PokeAPI id of their own to hang a sprite on. Every tile carries a
     strip along its bottom edge in its type colours (split for a dual
     type) — the thing that changes along a line — and tapping a tile
     opens that Pokémon's own sheet, pushed on top: Back returns to the

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { POKEMON } from "../data/pokedex.js";
+import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
 import { baseOf, formLabel, formTrigger, formsOf, isTransformation } from "./forms.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n);
@@ -20,6 +20,8 @@ describe("forms", () => {
     expect(formsOf(byName("Charizard")).map((p) => p.displayName)).toEqual(["Charizard Mega X", "Charizard Mega Y", "Charizard Gmax"]);
     expect(baseOf(byName("Darmanitan Galar Zen")).displayName).toBe("Darmanitan Galar Standard");
     expect(formsOf(byName("Rotom")).length).toBe(5);
+    expect(formsOf(byName("Kyurem")).map((p) => p.displayName)).toEqual(["Kyurem Black", "Kyurem White"]);
+    expect(formTrigger(byName("Kyogre Primal"))).toBe("Blue Orb");
   });
   it("labels a form by its own name", () => {
     expect(formLabel(byName("Charizard Mega X"))).toBe("Mega X");

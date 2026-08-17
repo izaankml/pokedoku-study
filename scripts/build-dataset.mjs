@@ -447,9 +447,12 @@ function formEvolution(s) {
   return result;
 }
 
-// A form only earns a record if it can answer some cell its base species
-// cannot: a type the base lacks, a different type count, region, stage,
-// method, flag, move or ability. Otherwise the base record already covers it.
+// A form only earns an *answer* record if it can answer some cell its base
+// species cannot: a type the base lacks, a different type count, region,
+// stage, method, flag, move or ability. Otherwise the base record already
+// covers it — the form is still written, as `answer: false`, so the detail
+// sheet can draw it (Rockruff → Lycanroc / Midnight / Dusk; Kyurem ⇢
+// Black / White) without it ever being an answer anywhere.
 function coversNothingNew(form, base) {
   const subset = (a, b) => a.every((x) => b.includes(x));
   return (
@@ -484,13 +487,13 @@ for (const s of candidateForms) {
     abilities: abilitiesOf(s),
     abilityList: abilityListOf(s),
   };
-  if (coversNothingNew(record, base)) droppedForms.push(record);
+  if (coversNothingNew(record, base)) droppedForms.push({ ...record, answer: false });
   else formRecords.push(record);
 }
 
 // prevo: the record this Pokémon evolved from (null at the start of a line
 // or for Mega/Gigantamax/battle forms, which have no evolution categories)
-const keptFormIds = new Set(formRecords.map((r) => r.id));
+const keptFormIds = new Set(formRecords.concat(droppedForms).map((r) => r.id));
 function prevoIdOf(s) {
   if (hasNoEvolution(s)) return null;
   const parent = parentOf(s);
@@ -501,10 +504,12 @@ function prevoIdOf(s) {
 const poolById = new Map(pool.map((s) => [s.id, s]));
 for (const r of baseRecords) r.prevo = prevoIdOf(poolById.get(r.name));
 for (const r of formRecords) r.prevo = prevoIdOf(poolById.get(r.name));
+for (const r of droppedForms) r.prevo = prevoIdOf(poolById.get(r.name));
 
 // Base species first, then its forms, in dex order.
 const records = baseRecords
   .concat(formRecords)
+  .concat(droppedForms)
   .sort((a, b) => a.species - b.species || (a.form === null ? -1 : b.form === null ? 1 : 0));
 
 // ---- validate -----------------------------------------------------------
@@ -670,13 +675,13 @@ check(same(get("growlithehisui").regions, ["hisui"]), "Hisuian Growlithe is Hisu
 check(get("growlithehisui").stage === "first", "Hisuian Growlithe is first stage");
 check(same(get("arcaninehisui").evoMethods, ["item", "stone"]), "Hisuian Arcanine by Fire Stone");
 check(same(get("basculinwhitestriped").regions, ["unova", "hisui"]), "White-Striped Basculin counts for Unova and Hisui");
-check(!byDexId.has("basculinbluestriped"), "Blue-Striped Basculin adds nothing (dropped)");
+check(byDexId.get("basculinbluestriped")?.answer === false, "Blue-Striped Basculin adds nothing (display-only)");
 check(same(get("dialgaorigin").regions, ["sinnoh", "hisui"]), "Origin Dialga: Sinnoh and Hisui");
 check(same(get("ursalunabloodmoon").regions, ["hisui", "paldea"]), "Bloodmoon: Hisui and Paldea");
 check(get("ursalunabloodmoon").stage === "single", "Bloodmoon Ursaluna has no evolution line");
 check(same(get("hoopaunbound").regions, ["kalos", "hoenn"]), "Hoopa Unbound: Kalos and Hoenn (ORAS)");
 check(same(get("deoxysattack").regions, ["hoenn", "kanto"]), "Deoxys Attack: Hoenn and Kanto (FRLG)");
-check(!byDexId.has("deoxysspeed"), "Deoxys Speed adds nothing (dropped)");
+check(byDexId.get("deoxysspeed")?.answer === false, "Deoxys Speed adds nothing (display-only)");
 check(same(get("zygarde10").regions, ["kalos", "alola"]), "Zygarde 10%: Kalos and Alola");
 check(same(get("groudonprimal").regions, ["hoenn"]), "Primal Groudon: Hoenn only");
 check(same(get("raichualola").evoMethods, ["item", "stone"]) && get("raichualola").stage === "final", "Alolan Raichu");
@@ -739,7 +744,8 @@ for (const region of GEN_REGIONS.concat("hisui")) {
   if (names.length) console.log(String(names.length).padStart(5), region + ":", names.join(", "));
 }
 console.log(`  plus ${formCount((r) => r.flags.includes("mega"))} Mega and ${formCount((r) => r.flags.includes("gmax"))} Gigantamax forms`);
-console.log("dropped:", droppedForms.map((r) => r.displayName).join(", "));
+console.log("display-only (answer: false):", droppedForms.map((r) => r.displayName).join(", "));
+check(droppedForms.every((r) => r.answer === false && r.id >= 10000), "display-only forms flagged");
 
 if (failures.length) {
   console.error("\nVALIDATION FAILED:");
@@ -753,6 +759,7 @@ const out = {
     sourceVersion: dexVersion,
     generatedAt: new Date().toISOString().slice(0, 10),
     count: records.length,
+    answerCount: baseRecords.length + formRecords.length,
     speciesCount: baseRecords.length,
   },
   pokemon: records,

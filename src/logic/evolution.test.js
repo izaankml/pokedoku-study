@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { POKEMON } from "../data/pokedex.js";
+import { ALL_POKEMON as POKEMON } from "../data/pokedex.js";
 import { evoNote, evoWhere, evolutionLine, evolutionTree, shortHow, titleCase } from "./evolution.js";
 
 const byName = (n) => POKEMON.find((p) => p.displayName === n);
@@ -64,7 +64,7 @@ describe("evoNote", () => {
   });
   it("leaves no branch with two sides reading the same (bar Wurmple's coin toss)", () => {
     const kids = new Map();
-    for (const p of POKEMON) if (p.prevo != null) kids.set(p.prevo, [...(kids.get(p.prevo) || []), p]);
+    for (const p of POKEMON) if (p.prevo != null && p.form !== "F") kids.set(p.prevo, [...(kids.get(p.prevo) || []), p]); // gender forms aren't branches
     for (const [, ks] of kids) {
       const labels = ks.map((k) => shortHow(k.evoDetail) + (evoNote(k) || ""));
       const distinct = new Set(labels).size;
@@ -89,5 +89,16 @@ describe("dex order", () => {
   it("keeps a form beside its base, not after later species", () => {
     const { root } = evolutionTree(byName("Burmy"));
     expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Wormadam", "Wormadam Sandy", "Wormadam Trash", "Mothim"]);
+  });
+});
+
+describe("display-only forms", () => {
+  it("draw in the tree but are never answers", () => {
+    const { root } = evolutionTree(byName("Rockruff"));
+    expect(root.children.map((c) => c.pokemon.displayName)).toEqual(["Lycanroc", "Lycanroc Midnight", "Lycanroc Dusk"]);
+    expect(byName("Lycanroc Midnight").answer).toBe(false);
+    expect(evolutionTree(byName("Toxel")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Toxtricity", "Toxtricity Low Key"]);
+    // the female Meowstic is the same Pokémon, not another evolution
+    expect(evolutionTree(byName("Espurr")).root.children.map((c) => c.pokemon.displayName)).toEqual(["Meowstic"]);
   });
 });

@@ -2,11 +2,16 @@ import data from "./pokedex.json";
 import SPRITES from "./sprites.json";
 import POKEDOKU_NAMES from "./pokedoku-names.json";
 
-export const POKEMON = data.pokemon;
+// Every record, answers and the display-only forms (`answer: false`:
+// forms PokeDoku doesn't tell from their base — Midnight Lycanroc, Black
+// Kyurem — kept so the detail sheet can draw a whole line). Categories,
+// Browse, Drill, Cards and Grid use POKEMON, the answers only.
+export const ALL_POKEMON = data.pokemon;
+export const POKEMON = ALL_POKEMON.filter((p) => p.answer !== false);
 export const DATA_META = data.meta;
 
-export const POKEMON_BY_ID = new Map(POKEMON.map((p) => [p.id, p]));
-export const POKEMON_BY_NAME = new Map(POKEMON.map((p) => [p.name, p]));
+export const POKEMON_BY_ID = new Map(ALL_POKEMON.map((p) => [p.id, p]));
+export const POKEMON_BY_NAME = new Map(ALL_POKEMON.map((p) => [p.name, p]));
 
 // Forms are named the way PokeDoku names them — species first, then the
 // form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner") — built
@@ -14,12 +19,18 @@ export const POKEMON_BY_NAME = new Map(POKEMON.map((p) => [p.name, p]));
 // proper name (so "Mr. Mime Galar", not "Mr Mime Galar"). The dataset's
 // own name ("Galarian Zapdos") is kept as `altName`, still searchable.
 const cap = (w) => (w ? w[0].toUpperCase() + w.slice(1) : w);
-for (const p of POKEMON) {
+for (const p of ALL_POKEMON) {
   const pd = POKEDOKU_NAMES[p.id];
-  if (!pd) continue;
-  const rest = pd.name.startsWith(`${pd.specie}-`) ? pd.name.slice(pd.specie.length + 1) : pd.name;
   const base = POKEMON_BY_ID.get(p.species);
-  const name = `${base ? base.displayName : cap(pd.specie)} ${rest.split("-").map(cap).join(" ")}`;
+  let name;
+  if (pd) {
+    const rest = pd.name.startsWith(`${pd.specie}-`) ? pd.name.slice(pd.specie.length + 1) : pd.name;
+    name = `${base ? base.displayName : cap(pd.specie)} ${rest.split("-").map(cap).join(" ")}`;
+  } else if (p.form && p.answer === false && base) {
+    // display-only forms aren't PokeDoku answers, so have no PokeDoku name;
+    // name them the same way ("Lycanroc Midnight", "Kyurem Black")
+    name = `${base.displayName} ${p.form.split("-").map(cap).join(" ")}`;
+  } else continue;
   if (name !== p.displayName) {
     p.altName = p.displayName;
     p.displayName = name;

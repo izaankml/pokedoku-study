@@ -1,11 +1,12 @@
 // Alternate forms that are transformations — the same Pokémon switched
 // into another shape by an item or a battle state, and back — as opposed
 // to variants that are different individuals (regional forms, Tauros
-// breeds, Oricorio, Wormadam's cloaks, Partner Pikachu …). Only the
-// transformations belong beside an evolution line: Charizard ⇢ Mega X /
-// Mega Y / Gigantamax. Regional forms already sit in the tree via `prevo`.
+// breeds, Oricorio, Wormadam's cloaks, Partner Pikachu, Minior's colours,
+// Squawkabilly, gender forms …). Only the transformations belong beside an
+// evolution line: Charizard ⇢ Mega X / Mega Y / Gigantamax. Regional forms
+// (and Lycanroc's, Toxtricity's) already sit in the tree via `prevo`.
 
-import { POKEMON, POKEMON_BY_ID, POKEMON_BY_NAME } from "../data/pokedex.js";
+import { ALL_POKEMON, POKEMON_BY_ID, POKEMON_BY_NAME } from "../data/pokedex.js";
 
 // Mega Stones (Serebii's Legends: Z-A table — the older ones aren't
 // formulaic: Blastoisinite, Alakazite, Lucarionite …), by species name;
@@ -38,6 +39,25 @@ const MEGA_STONES = {
 // The other transformations, by slug: what switches the Pokémon into it.
 const TRIGGERS = {
   groudonprimal: "Red Orb",
+  kyogreprimal: "Blue Orb",
+  deoxysspeed: "Meteorite",
+  tornadustherian: "Reveal Glass",
+  thundurustherian: "Reveal Glass",
+  enamorustherian: "Reveal Glass",
+  kyuremblack: "DNA Splicers + Zekrom",
+  kyuremwhite: "DNA Splicers + Reshiram",
+  keldeoresolute: "Knowing Secret Sword",
+  aegislashblade: "Stance Change, Attacking",
+  wishiwashischool: "Schooling, Lv 20+, ¼+ HP",
+  mimikyubusted: "Disguise Broken",
+  eiscuenoice: "Ice Face Broken",
+  morpekohangry: "Hunger Switch, Each Turn",
+  cramorantgulping: "Gulp Missile, after Surf / Dive",
+  cramorantgorging: "Gulp Missile, under ½ HP",
+  palafinhero: "Zero to Hero, Switch Out",
+  terapagosterastal: "Tera Shift, in Battle",
+  terapagosstellar: "Terastallize",
+  eternatuseternamax: "Eternamax (Raid)",
   dialgaorigin: "Adamant Crystal",
   palkiaorigin: "Lustrous Globe",
   giratinaorigin: "Griseous Core",
@@ -103,7 +123,7 @@ export function formTrigger(p) {
 }
 
 const formsByBase = new Map();
-for (const p of POKEMON) {
+for (const p of ALL_POKEMON) {
   if (!isTransformation(p)) continue;
   const base = baseOf(p);
   if (!formsByBase.has(base.id)) formsByBase.set(base.id, []);
