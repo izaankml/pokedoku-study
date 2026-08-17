@@ -24,7 +24,8 @@ Delete this file once reviewed; anything worth keeping is in README.md.
    Charizard are (96 Mega + 34 Gmax records). Evidence: PokeDoku's ids
    `MEGA_EVOLVED`/`GMAX_FORM`, separate answer entries, and helper counts
    (96/34) that only work per-entry. **Impact on you:** for a Mega cell,
-   type "Mega Charizard X", not "Charizard". If PokeDoku actually accepts
+   type "Charizard Mega X" (PokeDoku's naming; "Mega Charizard X" also
+   matches), not "Charizard". If PokeDoku actually accepts
    plain "Charizard" too, flip `formFlags`/`speciesFlags` in
    `scripts/build-dataset.mjs`.
 2. Mega/Gmax forms: no evolution stage/method (helper: `IGNORE_EVOLVE_FORMS`),

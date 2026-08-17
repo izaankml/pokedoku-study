@@ -12,25 +12,41 @@ Rotom appliances, …) whenever they fit a cell the base species doesn't.
 ## Modes
 
 - **Browse** — pick one category, or a pair like a PokeDoku cell, and see
-  every Pokémon that qualifies.
+  every Pokémon that qualifies. Tap any Pokémon (here or in a Drill/Grid
+  answer list) for its detail sheet: every category it counts for, its
+  abilities (hidden one marked) and its whole evolution line with how
+  each stage evolves.
 - **Drill** — the core PokeDoku skill: given two categories, name any
-  Pokémon that fits both. Every answer reveals the full list of valid
-  answers, which is where the learning happens.
+  Pokémon that fits both. A miss says why ("Pikachu doesn't fit — it isn't
+  Fire-type and isn't from Galar"), and every answer reveals the full
+  list of valid answers, which is where the learning happens.
 - **Cards** — flashcards, one deck per category group (or all at once):
   region, type, evolution method/stage/line, group, moves ("can it learn
-  Earthquake?"), abilities. (No type-count deck: naming both types already
-  says mono or dual.) Pick an answer, then Submit; Type, Region and
-  Evolution Method want every answer (both types of a dual type; Stone
-  implies Item and Friendship implies Level-Up). Skip or Don't Know on a
-  card; the current card survives switching tabs. Enter submits / moves
-  on from the keyboard.
+  Earthquake?"), abilities. (No type-count deck — naming both types already
+  says mono or dual — and the Group deck only asks about Pokémon that are
+  in a group.) Pick, then Submit; Type, Region and Evolution Method want
+  every answer (both types of a dual type; Stone implies Item and
+  Friendship implies Level-Up). Skip or Don't Know on a card. Once
+  answered, the card shows the Pokémon's types, region, group and
+  abilities, and tapping it opens the detail sheet. Keyboard: arrows move
+  over the options, Space picks, Enter submits / moves on.
 - **Grid** — a full 3×3 practice board, generated so every cell is
-  solvable with distinct Pokémon.
-- **Stats** — per-category accuracy, weak spots highlighted.
+  solvable with distinct Pokémon; wrong guesses say why.
+- **Stats** — per-category accuracy, weak spots highlighted (Mono-/Dual-
+  Type have no table there — the type rows say it all — but still count
+  for Drill and Grid); spaced-review counts; cross-device sync.
 
 Questions are weighted toward what you get wrong. Before any history
 exists they're pre-biased toward Gen 5+ regions (Unova, Kalos, Alola,
 Galar, Hisui, Paldea).
+
+Where you are survives a reload: the tab and its state live in the URL
+hash (`#cards/region`, `#browse/type-fire/flag-legendary`,
+`#drill/type-fire/flag-legendary`), and the current flashcard and the
+Grid board in progress are kept in `localStorage`. Pokémon are named the
+way PokeDoku names them ("Zapdos Galar", "Charizard Mega X", "Pikachu
+Partner"); the conventional names ("Galarian Zapdos") still work in
+search.
 
 ## Cross-device sync
 
@@ -78,8 +94,25 @@ npm run build-data
 
 The build script validates counts (1025 species, per-generation totals,
 group sizes) and known facts (Alakazam evolved by trade, Wyrdeer is from
-Hisui, …) and refuses to write if anything is off. Sprites are loaded at
-runtime from [PokeAPI sprites](https://github.com/PokeAPI/sprites).
+Hisui, …) and refuses to write if anything is off. Each record also
+carries `prevo`, the record it evolved from, which draws the evolution
+lines.
+
+Two more generated files sit beside it, both keyed by the same PokeAPI
+ids and refreshed with `npm run build-sprites` / `npm run build-names`
+whenever records are added:
+
+- `src/data/sprites.json` — which sprite to show and the visible box
+  inside it. Sprites are PokeDoku's own 96×96 pixel art (its CDN; the art
+  you see in the game, with truer colours than the fan sprites elsewhere
+  for Gen 6+), PokeAPI's as the fallback. Every sprite is normalised to
+  fill its slot (a Charmander no longer sits as a speck beside its
+  Gigantamax), which needs each sprite's bounding box; PokeDoku's CDN
+  sends no CORS headers, so the boxes are measured here at build time
+  rather than on a canvas at runtime.
+- `src/data/pokedoku-names.json` — PokeDoku's name slug for every
+  alternate form, from its public answer list, so forms are displayed
+  the way PokeDoku shows them.
 
 Notes on judgment calls:
 

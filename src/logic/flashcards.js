@@ -55,7 +55,7 @@ export const DECKS = [
     questionText: "What type is this Pokémon?",
     options: CATEGORIES.filter((c) => c.group === "type"),
     answers: (p) => p.types.map((t) => `type-${t}`),
-    // Megas can change type (Mega Charizard X); Gmax never does
+    // Megas can change type (Charizard Mega X); Gmax never does
     eligible: (p) => !p.flags.includes("gmax"),
   },
   {
@@ -138,7 +138,7 @@ export const DECKS = [
 export const DECK_BY_ID = new Map(DECKS.map((d) => [d.id, d]));
 
 // A form is only worth its own card when the deck's answer differs from
-// the base species' (Hisuian Growlithe: yes; Mega Charizard Y: no). The
+// the base species' (Growlithe Hisui: yes; Charizard Mega Y: no). The
 // Moves deck compares the whole move list.
 const distinctFromBase = (p, deck) => {
   if (p.form === null) return true;

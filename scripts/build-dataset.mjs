@@ -358,6 +358,11 @@ function formRegion(s, base) {
 }
 
 // ---- names --------------------------------------------------------------
+//
+// These are the dataset's own names ("Hisuian Growlithe", "Mega Charizard
+// X"). The app shows forms the way PokeDoku does ("Growlithe Hisui",
+// "Charizard Mega X") using src/data/pokedoku-names.json (see
+// scripts/build-pokedoku-names.mjs) and keeps these as `altName` for search.
 
 function formDisplayName(s) {
   if (DISPLAY_NAME_OVERRIDES[s.id]) return DISPLAY_NAME_OVERRIDES[s.id];

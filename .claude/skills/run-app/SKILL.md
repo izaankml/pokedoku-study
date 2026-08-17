@@ -6,8 +6,11 @@ description: Launch the PokeDoku Study Vite dev server, drive it in headless Chr
 # Run PokeDoku Study and screenshot a view
 
 React + Vite single-page app. "Running" means: dev server up, headless
-Chrome navigates to it, clicks a tab, screenshots. Tabs are `Browse`,
-`Drill` (default), `Cards`, `Grid`, `Stats`.
+Chrome navigates to it, clicks a tab, screenshots. Tabs are `Browse`
+(default), `Drill`, `Cards`, `Grid`, `Stats`. Each tab is also reachable
+by hash, with its state after it — `#cards/region`,
+`#browse/type-fire/flag-legendary`, `#drill/<a>/<b>` — which is the
+quickest way to land a headless page on a specific view.
 
 ## 1. Dev server
 

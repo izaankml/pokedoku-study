@@ -20,14 +20,16 @@ export function PokeballIcon(props) {
   );
 }
 
-// PokeAPI draws every Pokémon at its in-game relative size inside the same
-// 96×96 canvas, so Charmander is a speck and Gigantamax Venusaur fills the
-// frame. Each sprite is measured once (alpha bounding box) and transformed
-// so that box fills the slot — capped two ways: at MAX_UPSCALE of the slot,
-// so tiny Pokémon read clearly without erasing the size relationship, and
-// at MAX_NATIVE_SCALE CSS px per sprite pixel, so pixel art never turns
-// into chunky blocks in the big flashcard slot. Slots are square, so the
-// transform is expressed in the sprite's own percentages.
+// Pixel sprites (PokeDoku's and PokeAPI's alike) draw every Pokémon at its
+// in-game relative size inside the same 96×96 canvas, so Charmander is a
+// speck and Gigantamax Venusaur fills the frame. Each sprite's alpha
+// bounding box (prebuilt in sprites.json, or measured here for CORS-able
+// fallbacks) is transformed so the box fills the slot — capped two ways:
+// at MAX_UPSCALE of the slot, so tiny Pokémon read clearly without erasing
+// the size relationship, and at MAX_NATIVE_SCALE CSS px per sprite pixel,
+// so pixel art never turns into chunky blocks in the big flashcard slot.
+// Slots are square, so the transform is expressed in the sprite's own
+// percentages.
 const FILL = 0.94; // fraction of the slot the sprite's box grows to
 const MAX_UPSCALE = 1.8;
 const MAX_NATIVE_SCALE = 2;
