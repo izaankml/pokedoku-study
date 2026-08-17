@@ -1109,14 +1109,13 @@ header h1 {
   font-size: 0.78rem;
 }
 
-/* types · region · group — region sits dead centre; the types hang off
-   its left and the group off its right, with a wider gap to the region
-   than between two types or two groups */
+/* types · region · group — the row is split into thirds and each cluster
+   is centred in its own third */
 .card-tags-spread {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  column-gap: 20px;
+  column-gap: 8px;
   width: 100%;
   max-width: 480px;
 }
@@ -1127,14 +1126,6 @@ header h1 {
   justify-content: center;
   gap: 6px;
   min-width: 0;
-}
-
-.card-tags-spread .tag-group:first-child {
-  justify-content: flex-end;
-}
-
-.card-tags-spread .tag-group:last-child {
-  justify-content: flex-start;
 }
 
 /* small caps caption on a pill row ("Abilities"), styled like the
