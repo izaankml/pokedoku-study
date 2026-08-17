@@ -8,11 +8,12 @@ import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
 import { CATEGORIES } from "../data/categories.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonCard from "./PokemonCard.jsx";
+import EvolutionLine from "./EvolutionLine.jsx";
 
 const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby", "mega", "gmax"];
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
 // Shown in the group slot when a Pokémon is in no group at all
-const REGULAR = { id: "regular", label: "Regular", short: "Regular", group: "special" };
+const REGULAR = { id: "flag-regular", label: "Regular", short: "Regular", group: "special" };
 
 // Typing, region and group of a Pokémon as pills, shown once a card is
 // answered — the same strip whatever the deck asked: types on the left,
@@ -92,21 +93,37 @@ function Flashcards() {
     row.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
   }, [deckId]);
 
-  // Enter moves the card along from the keyboard: Submit once something is
-  // selected, Next Card once answered. Cancelling the default keeps a
-  // focused option button from also being "clicked".
+  // Keyboard: arrows move focus over the options (←/→ one at a time, ↑/↓
+  // a row), Space toggles the focused one (native button behaviour), and
+  // Enter moves the card along — Submit once something is selected, Next
+  // Card once answered. Cancelling Enter's default keeps a focused option
+  // from also being "clicked".
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key !== "Enter" || e.metaKey || e.ctrlKey || e.altKey) return;
-      // Enter on a focused tab or deck chip still activates that
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // a focused tab or deck chip keeps its own keyboard behaviour
       if (document.activeElement?.closest(".tabs, .deck-picker")) return;
-      if (picked !== null) {
-        e.preventDefault();
-        next();
-      } else if (selection.length) {
-        e.preventDefault();
-        submit();
+      if (e.key === "Enter") {
+        if (picked !== null) {
+          e.preventDefault();
+          next();
+        } else if (selection.length) {
+          e.preventDefault();
+          submit();
+        }
+        return;
       }
+      if (picked !== null || !e.key.startsWith("Arrow")) return;
+      const grid = document.querySelector(".region-buttons");
+      const buttons = grid ? [...grid.querySelectorAll(".region-btn")] : [];
+      if (!buttons.length) return;
+      const cols = parseInt(getComputedStyle(grid).getPropertyValue("--cols"), 10) || 1;
+      const at = buttons.indexOf(document.activeElement);
+      const step = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: cols, ArrowUp: -cols }[e.key];
+      if (step === undefined) return;
+      e.preventDefault();
+      const to = at < 0 ? (step > 0 ? 0 : buttons.length - 1) : Math.min(buttons.length - 1, Math.max(0, at + step));
+      buttons[to].focus();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -209,7 +226,6 @@ function Flashcards() {
     return cls;
   };
 
-  const evolves = deck.id === "method" && pokemon.evoDetail ? `Evolves: ${pokemon.evoDetail}` : null;
 
   return (
     <div className="flashcards">
@@ -246,7 +262,10 @@ function Flashcards() {
                 <AbilityPill key={a.name} ability={a} />
               ))}
             </div>
-            {evolves ? <p className="card-extra">{evolves}</p> : null}
+            <div className="card-tags">
+              <span className="tags-label">Evolution</span>
+              <EvolutionLine pokemon={pokemon} />
+            </div>
           </div>
         ) : null}
         <div className="answer-body">

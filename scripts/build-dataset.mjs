@@ -147,6 +147,11 @@ function isBranched(s) {
   return new Set(kids.map((k) => k.num)).size >= 2;
 }
 
+// The record a Pokémon evolved from, for drawing evolution lines: the
+// parent species' number, or the parent form's record id when that form has
+// one (Sirfetch'd <- Farfetch'd-Galar). Filled in once the form records are
+// known — see prevoIdOf below.
+
 // ---- evolution methods --------------------------------------------------
 
 const EVO_STONES = new Set([
@@ -477,6 +482,20 @@ for (const s of candidateForms) {
   if (coversNothingNew(record, base)) droppedForms.push(record);
   else formRecords.push(record);
 }
+
+// prevo: the record this Pokémon evolved from (null at the start of a line
+// or for Mega/Gigantamax/battle forms, which have no evolution categories)
+const keptFormIds = new Set(formRecords.map((r) => r.id));
+function prevoIdOf(s) {
+  if (hasNoEvolution(s)) return null;
+  const parent = parentOf(s);
+  if (!parent) return null;
+  if (parent.forme && parent.id in FORM_IDS && keptFormIds.has(FORM_IDS[parent.id])) return FORM_IDS[parent.id];
+  return parent.num;
+}
+const poolById = new Map(pool.map((s) => [s.id, s]));
+for (const r of baseRecords) r.prevo = prevoIdOf(poolById.get(r.name));
+for (const r of formRecords) r.prevo = prevoIdOf(poolById.get(r.name));
 
 // Base species first, then its forms, in dex order.
 const records = baseRecords

@@ -549,7 +549,12 @@ header h1 {
 .group-baby { --g: #7ec2f2; }       /* sky */
 .group-mega { --g: #e050c0; }       /* magenta */
 .group-gmax { --g: #f0603c; }       /* red-orange */
-.group-regular { --g: #8b8992; }    /* grey: in no group */
+.group-regular { --g: #c0bfca; }    /* light grey, dashed: in no group */
+
+.pill.group-regular {
+  border-style: dashed;
+  color: var(--text-mid);
+}
 
 /* Abilities: outlined, quieter than category pills; the ones PokeDoku
    asks about get the accent wash */
@@ -1144,6 +1149,86 @@ header h1 {
   justify-content: center;
   gap: 6px;
   min-width: 0;
+}
+
+/* ---- evolution line: chips joined by arrows ---- */
+
+.evo-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px 4px;
+}
+
+.evo-level-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* a branch (several evolutions) takes its own row under a ↓ */
+.evo-level-wrap.branch {
+  flex-basis: 100%;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.evo-level {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.evo-arrow {
+  color: var(--text-low);
+  font-size: 1rem;
+  padding: 0 2px;
+}
+
+.evo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 4px;
+  border-radius: var(--radius-full);
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-hi);
+  text-align: left;
+  line-height: 1.15;
+}
+
+.evo-chip.current {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.evo-sprite,
+.sprite-fallback.evo-sprite {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+.evo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.evo-how {
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: var(--text-low);
+  white-space: nowrap;
+}
+
+.evo-none {
+  font-size: 0.8rem;
+  color: var(--text-low);
 }
 
 /* small caps caption on a pill row ("Abilities"), styled like the

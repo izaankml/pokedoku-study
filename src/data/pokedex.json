@@ -2,7 +2,7 @@
  "meta": {
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
-  "generatedAt": "2026-08-16",
+  "generatedAt": "2026-08-17",
   "count": 1257,
   "speciesCount": 1025
  },
@@ -45,7 +45,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 2,
@@ -87,7 +88,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 1
   },
   {
    "id": 3,
@@ -130,7 +132,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 2
   },
   {
    "id": 10033,
@@ -167,7 +170,8 @@
      "name": "Thick Fat",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10195,
@@ -203,7 +207,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 4,
@@ -245,7 +250,8 @@
      "name": "Solar Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 5,
@@ -289,7 +295,8 @@
      "name": "Solar Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 4
   },
   {
    "id": 6,
@@ -336,7 +343,8 @@
      "name": "Solar Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 5
   },
   {
    "id": 10034,
@@ -377,7 +385,8 @@
      "name": "Tough Claws",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10035,
@@ -418,7 +427,8 @@
      "name": "Drought",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10196,
@@ -454,7 +464,8 @@
      "name": "Solar Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 7,
@@ -496,7 +507,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 8,
@@ -540,7 +552,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 7
   },
   {
    "id": 9,
@@ -586,7 +599,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 8
   },
   {
    "id": 10036,
@@ -626,7 +640,8 @@
      "name": "Mega Launcher",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10197,
@@ -661,7 +676,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10,
@@ -694,7 +710,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 11,
@@ -725,7 +742,8 @@
      "name": "Shed Skin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 10
   },
   {
    "id": 12,
@@ -766,7 +784,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 11
   },
   {
    "id": 10198,
@@ -802,7 +821,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 13,
@@ -836,7 +856,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 14,
@@ -868,7 +889,8 @@
      "name": "Shed Skin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 13
   },
   {
    "id": 15,
@@ -909,7 +931,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 14
   },
   {
    "id": 10090,
@@ -946,7 +969,8 @@
      "name": "Adaptability",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 16,
@@ -989,7 +1013,8 @@
      "name": "Big Pecks",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 17,
@@ -1034,7 +1059,8 @@
      "name": "Big Pecks",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 16
   },
   {
    "id": 18,
@@ -1079,7 +1105,8 @@
      "name": "Big Pecks",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 17
   },
   {
    "id": 10073,
@@ -1114,7 +1141,8 @@
      "name": "No Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 19,
@@ -1157,7 +1185,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10091,
@@ -1201,7 +1230,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 20,
@@ -1246,7 +1276,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 19
   },
   {
    "id": 10092,
@@ -1292,7 +1323,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10091
   },
   {
    "id": 21,
@@ -1331,7 +1363,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 22,
@@ -1372,7 +1405,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 21
   },
   {
    "id": 23,
@@ -1416,7 +1450,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 24,
@@ -1462,7 +1497,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 23
   },
   {
    "id": 25,
@@ -1504,7 +1540,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 172
   },
   {
    "id": 10158,
@@ -1545,7 +1582,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10199,
@@ -1580,7 +1618,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 26,
@@ -1622,7 +1661,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 25
   },
   {
    "id": 10100,
@@ -1662,7 +1702,8 @@
      "name": "Surge Surfer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 25
   },
   {
    "id": 10304,
@@ -1699,7 +1740,8 @@
      "name": "Electric Surge",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10305,
@@ -1736,7 +1778,8 @@
      "name": "No Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 27,
@@ -1773,7 +1816,8 @@
      "name": "Sand Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10101,
@@ -1813,7 +1857,8 @@
      "name": "Slush Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 28,
@@ -1852,7 +1897,8 @@
      "name": "Sand Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 27
   },
   {
    "id": 10102,
@@ -1895,7 +1941,8 @@
      "name": "Slush Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10101
   },
   {
    "id": 29,
@@ -1938,7 +1985,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 30,
@@ -1983,7 +2031,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 29
   },
   {
    "id": 31,
@@ -2036,7 +2085,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 30
   },
   {
    "id": 32,
@@ -2078,7 +2128,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 33,
@@ -2122,7 +2173,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 32
   },
   {
    "id": 34,
@@ -2174,7 +2226,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 33
   },
   {
    "id": 35,
@@ -2226,7 +2279,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 173
   },
   {
    "id": 36,
@@ -2278,7 +2332,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 35
   },
   {
    "id": 10278,
@@ -2322,7 +2377,8 @@
      "name": "Magic Bounce",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 37,
@@ -2359,7 +2415,8 @@
      "name": "Drought",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10103,
@@ -2397,7 +2454,8 @@
      "name": "Snow Warning",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 38,
@@ -2439,7 +2497,8 @@
      "name": "Drought",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 37
   },
   {
    "id": 10104,
@@ -2482,7 +2541,8 @@
      "name": "Snow Warning",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10103
   },
   {
    "id": 39,
@@ -2535,7 +2595,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 174
   },
   {
    "id": 40,
@@ -2588,7 +2649,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 39
   },
   {
    "id": 41,
@@ -2629,7 +2691,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 42,
@@ -2672,7 +2735,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 41
   },
   {
    "id": 43,
@@ -2711,7 +2775,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 44,
@@ -2752,7 +2817,8 @@
      "name": "Stench",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 43
   },
   {
    "id": 45,
@@ -2793,7 +2859,8 @@
      "name": "Effect Spore",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 44
   },
   {
    "id": 46,
@@ -2835,7 +2902,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 47,
@@ -2879,7 +2947,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 46
   },
   {
    "id": 48,
@@ -2921,7 +2990,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 49,
@@ -2966,7 +3036,8 @@
      "name": "Wonder Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 48
   },
   {
    "id": 50,
@@ -3007,7 +3078,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10105,
@@ -3049,7 +3121,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 51,
@@ -3092,7 +3165,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 50
   },
   {
    "id": 10106,
@@ -3136,7 +3210,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10105
   },
   {
    "id": 52,
@@ -3177,7 +3252,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10107,
@@ -3218,7 +3294,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10161,
@@ -3262,7 +3339,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10200,
@@ -3301,7 +3379,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 53,
@@ -3344,7 +3423,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 52
   },
   {
    "id": 10108,
@@ -3388,7 +3468,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10107
   },
   {
    "id": 54,
@@ -3437,7 +3518,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 55,
@@ -3488,7 +3570,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 54
   },
   {
    "id": 56,
@@ -3534,7 +3617,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 57,
@@ -3582,7 +3666,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 56
   },
   {
    "id": 58,
@@ -3627,7 +3712,8 @@
      "name": "Justified",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10229,
@@ -3672,7 +3758,8 @@
      "name": "Rock Head",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 59,
@@ -3720,7 +3807,8 @@
      "name": "Justified",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 58
   },
   {
    "id": 10230,
@@ -3768,7 +3856,8 @@
      "name": "Rock Head",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10229
   },
   {
    "id": 60,
@@ -3813,7 +3902,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 61,
@@ -3864,7 +3954,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 60
   },
   {
    "id": 62,
@@ -3918,7 +4009,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 61
   },
   {
    "id": 63,
@@ -3963,7 +4055,8 @@
      "name": "Magic Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 64,
@@ -4010,7 +4103,8 @@
      "name": "Magic Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 63
   },
   {
    "id": 65,
@@ -4058,7 +4152,8 @@
      "name": "Magic Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 64
   },
   {
    "id": 10037,
@@ -4097,7 +4192,8 @@
      "name": "Trace",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 66,
@@ -4142,7 +4238,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 67,
@@ -4189,7 +4286,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 66
   },
   {
    "id": 68,
@@ -4237,7 +4335,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 67
   },
   {
    "id": 10201,
@@ -4276,7 +4375,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 69,
@@ -4314,7 +4414,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 70,
@@ -4354,7 +4455,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 69
   },
   {
    "id": 71,
@@ -4395,7 +4497,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 70
   },
   {
    "id": 10279,
@@ -4431,7 +4534,8 @@
      "name": "Innards Out",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 72,
@@ -4476,7 +4580,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 73,
@@ -4523,7 +4628,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 72
   },
   {
    "id": 74,
@@ -4569,7 +4675,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10109,
@@ -4615,7 +4722,8 @@
      "name": "Galvanize",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 75,
@@ -4663,7 +4771,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 74
   },
   {
    "id": 10110,
@@ -4712,7 +4821,8 @@
      "name": "Galvanize",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10109
   },
   {
    "id": 76,
@@ -4761,7 +4871,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 75
   },
   {
    "id": 10111,
@@ -4810,7 +4921,8 @@
      "name": "Galvanize",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10110
   },
   {
    "id": 77,
@@ -4850,7 +4962,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10162,
@@ -4892,7 +5005,8 @@
      "name": "Anticipation",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 78,
@@ -4934,7 +5048,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 77
   },
   {
    "id": 10163,
@@ -4979,7 +5094,8 @@
      "name": "Anticipation",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10162
   },
   {
    "id": 79,
@@ -5027,7 +5143,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10164,
@@ -5074,7 +5191,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 80,
@@ -5127,7 +5245,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 79
   },
   {
    "id": 10071,
@@ -5172,7 +5291,8 @@
      "name": "Shell Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10165,
@@ -5226,7 +5346,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10164
   },
   {
    "id": 81,
@@ -5269,7 +5390,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 82,
@@ -5314,7 +5436,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 81
   },
   {
    "id": 83,
@@ -5360,7 +5483,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10166,
@@ -5397,7 +5521,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 84,
@@ -5439,7 +5564,8 @@
      "name": "Tangled Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 85,
@@ -5483,7 +5609,8 @@
      "name": "Tangled Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 84
   },
   {
    "id": 86,
@@ -5525,7 +5652,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 87,
@@ -5570,7 +5698,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 86
   },
   {
    "id": 88,
@@ -5615,7 +5744,8 @@
      "name": "Poison Touch",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10112,
@@ -5663,7 +5793,8 @@
      "name": "Power of Alchemy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 89,
@@ -5711,7 +5842,8 @@
      "name": "Poison Touch",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 88
   },
   {
    "id": 10113,
@@ -5761,7 +5893,8 @@
      "name": "Power of Alchemy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10112
   },
   {
    "id": 90,
@@ -5803,7 +5936,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 91,
@@ -5849,7 +5983,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 90
   },
   {
    "id": 92,
@@ -5889,7 +6024,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 93,
@@ -5932,7 +6068,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 92
   },
   {
    "id": 94,
@@ -5975,7 +6112,8 @@
      "name": "Cursed Body",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 93
   },
   {
    "id": 10038,
@@ -6017,7 +6155,8 @@
      "name": "Shadow Tag",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10202,
@@ -6049,7 +6188,8 @@
      "name": "Cursed Body",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 95,
@@ -6092,7 +6232,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 96,
@@ -6138,7 +6279,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 97,
@@ -6186,7 +6328,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 96
   },
   {
    "id": 98,
@@ -6228,7 +6371,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 99,
@@ -6273,7 +6417,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 98
   },
   {
    "id": 10203,
@@ -6312,7 +6457,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 100,
@@ -6352,7 +6498,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10231,
@@ -6393,7 +6540,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 101,
@@ -6435,7 +6583,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 100
   },
   {
    "id": 10232,
@@ -6479,7 +6628,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10231
   },
   {
    "id": 102,
@@ -6517,7 +6667,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 103,
@@ -6560,7 +6711,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 102
   },
   {
    "id": 10114,
@@ -6605,7 +6757,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 102
   },
   {
    "id": 104,
@@ -6648,7 +6801,8 @@
      "name": "Battle Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 105,
@@ -6693,7 +6847,8 @@
      "name": "Battle Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 104
   },
   {
    "id": 10115,
@@ -6741,7 +6896,8 @@
      "name": "Rock Head",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 104
   },
   {
    "id": 106,
@@ -6786,7 +6942,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 236
   },
   {
    "id": 107,
@@ -6834,7 +6991,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 236
   },
   {
    "id": 108,
@@ -6882,7 +7040,8 @@
      "name": "Cloud Nine",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 109,
@@ -6927,7 +7086,8 @@
      "name": "Stench",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 110,
@@ -6974,7 +7134,8 @@
      "name": "Stench",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 109
   },
   {
    "id": 10167,
@@ -7023,7 +7184,8 @@
      "name": "Misty Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 109
   },
   {
    "id": 111,
@@ -7068,7 +7230,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 112,
@@ -7119,7 +7282,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 111
   },
   {
    "id": 113,
@@ -7172,7 +7336,8 @@
      "name": "Healer",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 440
   },
   {
    "id": 114,
@@ -7212,7 +7377,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 115,
@@ -7261,7 +7427,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10039,
@@ -7304,7 +7471,8 @@
      "name": "Parental Bond",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 116,
@@ -7349,7 +7517,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 117,
@@ -7393,7 +7562,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 116
   },
   {
    "id": 118,
@@ -7437,7 +7607,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 119,
@@ -7483,7 +7654,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 118
   },
   {
    "id": 120,
@@ -7528,7 +7700,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 121,
@@ -7577,7 +7750,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 120
   },
   {
    "id": 10280,
@@ -7617,7 +7791,8 @@
      "name": "Huge Power",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 122,
@@ -7667,7 +7842,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 439
   },
   {
    "id": 10168,
@@ -7718,7 +7894,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 439
   },
   {
    "id": 123,
@@ -7761,7 +7938,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 124,
@@ -7810,7 +7988,8 @@
      "name": "Dry Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 238
   },
   {
    "id": 125,
@@ -7852,7 +8031,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 239
   },
   {
    "id": 126,
@@ -7893,7 +8073,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 240
   },
   {
    "id": 127,
@@ -7935,7 +8116,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10040,
@@ -7972,7 +8154,8 @@
      "name": "Aerilate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 128,
@@ -8020,7 +8203,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10250,
@@ -8064,7 +8248,8 @@
      "name": "Cud Chew",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10251,
@@ -8109,7 +8294,8 @@
      "name": "Cud Chew",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10252,
@@ -8155,7 +8341,8 @@
      "name": "Cud Chew",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 129,
@@ -8192,7 +8379,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 130,
@@ -8240,7 +8428,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 129
   },
   {
    "id": 10041,
@@ -8282,7 +8471,8 @@
      "name": "Mold Breaker",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 131,
@@ -8329,7 +8519,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10204,
@@ -8369,7 +8560,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 132,
@@ -8402,7 +8594,8 @@
      "name": "Imposter",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 133,
@@ -8443,7 +8636,8 @@
      "name": "Anticipation",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10159,
@@ -8485,7 +8679,8 @@
      "name": "Anticipation",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10205,
@@ -8524,7 +8719,8 @@
      "name": "Anticipation",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 134,
@@ -8567,7 +8763,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 135,
@@ -8608,7 +8805,8 @@
      "name": "Quick Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 136,
@@ -8649,7 +8847,8 @@
      "name": "Guts",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 137,
@@ -8692,7 +8891,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 138,
@@ -8739,7 +8939,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 139,
@@ -8789,7 +8990,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 138
   },
   {
    "id": 140,
@@ -8836,7 +9038,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 141,
@@ -8886,7 +9089,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 140
   },
   {
    "id": 142,
@@ -8933,7 +9137,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10042,
@@ -8973,7 +9178,8 @@
      "name": "Tough Claws",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 143,
@@ -9027,7 +9233,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 446
   },
   {
    "id": 10206,
@@ -9066,7 +9273,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 144,
@@ -9106,7 +9314,8 @@
      "name": "Snow Cloak",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10169,
@@ -9144,7 +9353,8 @@
      "name": "Competitive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 145,
@@ -9185,7 +9395,8 @@
      "name": "Static",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10170,
@@ -9223,7 +9434,8 @@
      "name": "Defiant",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 146,
@@ -9264,7 +9476,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10171,
@@ -9301,7 +9514,8 @@
      "name": "Berserk",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 147,
@@ -9342,7 +9556,8 @@
      "name": "Marvel Scale",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 148,
@@ -9385,7 +9600,8 @@
      "name": "Marvel Scale",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 147
   },
   {
    "id": 149,
@@ -9434,7 +9650,8 @@
      "name": "Multiscale",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 148
   },
   {
    "id": 10281,
@@ -9479,7 +9696,8 @@
      "name": "Multiscale",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 150,
@@ -9526,7 +9744,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10043,
@@ -9571,7 +9790,8 @@
      "name": "Steadfast",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10044,
@@ -9615,7 +9835,8 @@
      "name": "Insomnia",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 151,
@@ -9668,7 +9889,8 @@
      "name": "Synchronize",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 152,
@@ -9706,7 +9928,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 153,
@@ -9746,7 +9969,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 152
   },
   {
    "id": 154,
@@ -9787,7 +10011,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 153
   },
   {
    "id": 10282,
@@ -9823,7 +10048,8 @@
      "name": "Mega Sol",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 155,
@@ -9861,7 +10087,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 156,
@@ -9902,7 +10129,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 155
   },
   {
    "id": 157,
@@ -9945,7 +10173,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 156
   },
   {
    "id": 10233,
@@ -9990,7 +10219,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 156
   },
   {
    "id": 158,
@@ -10033,7 +10263,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 159,
@@ -10078,7 +10309,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 158
   },
   {
    "id": 160,
@@ -10124,7 +10356,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 159
   },
   {
    "id": 10283,
@@ -10165,7 +10398,8 @@
      "name": "Dragonize",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 161,
@@ -10213,7 +10447,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 162,
@@ -10263,7 +10498,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 161
   },
   {
    "id": 163,
@@ -10310,7 +10546,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 164,
@@ -10359,7 +10596,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 163
   },
   {
    "id": 165,
@@ -10402,7 +10640,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 166,
@@ -10447,7 +10686,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 165
   },
   {
    "id": 167,
@@ -10489,7 +10729,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 168,
@@ -10533,7 +10774,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 167
   },
   {
    "id": 169,
@@ -10577,7 +10819,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 42
   },
   {
    "id": 170,
@@ -10622,7 +10865,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 171,
@@ -10669,7 +10913,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 170
   },
   {
    "id": 172,
@@ -10708,7 +10953,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 173,
@@ -10755,7 +11001,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 174,
@@ -10801,7 +11048,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 175,
@@ -10847,7 +11095,8 @@
      "name": "Super Luck",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 176,
@@ -10897,7 +11146,8 @@
      "name": "Super Luck",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 175
   },
   {
    "id": 177,
@@ -10941,7 +11191,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 178,
@@ -10988,7 +11239,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 177
   },
   {
    "id": 179,
@@ -11025,7 +11277,8 @@
      "name": "Plus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 180,
@@ -11066,7 +11319,8 @@
      "name": "Plus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 179
   },
   {
    "id": 181,
@@ -11107,7 +11361,8 @@
      "name": "Plus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 180
   },
   {
    "id": 10045,
@@ -11145,7 +11400,8 @@
      "name": "Mold Breaker",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 182,
@@ -11185,7 +11441,8 @@
      "name": "Healer",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 44
   },
   {
    "id": 183,
@@ -11234,7 +11491,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 298
   },
   {
    "id": 184,
@@ -11282,7 +11540,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 183
   },
   {
    "id": 185,
@@ -11329,7 +11588,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 438
   },
   {
    "id": 186,
@@ -11379,7 +11639,8 @@
      "name": "Drizzle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 61
   },
   {
    "id": 187,
@@ -11421,7 +11682,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 188,
@@ -11465,7 +11727,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 187
   },
   {
    "id": 189,
@@ -11509,7 +11772,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 188
   },
   {
    "id": 190,
@@ -11555,7 +11819,8 @@
      "name": "Skill Link",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 191,
@@ -11596,7 +11861,8 @@
      "name": "Early Bird",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 192,
@@ -11641,7 +11907,8 @@
      "name": "Early Bird",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 191
   },
   {
    "id": 193,
@@ -11683,7 +11950,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 194,
@@ -11729,7 +11997,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10253,
@@ -11773,7 +12042,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 195,
@@ -11822,7 +12092,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 194
   },
   {
    "id": 196,
@@ -11864,7 +12135,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 197,
@@ -11906,7 +12178,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 198,
@@ -11951,7 +12224,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 199,
@@ -12005,7 +12279,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 79
   },
   {
    "id": 10172,
@@ -12059,7 +12334,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10164
   },
   {
    "id": 200,
@@ -12097,7 +12373,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 201,
@@ -12128,7 +12405,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 202,
@@ -12163,7 +12441,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 360
   },
   {
    "id": 203,
@@ -12210,7 +12489,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 204,
@@ -12248,7 +12528,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 205,
@@ -12289,7 +12570,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 204
   },
   {
    "id": 206,
@@ -12334,7 +12616,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 207,
@@ -12379,7 +12662,8 @@
      "name": "Immunity",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 208,
@@ -12426,7 +12710,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 95
   },
   {
    "id": 10072,
@@ -12462,7 +12747,8 @@
      "name": "Sand Force",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 209,
@@ -12514,7 +12800,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 210,
@@ -12568,7 +12855,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 209
   },
   {
    "id": 211,
@@ -12617,7 +12905,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10234,
@@ -12666,7 +12955,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 212,
@@ -12712,7 +13002,8 @@
      "name": "Light Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 123
   },
   {
    "id": 10046,
@@ -12749,7 +13040,8 @@
      "name": "Technician",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 213,
@@ -12793,7 +13085,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 214,
@@ -12836,7 +13129,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10047,
@@ -12873,7 +13167,8 @@
      "name": "Skill Link",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 215,
@@ -12921,7 +13216,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10235,
@@ -12968,7 +13264,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 216,
@@ -13013,7 +13310,8 @@
      "name": "Honey Gather",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 217,
@@ -13060,7 +13358,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 216
   },
   {
    "id": 218,
@@ -13101,7 +13400,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 219,
@@ -13145,7 +13445,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 218
   },
   {
    "id": 220,
@@ -13187,7 +13488,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 221,
@@ -13231,7 +13533,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 220
   },
   {
    "id": 222,
@@ -13278,7 +13581,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10173,
@@ -13320,7 +13624,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 223,
@@ -13364,7 +13669,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 224,
@@ -13411,7 +13717,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 223
   },
   {
    "id": 225,
@@ -13456,7 +13763,8 @@
      "name": "Insomnia",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 226,
@@ -13505,7 +13813,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 458
   },
   {
    "id": 227,
@@ -13549,7 +13858,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10284,
@@ -13584,7 +13894,8 @@
      "name": "Stalwart",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 228,
@@ -13628,7 +13939,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 229,
@@ -13674,7 +13986,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 228
   },
   {
    "id": 10048,
@@ -13712,7 +14025,8 @@
      "name": "Solar Power",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 230,
@@ -13760,7 +14074,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 117
   },
   {
    "id": 231,
@@ -13796,7 +14111,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 232,
@@ -13836,7 +14152,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 231
   },
   {
    "id": 233,
@@ -13882,7 +14199,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 137
   },
   {
    "id": 234,
@@ -13928,7 +14246,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 235,
@@ -13965,7 +14284,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 236,
@@ -14008,7 +14328,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 237,
@@ -14054,7 +14375,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 236
   },
   {
    "id": 238,
@@ -14102,7 +14424,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 239,
@@ -14143,7 +14466,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 240,
@@ -14183,7 +14507,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 241,
@@ -14230,7 +14555,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 242,
@@ -14283,7 +14609,8 @@
      "name": "Healer",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 113
   },
   {
    "id": 243,
@@ -14324,7 +14651,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 244,
@@ -14365,7 +14693,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 245,
@@ -14408,7 +14737,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 246,
@@ -14447,7 +14777,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 247,
@@ -14484,7 +14815,8 @@
      "name": "Shed Skin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 246
   },
   {
    "id": 248,
@@ -14531,7 +14863,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 247
   },
   {
    "id": 10049,
@@ -14574,7 +14907,8 @@
      "name": "Sand Stream",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 249,
@@ -14622,7 +14956,8 @@
      "name": "Multiscale",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 250,
@@ -14667,7 +15002,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 251,
@@ -14706,7 +15042,8 @@
      "name": "Natural Cure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 252,
@@ -14746,7 +15083,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 253,
@@ -14788,7 +15126,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 252
   },
   {
    "id": 254,
@@ -14831,7 +15170,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 253
   },
   {
    "id": 10065,
@@ -14869,7 +15209,8 @@
      "name": "Lightning Rod",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 255,
@@ -14907,7 +15248,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 256,
@@ -14950,7 +15292,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 255
   },
   {
    "id": 257,
@@ -14995,7 +15338,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 256
   },
   {
    "id": 10050,
@@ -15034,7 +15378,8 @@
      "name": "Speed Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 258,
@@ -15074,7 +15419,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 259,
@@ -15120,7 +15466,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 258
   },
   {
    "id": 260,
@@ -15166,7 +15513,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 259
   },
   {
    "id": 10064,
@@ -15208,7 +15556,8 @@
      "name": "Swift Swim",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 261,
@@ -15249,7 +15598,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 262,
@@ -15294,7 +15644,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 261
   },
   {
    "id": 263,
@@ -15338,7 +15689,8 @@
      "name": "Quick Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10174,
@@ -15382,7 +15734,8 @@
      "name": "Quick Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 264,
@@ -15428,7 +15781,8 @@
      "name": "Quick Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 263
   },
   {
    "id": 10175,
@@ -15474,7 +15828,8 @@
      "name": "Quick Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10174
   },
   {
    "id": 265,
@@ -15507,7 +15862,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 266,
@@ -15538,7 +15894,8 @@
      "name": "Shed Skin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 265
   },
   {
    "id": 267,
@@ -15579,7 +15936,8 @@
      "name": "Rivalry",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 266
   },
   {
    "id": 268,
@@ -15610,7 +15968,8 @@
      "name": "Shed Skin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 265
   },
   {
    "id": 269,
@@ -15652,7 +16011,8 @@
      "name": "Compound Eyes",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 268
   },
   {
    "id": 270,
@@ -15697,7 +16057,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 271,
@@ -15747,7 +16108,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 270
   },
   {
    "id": 272,
@@ -15798,7 +16160,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 271
   },
   {
    "id": 273,
@@ -15838,7 +16201,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 274,
@@ -15883,7 +16247,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 273
   },
   {
    "id": 275,
@@ -15929,7 +16294,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 274
   },
   {
    "id": 276,
@@ -15966,7 +16332,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 277,
@@ -16005,7 +16372,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 276
   },
   {
    "id": 278,
@@ -16052,7 +16420,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 279,
@@ -16101,7 +16470,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 278
   },
   {
    "id": 280,
@@ -16148,7 +16518,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 281,
@@ -16197,7 +16568,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 280
   },
   {
    "id": 282,
@@ -16246,7 +16618,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 281
   },
   {
    "id": 10051,
@@ -16287,7 +16660,8 @@
      "name": "Pixilate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 283,
@@ -16330,7 +16704,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 284,
@@ -16375,7 +16750,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 283
   },
   {
    "id": 285,
@@ -16415,7 +16791,8 @@
      "name": "Quick Feet",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 286,
@@ -16460,7 +16837,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 285
   },
   {
    "id": 287,
@@ -16498,7 +16876,8 @@
      "name": "Truant",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 288,
@@ -16539,7 +16918,8 @@
      "name": "Vital Spirit",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 287
   },
   {
    "id": 289,
@@ -16580,7 +16960,8 @@
      "name": "Truant",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 288
   },
   {
    "id": 290,
@@ -16617,7 +16998,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 291,
@@ -16657,7 +17039,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 290
   },
   {
    "id": 292,
@@ -16692,7 +17075,8 @@
      "name": "Wonder Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 290
   },
   {
    "id": 293,
@@ -16731,7 +17115,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 294,
@@ -16774,7 +17159,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 293
   },
   {
    "id": 295,
@@ -16820,7 +17206,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 294
   },
   {
    "id": 296,
@@ -16865,7 +17252,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 297,
@@ -16912,7 +17300,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 296
   },
   {
    "id": 298,
@@ -16956,7 +17345,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 299,
@@ -17001,7 +17391,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 300,
@@ -17044,7 +17435,8 @@
      "name": "Wonder Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 301,
@@ -17090,7 +17482,8 @@
      "name": "Wonder Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 300
   },
   {
    "id": 302,
@@ -17139,7 +17532,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10066,
@@ -17180,7 +17574,8 @@
      "name": "Magic Bounce",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 303,
@@ -17229,7 +17624,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10052,
@@ -17270,7 +17666,8 @@
      "name": "Huge Power",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 304,
@@ -17313,7 +17710,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 305,
@@ -17358,7 +17756,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 304
   },
   {
    "id": 306,
@@ -17411,7 +17810,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 305
   },
   {
    "id": 10053,
@@ -17453,7 +17853,8 @@
      "name": "Filter",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 307,
@@ -17496,7 +17897,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 308,
@@ -17541,7 +17943,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 307
   },
   {
    "id": 10054,
@@ -17582,7 +17985,8 @@
      "name": "Pure Power",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 309,
@@ -17624,7 +18028,8 @@
      "name": "Minus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 310,
@@ -17668,7 +18073,8 @@
      "name": "Minus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 309
   },
   {
    "id": 10055,
@@ -17706,7 +18112,8 @@
      "name": "Intimidate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 311,
@@ -17743,7 +18150,8 @@
      "name": "Lightning Rod",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 312,
@@ -17780,7 +18188,8 @@
      "name": "Volt Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 313,
@@ -17826,7 +18235,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 314,
@@ -17872,7 +18282,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 315,
@@ -17919,7 +18330,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 406
   },
   {
    "id": 316,
@@ -17962,7 +18374,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 317,
@@ -18010,7 +18423,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 316
   },
   {
    "id": 318,
@@ -18050,7 +18464,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 319,
@@ -18094,7 +18509,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 318
   },
   {
    "id": 10070,
@@ -18134,7 +18550,8 @@
      "name": "Strong Jaw",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 320,
@@ -18177,7 +18594,8 @@
      "name": "Pressure",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 321,
@@ -18222,7 +18640,8 @@
      "name": "Pressure",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 320
   },
   {
    "id": 322,
@@ -18264,7 +18683,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 323,
@@ -18308,7 +18728,8 @@
      "name": "Anger Point",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 322
   },
   {
    "id": 10087,
@@ -18344,7 +18765,8 @@
      "name": "Sheer Force",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 324,
@@ -18386,7 +18808,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 325,
@@ -18429,7 +18852,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 326,
@@ -18477,7 +18901,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 325
   },
   {
    "id": 327,
@@ -18522,7 +18947,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 328,
@@ -18563,7 +18989,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 329,
@@ -18602,7 +19029,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 328
   },
   {
    "id": 330,
@@ -18642,7 +19070,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 329
   },
   {
    "id": 331,
@@ -18678,7 +19107,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 332,
@@ -18718,7 +19148,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 331
   },
   {
    "id": 333,
@@ -18758,7 +19189,8 @@
      "name": "Cloud Nine",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 334,
@@ -18802,7 +19234,8 @@
      "name": "Cloud Nine",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 333
   },
   {
    "id": 10067,
@@ -18842,7 +19275,8 @@
      "name": "Pixilate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 335,
@@ -18885,7 +19319,8 @@
      "name": "Toxic Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 336,
@@ -18925,7 +19360,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 337,
@@ -18965,7 +19401,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 338,
@@ -19005,7 +19442,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 339,
@@ -19049,7 +19487,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 340,
@@ -19095,7 +19534,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 339
   },
   {
    "id": 341,
@@ -19140,7 +19580,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 342,
@@ -19189,7 +19630,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 341
   },
   {
    "id": 343,
@@ -19229,7 +19671,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 344,
@@ -19271,7 +19714,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 343
   },
   {
    "id": 345,
@@ -19310,7 +19754,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 346,
@@ -19352,7 +19797,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 345
   },
   {
    "id": 347,
@@ -19393,7 +19839,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 348,
@@ -19437,7 +19884,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 347
   },
   {
    "id": 349,
@@ -19480,7 +19928,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 350,
@@ -19526,7 +19975,8 @@
      "name": "Cute Charm",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 349
   },
   {
    "id": 351,
@@ -19562,7 +20012,8 @@
      "name": "Forecast",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10013,
@@ -19598,7 +20049,8 @@
      "name": "Forecast",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10014,
@@ -19634,7 +20086,8 @@
      "name": "Forecast",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10015,
@@ -19670,7 +20123,8 @@
      "name": "Forecast",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 352,
@@ -19712,7 +20166,8 @@
      "name": "Protean",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 353,
@@ -19757,7 +20212,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 354,
@@ -19804,7 +20260,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 353
   },
   {
    "id": 10056,
@@ -19843,7 +20300,8 @@
      "name": "Prankster",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 355,
@@ -19884,7 +20342,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 356,
@@ -19929,7 +20388,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 355
   },
   {
    "id": 357,
@@ -19973,7 +20433,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 358,
@@ -20013,7 +20474,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 433
   },
   {
    "id": 10306,
@@ -20053,7 +20515,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 359,
@@ -20098,7 +20561,8 @@
      "name": "Justified",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10057,
@@ -20137,7 +20601,8 @@
      "name": "Magic Bounce",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10307,
@@ -20177,7 +20642,8 @@
      "name": "Magic Bounce",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 360,
@@ -20212,7 +20678,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 361,
@@ -20254,7 +20721,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 362,
@@ -20299,7 +20767,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 361
   },
   {
    "id": 10074,
@@ -20336,7 +20805,8 @@
      "name": "Refrigerate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 363,
@@ -20379,7 +20849,8 @@
      "name": "Oblivious",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 364,
@@ -20424,7 +20895,8 @@
      "name": "Oblivious",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 363
   },
   {
    "id": 365,
@@ -20471,7 +20943,8 @@
      "name": "Oblivious",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 364
   },
   {
    "id": 366,
@@ -20508,7 +20981,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 367,
@@ -20552,7 +21026,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 366
   },
   {
    "id": 368,
@@ -20597,7 +21072,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 366
   },
   {
    "id": 369,
@@ -20645,7 +21121,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 370,
@@ -20685,7 +21162,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 371,
@@ -20725,7 +21203,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 372,
@@ -20766,7 +21245,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 371
   },
   {
    "id": 373,
@@ -20812,7 +21292,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 372
   },
   {
    "id": 10089,
@@ -20852,7 +21333,8 @@
      "name": "Aerilate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 374,
@@ -20886,7 +21368,8 @@
      "name": "Light Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 375,
@@ -20930,7 +21413,8 @@
      "name": "Light Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 374
   },
   {
    "id": 376,
@@ -20974,7 +21458,8 @@
      "name": "Light Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 375
   },
   {
    "id": 10076,
@@ -21014,7 +21499,8 @@
      "name": "Tough Claws",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 377,
@@ -21057,7 +21543,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 378,
@@ -21099,7 +21586,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 379,
@@ -21140,7 +21628,8 @@
      "name": "Light Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 380,
@@ -21184,7 +21673,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10062,
@@ -21229,7 +21719,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 381,
@@ -21273,7 +21764,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10063,
@@ -21318,7 +21810,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 382,
@@ -21358,7 +21851,8 @@
      "name": "Drizzle",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 383,
@@ -21396,7 +21890,8 @@
      "name": "Drought",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10078,
@@ -21435,7 +21930,8 @@
      "name": "Desolate Land",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 384,
@@ -21478,7 +21974,8 @@
      "name": "Air Lock",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10079,
@@ -21522,7 +22019,8 @@
      "name": "Delta Stream",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 385,
@@ -21563,7 +22061,8 @@
      "name": "Serene Grace",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 386,
@@ -21603,7 +22102,8 @@
      "name": "Pressure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10001,
@@ -21644,7 +22144,8 @@
      "name": "Pressure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10002,
@@ -21685,7 +22186,8 @@
      "name": "Pressure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 387,
@@ -21724,7 +22226,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 388,
@@ -21765,7 +22268,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 387
   },
   {
    "id": 389,
@@ -21808,7 +22312,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 388
   },
   {
    "id": 390,
@@ -21849,7 +22354,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 391,
@@ -21894,7 +22400,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 390
   },
   {
    "id": 392,
@@ -21941,7 +22448,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 391
   },
   {
    "id": 393,
@@ -21982,7 +22490,8 @@
      "name": "Competitive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 394,
@@ -22025,7 +22534,8 @@
      "name": "Competitive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 393
   },
   {
    "id": 395,
@@ -22070,7 +22580,8 @@
      "name": "Competitive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 394
   },
   {
    "id": 396,
@@ -22110,7 +22621,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 397,
@@ -22152,7 +22664,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 396
   },
   {
    "id": 398,
@@ -22195,7 +22708,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 397
   },
   {
    "id": 10308,
@@ -22232,7 +22746,8 @@
      "name": "Contrary",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 399,
@@ -22275,7 +22790,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 400,
@@ -22322,7 +22838,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 399
   },
   {
    "id": 401,
@@ -22355,7 +22872,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 402,
@@ -22393,7 +22911,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 401
   },
   {
    "id": 403,
@@ -22436,7 +22955,8 @@
      "name": "Guts",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 404,
@@ -22481,7 +23001,8 @@
      "name": "Guts",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 403
   },
   {
    "id": 405,
@@ -22526,7 +23047,8 @@
      "name": "Guts",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 404
   },
   {
    "id": 406,
@@ -22572,7 +23094,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 407,
@@ -22618,7 +23141,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 315
   },
   {
    "id": 408,
@@ -22660,7 +23184,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 409,
@@ -22706,7 +23231,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 408
   },
   {
    "id": 410,
@@ -22750,7 +23276,8 @@
      "name": "Soundproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 411,
@@ -22796,7 +23323,8 @@
      "name": "Soundproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 410
   },
   {
    "id": 412,
@@ -22831,7 +23359,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 413,
@@ -22872,7 +23401,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 412
   },
   {
    "id": 10004,
@@ -22913,7 +23443,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 412
   },
   {
    "id": 10005,
@@ -22953,7 +23484,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 412
   },
   {
    "id": 414,
@@ -22994,7 +23526,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 412
   },
   {
    "id": 415,
@@ -23028,7 +23561,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 416,
@@ -23068,7 +23602,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 415
   },
   {
    "id": 417,
@@ -23108,7 +23643,8 @@
      "name": "Volt Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 418,
@@ -23152,7 +23688,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 419,
@@ -23198,7 +23735,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 418
   },
   {
    "id": 420,
@@ -23231,7 +23769,8 @@
      "name": "Chlorophyll",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 421,
@@ -23265,7 +23804,8 @@
      "name": "Flower Gift",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 420
   },
   {
    "id": 422,
@@ -23307,7 +23847,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 423,
@@ -23354,7 +23895,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 422
   },
   {
    "id": 424,
@@ -23401,7 +23943,8 @@
      "name": "Skill Link",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 190
   },
   {
    "id": 425,
@@ -23447,7 +23990,8 @@
      "name": "Flare Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 426,
@@ -23495,7 +24039,8 @@
      "name": "Flare Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 425
   },
   {
    "id": 427,
@@ -23538,7 +24083,8 @@
      "name": "Limber",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 428,
@@ -23586,7 +24132,8 @@
      "name": "Limber",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 427
   },
   {
    "id": 10088,
@@ -23626,7 +24173,8 @@
      "name": "Scrappy",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 429,
@@ -23667,7 +24215,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 200
   },
   {
    "id": 430,
@@ -23715,7 +24264,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 198
   },
   {
    "id": 431,
@@ -23758,7 +24308,8 @@
      "name": "Keen Eye",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 432,
@@ -23801,7 +24352,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 431
   },
   {
    "id": 433,
@@ -23840,7 +24392,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 434,
@@ -23887,7 +24440,8 @@
      "name": "Keen Eye",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 435,
@@ -23936,7 +24490,8 @@
      "name": "Keen Eye",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 434
   },
   {
    "id": 436,
@@ -23982,7 +24537,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 437,
@@ -24030,7 +24586,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 436
   },
   {
    "id": 438,
@@ -24076,7 +24633,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 439,
@@ -24124,7 +24682,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 440,
@@ -24169,7 +24728,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 441,
@@ -24212,7 +24772,8 @@
      "name": "Big Pecks",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 442,
@@ -24251,7 +24812,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 443,
@@ -24290,7 +24852,8 @@
      "name": "Rough Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 444,
@@ -24332,7 +24895,8 @@
      "name": "Rough Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 443
   },
   {
    "id": 445,
@@ -24376,7 +24940,8 @@
      "name": "Rough Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 444
   },
   {
    "id": 10058,
@@ -24416,7 +24981,8 @@
      "name": "Sand Force",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10309,
@@ -24455,7 +25021,8 @@
      "name": "Sand Force",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 446,
@@ -24508,7 +25075,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 447,
@@ -24554,7 +25122,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 448,
@@ -24606,7 +25175,8 @@
      "name": "Justified",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 447
   },
   {
    "id": 10059,
@@ -24649,7 +25219,8 @@
      "name": "Adaptability",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10310,
@@ -24692,7 +25263,8 @@
      "name": "Adaptability",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 449,
@@ -24729,7 +25301,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 450,
@@ -24768,7 +25341,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 449
   },
   {
    "id": 451,
@@ -24814,7 +25388,8 @@
      "name": "Keen Eye",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 452,
@@ -24863,7 +25438,8 @@
      "name": "Keen Eye",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 451
   },
   {
    "id": 453,
@@ -24908,7 +25484,8 @@
      "name": "Poison Touch",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 454,
@@ -24956,7 +25533,8 @@
      "name": "Poison Touch",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 453
   },
   {
    "id": 455,
@@ -24992,7 +25570,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 456,
@@ -25038,7 +25617,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 457,
@@ -25086,7 +25666,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 456
   },
   {
    "id": 458,
@@ -25135,7 +25716,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 459,
@@ -25175,7 +25757,8 @@
      "name": "Soundproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 460,
@@ -25219,7 +25802,8 @@
      "name": "Soundproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 459
   },
   {
    "id": 10060,
@@ -25259,7 +25843,8 @@
      "name": "Snow Warning",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 461,
@@ -25305,7 +25890,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 215
   },
   {
    "id": 462,
@@ -25351,7 +25937,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 82
   },
   {
    "id": 463,
@@ -25401,7 +25988,8 @@
      "name": "Cloud Nine",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 108
   },
   {
    "id": 464,
@@ -25453,7 +26041,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 112
   },
   {
    "id": 465,
@@ -25497,7 +26086,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 114
   },
   {
    "id": 466,
@@ -25542,7 +26132,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 125
   },
   {
    "id": 467,
@@ -25586,7 +26177,8 @@
      "name": "Vital Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 126
   },
   {
    "id": 468,
@@ -25636,7 +26228,8 @@
      "name": "Super Luck",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 176
   },
   {
    "id": 469,
@@ -25681,7 +26274,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 193
   },
   {
    "id": 470,
@@ -25723,7 +26317,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 471,
@@ -25765,7 +26360,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 472,
@@ -25813,7 +26409,8 @@
      "name": "Poison Heal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 207
   },
   {
    "id": 473,
@@ -25857,7 +26454,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 221
   },
   {
    "id": 474,
@@ -25903,7 +26501,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 233
   },
   {
    "id": 475,
@@ -25956,7 +26555,8 @@
      "name": "Justified",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 281
   },
   {
    "id": 10068,
@@ -26000,7 +26600,8 @@
      "name": "Inner Focus",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 476,
@@ -26049,7 +26650,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 299
   },
   {
    "id": 477,
@@ -26095,7 +26697,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 356
   },
   {
    "id": 478,
@@ -26140,7 +26743,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 361
   },
   {
    "id": 10285,
@@ -26180,7 +26784,8 @@
      "name": "Snow Warning",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 479,
@@ -26216,7 +26821,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10008,
@@ -26252,7 +26858,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10009,
@@ -26289,7 +26896,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10010,
@@ -26325,7 +26933,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10011,
@@ -26361,7 +26970,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10012,
@@ -26397,7 +27007,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 480,
@@ -26440,7 +27051,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 481,
@@ -26484,7 +27096,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 482,
@@ -26528,7 +27141,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 483,
@@ -26571,7 +27185,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10245,
@@ -26615,7 +27230,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 484,
@@ -26660,7 +27276,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10246,
@@ -26706,7 +27323,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 485,
@@ -26747,7 +27365,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10311,
@@ -26789,7 +27408,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 486,
@@ -26826,7 +27446,8 @@
      "name": "Slow Start",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 487,
@@ -26870,7 +27491,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10007,
@@ -26912,7 +27534,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 488,
@@ -26953,7 +27576,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 489,
@@ -26990,7 +27614,8 @@
      "name": "Hydration",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 490,
@@ -27030,7 +27655,8 @@
      "name": "Hydration",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 491,
@@ -27070,7 +27696,8 @@
      "name": "Bad Dreams",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10312,
@@ -27111,7 +27738,8 @@
      "name": "Bad Dreams",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 492,
@@ -27146,7 +27774,8 @@
      "name": "Natural Cure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10006,
@@ -27182,7 +27811,8 @@
      "name": "Serene Grace",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 493,
@@ -27228,7 +27858,8 @@
      "name": "Multitype",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 494,
@@ -27268,7 +27899,8 @@
      "name": "Victory Star",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 495,
@@ -27306,7 +27938,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 496,
@@ -27346,7 +27979,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 495
   },
   {
    "id": 497,
@@ -27386,7 +28020,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 496
   },
   {
    "id": 498,
@@ -27424,7 +28059,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 499,
@@ -27467,7 +28103,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 498
   },
   {
    "id": 500,
@@ -27511,7 +28148,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 499
   },
   {
    "id": 10286,
@@ -27549,7 +28187,8 @@
      "name": "Mold Breaker",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 501,
@@ -27589,7 +28228,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 502,
@@ -27632,7 +28272,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 501
   },
   {
    "id": 503,
@@ -27675,7 +28316,8 @@
      "name": "Shell Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 502
   },
   {
    "id": 10236,
@@ -27719,7 +28361,8 @@
      "name": "Sharpness",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 502
   },
   {
    "id": 504,
@@ -27763,7 +28406,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 505,
@@ -27811,7 +28455,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 504
   },
   {
    "id": 506,
@@ -27853,7 +28498,8 @@
      "name": "Run Away",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 507,
@@ -27900,7 +28546,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 506
   },
   {
    "id": 508,
@@ -27947,7 +28594,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 507
   },
   {
    "id": 509,
@@ -27987,7 +28635,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 510,
@@ -28029,7 +28678,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 509
   },
   {
    "id": 511,
@@ -28066,7 +28716,8 @@
      "name": "Overgrow",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 512,
@@ -28106,7 +28757,8 @@
      "name": "Overgrow",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 511
   },
   {
    "id": 513,
@@ -28144,7 +28796,8 @@
      "name": "Blaze",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 514,
@@ -28185,7 +28838,8 @@
      "name": "Blaze",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 513
   },
   {
    "id": 515,
@@ -28226,7 +28880,8 @@
      "name": "Torrent",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 516,
@@ -28269,7 +28924,8 @@
      "name": "Torrent",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 515
   },
   {
    "id": 517,
@@ -28312,7 +28968,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 518,
@@ -28358,7 +29015,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 517
   },
   {
    "id": 519,
@@ -28399,7 +29057,8 @@
      "name": "Rivalry",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 520,
@@ -28442,7 +29101,8 @@
      "name": "Rivalry",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 519
   },
   {
    "id": 521,
@@ -28485,7 +29145,8 @@
      "name": "Rivalry",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 520
   },
   {
    "id": 522,
@@ -28525,7 +29186,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 523,
@@ -28567,7 +29229,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 522
   },
   {
    "id": 524,
@@ -28609,7 +29272,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 525,
@@ -28653,7 +29317,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 524
   },
   {
    "id": 526,
@@ -28697,7 +29362,8 @@
      "name": "Sand Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 525
   },
   {
    "id": 527,
@@ -28742,7 +29408,8 @@
      "name": "Simple",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 528,
@@ -28790,7 +29457,8 @@
      "name": "Simple",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 527
   },
   {
    "id": 529,
@@ -28832,7 +29500,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 530,
@@ -28877,7 +29546,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 529
   },
   {
    "id": 10287,
@@ -28914,7 +29584,8 @@
      "name": "Piercing Drill",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 531,
@@ -28962,7 +29633,8 @@
      "name": "Klutz",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10069,
@@ -29005,7 +29677,8 @@
      "name": "Healer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 532,
@@ -29047,7 +29720,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 533,
@@ -29091,7 +29765,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 532
   },
   {
    "id": 534,
@@ -29136,7 +29811,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 533
   },
   {
    "id": 535,
@@ -29180,7 +29856,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 536,
@@ -29227,7 +29904,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 535
   },
   {
    "id": 537,
@@ -29277,7 +29955,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 536
   },
   {
    "id": 538,
@@ -29319,7 +29998,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 539,
@@ -29364,7 +30044,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 540,
@@ -29406,7 +30087,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 541,
@@ -29450,7 +30132,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 540
   },
   {
    "id": 542,
@@ -29495,7 +30178,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 541
   },
   {
    "id": 543,
@@ -29536,7 +30220,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 544,
@@ -29579,7 +30264,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 543
   },
   {
    "id": 545,
@@ -29623,7 +30309,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 544
   },
   {
    "id": 10288,
@@ -29659,7 +30346,8 @@
      "name": "Shell Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 546,
@@ -29701,7 +30389,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 547,
@@ -29748,7 +30437,8 @@
      "name": "Chlorophyll",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 546
   },
   {
    "id": 548,
@@ -29787,7 +30477,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 549,
@@ -29829,7 +30520,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 548
   },
   {
    "id": 10237,
@@ -29876,7 +30568,8 @@
      "name": "Leaf Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 548
   },
   {
    "id": 550,
@@ -29919,7 +30612,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10247,
@@ -29963,7 +30657,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 551,
@@ -30009,7 +30704,8 @@
      "name": "Anger Point",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 552,
@@ -30057,7 +30753,8 @@
      "name": "Anger Point",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 551
   },
   {
    "id": 553,
@@ -30106,7 +30803,8 @@
      "name": "Anger Point",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 552
   },
   {
    "id": 554,
@@ -30143,7 +30841,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10176,
@@ -30182,7 +30881,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 555,
@@ -30223,7 +30923,8 @@
      "name": "Zen Mode",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 554
   },
   {
    "id": 10017,
@@ -30261,7 +30962,8 @@
      "name": "Zen Mode",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10177,
@@ -30305,7 +31007,8 @@
      "name": "Zen Mode",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10176
   },
   {
    "id": 10178,
@@ -30346,7 +31049,8 @@
      "name": "Zen Mode",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 556,
@@ -30385,7 +31089,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 557,
@@ -30428,7 +31133,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 558,
@@ -30473,7 +31179,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 557
   },
   {
    "id": 559,
@@ -30520,7 +31227,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 560,
@@ -30570,7 +31278,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 559
   },
   {
    "id": 10289,
@@ -30612,7 +31321,8 @@
      "name": "Intimidate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 561,
@@ -30658,7 +31368,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 562,
@@ -30692,7 +31403,8 @@
      "name": "Mummy",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10179,
@@ -30728,7 +31440,8 @@
      "name": "Wandering Spirit",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 563,
@@ -30764,7 +31477,8 @@
      "name": "Mummy",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 562
   },
   {
    "id": 564,
@@ -30814,7 +31528,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 565,
@@ -30866,7 +31581,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 564
   },
   {
    "id": 566,
@@ -30903,7 +31619,8 @@
      "name": "Defeatist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 567,
@@ -30943,7 +31660,8 @@
      "name": "Defeatist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 566
   },
   {
    "id": 568,
@@ -30983,7 +31701,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 569,
@@ -31027,7 +31746,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 568
   },
   {
    "id": 10207,
@@ -31066,7 +31786,8 @@
      "name": "Aftermath",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 570,
@@ -31100,7 +31821,8 @@
      "name": "Illusion",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10238,
@@ -31135,7 +31857,8 @@
      "name": "Illusion",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 571,
@@ -31175,7 +31898,8 @@
      "name": "Illusion",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 570
   },
   {
    "id": 10239,
@@ -31216,7 +31940,8 @@
      "name": "Illusion",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 10238
   },
   {
    "id": 572,
@@ -31259,7 +31984,8 @@
      "name": "Skill Link",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 573,
@@ -31305,7 +32031,8 @@
      "name": "Skill Link",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 572
   },
   {
    "id": 574,
@@ -31348,7 +32075,8 @@
      "name": "Shadow Tag",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 575,
@@ -31394,7 +32122,8 @@
      "name": "Shadow Tag",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 574
   },
   {
    "id": 576,
@@ -31441,7 +32170,8 @@
      "name": "Shadow Tag",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 575
   },
   {
    "id": 577,
@@ -31483,7 +32213,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 578,
@@ -31527,7 +32258,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 577
   },
   {
    "id": 579,
@@ -31572,7 +32304,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 578
   },
   {
    "id": 580,
@@ -31617,7 +32350,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 581,
@@ -31666,7 +32400,8 @@
      "name": "Hydration",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 580
   },
   {
    "id": 582,
@@ -31706,7 +32441,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 583,
@@ -31748,7 +32484,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 582
   },
   {
    "id": 584,
@@ -31790,7 +32527,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 583
   },
   {
    "id": 585,
@@ -31831,7 +32569,8 @@
      "name": "Serene Grace",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 586,
@@ -31874,7 +32613,8 @@
      "name": "Serene Grace",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 585
   },
   {
    "id": 587,
@@ -31912,7 +32652,8 @@
      "name": "Motor Drive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 588,
@@ -31951,7 +32692,8 @@
      "name": "No Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 589,
@@ -31994,7 +32736,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 588
   },
   {
    "id": 590,
@@ -32031,7 +32774,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 591,
@@ -32070,7 +32814,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 590
   },
   {
    "id": 592,
@@ -32117,7 +32862,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 593,
@@ -32166,7 +32912,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 592
   },
   {
    "id": 594,
@@ -32212,7 +32959,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 595,
@@ -32253,7 +33001,8 @@
      "name": "Swarm",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 596,
@@ -32296,7 +33045,8 @@
      "name": "Swarm",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 595
   },
   {
    "id": 597,
@@ -32329,7 +33079,8 @@
      "name": "Iron Barbs",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 598,
@@ -32368,7 +33119,8 @@
      "name": "Anticipation",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 597
   },
   {
    "id": 599,
@@ -32408,7 +33160,8 @@
      "name": "Clear Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 600,
@@ -32450,7 +33203,8 @@
      "name": "Clear Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 599
   },
   {
    "id": 601,
@@ -32492,7 +33246,8 @@
      "name": "Clear Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 600
   },
   {
    "id": 602,
@@ -32523,7 +33278,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 603,
@@ -32561,7 +33317,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 602
   },
   {
    "id": 604,
@@ -32603,7 +33360,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 603
   },
   {
    "id": 10290,
@@ -32642,7 +33400,8 @@
      "name": "Eelevate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 605,
@@ -32685,7 +33444,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 606,
@@ -32730,7 +33490,8 @@
      "name": "Analytic",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 605
   },
   {
    "id": 607,
@@ -32774,7 +33535,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 608,
@@ -32820,7 +33582,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 607
   },
   {
    "id": 609,
@@ -32867,7 +33630,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 608
   },
   {
    "id": 10291,
@@ -32905,7 +33669,8 @@
      "name": "Infiltrator",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 610,
@@ -32948,7 +33713,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 611,
@@ -32993,7 +33759,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 610
   },
   {
    "id": 612,
@@ -33040,7 +33807,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 611
   },
   {
    "id": 613,
@@ -33083,7 +33851,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 614,
@@ -33133,7 +33902,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 613
   },
   {
    "id": 615,
@@ -33168,7 +33938,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 616,
@@ -33208,7 +33979,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 617,
@@ -33250,7 +34022,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 616
   },
   {
    "id": 618,
@@ -33294,7 +34067,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10180,
@@ -33330,7 +34104,8 @@
      "name": "Mimicry",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 619,
@@ -33373,7 +34148,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 620,
@@ -33418,7 +34194,8 @@
      "name": "Reckless",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 619
   },
   {
    "id": 621,
@@ -33463,7 +34240,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 622,
@@ -33509,7 +34287,8 @@
      "name": "No Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 623,
@@ -33560,7 +34339,8 @@
      "name": "No Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 622
   },
   {
    "id": 10313,
@@ -33603,7 +34383,8 @@
      "name": "Unseen Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 624,
@@ -33644,7 +34425,8 @@
      "name": "Pressure",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 625,
@@ -33687,7 +34469,8 @@
      "name": "Pressure",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 624
   },
   {
    "id": 626,
@@ -33729,7 +34512,8 @@
      "name": "Soundproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 627,
@@ -33774,7 +34558,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 628,
@@ -33821,7 +34606,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 627
   },
   {
    "id": 10240,
@@ -33872,7 +34658,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 627
   },
   {
    "id": 629,
@@ -33914,7 +34701,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 630,
@@ -33959,7 +34747,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 629
   },
   {
    "id": 631,
@@ -33999,7 +34788,8 @@
      "name": "White Smoke",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 632,
@@ -34040,7 +34830,8 @@
      "name": "Truant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 633,
@@ -34074,7 +34865,8 @@
      "name": "Hustle",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 634,
@@ -34110,7 +34902,8 @@
      "name": "Hustle",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 633
   },
   {
    "id": 635,
@@ -34154,7 +34947,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 634
   },
   {
    "id": 636,
@@ -34194,7 +34988,8 @@
      "name": "Swarm",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 637,
@@ -34237,7 +35032,8 @@
      "name": "Swarm",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 636
   },
   {
    "id": 638,
@@ -34274,7 +35070,8 @@
      "name": "Justified",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 639,
@@ -34312,7 +35109,8 @@
      "name": "Justified",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 640,
@@ -34349,7 +35147,8 @@
      "name": "Justified",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 641,
@@ -34393,7 +35192,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 642,
@@ -34438,7 +35238,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 643,
@@ -34478,7 +35279,8 @@
      "name": "Turboblaze",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 644,
@@ -34519,7 +35321,8 @@
      "name": "Teravolt",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 645,
@@ -34564,7 +35367,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10021,
@@ -34607,7 +35411,8 @@
      "name": "Intimidate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 646,
@@ -34646,7 +35451,8 @@
      "name": "Pressure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 647,
@@ -34685,7 +35491,8 @@
      "name": "Justified",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 648,
@@ -34729,7 +35536,8 @@
      "name": "Serene Grace",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10018,
@@ -34773,7 +35581,8 @@
      "name": "Serene Grace",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 649,
@@ -34812,7 +35621,8 @@
      "name": "Download",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 650,
@@ -34851,7 +35661,8 @@
      "name": "Bulletproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 651,
@@ -34892,7 +35703,8 @@
      "name": "Bulletproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 650
   },
   {
    "id": 652,
@@ -34937,7 +35749,8 @@
      "name": "Bulletproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 651
   },
   {
    "id": 10292,
@@ -34976,7 +35789,8 @@
      "name": "Bulletproof",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 653,
@@ -35016,7 +35830,8 @@
      "name": "Magician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 654,
@@ -35058,7 +35873,8 @@
      "name": "Magician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 653
   },
   {
    "id": 655,
@@ -35104,7 +35920,8 @@
      "name": "Magician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 654
   },
   {
    "id": 10293,
@@ -35146,7 +35963,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 656,
@@ -35187,7 +36005,8 @@
      "name": "Protean",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 657,
@@ -35231,7 +36050,8 @@
      "name": "Protean",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 656
   },
   {
    "id": 658,
@@ -35281,7 +36101,8 @@
      "name": "Battle Bond",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 657
   },
   {
    "id": 10117,
@@ -35320,7 +36141,8 @@
      "name": "Battle Bond",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10294,
@@ -35360,7 +36182,8 @@
      "name": "Protean",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 659,
@@ -35403,7 +36226,8 @@
      "name": "Huge Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 660,
@@ -35450,7 +36274,8 @@
      "name": "Huge Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 659
   },
   {
    "id": 661,
@@ -35488,7 +36313,8 @@
      "name": "Gale Wings",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 662,
@@ -35529,7 +36355,8 @@
      "name": "Gale Wings",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 661
   },
   {
    "id": 663,
@@ -35570,7 +36397,8 @@
      "name": "Gale Wings",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 662
   },
   {
    "id": 664,
@@ -35607,7 +36435,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 665,
@@ -35644,7 +36473,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 664
   },
   {
    "id": 666,
@@ -35689,7 +36519,8 @@
      "name": "Friend Guard",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 665
   },
   {
    "id": 667,
@@ -35732,7 +36563,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 668,
@@ -35777,7 +36609,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 667
   },
   {
    "id": 10295,
@@ -35814,7 +36647,8 @@
      "name": "Fire Mane",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 669,
@@ -35853,7 +36687,8 @@
      "name": "Symbiosis",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 670,
@@ -35895,7 +36730,8 @@
      "name": "Symbiosis",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 669
   },
   {
    "id": 10061,
@@ -35934,7 +36770,8 @@
      "name": "Symbiosis",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10296,
@@ -35971,7 +36808,8 @@
      "name": "Fairy Aura",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 671,
@@ -36013,7 +36851,8 @@
      "name": "Symbiosis",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 670
   },
   {
    "id": 672,
@@ -36051,7 +36890,8 @@
      "name": "Grass Pelt",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 673,
@@ -36092,7 +36932,8 @@
      "name": "Grass Pelt",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 672
   },
   {
    "id": 674,
@@ -36136,7 +36977,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 675,
@@ -36185,7 +37027,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 674
   },
   {
    "id": 676,
@@ -36217,7 +37060,8 @@
      "name": "Fur Coat",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 677,
@@ -36262,7 +37106,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 678,
@@ -36310,7 +37155,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 677
   },
   {
    "id": 10314,
@@ -36348,7 +37194,8 @@
      "name": "Trace",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 679,
@@ -36382,7 +37229,8 @@
      "name": "No Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 680,
@@ -36418,7 +37266,8 @@
      "name": "No Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 679
   },
   {
    "id": 681,
@@ -36456,7 +37305,8 @@
      "name": "Stance Change",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 680
   },
   {
    "id": 682,
@@ -36495,7 +37345,8 @@
      "name": "Aroma Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 683,
@@ -36538,7 +37389,8 @@
      "name": "Aroma Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 682
   },
   {
    "id": 684,
@@ -36579,7 +37431,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 685,
@@ -36624,7 +37477,8 @@
      "name": "Unburden",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 684
   },
   {
    "id": 686,
@@ -36668,7 +37522,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 687,
@@ -36714,7 +37569,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 686
   },
   {
    "id": 10297,
@@ -36752,7 +37608,8 @@
      "name": "Contrary",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 688,
@@ -36797,7 +37654,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 689,
@@ -36844,7 +37702,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 688
   },
   {
    "id": 10298,
@@ -36883,7 +37742,8 @@
      "name": "Tough Claws",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 690,
@@ -36928,7 +37788,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 691,
@@ -36975,7 +37836,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 690
   },
   {
    "id": 10299,
@@ -37014,7 +37876,8 @@
      "name": "Regenerator",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 692,
@@ -37049,7 +37912,8 @@
      "name": "Mega Launcher",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 693,
@@ -37087,7 +37951,8 @@
      "name": "Mega Launcher",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 692
   },
   {
    "id": 694,
@@ -37129,7 +37994,8 @@
      "name": "Solar Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 695,
@@ -37174,7 +38040,8 @@
      "name": "Solar Power",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 694
   },
   {
    "id": 696,
@@ -37218,7 +38085,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 697,
@@ -37262,7 +38130,8 @@
      "name": "Rock Head",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 696
   },
   {
    "id": 698,
@@ -37303,7 +38172,8 @@
      "name": "Snow Warning",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 699,
@@ -37348,7 +38218,8 @@
      "name": "Snow Warning",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 698
   },
   {
    "id": 700,
@@ -37390,7 +38261,8 @@
      "name": "Pixilate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 133
   },
   {
    "id": 701,
@@ -37434,7 +38306,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10300,
@@ -37472,7 +38345,8 @@
      "name": "No Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 702,
@@ -37514,7 +38388,8 @@
      "name": "Plus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 703,
@@ -37555,7 +38430,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 704,
@@ -37596,7 +38472,8 @@
      "name": "Gooey",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 705,
@@ -37640,7 +38517,8 @@
      "name": "Gooey",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 704
   },
   {
    "id": 10241,
@@ -37685,7 +38563,8 @@
      "name": "Gooey",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 704
   },
   {
    "id": 706,
@@ -37733,7 +38612,8 @@
      "name": "Gooey",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 705
   },
   {
    "id": 10242,
@@ -37782,7 +38662,8 @@
      "name": "Gooey",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10241
   },
   {
    "id": 707,
@@ -37821,7 +38702,8 @@
      "name": "Magician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 708,
@@ -37863,7 +38745,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 709,
@@ -37909,7 +38792,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 708
   },
   {
    "id": 710,
@@ -37954,7 +38838,8 @@
      "name": "Insomnia",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 711,
@@ -38001,7 +38886,8 @@
      "name": "Insomnia",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 710
   },
   {
    "id": 712,
@@ -38045,7 +38931,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 713,
@@ -38093,7 +38980,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 712
   },
   {
    "id": 10243,
@@ -38140,7 +39028,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 712
   },
   {
    "id": 714,
@@ -38185,7 +39074,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 715,
@@ -38233,7 +39123,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 714
   },
   {
    "id": 716,
@@ -38271,7 +39162,8 @@
      "name": "Fairy Aura",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 717,
@@ -38309,7 +39201,8 @@
      "name": "Dark Aura",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 718,
@@ -38350,7 +39243,8 @@
      "name": "Power Construct",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10118,
@@ -38392,7 +39286,8 @@
      "name": "Power Construct",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10120,
@@ -38430,7 +39325,8 @@
      "name": "Power Construct",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10301,
@@ -38468,7 +39364,8 @@
      "name": "Aura Break",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 719,
@@ -38506,7 +39403,8 @@
      "name": "Clear Body",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10075,
@@ -38545,7 +39443,8 @@
      "name": "Magic Bounce",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 720,
@@ -38585,7 +39484,8 @@
      "name": "Magician",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10086,
@@ -38626,7 +39526,8 @@
      "name": "Magician",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 721,
@@ -38665,7 +39566,8 @@
      "name": "Water Absorb",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 722,
@@ -38704,7 +39606,8 @@
      "name": "Long Reach",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 723,
@@ -38745,7 +39648,8 @@
      "name": "Long Reach",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 722
   },
   {
    "id": 724,
@@ -38788,7 +39692,8 @@
      "name": "Long Reach",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 723
   },
   {
    "id": 10244,
@@ -38831,7 +39736,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 723
   },
   {
    "id": 725,
@@ -38873,7 +39779,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 726,
@@ -38917,7 +39824,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 725
   },
   {
    "id": 727,
@@ -38965,7 +39873,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 726
   },
   {
    "id": 728,
@@ -39006,7 +39915,8 @@
      "name": "Liquid Voice",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 729,
@@ -39049,7 +39959,8 @@
      "name": "Liquid Voice",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 728
   },
   {
    "id": 730,
@@ -39097,7 +40008,8 @@
      "name": "Liquid Voice",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 729
   },
   {
    "id": 731,
@@ -39142,7 +40054,8 @@
      "name": "Pickup",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 732,
@@ -39189,7 +40102,8 @@
      "name": "Pickup",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 731
   },
   {
    "id": 733,
@@ -39236,7 +40150,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 732
   },
   {
    "id": 734,
@@ -39277,7 +40192,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 735,
@@ -39321,7 +40237,8 @@
      "name": "Adaptability",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 734
   },
   {
    "id": 736,
@@ -39355,7 +40272,8 @@
      "name": "Swarm",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 737,
@@ -39392,7 +40310,8 @@
      "name": "Battery",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 736
   },
   {
    "id": 738,
@@ -39433,7 +40352,8 @@
      "name": "Levitate",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 737
   },
   {
    "id": 739,
@@ -39476,7 +40396,8 @@
      "name": "Anger Point",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 740,
@@ -39524,7 +40445,8 @@
      "name": "Anger Point",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 739
   },
   {
    "id": 10315,
@@ -39563,7 +40485,8 @@
      "name": "Iron Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 741,
@@ -39598,7 +40521,8 @@
      "name": "Dancer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10123,
@@ -39633,7 +40557,8 @@
      "name": "Dancer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10124,
@@ -39668,7 +40593,8 @@
      "name": "Dancer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10125,
@@ -39703,7 +40629,8 @@
      "name": "Dancer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 742,
@@ -39747,7 +40674,8 @@
      "name": "Sweet Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 743,
@@ -39793,7 +40721,8 @@
      "name": "Sweet Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 742
   },
   {
    "id": 744,
@@ -39839,7 +40768,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 745,
@@ -39886,7 +40816,8 @@
      "name": "Steadfast",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 744
   },
   {
    "id": 746,
@@ -39921,7 +40852,8 @@
      "name": "Schooling",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 747,
@@ -39965,7 +40897,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 748,
@@ -40011,7 +40944,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 747
   },
   {
    "id": 749,
@@ -40052,7 +40986,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 750,
@@ -40095,7 +41030,8 @@
      "name": "Inner Focus",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 749
   },
   {
    "id": 751,
@@ -40135,7 +41071,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 752,
@@ -40177,7 +41114,8 @@
      "name": "Water Absorb",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 751
   },
   {
    "id": 753,
@@ -40213,7 +41151,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 754,
@@ -40252,7 +41191,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 753
   },
   {
    "id": 755,
@@ -40294,7 +41234,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 756,
@@ -40338,7 +41279,8 @@
      "name": "Rain Dish",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 755
   },
   {
    "id": 757,
@@ -40377,7 +41319,8 @@
      "name": "Oblivious",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 758,
@@ -40419,7 +41362,8 @@
      "name": "Oblivious",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 757
   },
   {
    "id": 759,
@@ -40462,7 +41406,8 @@
      "name": "Cute Charm",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 760,
@@ -40508,7 +41453,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 759
   },
   {
    "id": 761,
@@ -40549,7 +41495,8 @@
      "name": "Sweet Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 762,
@@ -40592,7 +41539,8 @@
      "name": "Sweet Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 761
   },
   {
    "id": 763,
@@ -40636,7 +41584,8 @@
      "name": "Sweet Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 762
   },
   {
    "id": 764,
@@ -40678,7 +41627,8 @@
      "name": "Natural Cure",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 765,
@@ -40724,7 +41674,8 @@
      "name": "Symbiosis",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 766,
@@ -40764,7 +41715,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 767,
@@ -40797,7 +41749,8 @@
      "name": "Wimp Out",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 768,
@@ -40836,7 +41789,8 @@
      "name": "Emergency Exit",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 767
   },
   {
    "id": 10316,
@@ -40875,7 +41829,8 @@
      "name": "Emergency Exit",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 769,
@@ -40915,7 +41870,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 770,
@@ -40957,7 +41913,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 769
   },
   {
    "id": 771,
@@ -40992,7 +41949,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 772,
@@ -41025,7 +41983,8 @@
      "name": "Battle Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 773,
@@ -41067,7 +42026,8 @@
      "name": "RKS System",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 772
   },
   {
    "id": 774,
@@ -41104,7 +42064,8 @@
      "name": "Shields Down",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 775,
@@ -41139,7 +42100,8 @@
      "name": "Comatose",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 776,
@@ -41173,7 +42135,8 @@
      "name": "Shell Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 777,
@@ -41216,7 +42179,8 @@
      "name": "Sturdy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 778,
@@ -41252,7 +42216,8 @@
      "name": "Disguise",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 779,
@@ -41298,7 +42263,8 @@
      "name": "Wonder Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 780,
@@ -41348,7 +42314,8 @@
      "name": "Cloud Nine",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10302,
@@ -41392,7 +42359,8 @@
      "name": "Berserk",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 781,
@@ -41429,7 +42397,8 @@
      "name": "Steelworker",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 782,
@@ -41470,7 +42439,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 783,
@@ -41515,7 +42485,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 782
   },
   {
    "id": 784,
@@ -41562,7 +42533,8 @@
      "name": "Overcoat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 783
   },
   {
    "id": 785,
@@ -41605,7 +42577,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 786,
@@ -41648,7 +42621,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 787,
@@ -41690,7 +42664,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 788,
@@ -41735,7 +42710,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 789,
@@ -41766,7 +42742,8 @@
      "name": "Unaware",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 790,
@@ -41801,7 +42778,8 @@
      "name": "Sturdy",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 789
   },
   {
    "id": 791,
@@ -41844,7 +42822,8 @@
      "name": "Full Metal Body",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 790
   },
   {
    "id": 792,
@@ -41888,7 +42867,8 @@
      "name": "Shadow Shield",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 790
   },
   {
    "id": 793,
@@ -41926,7 +42906,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 794,
@@ -41964,7 +42945,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 795,
@@ -42001,7 +42983,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 796,
@@ -42037,7 +43020,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 797,
@@ -42075,7 +43059,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 798,
@@ -42112,7 +43097,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 799,
@@ -42152,7 +43138,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 800,
@@ -42189,7 +43176,8 @@
      "name": "Prism Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10155,
@@ -42227,7 +43215,8 @@
      "name": "Prism Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10156,
@@ -42265,7 +43254,8 @@
      "name": "Prism Armor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10157,
@@ -42303,7 +43293,8 @@
      "name": "Neuroforce",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 801,
@@ -42344,7 +43335,8 @@
      "name": "Soul-Heart",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10317,
@@ -42386,7 +43378,8 @@
      "name": "Soul-Heart",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10318,
@@ -42428,7 +43421,8 @@
      "name": "Soul-Heart",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 802,
@@ -42468,7 +43462,8 @@
      "name": "Technician",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 803,
@@ -42502,7 +43497,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 804,
@@ -42543,7 +43539,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 803
   },
   {
    "id": 805,
@@ -42578,7 +43575,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 806,
@@ -42616,7 +43614,8 @@
      "name": "Beast Boost",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 807,
@@ -42654,7 +43653,8 @@
      "name": "Volt Absorb",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10319,
@@ -42693,7 +43693,8 @@
      "name": "Volt Absorb",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 808,
@@ -42725,7 +43726,8 @@
      "name": "Magnet Pull",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 809,
@@ -42761,7 +43763,8 @@
      "name": "Iron Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 808
   },
   {
    "id": 10208,
@@ -42791,7 +43794,8 @@
      "name": "Iron Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 810,
@@ -42830,7 +43834,8 @@
      "name": "Grassy Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 811,
@@ -42871,7 +43876,8 @@
      "name": "Grassy Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 810
   },
   {
    "id": 812,
@@ -42914,7 +43920,8 @@
      "name": "Grassy Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 811
   },
   {
    "id": 10209,
@@ -42949,7 +43956,8 @@
      "name": "Grassy Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 813,
@@ -42988,7 +43996,8 @@
      "name": "Libero",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 814,
@@ -43029,7 +44038,8 @@
      "name": "Libero",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 813
   },
   {
    "id": 815,
@@ -43071,7 +44081,8 @@
      "name": "Libero",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 814
   },
   {
    "id": 10210,
@@ -43106,7 +44117,8 @@
      "name": "Libero",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 816,
@@ -43145,7 +44157,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 817,
@@ -43186,7 +44199,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 816
   },
   {
    "id": 818,
@@ -43231,7 +44245,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 817
   },
   {
    "id": 10211,
@@ -43266,7 +44281,8 @@
      "name": "Sniper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 819,
@@ -43303,7 +44319,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 820,
@@ -43343,7 +44360,8 @@
      "name": "Gluttony",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 819
   },
   {
    "id": 821,
@@ -43385,7 +44403,8 @@
      "name": "Big Pecks",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 822,
@@ -43429,7 +44448,8 @@
      "name": "Big Pecks",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 821
   },
   {
    "id": 823,
@@ -43472,7 +44492,8 @@
      "name": "Mirror Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 822
   },
   {
    "id": 10212,
@@ -43512,7 +44533,8 @@
      "name": "Mirror Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 824,
@@ -43549,7 +44571,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 825,
@@ -43594,7 +44617,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 824
   },
   {
    "id": 826,
@@ -43639,7 +44663,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 825
   },
   {
    "id": 10213,
@@ -43679,7 +44704,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 827,
@@ -43719,7 +44745,8 @@
      "name": "Stakeout",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 828,
@@ -43765,7 +44792,8 @@
      "name": "Stakeout",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 827
   },
   {
    "id": 829,
@@ -43805,7 +44833,8 @@
      "name": "Effect Spore",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 830,
@@ -43847,7 +44876,8 @@
      "name": "Effect Spore",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 829
   },
   {
    "id": 831,
@@ -43886,7 +44916,8 @@
      "name": "Bulletproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 832,
@@ -43927,7 +44958,8 @@
      "name": "Bulletproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 831
   },
   {
    "id": 833,
@@ -43971,7 +45003,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 834,
@@ -44020,7 +45053,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 833
   },
   {
    "id": 10214,
@@ -44062,7 +45096,8 @@
      "name": "Swift Swim",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 835,
@@ -44099,7 +45134,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 836,
@@ -44138,7 +45174,8 @@
      "name": "Competitive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 835
   },
   {
    "id": 837,
@@ -44177,7 +45214,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 838,
@@ -44220,7 +45258,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 837
   },
   {
    "id": 839,
@@ -44264,7 +45303,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 838
   },
   {
    "id": 10215,
@@ -44304,7 +45344,8 @@
      "name": "Flash Fire",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 840,
@@ -44342,7 +45383,8 @@
      "name": "Bulletproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 841,
@@ -44386,7 +45428,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 840
   },
   {
    "id": 10216,
@@ -44426,7 +45469,8 @@
      "name": "Hustle",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 842,
@@ -44469,7 +45513,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 840
   },
   {
    "id": 10217,
@@ -44509,7 +45554,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 843,
@@ -44549,7 +45595,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 844,
@@ -44591,7 +45638,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 843
   },
   {
    "id": 10218,
@@ -44630,7 +45678,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 845,
@@ -44667,7 +45716,8 @@
      "name": "Gulp Missile",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 846,
@@ -44709,7 +45759,8 @@
      "name": "Propeller Tail",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 847,
@@ -44754,7 +45805,8 @@
      "name": "Propeller Tail",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 846
   },
   {
    "id": 848,
@@ -44796,7 +45848,8 @@
      "name": "Klutz",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 849,
@@ -44842,7 +45895,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 848
   },
   {
    "id": 10219,
@@ -44882,7 +45936,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10228,
@@ -44922,7 +45977,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 850,
@@ -44963,7 +46019,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 851,
@@ -45007,7 +46064,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 850
   },
   {
    "id": 10220,
@@ -45047,7 +46105,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 852,
@@ -45085,7 +46144,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 853,
@@ -45127,7 +46187,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 852
   },
   {
    "id": 854,
@@ -45166,7 +46227,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 855,
@@ -45207,7 +46269,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 854
   },
   {
    "id": 856,
@@ -45250,7 +46313,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 857,
@@ -45295,7 +46359,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 856
   },
   {
    "id": 858,
@@ -45342,7 +46407,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 857
   },
   {
    "id": 10221,
@@ -45382,7 +46448,8 @@
      "name": "Magic Bounce",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 859,
@@ -45424,7 +46491,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 860,
@@ -45468,7 +46536,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 859
   },
   {
    "id": 861,
@@ -45515,7 +46584,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 860
   },
   {
    "id": 10222,
@@ -45555,7 +46625,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 862,
@@ -45604,7 +46675,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10175
   },
   {
    "id": 863,
@@ -45651,7 +46723,8 @@
      "name": "Steely Spirit",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10161
   },
   {
    "id": 864,
@@ -45695,7 +46768,8 @@
      "name": "Perish Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10173
   },
   {
    "id": 865,
@@ -45732,7 +46806,8 @@
      "name": "Scrappy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10166
   },
   {
    "id": 866,
@@ -45783,7 +46858,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10168
   },
   {
    "id": 867,
@@ -45819,7 +46895,8 @@
      "name": "Wandering Spirit",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 10179
   },
   {
    "id": 868,
@@ -45855,7 +46932,8 @@
      "name": "Aroma Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 869,
@@ -45896,7 +46974,8 @@
      "name": "Aroma Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 868
   },
   {
    "id": 10223,
@@ -45931,7 +47010,8 @@
      "name": "Aroma Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 870,
@@ -45968,7 +47048,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10303,
@@ -46003,7 +47084,8 @@
      "name": "Defiant",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 871,
@@ -46041,7 +47123,8 @@
      "name": "Electric Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 872,
@@ -46077,7 +47160,8 @@
      "name": "Ice Scales",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 873,
@@ -46120,7 +47204,8 @@
      "name": "Ice Scales",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 872
   },
   {
    "id": 874,
@@ -46152,7 +47237,8 @@
      "name": "Power Spot",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 875,
@@ -46187,7 +47273,8 @@
      "name": "Ice Face",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 876,
@@ -46232,7 +47319,8 @@
      "name": "Psychic Surge",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 877,
@@ -46267,7 +47355,8 @@
      "name": "Hunger Switch",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 878,
@@ -46304,7 +47393,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 879,
@@ -46343,7 +47433,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 878
   },
   {
    "id": 10224,
@@ -46378,7 +47469,8 @@
      "name": "Heavy Metal",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 880,
@@ -46423,7 +47515,8 @@
      "name": "Sand Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 881,
@@ -46469,7 +47562,8 @@
      "name": "Slush Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 882,
@@ -46515,7 +47609,8 @@
      "name": "Sand Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 883,
@@ -46561,7 +47656,8 @@
      "name": "Slush Rush",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 884,
@@ -46603,7 +47699,8 @@
      "name": "Stalwart",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10225,
@@ -46643,7 +47740,8 @@
      "name": "Stalwart",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 885,
@@ -46683,7 +47781,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 886,
@@ -46731,7 +47830,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 885
   },
   {
    "id": 887,
@@ -46780,7 +47880,8 @@
      "name": "Cursed Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 886
   },
   {
    "id": 888,
@@ -46818,7 +47919,8 @@
      "name": "Intrepid Sword",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10188,
@@ -46857,7 +47959,8 @@
      "name": "Intrepid Sword",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 889,
@@ -46895,7 +47998,8 @@
      "name": "Dauntless Shield",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10189,
@@ -46934,7 +48038,8 @@
      "name": "Dauntless Shield",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 890,
@@ -46972,7 +48077,8 @@
      "name": "Pressure",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 891,
@@ -47009,7 +48115,8 @@
      "name": "Inner Focus",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 892,
@@ -47050,7 +48157,8 @@
      "name": "Unseen Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 891
   },
   {
    "id": 10191,
@@ -47090,7 +48198,8 @@
      "name": "Unseen Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 891
   },
   {
    "id": 10226,
@@ -47123,7 +48232,8 @@
      "name": "Unseen Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10227,
@@ -47156,7 +48266,8 @@
      "name": "Unseen Fist",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 893,
@@ -47194,7 +48305,8 @@
      "name": "Leaf Guard",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 894,
@@ -47229,7 +48341,8 @@
      "name": "Transistor",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 895,
@@ -47264,7 +48377,8 @@
      "name": "Dragon's Maw",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 896,
@@ -47300,7 +48414,8 @@
      "name": "Chilling Neigh",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 897,
@@ -47337,7 +48452,8 @@
      "name": "Grim Neigh",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 898,
@@ -47374,7 +48490,8 @@
      "name": "Unnerve",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10193,
@@ -47414,7 +48531,8 @@
      "name": "As One (Glastrier)",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10194,
@@ -47453,7 +48571,8 @@
      "name": "As One (Spectrier)",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 899,
@@ -47500,7 +48619,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 234
   },
   {
    "id": 900,
@@ -47545,7 +48665,8 @@
      "name": "Sharpness",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 123
   },
   {
    "id": 901,
@@ -47593,7 +48714,8 @@
      "name": "Unnerve",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 217
   },
   {
    "id": 10272,
@@ -47631,7 +48753,8 @@
      "name": "Mind's Eye",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 902,
@@ -47680,7 +48803,8 @@
      "name": "Mold Breaker",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10247
   },
   {
    "id": 903,
@@ -47729,7 +48853,8 @@
      "name": "Poison Touch",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10235
   },
   {
    "id": 904,
@@ -47780,7 +48905,8 @@
      "name": "Intimidate",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10234
   },
   {
    "id": 905,
@@ -47823,7 +48949,8 @@
      "name": "Contrary",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 906,
@@ -47861,7 +48988,8 @@
      "name": "Protean",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 907,
@@ -47901,7 +49029,8 @@
      "name": "Protean",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 906
   },
   {
    "id": 908,
@@ -47944,7 +49073,8 @@
      "name": "Protean",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 907
   },
   {
    "id": 909,
@@ -47983,7 +49113,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 910,
@@ -48024,7 +49155,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 909
   },
   {
    "id": 911,
@@ -48068,7 +49200,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 910
   },
   {
    "id": 912,
@@ -48108,7 +49241,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 913,
@@ -48150,7 +49284,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 912
   },
   {
    "id": 914,
@@ -48195,7 +49330,8 @@
      "name": "Moxie",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 913
   },
   {
    "id": 915,
@@ -48234,7 +49370,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 916,
@@ -48275,7 +49412,8 @@
      "name": "Thick Fat",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 915
   },
   {
    "id": 917,
@@ -48310,7 +49448,8 @@
      "name": "Stakeout",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 918,
@@ -48348,7 +49487,8 @@
      "name": "Stakeout",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 917
   },
   {
    "id": 919,
@@ -48383,7 +49523,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 920,
@@ -48422,7 +49563,8 @@
      "name": "Tinted Lens",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 919
   },
   {
    "id": 921,
@@ -48463,7 +49605,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 922,
@@ -48507,7 +49650,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 921
   },
   {
    "id": 923,
@@ -48555,7 +49699,8 @@
      "name": "Iron Fist",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 922
   },
   {
    "id": 924,
@@ -48595,7 +49740,8 @@
      "name": "Own Tempo",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 925,
@@ -48637,7 +49783,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 924
   },
   {
    "id": 926,
@@ -48674,7 +49821,8 @@
      "name": "Klutz",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 927,
@@ -48713,7 +49861,8 @@
      "name": "Aroma Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 926
   },
   {
    "id": 928,
@@ -48750,7 +49899,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 929,
@@ -48789,7 +49939,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 928
   },
   {
    "id": 930,
@@ -48830,7 +49981,8 @@
      "name": "Harvest",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 929
   },
   {
    "id": 931,
@@ -48873,7 +50025,8 @@
      "name": "Guts",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 932,
@@ -48915,7 +50068,8 @@
      "name": "Clear Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 933,
@@ -48959,7 +50113,8 @@
      "name": "Clear Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 932
   },
   {
    "id": 934,
@@ -49005,7 +50160,8 @@
      "name": "Clear Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 933
   },
   {
    "id": 935,
@@ -49041,7 +50197,8 @@
      "name": "Flame Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 936,
@@ -49083,7 +50240,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 935
   },
   {
    "id": 937,
@@ -49125,7 +50283,8 @@
      "name": "Weak Armor",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 935
   },
   {
    "id": 938,
@@ -49165,7 +50324,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 939,
@@ -49208,7 +50368,8 @@
      "name": "Damp",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 938
   },
   {
    "id": 940,
@@ -49251,7 +50412,8 @@
      "name": "Competitive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 941,
@@ -49296,7 +50458,8 @@
      "name": "Competitive",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 940
   },
   {
    "id": 942,
@@ -49338,7 +50501,8 @@
      "name": "Stakeout",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 943,
@@ -49382,7 +50546,8 @@
      "name": "Stakeout",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 942
   },
   {
    "id": 944,
@@ -49425,7 +50590,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 945,
@@ -49470,7 +50636,8 @@
      "name": "Prankster",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 944
   },
   {
    "id": 946,
@@ -49507,7 +50674,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 947,
@@ -49546,7 +50714,8 @@
      "name": "Infiltrator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 946
   },
   {
    "id": 948,
@@ -49580,7 +50749,8 @@
      "name": "Mycelium Might",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 949,
@@ -49616,7 +50786,8 @@
      "name": "Mycelium Might",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 948
   },
   {
    "id": 950,
@@ -49656,7 +50827,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 951,
@@ -49697,7 +50869,8 @@
      "name": "Klutz",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 952,
@@ -49743,7 +50916,8 @@
      "name": "Moody",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 951
   },
   {
    "id": 10320,
@@ -49780,7 +50954,8 @@
      "name": "Spicy Spray",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 953,
@@ -49816,7 +50991,8 @@
      "name": "Shed Skin",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 954,
@@ -49859,7 +51035,8 @@
      "name": "Telepathy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 953
   },
   {
    "id": 955,
@@ -49900,7 +51077,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 956,
@@ -49945,7 +51123,8 @@
      "name": "Speed Boost",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 955
   },
   {
    "id": 957,
@@ -49986,7 +51165,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 958,
@@ -50030,7 +51210,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 957
   },
   {
    "id": 959,
@@ -50074,7 +51255,8 @@
      "name": "Pickpocket",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 958
   },
   {
    "id": 960,
@@ -50116,7 +51298,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 961,
@@ -50160,7 +51343,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 960
   },
   {
    "id": 962,
@@ -50204,7 +51388,8 @@
      "name": "Rocky Payload",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 963,
@@ -50239,7 +51424,8 @@
      "name": "Water Veil",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 964,
@@ -50278,7 +51464,8 @@
      "name": "Zero to Hero",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 963
   },
   {
    "id": 965,
@@ -50315,7 +51502,8 @@
      "name": "Slow Start",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 966,
@@ -50354,7 +51542,8 @@
      "name": "Filter",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 965
   },
   {
    "id": 967,
@@ -50393,7 +51582,8 @@
      "name": "Regenerator",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 968,
@@ -50429,7 +51619,8 @@
      "name": "Sand Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 969,
@@ -50467,7 +51658,8 @@
      "name": "Corrosion",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 970,
@@ -50507,7 +51699,8 @@
      "name": "Corrosion",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 969
   },
   {
    "id": 10321,
@@ -50543,7 +51736,8 @@
      "name": "Adaptability",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 971,
@@ -50580,7 +51774,8 @@
      "name": "Fluffy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 972,
@@ -50619,7 +51814,8 @@
      "name": "Fluffy",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 971
   },
   {
    "id": 973,
@@ -50662,7 +51858,8 @@
      "name": "Costar",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 974,
@@ -50703,7 +51900,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 975,
@@ -50748,7 +51946,8 @@
      "name": "Sheer Force",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 974
   },
   {
    "id": 976,
@@ -50789,7 +51988,8 @@
      "name": "Sharpness",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 977,
@@ -50832,7 +52032,8 @@
      "name": "Water Veil",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 978,
@@ -50870,7 +52071,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10322,
@@ -50910,7 +52112,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10323,
@@ -50950,7 +52153,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10324,
@@ -50990,7 +52194,8 @@
      "name": "Storm Drain",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 979,
@@ -51040,7 +52245,8 @@
      "name": "Defiant",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 57
   },
   {
    "id": 980,
@@ -51086,7 +52292,8 @@
      "name": "Unaware",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 10253
   },
   {
    "id": 981,
@@ -51135,7 +52342,8 @@
      "name": "Sap Sipper",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 203
   },
   {
    "id": 982,
@@ -51182,7 +52390,8 @@
      "name": "Rattled",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 206
   },
   {
    "id": 983,
@@ -51225,7 +52434,8 @@
      "name": "Pressure",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 625
   },
   {
    "id": 984,
@@ -51262,7 +52472,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 985,
@@ -51305,7 +52516,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 986,
@@ -51341,7 +52553,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 987,
@@ -51379,7 +52592,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 988,
@@ -51417,7 +52631,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 989,
@@ -51453,7 +52668,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 990,
@@ -51488,7 +52704,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 991,
@@ -51526,7 +52743,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 992,
@@ -51566,7 +52784,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 993,
@@ -51605,7 +52824,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 994,
@@ -51643,7 +52863,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 995,
@@ -51684,7 +52905,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 996,
@@ -51722,7 +52944,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 997,
@@ -51763,7 +52986,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 996
   },
   {
    "id": 998,
@@ -51805,7 +53029,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 997
   },
   {
    "id": 10325,
@@ -51847,7 +53072,8 @@
      "name": "Ice Body",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 999,
@@ -51879,7 +53105,8 @@
      "name": "Rattled",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10263,
@@ -51911,7 +53138,8 @@
      "name": "Run Away",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1000,
@@ -51949,7 +53177,8 @@
      "name": "Good as Gold",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": 999
   },
   {
    "id": 1001,
@@ -51983,7 +53212,8 @@
      "name": "Tablets of Ruin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1002,
@@ -52020,7 +53250,8 @@
      "name": "Sword of Ruin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1003,
@@ -52055,7 +53286,8 @@
      "name": "Vessel of Ruin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1004,
@@ -52092,7 +53324,8 @@
      "name": "Beads of Ruin",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1005,
@@ -52133,7 +53366,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1006,
@@ -52176,7 +53410,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1007,
@@ -52216,7 +53451,8 @@
      "name": "Orichalcum Pulse",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1008,
@@ -52256,7 +53492,8 @@
      "name": "Hadron Engine",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1009,
@@ -52294,7 +53531,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1010,
@@ -52331,7 +53569,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1011,
@@ -52373,7 +53612,8 @@
      "name": "Sticky Hold",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 840
   },
   {
    "id": 1012,
@@ -52411,7 +53651,8 @@
      "name": "Heatproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1013,
@@ -52451,7 +53692,8 @@
      "name": "Heatproof",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 1012
   },
   {
    "id": 1014,
@@ -52494,7 +53736,8 @@
      "name": "Guard Dog",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1015,
@@ -52537,7 +53780,8 @@
      "name": "Frisk",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1016,
@@ -52582,7 +53826,8 @@
      "name": "Technician",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1017,
@@ -52616,7 +53861,8 @@
      "name": "Defiant",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10273,
@@ -52651,7 +53897,8 @@
      "name": "Water Absorb",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10274,
@@ -52686,7 +53933,8 @@
      "name": "Mold Breaker",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 10275,
@@ -52723,7 +53971,8 @@
      "name": "Sturdy",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1018,
@@ -52770,7 +54019,8 @@
      "name": "Stalwart",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 884
   },
   {
    "id": 1019,
@@ -52814,7 +54064,8 @@
      "name": "Sticky Hold",
      "hidden": true
     }
-   ]
+   ],
+   "prevo": 1011
   },
   {
    "id": 1020,
@@ -52851,7 +54102,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1021,
@@ -52889,7 +54141,8 @@
      "name": "Protosynthesis",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1022,
@@ -52927,7 +54180,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1023,
@@ -52964,7 +54218,8 @@
      "name": "Quark Drive",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1024,
@@ -53005,7 +54260,8 @@
      "name": "Tera Shift",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   },
   {
    "id": 1025,
@@ -53041,7 +54297,8 @@
      "name": "Poison Puppeteer",
      "hidden": false
     }
-   ]
+   ],
+   "prevo": null
   }
  ]
 }

@@ -4,6 +4,7 @@ import { POKEMON_BY_ID } from "../data/pokedex.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
+import EvolutionLine from "./EvolutionLine.jsx";
 
 // Everything a Pokémon counts for, grouped the way the dropdowns are —
 // minus type count (the type pills already show it) and the tracked
@@ -72,7 +73,6 @@ function PokemonDetail({ pokemon, onClose }) {
             <p className="hint detail-meta">
               #{String(pokemon.species).padStart(4, "0")}
               {base ? ` · Form of ${base.displayName}` : ""}
-              {pokemon.evoDetail ? ` · Evolves: ${pokemon.evoDetail}` : ""}
             </p>
           </div>
         </div>
@@ -85,6 +85,12 @@ function PokemonDetail({ pokemon, onClose }) {
               {pokemon.abilityList.map((a) => (
                 <AbilityPill key={a.name} ability={a} />
               ))}
+            </div>
+          </section>
+          <section className="detail-group wide">
+            <h4>Evolution</h4>
+            <div className="detail-pills">
+              <EvolutionLine pokemon={pokemon} />
             </div>
           </section>
           {groups.filter((g) => g.wide).map(renderGroup)}
