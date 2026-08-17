@@ -66,3 +66,16 @@ export function shortHow(detail) {
     .replace(/ during rain$/, ", rain")
     .replace(/Mount Lanakila/, "Mt. Lanakila");
 }
+
+// Where an evolution has to happen, when the dex's line for it doesn't say:
+// a regional form that evolves from a non-regional (or differently
+// regional) Pokémon — Koffing → Galarian Weezing, Pikachu → Alolan Raichu,
+// Quilava → Hisuian Typhlosion — does so by evolving in that region;
+// elsewhere it becomes the usual form. Null when nothing needs saying.
+const REGION_FORMS = new Set(["Alola", "Galar", "Hisui", "Paldea"]);
+export function evoWhere(pokemon) {
+  if (!REGION_FORMS.has(pokemon.form)) return null;
+  const prevo = POKEMON_BY_ID.get(pokemon.prevo);
+  if (!prevo || prevo.form === pokemon.form) return null;
+  return `in ${pokemon.form}`;
+}

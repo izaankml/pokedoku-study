@@ -185,9 +185,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     hairlines: header (plain sprite; name, dex line, and the type and
     region pills — identity, not rows), then Evolution, centred, as a row
     of stage tiles (sprite, name, how) joined by arrows — a level with
-    several Pokémon is one column whose tiles wrap, so Wurmple →
-    Silcoon/Cascoon → Beautifly/Dustox reads as a tree and Eevee's eight
-    grid — then Group, Abilities and Moves, each a small-caps label with
+    several Pokémon stacks its tiles in a column (a second column past
+    four), so Wurmple → Silcoon/Cascoon → Beautifly/Dustox reads as a
+    tree and Eevee's eight sit 4 × 2. A regional form that evolves from
+    a different form (Koffing → Galarian Weezing, Pikachu → Alolan
+    Raichu, the Hisuian evolutions) says "in Galar" etc. after the method
+    (`evoWhere`) — the dex line alone reads the same as the usual form's
+    — then Group, Abilities and Moves, each a small-caps label with
     its pills beneath (quieter, uniform pills). Not listed (still
     categories everywhere else): type count, tracked abilities, evolution
     method, stage and line — the header and tree already show them.

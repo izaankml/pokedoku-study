@@ -1180,29 +1180,18 @@ header h1 {
   display: flex;
   align-items: stretch;
   gap: 4px;
-  flex: none; /* a single-tile level keeps its width … */
-}
-
-/* … while a level with several Pokémon is one column that gives way,
-   its tiles wrapping into as many rows as needed (Wurmple's cocoons
-   stack, Eevee's eight grid) */
-.evo-level.branch {
-  flex: 0 1 auto;
-  min-width: 0;
-}
-
-.evo-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.evo-tiles > * {
-  width: 84px;
   flex: none;
+}
+
+/* a level's tiles: one, or (a branch) a column of up to four — the
+   template rows come inline from EvolutionLine — that spills into a
+   second column past that (Eevee's eight sit 4 × 2) */
+.evo-tiles {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 84px;
+  gap: 6px;
+  align-content: center;
 }
 
 .evo-arrow {
