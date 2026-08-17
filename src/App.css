@@ -446,6 +446,8 @@ header h1 {
 
 .pill {
   display: inline-block;
+  min-width: 5em; /* short names (Ice, Bug, Baby) still read as full chips */
+  text-align: center;
   padding: 8px 14px;
   border-radius: var(--radius-full);
   background: var(--surface-2);
@@ -457,8 +459,6 @@ header h1 {
 }
 
 .pill[class*="type-"] {
-  min-width: 5em; /* "Ice" and "Bug" as wide a chip as "Fighting" nearly is */
-  text-align: center;
   background: var(--type-c);
   background: linear-gradient(
     140deg,
