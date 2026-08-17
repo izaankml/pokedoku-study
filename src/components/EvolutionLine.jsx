@@ -1,4 +1,5 @@
 import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
+import { POKEMON_BY_ID } from "../data/pokedex.js";
 import { baseOf, formLabel, formTrigger, formsOf, variantNote, variantsOf } from "../logic/forms.js";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
@@ -128,13 +129,15 @@ function EvolutionLine({ pokemon, onOpen }) {
   );
 }
 
-// The other forms of every stage of a Pokémon's line, laid out like the
-// tree in one row: each stage that has any, ⇢ its transformations
-// (Charizard ⇢ Mega X / Mega Y / Gigantamax) and ≈ its variants (Rockruff
-// ≈ Own Tempo, Vulpix ≈ Alolan, Zarude ≈ Dada — the same species in
-// another shape that isn't already in the tree), stacked in pairs, the
-// Pokémon itself highlighted when it is one of them. Null when the line
-// has none.
+// The other forms of every species in a Pokémon's line, laid out like the
+// tree in one row — one group per species, its base first: ⇢ its
+// transformations (Charizard ⇢ Mega X / Mega Y / Gigantamax) and ≈ its
+// variants (Rockruff ≈ Own Tempo, Vulpix ≈ Alolan, Zarude ≈ Dada — the
+// same species in another shape), stacked in pairs. The base leads even
+// on the variant's own sheet, so both read the same way, the Pokémon
+// itself highlighted wherever it is. A species whose base is in the tree
+// leaves its tree-mates out (Alolan Raichu already sits beside Raichu).
+// Null when the line has none.
 export function FormsRows({ pokemon, onOpen }) {
   const tree = evolutionTree(pokemon);
   const stages = [];
@@ -145,14 +148,16 @@ export function FormsRows({ pokemon, onOpen }) {
   if (tree) walk(tree.root);
   else stages.push(baseOf(pokemon));
   const inTree = new Set(stages.map((s) => s.id));
-  const seen = new Set(); // a species' variants show once, at its first stage in the tree
-  const groups = stages
-    .map((s) => {
-      const variants = variantsOf(s).filter((v) => !inTree.has(v.id) && !seen.has(v.id));
-      variants.forEach((v) => seen.add(v.id));
-      return [s, formsOf(s), variants];
-    })
-    .filter(([, forms, variants]) => forms.length || variants.length);
+  const groups = [];
+  const done = new Set();
+  for (const s of stages) {
+    if (done.has(s.species)) continue;
+    done.add(s.species);
+    const anchor = POKEMON_BY_ID.get(s.species) || s;
+    const forms = [...new Set(stages.filter((t) => t.species === s.species).flatMap((t) => formsOf(t)))];
+    const variants = variantsOf(anchor).filter((v) => !(inTree.has(anchor.id) && inTree.has(v.id)));
+    if (forms.length || variants.length) groups.push([anchor, forms, variants]);
+  }
   if (!groups.length) return null;
   return (
     <>

@@ -263,9 +263,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     of a species — the *variants*: regional forms, Own Tempo Rockruff,
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
     Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted
-    tiles, a word on what it is: `variantNote`), once per species at its
-    first stage in the tree, tree-mates left out; so Rockruff's sheet
-    reaches Own Tempo Rockruff and Vulpix's the Alolan line. Long
+    tiles, a word on what it is: `variantNote`). Rows are one per species
+    in the line and always lead with the species base — even on the
+    variant's own sheet, so Zarude and Zarude Dada read the same way with
+    the current one highlighted — and a species whose base is in the tree
+    leaves its tree-mates out; so Rockruff's sheet reaches Own Tempo
+    Rockruff and Vulpix's the Alolan line, and vice versa. Long
     one-word names (Meowscarada) shrink to fit a tile rather than break.
     Still absent, on
     purpose: cosmetic forms (Vivillon, Alcremie, Arceus/Silvally plates,
