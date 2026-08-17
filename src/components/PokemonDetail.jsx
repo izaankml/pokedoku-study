@@ -105,17 +105,18 @@ function PokemonDetail({ pokemon, onClose }) {
                 ))}
               </div>
             </div>
-            <div className="detail-title-row">
-              <div className="detail-pills detail-types">
-                {types.map((c) => (
-                  <CategoryPill key={c.id} cat={c} useShort />
-                ))}
-              </div>
-              <div className="detail-pills detail-side">
-                {groups.map((c) => (
-                  <CategoryPill key={c.id} cat={c} useShort />
-                ))}
-              </div>
+          </div>
+          {/* beside the sprite on a desktop; under it, full width, on a phone */}
+          <div className="detail-title-row detail-tags">
+            <div className="detail-pills detail-types">
+              {types.map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
+            </div>
+            <div className="detail-pills detail-side">
+              {groups.map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
             </div>
           </div>
         </header>
