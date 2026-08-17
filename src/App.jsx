@@ -246,6 +246,18 @@ function App() {
     window.scrollTo(0, 0);
   }, []);
 
+  // The title is a home link: the Browse tab with no filters and no sheet.
+  // Browser only reads the hash on mount, so remount it to drop its filters.
+  const [homeKey, setHomeKey] = useState(0);
+  const goHome = useCallback((e) => {
+    e.preventDefault();
+    writeHash(DEFAULT_TAB, [], { push: true, detail: null });
+    setTab(DEFAULT_TAB);
+    setHomeKey((k) => k + 1);
+    document.getElementById("root")?.scrollTo(0, 0);
+    window.scrollTo(0, 0);
+  }, []);
+
   // Back/forward (and hand-edited hashes) drive the tab too.
   useEffect(() => {
     const onHash = () => setTab(tabFromHash() || DEFAULT_TAB);
@@ -261,14 +273,16 @@ function App() {
     <div className="app">
       <header>
         <h1>
-          <PokeballIcon className="pokeball-mark" width="22" height="22" />
-          <span>PokeDoku</span> <span className="h1-sub">Study</span>
+          <a className="home-link" href={"#" + DEFAULT_TAB.toLowerCase()} onClick={goHome} aria-label="PokeDoku Study — home">
+            <PokeballIcon className="pokeball-mark" width="22" height="22" />
+            <span>PokeDoku</span> <span className="h1-sub">Study</span>
+          </a>
         </h1>
         <TabNav tabs={TABS} active={tab} onSelect={selectTab} />
       </header>
       <StatsContext.Provider value={stats}>
         <main>
-          {tab === "Browse" && <Browser />}
+          {tab === "Browse" && <Browser key={homeKey} />}
           {tab === "Drill" && <Drill />}
           {tab === "Cards" && <Flashcards />}
           {tab === "Grid" && <PracticeGrid />}
