@@ -279,11 +279,17 @@ function abilitiesOf(s) {
 
 // Every ability, for display: regular slots first, then the hidden ability
 // (H) and any special one (S, e.g. Own Tempo Rockruff) marked as such.
+// The dex's "S" (special) slot: Battle Bond Greninja and Power Construct
+// Zygarde are ordinary Greninja / Zygarde with that ability, so it stays;
+// Own Tempo Rockruff is a form of its own (its record has the ability), so
+// base Rockruff doesn't list it.
+const SPECIAL_ABILITY_OWN_FORM = new Set(["rockruff"]);
 function abilityListOf(s) {
   const slots = abilitySlots(s);
   const list = [];
   for (const key of ["0", "1"]) if (slots[key]) list.push({ name: slots[key], hidden: false });
-  for (const key of ["H", "S"]) if (slots[key]) list.push({ name: slots[key], hidden: true });
+  if (slots.H) list.push({ name: slots.H, hidden: true });
+  if (slots.S && !SPECIAL_ABILITY_OWN_FORM.has(s.id)) list.push({ name: slots.S, hidden: true });
   return list;
 }
 
