@@ -1220,7 +1220,7 @@ header h1 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .evo-arrow {
@@ -1268,7 +1268,7 @@ header h1 {
 /* the Forms row sits under the tree and scrolls like it: each stage and
    its forms (stacked in pairs) as a group, groups side by side */
 .detail-forms-head {
-  margin-top: var(--sp-3);
+  margin-top: 20px;
 }
 
 .forms-line {
@@ -2195,6 +2195,44 @@ main > * {
   }
 }
 
+/* "more below": a fade over the sheet's bottom edge with a chevron, only
+   while it can still scroll down (PokemonDetail toggles .on) */
+.modal-more {
+  position: sticky;
+  bottom: 0;
+  height: 44px;
+  margin-top: -44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--surface-1) 80%);
+  color: var(--text-low);
+  opacity: 0;
+  transition: opacity var(--dur-med);
+}
+
+.modal-more.on {
+  opacity: 1;
+}
+
+.modal-more svg {
+  width: 20px;
+  height: 20px;
+  animation: nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
 .modal-close {
   position: absolute;
   top: 12px;
@@ -2224,7 +2262,7 @@ main > * {
    so two types and two groups (Koraidon) still fit one line */
 .detail-head {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr; /* region/groups start right after the name column */
   align-items: center;
   column-gap: var(--sp-3);
   row-gap: 8px;
@@ -2255,6 +2293,19 @@ main > * {
 .detail-groups {
   grid-column: 3;
   align-self: center;
+}
+
+/* when the type row wouldn't fit beside the region/groups column
+   (Koraidon: two types and two groups on a phone) it drops under the
+   sprite and spans both left columns — decided by measurement in
+   PokemonDetail */
+.detail-head.types-below > .sprite,
+.detail-head.types-below > .sprite-fallback {
+  grid-row: 1 / 3;
+}
+
+.detail-head.types-below .detail-types {
+  grid-column: 1 / 3;
 }
 
 /* both types stay side by side; several groups may stack when the sheet
@@ -2338,11 +2389,7 @@ main > * {
   }
   .detail-head > .sprite,
   .detail-head > .sprite-fallback {
-    grid-row: 1 / 3; /* beside the dex line and name only */
     margin-right: 0;
-  }
-  .detail-types {
-    grid-column: 1 / 3; /* under the sprite, so the row has the width */
   }
   .detail-sprite,
   .sprite-fallback.detail-sprite {
@@ -2382,9 +2429,11 @@ main > * {
     width: 32px;
     height: 32px;
   }
-  .evo-tiles,
-  .evo-col {
+  .evo-tiles {
     gap: 4px;
+  }
+  .evo-col {
+    gap: 6px;
   }
   .evo-arrow {
     padding: 0;

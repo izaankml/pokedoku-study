@@ -193,11 +193,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     fixed backdrop, so a sheet opened by a reload sat thousands of pixels
     down the Browse list for 200ms and then jumped into place. Three blocks divided by
     hairlines: header (one grid — plain sprite; dex line; the name with
-    the region pill beside it; the type pills with the group pills beside
-    them, region and groups sharing a left-aligned column; on a phone the
-    types row drops under the sprite and spans the left columns, and two
-    groups stack in their column on the narrowest phones so the name
-    keeps its room — identity, not rows), then
+    the region pill right after it; the type pills under the name with the
+    group pills beside them, region and groups sharing a left-aligned
+    column that starts right after the name column; only when that row
+    wouldn't fit — the groups had to stack, or the header overflows:
+    Koraidon/Miraidon on a phone — do the types drop under the sprite and
+    span the left columns (measured in PokemonDetail, `.types-below`) —
+    identity, not rows), then
     Evolution, centred: a tree
     of square tiles (sprite, name, how), each joined by an arrow to its
     own evolutions — one arrow to a lone evolution, one shared arrow into
@@ -206,17 +208,18 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     when three or more span several (Eevee: the Kanto three, the Johto
     two, the Sinnoh two, Sylveon), else pairs — and ones that evolve
     again get a row each. The tree never wraps: laid out at its natural
-    width (the sheet is 580px so Eevee's fits); on a phone the tiles are
-    76px and the section's rows (tree and forms) are zoomed down by one
-    factor (`useFitRows`, floor 0.7) until the widest fits, past which it
-    scrolls sideways — Goomy shows Sliggoo → Goodra over
+    width and zoomed to fit the sheet (below) — Goomy shows Sliggoo → Goodra over
     Hisuian Sliggoo → Hisuian Goodra, Applin has Flapple/Appletun paired
     above Dipplin → Hydrapple. Tiles are all one size: 100px on a desktop
     (what the tallest content — a two-line name over a two-line method:
     Wormadam Sandy, Urshifu Rapid Strike — needs, so they're square) and
     76px on a phone; on any sheet every tile is as tall as that sheet's
     tallest (`useFitRows` sets `--evo-tile-h`), so tree and forms tiles
-    match.
+    match, and the section's rows are zoomed by one factor so the widest
+    exactly fits the sheet — down as far as it takes (nothing scrolls
+    sideways; the sheet scrolls down instead), up to 1.25× when there's
+    room. A fade with a nudging chevron sits on the sheet's bottom edge
+    while there's more below to scroll to (`.modal-more`).
     Methods stay under ~30 characters
     (`TERSE` overrides for the long dex lines) and are Title Case, small
     words aside (`titleCase`). A regional

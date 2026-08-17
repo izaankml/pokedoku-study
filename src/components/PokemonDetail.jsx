@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
@@ -54,7 +54,46 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
   }, [onClose]);
 
   const evoRef = useRef(null);
-  useFitRows(evoRef); // the tree and forms shrink together to fit the sheet
+  useFitRows(evoRef, [pokemon]); // the tree and forms sized together to fit the sheet
+
+  // Types sit under the name; when that row plus the region/groups column
+  // is wider than the header (Koraidon on a phone), the types drop under
+  // the sprite instead (App.css .types-below)
+  // A fade with a chevron pinned to the sheet's bottom edge while there's
+  // more below to scroll to
+  const modalRef = useRef(null);
+  const [more, setMore] = useState(false);
+  useLayoutEffect(() => {
+    const el = modalRef.current;
+    if (!el) return undefined;
+    const check = () => setMore(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    for (const child of el.children) ro.observe(child);
+    return () => {
+      el.removeEventListener("scroll", check);
+      ro.disconnect();
+    };
+  }, [pokemon]);
+
+  const headRef = useRef(null);
+  useLayoutEffect(() => {
+    const head = headRef.current;
+    if (!head) return undefined;
+    const place = () => {
+      head.classList.remove("types-below"); // measure with the types under the name
+      const groups = head.querySelector(".detail-groups");
+      const pill = groups?.firstElementChild;
+      const stacked = pill && groups.offsetHeight > pill.offsetHeight * 1.5; // the groups had to wrap
+      if (stacked || head.scrollWidth > head.clientWidth + 1) head.classList.add("types-below");
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(head);
+    return () => ro.disconnect();
+  }, [pokemon]);
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
   const of = (group) => CATEGORIES.filter((c) => c.group === group && c.predicate(pokemon));
@@ -81,6 +120,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
     <div className="modal-backdrop" onClick={onClose}>
       <div
         className="modal detail"
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="pokemon-detail-title"
@@ -89,7 +129,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
         <button className="modal-close" aria-label="Close" onClick={onClose}>
           ×
         </button>
-        <header className="detail-head">
+        <header className="detail-head" ref={headRef}>
           <Sprite pokemon={pokemon} className="sprite detail-sprite" />
           <p className="detail-meta">
             #{String(pokemon.species).padStart(4, "0")}
@@ -128,6 +168,11 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
           </Fact>
           {moves.map(renderFact)}
         </dl>
+        <div className={`modal-more${more ? " on" : ""}`} aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </div>
       </div>
     </div>,
     document.body,
