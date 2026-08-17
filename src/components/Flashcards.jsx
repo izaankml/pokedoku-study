@@ -9,8 +9,10 @@ import { CATEGORIES } from "../data/categories.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonCard from "./PokemonCard.jsx";
 
-const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby"];
+const GROUP_FLAGS = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby", "mega", "gmax"];
 const CAT = new Map(CATEGORIES.map((c) => [c.id, c]));
+// Shown in the group slot when a Pokémon is in no group at all
+const REGULAR = { id: "regular", label: "Regular", short: "Regular", group: "special" };
 
 // Typing, region and group of a Pokémon as pills, shown once a card is
 // answered — the same strip whatever the deck asked: types on the left,
@@ -21,7 +23,7 @@ function summaryPills(p) {
     p.types.map((t) => CAT.get(`type-${t}`)),
     p.regions.map((r) => CAT.get(`region-${r}`)),
     GROUP_FLAGS.filter((f) => p.flags.includes(f)).map((f) => CAT.get(`flag-${f}`)),
-  ];
+  ].map((cats, i) => (i === 2 && !cats.length ? [REGULAR] : cats));
 }
 
 const GAVE_UP = "gaveup";

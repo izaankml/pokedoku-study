@@ -540,6 +540,7 @@ header h1 {
 .group-baby { --g: #7ec2f2; }       /* sky */
 .group-mega { --g: #e050c0; }       /* magenta */
 .group-gmax { --g: #f0603c; }       /* red-orange */
+.group-regular { --g: #8b8992; }    /* grey: in no group */
 
 /* Abilities: outlined, quieter than category pills; the ones PokeDoku
    asks about get the accent wash */
