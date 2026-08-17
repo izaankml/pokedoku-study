@@ -5,7 +5,7 @@
 // transformations belong beside an evolution line: Charizard ⇢ Mega X /
 // Mega Y / Gigantamax. Regional forms already sit in the tree via `prevo`.
 
-import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.js";
+import { POKEMON, POKEMON_BY_ID, POKEMON_BY_NAME } from "../data/pokedex.js";
 
 // Mega Stones (Serebii's Legends: Z-A table — the older ones aren't
 // formulaic: Blastoisinite, Alakazite, Lucarionite …), by species name;
@@ -75,7 +75,6 @@ const TRIGGERS = {
 // A form of a form attaches to that form, not the species (Galarian
 // Darmanitan's Zen Mode; Gigantamax Rapid Strike Urshifu).
 const BASE_OF = { darmanitangalarzen: "darmanitangalar", urshifurapidstrikegmax: "urshifurapidstrike" };
-const BY_NAME = new Map(POKEMON.map((p) => [p.name, p]));
 
 const isMega = (p) => /mega$/i.test(p.form || "") || /^Mega-[XYZ]$/.test(p.form || "");
 const isGmax = (p) => /gmax$/i.test(p.form || "");
@@ -88,7 +87,7 @@ export function isTransformation(p) {
 // The Pokémon a transformation is a form of (the record itself otherwise).
 export function baseOf(p) {
   if (!isTransformation(p)) return p;
-  return BY_NAME.get(BASE_OF[p.name]) || POKEMON_BY_ID.get(p.species) || p;
+  return POKEMON_BY_NAME.get(BASE_OF[p.name]) || POKEMON_BY_ID.get(p.species) || p;
 }
 
 // What switches a Pokémon into this form.

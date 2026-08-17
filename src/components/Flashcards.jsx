@@ -4,7 +4,7 @@ import { pickFlashcard } from "../logic/picker.js";
 import { DECKS, DECK_BY_ID, cardKey, saveSession, session } from "../logic/flashcards.js";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.js";
 import { formatInterval, intervalFor } from "../logic/schedule.js";
-import { POKEMON_BY_ID, preloadSprite } from "../data/pokedex.js";
+import { POKEMON_BY_ID, POKEMON_BY_NAME, preloadSprite } from "../data/pokedex.js";
 import { CATEGORIES } from "../data/categories.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
 import PokemonCard from "./PokemonCard.jsx";
@@ -63,9 +63,10 @@ function Flashcards() {
   const pokemon = POKEMON_BY_ID.get(card.pokemonId);
 
   // The open sheet lives in the URL (#cards/region/pokemon-eevee) — only
-  // for this card once answered, so nothing gives the answer away
-  const resolve = useCallback((slug) => (picked !== null && slug === pokemon.name ? pokemon : null), [picked, pokemon]);
-  const [showDetail, openDetail, closeDetail] = useDetailHash(resolve);
+  // once the card is answered, so nothing gives the answer away (any
+  // Pokémon then: a sheet's evolution tiles lead on to other sheets)
+  const resolve = useCallback((slug) => (picked !== null && slug ? POKEMON_BY_NAME.get(slug) || null : null), [picked]);
+  const [detail, openDetail, closeDetail] = useDetailHash(resolve); // the open sheet's Pokémon
 
   function freshCard(forDeck, alsoExclude = []) {
     const { deck, pokemon, param } = pickFlashcard(merged, {
@@ -110,7 +111,7 @@ function Flashcards() {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       // a focused tab or deck chip keeps its own keyboard behaviour; with
       // the detail sheet open, keys belong to it (Escape closes)
-      if (showDetail || document.activeElement?.closest(".tabs, .deck-picker")) return;
+      if (detail || document.activeElement?.closest(".tabs, .deck-picker")) return;
       if (e.key === "Enter") {
         if (picked !== null) {
           e.preventDefault();
@@ -254,7 +255,7 @@ function Flashcards() {
       {/* once answered, the card opens the detail sheet (evolution line and
           all); before that it stays inert so nothing gives the answer away */}
       <PokemonCard pokemon={pokemon} eager onClick={answered ? () => openDetail(pokemon) : undefined} />
-      {showDetail ? <PokemonDetail pokemon={pokemon} onClose={closeDetail} /> : null}
+      {detail ? <PokemonDetail pokemon={detail} onClose={closeDetail} onOpen={openDetail} /> : null}
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
           <div className="card-facts">

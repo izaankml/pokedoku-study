@@ -38,7 +38,8 @@ function Fact({ label, children }) {
   );
 }
 
-function PokemonDetail({ pokemon, onClose }) {
+// `onOpen(pokemon)` opens another Pokémon's sheet (a tile of the tree)
+function PokemonDetail({ pokemon, onClose, onOpen }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -115,8 +116,8 @@ function PokemonDetail({ pokemon, onClose }) {
         </header>
         <section className="detail-evo" ref={evoRef}>
           <h4>Evolution</h4>
-          <EvolutionLine pokemon={pokemon} />
-          <FormsRows pokemon={pokemon} />
+          <EvolutionLine pokemon={pokemon} onOpen={onOpen} />
+          <FormsRows pokemon={pokemon} onOpen={onOpen} />
         </section>
         <dl className="detail-facts">
           {before.map(renderFact)}

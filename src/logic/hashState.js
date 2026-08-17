@@ -6,6 +6,9 @@
 // An open detail sheet is a trailing "pokemon-<slug>" segment
 // ("#browse/region-kanto/pokemon-eevee"): opening pushes an entry, so Back
 // closes the sheet; closing it pops that entry, so Back never reopens it.
+// A sheet opened from within a sheet (tapping a tile of the evolution
+// line) pushes another, so Back returns to the previous sheet while ×
+// closes them all (the entry's state counts the depth).
 
 import { useEffect, useState } from "react";
 
@@ -58,13 +61,15 @@ export function useDetailHash(resolve) {
   const open = (pokemon) => {
     setSelected(pokemon);
     const { tab, rest } = readHash();
-    writeHash(tab, rest, { detail: pokemon.name, push: true, state: { detail: pokemon.name } });
+    const depth = (window.history.state?.depth || 0) + 1;
+    writeHash(tab, rest, { detail: pokemon.name, push: true, state: { detail: pokemon.name, depth } });
   };
   const close = () => {
     setSelected(null);
-    // the entry we pushed on open — pop it; a sheet opened from a pasted or
-    // refreshed link has none, so just drop the segment
-    if (window.history.state?.detail) window.history.back();
+    // the entries we pushed on open — pop them; a sheet opened from a pasted
+    // or refreshed link has none, so just drop the segment
+    const depth = window.history.state?.depth || 0;
+    if (depth) window.history.go(-depth);
     else {
       const { tab, rest } = readHash();
       writeHash(tab, rest, { detail: null });

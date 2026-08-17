@@ -1,12 +1,13 @@
-import { useCallback } from "react";
 import PokemonCard from "./PokemonCard.jsx";
 import PokemonDetail from "./PokemonDetail.jsx";
 import { useDetailHash } from "../logic/hashState.js";
+import { POKEMON_BY_NAME } from "../data/pokedex.js";
+
+// the open sheet lives in the URL (…/pokemon-eevee); any Pokémon, since a
+// sheet's evolution tiles lead to sheets of Pokémon outside this list
+const resolve = (slug) => (slug && POKEMON_BY_NAME.get(slug)) || null;
 
 function AnswerList({ pokemon, title, highlightId }) {
-  // the open sheet lives in the URL (…/pokemon-eevee) — only for a Pokémon
-  // in this list, so a slug left over from another view doesn't open here
-  const resolve = useCallback((slug) => (slug && pokemon.find((p) => p.name === slug)) || null, [pokemon]);
   const [selected, open, close] = useDetailHash(resolve);
   return (
     <section className="answer-list">
@@ -22,7 +23,7 @@ function AnswerList({ pokemon, title, highlightId }) {
           </div>
         ))}
       </div>
-      {selected ? <PokemonDetail pokemon={selected} onClose={close} /> : null}
+      {selected ? <PokemonDetail pokemon={selected} onClose={close} onOpen={open} /> : null}
     </section>
   );
 }

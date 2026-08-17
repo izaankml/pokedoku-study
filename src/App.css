@@ -1243,7 +1243,7 @@ header h1 {
   align-items: center;
   justify-content: center;
   gap: 1px;
-  padding: 5px 4px;
+  padding: 5px 4px 8px; /* room above the type strip */
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1.5px solid var(--border-subtle);
@@ -1285,6 +1285,38 @@ header h1 {
 .evo-tile.current {
   border-color: var(--accent);
   background: var(--accent-soft);
+}
+
+/* a tile that opens that Pokémon's sheet */
+button.evo-tile {
+  cursor: pointer;
+  user-select: none;
+}
+
+button.evo-tile:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-3);
+}
+
+button.evo-tile:active {
+  transform: scale(0.97);
+}
+
+/* the type strip along the bottom edge: one colour, or split for a dual
+   type (--t1 / --t2 come inline from the tile) */
+.evo-tile {
+  position: relative;
+  overflow: hidden;
+}
+
+.evo-types {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--t1) 0 50%, var(--t2) 50% 100%);
+  opacity: 0.9;
 }
 
 .evo-sprite,

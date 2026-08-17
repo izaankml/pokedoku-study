@@ -239,7 +239,13 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     that are different individuals — regional forms (already in the tree),
     Tauros breeds, Oricorio, Partner Pikachu, Bloodmoon Ursaluna … — are
     not forms of this kind. A test checks every transformation has a
-    trigger; all 318 form tiles measured square.
+    trigger; all 318 form tiles measured square. Every tile carries a
+    strip along its bottom edge in its type colours (split for a dual
+    type) — the thing that changes along a line — and tapping a tile
+    opens that Pokémon's own sheet, pushed on top: Back returns to the
+    previous sheet, × closes them all (`useDetailHash` counts the depth
+    in the history entry's state). Region stays in the header: it's the
+    same on every tile of nearly every line.
     — then Abilities and Moves, each a small-caps label with its pills
     beneath (quieter, uniform pills). Not listed (still
     categories everywhere else): type count, tracked abilities, evolution

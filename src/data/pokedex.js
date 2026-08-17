@@ -6,6 +6,7 @@ export const POKEMON = data.pokemon;
 export const DATA_META = data.meta;
 
 export const POKEMON_BY_ID = new Map(POKEMON.map((p) => [p.id, p]));
+export const POKEMON_BY_NAME = new Map(POKEMON.map((p) => [p.name, p]));
 
 // Forms are named the way PokeDoku names them — species first, then the
 // form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner") — built
