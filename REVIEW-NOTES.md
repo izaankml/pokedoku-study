@@ -231,8 +231,10 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Gigantamax, Primal, Origin, Crowned, Necrozma's fusions, Hoopa
     Unbound, Zygarde, Calyrex riders, Ogerpon masks, Rotom appliances,
     Sky Shaymin, Therian Landorus, Pirouette Meloetta, Zen Mode, Castform,
-    Deoxys, Ash-Greninja — one row per stage that has any (Pikachu ⇢
-    Gmax; Raichu ⇢ Mega X / Mega Y), dashed tiles and a ⇢ arrow so they
+    Deoxys, Ash-Greninja — laid out like the tree in one row: each stage
+    that has any, then its forms stacked in pairs (Pikachu ⇢ Gmax, then
+    Raichu ⇢ Mega X over Mega Y; Rotom's five in three columns), dashed
+    tiles and a ⇢ arrow so they
     read as "becomes, for a while", each with its trigger (Mega Stones
     from Serebii's Legends: Z-A table, incl. Absolite Z, Garchompite Z,
     Lucarionite Z, Raichunite X/Y; Rayquaza's is Dragon Ascent). Variants

@@ -1265,21 +1265,15 @@ header h1 {
   font-size: 1.2rem;
 }
 
-/* the Forms block sits under the tree and scrolls like it: a grid of
-   base | ⇢ | forms rows, centred as a whole, bases in one column */
+/* the Forms row sits under the tree and scrolls like it: each stage and
+   its forms (stacked in pairs) as a group, groups side by side */
 .detail-forms-head {
   margin-top: var(--sp-3);
 }
 
-.forms-grid {
-  --evo-tile: 100px;
-  display: grid;
-  grid-template-columns: auto auto auto;
+.forms-line {
   align-items: center;
-  justify-content: center;
-  gap: 6px 2px;
-  width: max-content;
-  min-width: 100%;
+  gap: var(--sp-4);
 }
 
 .evo-tile.current {
@@ -2373,8 +2367,7 @@ main > * {
 /* phones: smaller tiles, so a stage row or a forms row fits the sheet
    without scrolling (three stages, or a base and three forms) */
 @media (max-width: 480px) {
-  .evo-line,
-  .forms-grid {
+  .evo-line {
     --evo-tile: 76px;
   }
   .evo-tile {
