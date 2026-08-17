@@ -457,6 +457,8 @@ header h1 {
 }
 
 .pill[class*="type-"] {
+  min-width: 5em; /* "Ice" and "Bug" as wide a chip as "Fighting" nearly is */
+  text-align: center;
   background: var(--type-c);
   background: linear-gradient(
     140deg,
