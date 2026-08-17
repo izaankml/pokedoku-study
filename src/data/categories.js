@@ -71,11 +71,11 @@ export const CATEGORIES = [
   // (Alakazam: trade and item, via the Linking Cord). Stone is the subset
   // of item where an evolution stone is used, not held.
   ...[
-    ["level", "Evolved by Level-Up", "Level Evo", 2, "didn't evolve by levelling up"],
-    ["item", "Evolved by Item", "Item Evo", 2, "didn't evolve with an item"],
-    ["stone", "Evolved by Stone", "Stone Evo", 2, "didn't evolve with a stone"],
-    ["trade", "Evolved by Trade", "Trade Evo", 2, "didn't evolve by trade"],
-    ["friendship", "Evolved by Friendship", "Friendship Evo", 2, "didn't evolve by friendship"],
+    ["level", "Evolved by Level-Up", "Level Evolution", 2, "didn't evolve by levelling up"],
+    ["item", "Evolved by Item", "Item Evolution", 2, "didn't evolve with an item"],
+    ["stone", "Evolved by Stone", "Stone Evolution", 2, "didn't evolve with a stone"],
+    ["trade", "Evolved by Trade", "Trade Evolution", 2, "didn't evolve by trade"],
+    ["friendship", "Evolved by Friendship", "Friendship Evolution", 2, "didn't evolve by friendship"],
   ].map(([m, label, short, priorWeight, miss]) => ({
     id: `evo-${m}`,
     label,
@@ -89,7 +89,7 @@ export const CATEGORIES = [
     ["first", "First Stage", "First Stage", "isn't a first-stage Pokémon"],
     ["middle", "Middle Stage", "Middle Stage", "isn't a middle-stage Pokémon"],
     ["final", "Final Stage", "Final Stage", "isn't a final-stage Pokémon"],
-    ["single", "No Evolution Line", "No Evo Line", "has an evolution line"],
+    ["single", "No Evolution Line", "No Evolution Line", "has an evolution line"],
   ].map(([st, label, short, miss]) => ({
     id: `stage-${st}`,
     label,

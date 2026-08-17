@@ -68,7 +68,7 @@ export const DECKS = [
     questionText: "How did this Pokémon evolve?",
     options: ["evo-level", "evo-item", "evo-stone", "evo-trade", "evo-friendship"].map((id) => ({
       ...cat(id),
-      short: cat(id).short.replace(" Evo", "").replace("Level", "Level-Up"),
+      short: cat(id).short.replace(" Evolution", "").replace("Level", "Level-Up"),
     })),
     answers: (p) => p.evoMethods.map((m) => `evo-${m}`),
     eligible: (p) =>
