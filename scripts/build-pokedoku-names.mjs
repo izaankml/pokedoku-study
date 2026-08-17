@@ -23,10 +23,15 @@ if (!res.ok) throw new Error(`PokeDoku API ${res.status}`);
 const entries = await res.json();
 const byId = new Map(entries.filter((e) => e.id > 0).map((e) => [e.id, e]));
 
+// Records PokeDoku names under a different id than ours: its plain Zygarde
+// (718, "zygarde-50") is hidden and the one it shows is the 50% Power
+// Construct entry (10119, "zygarde-50%"), which the dataset folds into 718.
+const ALIAS = { 718: 10119 };
+
 const out = {};
 let missing = 0;
 for (const p of pokemon) {
-  const e = byId.get(p.id);
+  const e = byId.get(ALIAS[p.id] ?? p.id);
   if (!e) {
     if (p.form !== null) missing += 1;
     continue;
