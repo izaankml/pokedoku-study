@@ -145,7 +145,7 @@ export function FormsRows({ pokemon, onOpen }) {
         <div className="evo-line forms-line">
           {groups.map(([stage, forms]) => (
             <div key={stage.id} className="evo-node">
-              <Tile pokemon={stage} onOpen={stage.id === pokemon.id ? undefined : onOpen} />
+              <Tile pokemon={stage} current={stage.id === pokemon.id} onOpen={onOpen} />
               <Arrow form />
               <div className="evo-tiles">
                 {pairsOf(forms).map((pair) => (
