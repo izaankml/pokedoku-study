@@ -71,8 +71,8 @@ function PokemonDetail({ pokemon, onClose }) {
             </h3>
             <p className="hint detail-meta">
               #{String(pokemon.species).padStart(4, "0")}
-              {base ? ` · form of ${base.displayName}` : ""}
-              {pokemon.evoDetail ? ` · evolves: ${pokemon.evoDetail}` : ""}
+              {base ? ` · Form of ${base.displayName}` : ""}
+              {pokemon.evoDetail ? ` · Evolves: ${pokemon.evoDetail}` : ""}
             </p>
           </div>
         </div>
