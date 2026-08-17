@@ -390,3 +390,12 @@ Delete this file once reviewed; anything worth keeping is in README.md.
   Primal/ORAS region handling (see 7) against a live puzzle — the puzzle
   APIs need a login.
 - Old flashcard history keyed by species id now only feeds the Region deck.
+
+## Browse
+
+41. Both dropdowns start blank (a blank option, not "— none —"), which
+    lists every answer; one category filters, two intersect. The hash
+    carries only what's picked (`#browse`, `#browse/type-fire`,
+    `#browse/region-kanto/type-fire`). A search box under the dropdowns
+    narrows the current list by name — display name, the dataset's own
+    name and the dex slug, like the answer boxes — and isn't in the hash.
