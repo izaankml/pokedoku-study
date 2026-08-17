@@ -76,24 +76,20 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
   }, [pokemon]);
 
   // Types sit under the name with the groups beside them. When that row
-  // is wider than the header (Koraidon on a phone) the types drop under
-  // the sprite (App.css .types-below); when even that overflows (a long
-  // name beside "Mega Evolution") types and groups share one row across
-  // the header (.tags-row); the name itself only wraps as a last resort
+  // can't hold both (Koraidon on a phone) it drops under the sprite and
+  // spans the header (App.css .types-below); the name itself only wraps as
+  // a last resort
   const headRef = useRef(null);
   useLayoutEffect(() => {
     const head = headRef.current;
     if (!head) return undefined;
     const overflows = () => head.scrollWidth > head.clientWidth + 1;
     const place = () => {
-      head.classList.remove("types-below", "tags-row", "name-wraps"); // measure with the types under the name
-      const groups = head.querySelector(".detail-groups");
-      const pill = groups?.firstElementChild;
-      const stacked = pill && groups.offsetHeight > pill.offsetHeight * 1.5; // the groups had to wrap
-      if (!stacked && !overflows()) return;
-      head.classList.add("types-below");
-      if (!overflows()) return;
-      head.classList.add("tags-row");
+      head.classList.remove("types-below", "name-wraps"); // measure with the tags under the name
+      const tags = head.querySelector(".detail-tags");
+      const pill = tags?.querySelector(".pill");
+      const wrapped = pill && tags.offsetHeight > pill.offsetHeight * 1.5; // types and groups no longer share a line
+      if (wrapped || overflows()) head.classList.add("types-below");
       if (overflows()) head.classList.add("name-wraps"); // a very long name: let it break rather than overflow
     };
     place();
@@ -142,16 +138,18 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
             #{String(pokemon.species).padStart(4, "0")}
             {base ? ` · Form of ${pokemon.speciesName || base.displayName}` : ""}
           </p>
-          <h3 id="pokemon-detail-title">
-            <PokemonName name={pokemon.displayName} />
-          </h3>
-          <div className="detail-pills detail-region">
-            {regions.map((c) => (
-              <CategoryPill key={c.id} cat={c} useShort />
-            ))}
+          <div className="detail-name-row">
+            <h3 id="pokemon-detail-title">
+              <PokemonName name={pokemon.displayName} />
+            </h3>
+            <div className="detail-pills detail-region">
+              {regions.map((c) => (
+                <CategoryPill key={c.id} cat={c} useShort />
+              ))}
+            </div>
           </div>
-          {/* display: contents normally (types and groups are grid cells);
-              a flex row spanning the header when nothing else fits */}
+          {/* types then groups, one wrapping row; under the sprite when
+              that's the only way they fit (Koraidon on a phone) */}
           <div className="detail-tags">
             <div className="detail-pills detail-types">
               {types.map((c) => (

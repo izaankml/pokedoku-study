@@ -193,18 +193,14 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     (`main > *`, a translate) made them the containing block for the
     fixed backdrop, so a sheet opened by a reload sat thousands of pixels
     down the Browse list for 200ms and then jumped into place. Three blocks divided by
-    hairlines: header (one grid — plain sprite; dex line; the name with
-    the region pill right after it; the type pills under the name with the
-    group pills beside them, region and groups sharing a left-aligned
-    column that starts right after the name column; only when that row
-    wouldn't fit — the groups had to stack, or the header overflows:
-    Koraidon/Miraidon on a phone — do the types drop under the sprite and
-    span the left columns (measured in PokemonDetail, `.types-below`);
-    when even that overflows (a long name beside "Mega Evolution") types
-    and groups share one row across the header (`.tags-row`), and only
-    then may the name itself wrap (`.name-wraps`). Header pills never
-    wrap their text; the rows under the dex line run under the close
-    button — identity, not rows), then
+    hairlines: header (a grid of sprite | rows: dex line; the name with
+    the region pill right after it — the same spot on every sheet, wrapping
+    under only for an extreme name; the type pills with the group pills
+    right after them, one wrapping row; when types and groups can't share
+    a line (Koraidon on a phone) that row drops under the sprite and spans
+    the header (`.types-below`, measured), and only then may the name
+    wrap (`.name-wraps`); pills never wrap their text — identity, not
+    rows), then
     Evolution, centred: a tree
     of square tiles (sprite, name, how), each joined by an arrow to its
     own evolutions — one arrow to a lone evolution, one shared arrow into

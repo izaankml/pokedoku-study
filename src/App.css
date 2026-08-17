@@ -2335,48 +2335,20 @@ main > * {
   text-align: left;
 }
 
-/* one grid:   sprite | dex line ─────────
-                sprite | name    | region
-                sprite | types   | groups
-   region and groups share a column, left-aligned to each other; on a
-   phone the types row drops under the sprite and spans both left columns,
-   so two types and two groups (Koraidon) still fit one line */
+/* one grid:   sprite | dex line
+                sprite | name  region
+                sprite | types  groups
+   the region pill sits right after the name, the group pills right after
+   the types — same place on every sheet; on a phone the types row drops
+   under the sprite and spans the header when it can't hold both */
 .detail-head {
   display: grid;
-  grid-template-columns: auto auto 1fr; /* region/groups start right after the name column */
+  grid-template-columns: auto 1fr;
   align-items: center;
   column-gap: var(--sp-3);
   row-gap: 8px;
   padding: var(--sp-4);
   border-bottom: 1px solid var(--border-subtle);
-}
-
-/* the dex line shares its row with the close button; the rows below run
-   under it */
-.detail-meta {
-  padding-right: 40px;
-}
-
-.detail-head .pill {
-  white-space: nowrap;
-}
-
-.detail-tags {
-  display: contents;
-}
-
-/* nothing else fits: types and groups in one row across the header */
-.detail-head.tags-row .detail-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px var(--sp-3);
-  grid-column: 1 / -1;
-}
-
-.detail-head.tags-row .detail-types,
-.detail-head.tags-row .detail-groups {
-  grid-column: auto;
 }
 
 .detail-head > .sprite,
@@ -2385,11 +2357,24 @@ main > * {
   margin-right: var(--sp-1);
 }
 
+/* the dex line shares its row with the close button; the rows below run
+   under it */
 .detail-meta {
-  grid-column: 2 / -1;
+  grid-column: 2;
   margin: 0 0 -4px;
+  padding-right: 40px;
   font-size: 0.82rem;
   color: var(--text-low);
+}
+
+.detail-name-row,
+.detail-tags {
+  grid-column: 2;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px var(--sp-3);
 }
 
 .detail-head h3 {
@@ -2403,27 +2388,11 @@ main > * {
   white-space: normal; /* … unless nothing else is left to give */
 }
 
-.detail-region,
-.detail-groups {
-  grid-column: 3;
-  align-self: center;
+.detail-head .pill {
+  white-space: nowrap;
 }
 
-/* when the type row wouldn't fit beside the region/groups column
-   (Koraidon: two types and two groups on a phone) it drops under the
-   sprite and spans both left columns — decided by measurement in
-   PokemonDetail */
-.detail-head.types-below > .sprite,
-.detail-head.types-below > .sprite-fallback {
-  grid-row: 1 / 3;
-}
-
-.detail-head.types-below .detail-types {
-  grid-column: 1 / 3;
-}
-
-/* both types stay side by side; several groups may stack when the sheet
-   is narrow (the name keeps its room) */
+/* both types stay side by side */
 .detail-head .detail-types,
 .detail-head .detail-region {
   flex-wrap: nowrap;
@@ -2435,6 +2404,15 @@ main > * {
   font-size: 0.82rem;
   font-weight: 700;
   box-shadow: var(--edge-hi);
+}
+
+.detail-head.types-below > .sprite,
+.detail-head.types-below > .sprite-fallback {
+  grid-row: 1 / 3;
+}
+
+.detail-head.types-below .detail-tags {
+  grid-column: 1 / -1;
 }
 
 .detail-sprite,
