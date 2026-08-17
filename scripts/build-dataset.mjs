@@ -612,16 +612,16 @@ for (const a of ABILITIES) check(count((r) => r.abilities.includes(a.id)) > 0, `
 
 // forms
 const formCount = (pred) => formRecords.filter(pred).length;
-const EXPECTED_FORM_COUNT = 232;
+const EXPECTED_FORM_COUNT = 233;
 check(
   formRecords.length === EXPECTED_FORM_COUNT,
   `form count ${formRecords.length} != ${EXPECTED_FORM_COUNT}`
 );
 check(formRecords.every((r) => r.id >= 10000), "form ids must be PokeAPI form ids");
 check(formRecords.every((r) => baseById.has(r.species)), "form without base species");
-check(formCount((r) => r.flags.includes("mega")) === 96, "mega forms != 96 (all visible in PokeDoku)");
+check(formCount((r) => r.flags.includes("mega")) === 97, "mega forms != 97 (PokeDoku's 96 visible plus the hidden Meowstic-F-Mega)");
 check(formCount((r) => r.flags.includes("gmax")) === 34, "gmax forms != 34 (all visible in PokeDoku)");
-check(formCount((r) => r.stage === null) === 96 + 34 + 1, "no-stage forms = mega + gmax + Ash-Greninja (Eternamax adds nothing)");
+check(formCount((r) => r.stage === null) === 97 + 34 + 1, "no-stage forms = mega + gmax + Ash-Greninja (Eternamax adds nothing)");
 const regional = (name) => (r) => r.form.startsWith(name);
 const only = (r, region) => r.region === region && r.regions.length === 1;
 check(formCount(regional("Alola")) === 18, "alolan forms != 18");

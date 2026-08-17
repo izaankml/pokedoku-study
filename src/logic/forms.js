@@ -241,18 +241,26 @@ export function counterpartsOf(p) {
 // Galar Zen; Charizard Mega X lists Charizard, Mega X, Mega Y, Gmax;
 // every Lycanroc lists all three. Empty when there's nothing but itself.
 // A gender form (Pyroar Female) shares its base's transformations — she
-// Mega Evolves into the same Mega Pyroar — so those rows list each other.
-const genderMatesOf = (base) => variantsOf(base).filter((v) => v.form === "F");
+// Mega Evolves into the same Mega Pyroar — unless she has her own of that
+// kind (Meowstic Female has her own Mega); those rows list each other.
+const sharedFormsOf = (female, base) => {
+  const own = new Set(formsOf(female).map(formKind));
+  return formsOf(base).filter((f) => !own.has(formKind(f)));
+};
+const genderMatesOf = (t) => {
+  const B = baseOf(t);
+  return variantsOf(B).filter((v) => v.form === "F" && sharedFormsOf(v, B).includes(t));
+};
 export function formsRow(p) {
   const S = POKEMON_BY_ID.get(p.species) || p;
   let list;
   if (isTransformation(p)) {
     const B = baseOf(p);
-    list = [B, ...formsOf(B), ...counterpartsOf(p), ...genderMatesOf(B)];
+    list = [B, ...formsOf(B), ...counterpartsOf(p), ...genderMatesOf(p)];
   } else if (p === S) {
     list = [S, ...formsOf(S), ...variantsOf(S)];
   } else {
-    list = [S, ...variantsOf(S), ...formsOf(p), ...(p.form === "F" ? formsOf(S) : [])];
+    list = [S, ...variantsOf(S), ...formsOf(p), ...(p.form === "F" ? sharedFormsOf(p, S) : [])];
   }
   const seen = new Set();
   list = list.filter((q) => !seen.has(q.id) && seen.add(q.id)).sort((a, b) => a.id - b.id);

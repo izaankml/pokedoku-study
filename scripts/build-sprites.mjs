@@ -69,12 +69,16 @@ function boxOf(buf) {
 const { pokemon } = JSON.parse(readFileSync(join(dataDir, "pokedex.json"), "utf8"));
 const out = {};
 const counts = { pokedoku: 0, pokedokuBase: 0, pokeapi: 0, pokeapiBase: 0, none: 0 };
+// a form with no sprite of its own anywhere: the closest form to stand in
+// (Meowstic-F-Mega → the female Meowstic, not the species' male sprite)
+const STAND_IN = { 10326: 10025 };
 let done = 0;
 for (const p of pokemon) {
-  // own id on PokeDoku, then base species on PokeDoku, then the same on PokeAPI
+  // own id on PokeDoku, then a stand-in, then base species on PokeDoku, then the same on PokeAPI
   const tries = [];
   for (const host of [0, 1]) {
     tries.push([host, p.id]);
+    if (STAND_IN[p.id]) tries.push([host, STAND_IN[p.id]]);
     if (p.species !== p.id) tries.push([host, p.species]);
   }
   let entry = null;

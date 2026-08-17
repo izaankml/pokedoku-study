@@ -361,6 +361,7 @@ export const FORM_IDS = {
   floettemega: 10296, // Floette-Mega
   meowsticf: 10025, // Meowstic-F
   meowsticmmega: 10314, // Meowstic-M-Mega
+  meowsticfmega: 10326, // Meowstic-F-Mega (Legends Z-A; PokeDoku lists it hidden)
   aegislashblade: 10026, // Aegislash-Blade
   malamarmega: 10297, // Malamar-Mega
   barbaraclemega: 10298, // Barbaracle-Mega
