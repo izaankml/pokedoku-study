@@ -187,7 +187,11 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     entry so Back never reopens a closed sheet, a pasted or reloaded link
     opens it (only if the Pokémon is in that view — a stale slug is
     dropped), and switching tabs drops it. The `#` itself stays: GitHub
-    Pages serves static files, so a real path would 404 on refresh. Three blocks divided by
+    Pages serves static files, so a real path would 404 on refresh. The
+    sheet is portalled onto `<body>`: the tab roots' entry animation
+    (`main > *`, a translate) made them the containing block for the
+    fixed backdrop, so a sheet opened by a reload sat thousands of pixels
+    down the Browse list for 200ms and then jumped into place. Three blocks divided by
     hairlines: header (plain sprite; name, dex line, and the type and
     region pills — identity, not rows), then Evolution, centred: a tree
     of square tiles (sprite, name, how), each joined by an arrow to its

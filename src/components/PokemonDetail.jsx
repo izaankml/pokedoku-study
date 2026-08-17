@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
 import CategoryPill, { AbilityPill } from "./CategoryPill.jsx";
@@ -62,7 +63,11 @@ function PokemonDetail({ pokemon, onClose }) {
     </Fact>
   );
 
-  return (
+  // Rendered on <body>: the tab roots animate a translate on entry, and a
+  // transforming ancestor would anchor the fixed backdrop to itself — a
+  // sheet opened by a reload would sit far down the page until the
+  // animation ended, then jump.
+  return createPortal(
     <div className="modal-backdrop" onClick={onClose}>
       <div
         className="modal detail"
@@ -105,7 +110,8 @@ function PokemonDetail({ pokemon, onClose }) {
           {moves.map(renderFact)}
         </dl>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
