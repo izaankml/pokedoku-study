@@ -1,6 +1,6 @@
 import { evolutionTree, evoNote, shortHow } from "../logic/evolution.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
-import { formLabel, formTrigger, formsOf, variantNote, variantsOf } from "../logic/forms.js";
+import { baseNote, formLabel, formTrigger, formsOf, variantNote, variantsOf } from "../logic/forms.js";
 import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 
@@ -148,7 +148,7 @@ export function FormsRows({ pokemon, onOpen }) {
         <div className="evo-line forms-line">
           {groups.map(([stage, forms, variants]) => (
             <div key={stage.id} className="evo-node">
-              <Tile pokemon={stage} current={stage.id === pokemon.id} onOpen={onOpen} />
+              <Tile pokemon={stage} note={baseNote(stage)} current={stage.id === pokemon.id} onOpen={onOpen} />
               {forms.length ? (
                 <>
                   <Arrow form />

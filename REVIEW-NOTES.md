@@ -267,7 +267,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     sheet's own species only (not every stage of the line) and always
     leads with the species base — even on a form's own sheet, so Lycanroc,
     Midnight and Dusk all read "Lycanroc ≈ Midnight / Dusk" with the
-    current one highlighted; tree-mates aren't left out (Raichu ≈ Alola
+    current one highlighted, and the base names its own form where the games do (`baseNote`: Midday, Amped, Incarnate, Shield …); tree-mates aren't left out (Raichu ≈ Alola
     shows even though Alolan Raichu sits in the tree above). Long
     one-word names (Meowscarada) shrink to fit a tile rather than break.
     Still absent, on
