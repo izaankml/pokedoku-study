@@ -517,14 +517,19 @@ header h1 .home-link:focus-visible {
   text-shadow: none;
 }
 
-/* Regions: a two-tone border in the colours of the region's games (the
-   fill is painted on the padding box, the gradient on the border box, so
-   the ring follows the pill's radius) */
+/* Regions: a two-tone fill in the colours of the region's games (Red /
+   Blue, Gold / Silver, …), dark text like the type pills */
 .pill[class*="region-"] {
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
-    linear-gradient(135deg, var(--r1), var(--r2)) border-box;
+  background: linear-gradient(135deg, var(--r1), var(--r2));
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  color: #16130f;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Black / White is mostly dark, so it takes light text */
+.pill.region-unova {
+  color: #f5f4f6;
+  text-shadow: none;
 }
 
 .region-kanto { --r1: #e8463a; --r2: #3f78e0; }   /* Red / Blue */
