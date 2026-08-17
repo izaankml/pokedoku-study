@@ -180,8 +180,9 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     band is *still* black on device, Safari isn't showing the canvas there
     at all and the strip is Safari's own — nothing on our side can paint it.
 30b. Detail card: centred dialog on all sizes (was a bottom sheet on
-    phones); the page behind it can't scroll (`#root` overflow locked
-    while open, backdrop `touch-action: none`). An open sheet is a
+    phones), a fixed height (min(84dvh, 720px), not fit-to-content, so it
+    doesn't jump between Pokémon); the page behind it can't scroll
+    (`#root` overflow locked while open, backdrop `touch-action: none`). An open sheet is a
     trailing `pokemon-<slug>` hash segment (`useDetailHash`): opening
     pushes a history entry so Back closes it, ×/Esc/backdrop pop that
     entry so Back never reopens a closed sheet, a pasted or reloaded link
@@ -264,17 +265,18 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     Partner Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude
     Dada, the female Meowstic … — sits in the Forms row after ≈ (dotted
     tiles, a word on what it is: `variantNote`). The row (`formsRow`) is
-    the *other* forms that relate directly to the sheet's Pokémon (its own
-    tile is the header): the species base lists ⇢ its transformations and
-    ≈ its variants; a variant lists ≈ the base and the other variants and
-    ⇢ its own transformations; a transformation lists ⇠ its base and ≈ the
-    base's other transformations plus its counterparts (the same kind on
-    the other variants: Zen ≈ Galar Zen, Single Strike Gmax ≈ Rapid Strike
-    Gmax, Tatsugiri's three Megas — `formKind`, `counterpartsOf`). So
-    Darmanitan lists Zen and Galarian Darmanitan (not Galar Zen); Zen lists
-    Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
-    Galar Zen; Charizard Mega X lists Charizard, Mega Y, Gmax; every
-    Lycanroc lists the other two. A transformation's base is the variant
+    one flat, wrapping row in dex order, no connectors: the Pokémon itself
+    (once, highlighted) and the forms that relate to it directly — the
+    species base with its transformations and its variants; a variant with
+    the base, the other variants and its own transformations; a
+    transformation with its base, that base's other transformations and its
+    counterparts (the same kind on the other variants: Zen / Galar Zen,
+    Single Strike Gmax / Rapid Strike Gmax, Tatsugiri's three Megas —
+    `formKind`, `counterpartsOf`). So Darmanitan lists Zen and Galarian
+    Darmanitan (not Galar Zen); Zen lists Darmanitan and Galar Zen;
+    Galarian Darmanitan lists Darmanitan and Galar Zen; Charizard Mega X
+    lists Charizard, Mega X, Mega Y, Gmax; every Lycanroc lists all three.
+    The row takes the tree's zoom so tiles match. A transformation's base is the variant
     whose form its own form extends (`baseOf`: Galar-Zen → Galarian
     Darmanitan, Rapid-Strike-Gmax → Rapid Strike Urshifu, Droopy-Mega →
     Droopy Tatsugiri), else the species. Tests keep the rows symmetric
