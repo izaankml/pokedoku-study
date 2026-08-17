@@ -180,8 +180,10 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     band is *still* black on device, Safari isn't showing the canvas there
     at all and the strip is Safari's own — nothing on our side can paint it.
 30b. Detail card: centred dialog on all sizes (was a bottom sheet on
-    phones), a fixed height (min(84dvh, 720px), not fit-to-content, so it
-    doesn't jump between Pokémon); the page behind it can't scroll
+    phones), as tall as its content up to min(84dvh, 720px) but always
+    starting at the same height on the page — where a full-height sheet
+    would sit if centred — so the top edge doesn't move between Pokémon;
+    the page behind it can't scroll
     (`#root` overflow locked while open, backdrop `touch-action: none`). An open sheet is a
     trailing `pokemon-<slug>` hash segment (`useDetailHash`): opening
     pushes a history entry so Back closes it, ×/Esc/backdrop pop that
