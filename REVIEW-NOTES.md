@@ -181,17 +181,17 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     at all and the strip is Safari's own — nothing on our side can paint it.
 30b. Detail card: centred dialog on all sizes (was a bottom sheet on
     phones); the page behind it can't scroll (`#root` overflow locked
-    while open, backdrop `touch-action: none`). Laid out as three blocks
-    divided by hairlines, everything left-aligned: header (sprite in a
-    well washed with its first type's colour; name, dex line and the type
-    pills — types are identity, not a row), then a label/value list
-    (Region, Group, Abilities, Moves — no Stage or Line rows, the evolution
-    tree below shows both; the categories are untouched) with quieter, uniform
-    pills, then Evolution as a row of stage tiles (sprite, name, how)
-    joined by arrows — a level with several Pokémon is one column that
-    stacks or grids its tiles, so Wurmple → Silcoon/Cascoon →
-    Beautifly/Dustox reads as a tree and Eevee's eight sit in a 4×2 grid.
-    On phones the Moves row drops its pills under the label.
+    while open, backdrop `touch-action: none`). Three blocks divided by
+    hairlines: header (plain sprite; name, dex line, and the type and
+    region pills — identity, not rows), then Evolution, centred, as a row
+    of stage tiles (sprite, name, how) joined by arrows — a level with
+    several Pokémon is one column whose tiles wrap, so Wurmple →
+    Silcoon/Cascoon → Beautifly/Dustox reads as a tree and Eevee's eight
+    grid — then a left-aligned label/value list of Group, Abilities and
+    Moves with quieter, uniform pills. Not listed (still categories
+    everywhere else): type count, tracked abilities, evolution method,
+    stage and line — the header and tree already show them. Under 480px
+    the Moves row drops its pills under the label.
 
 30. Records carry `evoItem` (the item an item evolution needs: used stone,
     held item, or held-while-trading item). Dex `evoItem` plus overrides for

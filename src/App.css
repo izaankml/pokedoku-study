@@ -1171,6 +1171,7 @@ header h1 {
 
 .evo-line {
   display: flex;
+  justify-content: center;
   align-items: stretch; /* every stage as tall as the tallest, so the row reads as one band */
   gap: 4px;
 }
@@ -1179,29 +1180,29 @@ header h1 {
   display: flex;
   align-items: stretch;
   gap: 4px;
+  flex: none; /* a single-tile level keeps its width … */
+}
+
+/* … while a level with several Pokémon is one column that gives way,
+   its tiles wrapping into as many rows as needed (Wurmple's cocoons
+   stack, Eevee's eight grid) */
+.evo-level.branch {
+  flex: 0 1 auto;
   min-width: 0;
 }
 
-/* a level with several Pokémon shares the leftover width; its tiles stack
-   in as many columns as fit (Wurmple's cocoons stack, Eevee's eight grid) */
-.evo-level.branch {
-  flex: 1 1 0;
-}
-
 .evo-tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
   gap: 6px;
   min-width: 0;
 }
 
-.evo-level:not(.branch) .evo-tiles {
+.evo-tiles > * {
   width: 84px;
   flex: none;
-}
-
-.evo-level.branch .evo-tiles {
-  flex: 1;
 }
 
 .evo-arrow {
@@ -2144,24 +2145,11 @@ main > * {
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* the sprite sits in a well washed with its first type's colour */
-.detail-well {
-  flex: none;
-  width: 92px;
-  height: 92px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background:
-    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--type-c) 32%, transparent), transparent 72%),
-    var(--surface-2);
-  border: 1px solid color-mix(in srgb, var(--type-c) 30%, var(--border-subtle));
-}
-
 .detail-sprite,
 .sprite-fallback.detail-sprite {
-  width: 76px;
-  height: 76px;
+  width: 92px;
+  height: 92px;
+  flex: none;
 }
 
 .detail-title {
@@ -2196,7 +2184,7 @@ main > * {
 /* label column on the left, pills on the right */
 .detail-facts {
   margin: 0;
-  padding: var(--sp-3) var(--sp-4);
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
   display: grid;
   gap: 10px;
 }
@@ -2245,14 +2233,14 @@ main > * {
 
 .detail-evo {
   padding: var(--sp-3) var(--sp-4) var(--sp-4);
-  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .detail-evo h4 {
   margin: 0 0 8px;
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   .modal-backdrop {
     padding: var(--sp-3);
   }
@@ -2260,14 +2248,10 @@ main > * {
     gap: var(--sp-3);
     padding-left: var(--sp-3);
   }
-  .detail-well {
-    width: 80px;
-    height: 80px;
-  }
   .detail-sprite,
   .sprite-fallback.detail-sprite {
-    width: 66px;
-    height: 66px;
+    width: 80px;
+    height: 80px;
   }
   .detail-facts,
   .detail-evo {

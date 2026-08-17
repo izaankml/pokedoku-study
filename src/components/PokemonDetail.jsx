@@ -6,15 +6,15 @@ import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 import EvolutionLine from "./EvolutionLine.jsx";
 
-// The sheet is three blocks: identity (sprite, name, dex line, types),
-// then a label/value list of everything else the Pokémon counts for, then
-// its evolution line. Types sit in the header rather than the list — they
-// are what you recognise a Pokémon by. Dropped from the list (still
-// categories everywhere else): type count (two type pills already say
-// "dual"), the tracked abilities (the full ability row covers them) and
-// evolution stage and line (the evolution tree below shows both).
-const FACT_LABELS = { region: "Region", special: "Group", move: "Moves" };
-const SKIP = new Set(["type", "typeCount", "ability", "stage", "evoLine"]);
+// The sheet is three blocks: identity (sprite, name, dex line, type and
+// region pills), then the evolution tree, then a label/value list of
+// everything else the Pokémon counts for. Types and region sit in the
+// header — they are what you recognise a Pokémon by. Dropped from the
+// list (still categories everywhere else): type count (two type pills
+// already say "dual"), the tracked abilities (the full ability row covers
+// them), and evolution method, stage and line (the tree shows all three).
+const FACT_LABELS = { special: "Group", move: "Moves" };
+const SKIP = new Set(["type", "region", "typeCount", "ability", "evo", "stage", "evoLine"]);
 function factsOf(pokemon) {
   return CATEGORY_GROUPS.filter(([group]) => !SKIP.has(group))
     .map(([group, label]) => ({
@@ -50,7 +50,7 @@ function PokemonDetail({ pokemon, onClose }) {
   }, [onClose]);
 
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
-  const types = CATEGORIES.filter((c) => c.group === "type" && c.predicate(pokemon));
+  const identity = CATEGORIES.filter((c) => (c.group === "type" || c.group === "region") && c.predicate(pokemon));
   const facts = factsOf(pokemon);
   // abilities go after the category rows but before the (long) move row
   const before = facts.filter((f) => f.group !== "move");
@@ -76,9 +76,7 @@ function PokemonDetail({ pokemon, onClose }) {
           ×
         </button>
         <header className="detail-head">
-          <div className={`detail-well type-${pokemon.types[0]}`}>
-            <Sprite pokemon={pokemon} className="sprite detail-sprite" />
-          </div>
+          <Sprite pokemon={pokemon} className="sprite detail-sprite" />
           <div className="detail-title">
             <h3 id="pokemon-detail-title">
               <PokemonName name={pokemon.displayName} />
@@ -88,12 +86,16 @@ function PokemonDetail({ pokemon, onClose }) {
               {base ? ` · Form of ${base.displayName}` : ""}
             </p>
             <div className="detail-types">
-              {types.map((c) => (
+              {identity.map((c) => (
                 <CategoryPill key={c.id} cat={c} useShort />
               ))}
             </div>
           </div>
         </header>
+        <section className="detail-evo">
+          <h4>Evolution</h4>
+          <EvolutionLine pokemon={pokemon} />
+        </section>
         <dl className="detail-facts">
           {before.map(renderFact)}
           <Fact label="Abilities">
@@ -103,10 +105,6 @@ function PokemonDetail({ pokemon, onClose }) {
           </Fact>
           {moves.map(renderFact)}
         </dl>
-        <section className="detail-evo">
-          <h4>Evolution</h4>
-          <EvolutionLine pokemon={pokemon} />
-        </section>
       </div>
     </div>
   );
