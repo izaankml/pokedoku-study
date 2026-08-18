@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { useStats } from "../StatsContext.js";
@@ -337,6 +338,46 @@ function ResetPanel() {
   );
 }
 
+// TEMP: viewport diagnostics for the iOS home-screen layout issue
+function ViewportProbe() {
+  const [txt, setTxt] = React.useState("");
+  React.useEffect(() => {
+    const px = (v) => {
+      const el = document.createElement("div");
+      el.style.cssText = `position:fixed;top:0;left:0;visibility:hidden;height:${v}`;
+      document.body.appendChild(el);
+      const h = el.getBoundingClientRect().height;
+      el.remove();
+      return Math.round(h);
+    };
+    const update = () => {
+      const r = document.getElementById("root").getBoundingClientRect();
+      const nav = document.querySelector(".tabs")?.getBoundingClientRect();
+      const modes = ["standalone", "fullscreen", "minimal-ui", "browser"].filter(
+        (m) => matchMedia(`(display-mode: ${m})`).matches,
+      );
+      setTxt(
+        [
+          `inner ${window.innerWidth}×${window.innerHeight}`,
+          `screen ${screen.width}×${screen.height}`,
+          `vv ${Math.round(visualViewport?.height ?? 0)}`,
+          `dvh ${px("100dvh")} lvh ${px("100lvh")} svh ${px("100svh")} vh ${px("100vh")}`,
+          `sat ${px("env(safe-area-inset-top)")} sab ${px("env(safe-area-inset-bottom)")}`,
+          `root ${Math.round(r.top)}→${Math.round(r.bottom)}`,
+          nav ? `nav ${Math.round(nav.top)}→${Math.round(nav.bottom)}` : "no nav",
+          `mode ${modes.join(",") || "?"}`,
+          `nav.standalone ${navigator.standalone}`,
+        ].join(" · "),
+      );
+    };
+    update();
+    const t = setTimeout(update, 500);
+    window.addEventListener("resize", update);
+    return () => { clearTimeout(t); window.removeEventListener("resize", update); };
+  }, []);
+  return <p className="hint meta" style={{ fontFamily: "monospace", fontSize: "0.7rem" }}>{txt}</p>;
+}
+
 function StatsView() {
   const { merged } = useStats();
 
@@ -391,6 +432,7 @@ function StatsView() {
           Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
           {POKEMON.length} answers · generated {DATA_META.generatedAt}
         </p>
+        <ViewportProbe />
       </section>
     </div>
   );
