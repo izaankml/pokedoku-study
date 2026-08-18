@@ -301,7 +301,8 @@ header h1 .home-link:focus-visible {
 
   @media (display-mode: standalone) {
     .tabs {
-      --nav-inset: env(safe-area-inset-bottom);
+      /* the home indicator never needs more than this */
+      --nav-inset: min(env(safe-area-inset-bottom), 34px);
     }
   }
 
@@ -897,7 +898,9 @@ header h1 .home-link:focus-visible {
 
 @media (max-width: 640px) {
   .browser-controls {
-    top: 0;
+    /* stick just under the fixed lid strip (body::before), which also
+       covers the status bar in a home-screen app */
+    top: calc(env(safe-area-inset-top, 0px) + 3px);
   }
 }
 
