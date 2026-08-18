@@ -291,11 +291,11 @@ header h1 .home-link:focus-visible {
   .tabs {
     position: fixed;
     top: auto;
-    /* a floating pill: inset from the edges, clear of the home indicator */
-    --nav-gap: 10px;
-    /* In a browser the toolbar below already covers the home indicator, so
-       only a sliver of inset; a home-screen app gets the full inset. */
+    /* a floating pill, inset from the edges. In a browser the toolbar
+       below already covers the home indicator, so it sits just above the
+       toolbar; a home-screen app gets the inset (dipping into it a touch). */
     --nav-inset: min(env(safe-area-inset-bottom), 8px);
+    --nav-gap: 8px;
     bottom: calc(var(--nav-inset) + var(--nav-gap));
     left: 12px;
     right: 12px;
@@ -314,6 +314,7 @@ header h1 .home-link:focus-visible {
     .tabs {
       /* the home indicator never needs more than this */
       --nav-inset: min(env(safe-area-inset-bottom), 34px);
+      --nav-gap: -6px;
       /* iOS 26 home-screen apps size the layout viewport as if the status
          bar were opaque but still draw the page under it, leaving a
          status-bar-high strip of body below `bottom: 0`. The large viewport
@@ -321,6 +322,19 @@ header h1 .home-link:focus-visible {
          correction is 0. */
       bottom: calc(100dvh - 100lvh + var(--nav-inset) + var(--nav-gap));
     }
+  }
+
+  /* an opaque page-coloured dock under the pill: content scrolls to the
+     dock's edge rather than showing through around and beneath the bar */
+  .tabs::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -8px;
+    left: -12px;
+    right: -12px;
+    height: 100lvh;
+    background: var(--bg-0);
   }
 
   .tab {
@@ -352,7 +366,7 @@ header h1 .home-link:focus-visible {
   }
 
   .app {
-    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 34px);
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px);
     /* header sits under the status bar in a browser too; keep it clear */
     padding-top: calc(10px + env(safe-area-inset-top));
   }
