@@ -444,6 +444,7 @@ function StatsView() {
           Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
           {POKEMON.length} answers · generated {formatGenerated(DATA_META.generatedAt)}
         </p>
+        <p className="hint meta">Site built {formatGenerated(__BUILD_TIME__)}</p>
         <ViewportProbe />
       </section>
     </div>
