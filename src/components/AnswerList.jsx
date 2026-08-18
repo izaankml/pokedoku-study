@@ -22,7 +22,7 @@ function AnswerList({ pokemon, title, highlightId }) {
     if (!end || limit >= pokemon.length) return undefined;
     const io = new IntersectionObserver(
       (entries) => entries.some((e) => e.isIntersecting) && setLimit((n) => Math.min(n + PAGE, pokemon.length)),
-      { root: document.getElementById("root"), rootMargin: "600px 0px" }
+      { rootMargin: "600px 0px" }
     );
     io.observe(end);
     return () => io.disconnect();

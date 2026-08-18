@@ -95,31 +95,39 @@
   --pokeball-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h6.6M14.4 12H21'/%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3C/svg%3E");
 }
 
-/* The app scrolls inside #root, not the document: iOS bounces the whole
-   web view — fixed strip and nav included — when the root overscrolls,
-   but an inner scroller only bounces its own content. */
-html,
+/* The document itself scrolls (not an inner box): iOS Safari only tucks
+   its toolbar away for page scrolling. Overscroll bounces the whole web
+   view, fixed nav included; that's the price. */
+html {
+  min-height: 100%;
+}
+
 body {
-  height: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden; /* scaled sprites (Sprite.jsx) overhang their slots */
+}
+
+/* the detail sheet freezes the page behind it: pinned in place at its
+   scroll offset (PokemonDetail sets `top`), since overflow: hidden alone
+   doesn't stop iOS touch-scrolling the document */
+body.no-scroll {
+  position: fixed;
+  left: 0;
+  right: 0;
   overflow: hidden;
 }
 
 #root {
-  height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden; /* scaled sprites (Sprite.jsx) overhang their slots */
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  min-height: 100dvh;
   background: var(--bg-0);
 }
 
 /* see .tabs in the phone rules: the layout viewport can be shorter than the
-   screen in an iOS 26 home-screen app; the scroller should reach the nav */
+   screen in an iOS 26 home-screen app; the page should reach the nav */
 @media (display-mode: standalone) {
-  html,
   body,
   #root {
-    height: 100lvh;
+    min-height: 100lvh;
   }
 }
 
@@ -327,6 +335,12 @@ header h1 .home-link:focus-visible {
          correction is 0. */
       bottom: calc(100dvh - 100lvh + var(--nav-inset) + var(--nav-gap));
     }
+
+    .app {
+      /* clear the pill: 8px + nav from the screen bottom, which is
+         (100lvh - 100dvh) below the page's bottom */
+      padding-bottom: calc(var(--nav-h) + 20px + 100dvh - 100lvh);
+    }
   }
 
   .tab {
@@ -358,7 +372,7 @@ header h1 .home-link:focus-visible {
   }
 
   .app {
-    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px);
+    padding-bottom: calc(var(--nav-h) + min(env(safe-area-inset-bottom), 8px) + 20px);
     /* header sits under the status bar in a browser too; keep it clear */
     padding-top: calc(10px + env(safe-area-inset-top));
   }

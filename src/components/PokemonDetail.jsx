@@ -43,13 +43,15 @@ function PokemonDetail({ pokemon, onClose, onOpen }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    // #root is the page's scroller (see App.css); freeze it while open
-    const root = document.getElementById("root");
-    const prev = root ? root.style.overflow : "";
-    if (root) root.style.overflow = "hidden";
+    // freeze the page behind the sheet (see body.no-scroll in App.css)
+    const y = window.scrollY;
+    document.body.style.top = `${-y}px`;
+    document.body.classList.add("no-scroll");
     return () => {
       window.removeEventListener("keydown", onKey);
-      if (root) root.style.overflow = prev;
+      document.body.classList.remove("no-scroll");
+      document.body.style.top = "";
+      window.scrollTo(0, y);
     };
   }, [onClose]);
 
