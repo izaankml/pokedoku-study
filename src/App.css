@@ -1052,9 +1052,11 @@ header h1 .home-link:focus-visible {
 }
 
 /* A wrapping row rather than a grid, so a short last row centres; every
-   option is one --cols-th of the width, per deck */
+   option is one --cols-th of the width, per deck. The same column counts
+   on every screen size, so a deck's options sit in the same spots on the
+   phone and the desktop (muscle memory) */
 .region-buttons {
-  --cols: 5;
+  --cols: 3;
   --gap: var(--sp-2);
   display: flex;
   flex-wrap: wrap;
@@ -1063,8 +1065,8 @@ header h1 .home-link:focus-visible {
   gap: var(--gap);
   width: 100%; /* auto side margins would shrink it inside the flex column */
   max-width: 480px;
-  /* three rows (the Type deck) so the action row sits still across decks */
-  min-height: calc(3 * 44px + 2 * var(--gap));
+  /* four rows (the Type deck) so the action row sits still across decks */
+  min-height: calc(4 * 44px + 3 * var(--gap));
 }
 
 .region-btn {
@@ -1479,20 +1481,7 @@ button.evo-tile:active {
 
 /* per-deck column counts */
 .region-buttons.deck-type {
-  --cols: 6;
-}
-
-.region-buttons.deck-stage,
-.region-buttons.deck-special {
-  --cols: 4;
-}
-
-.region-buttons.deck-method {
   --cols: 5;
-}
-
-.region-buttons.deck-ability {
-  --cols: 3;
 }
 
 .region-buttons.deck-branched,
@@ -1504,23 +1493,9 @@ button.evo-tile:active {
 @media (max-width: 480px) {
   /* Everything (chips, card, options, Skip/Don't Know) has to fit above
      the nav without scrolling, inside Safari's ~680px of visible height. */
-  .region-buttons,
-  .region-buttons.deck-special,
-  .region-buttons.deck-stage,
-  .region-buttons.deck-method,
-  .region-buttons.deck-ability {
-    --cols: 3;
+  .region-buttons {
     --gap: 6px;
     min-height: 0; /* the answer area centres itself in the free space */
-  }
-
-  .region-buttons.deck-type {
-    --cols: 5;
-  }
-
-  .region-buttons.deck-branched,
-  .region-buttons.deck-move {
-    --cols: 2;
   }
 
   .region-btn {
