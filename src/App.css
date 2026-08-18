@@ -303,7 +303,10 @@ header h1 .home-link:focus-visible {
     height: var(--nav-h);
     padding: 5px;
     gap: 2px;
-    background: var(--surface-2);
+    /* slightly see-through, like a system sheet: the page blurs behind it */
+    background: color-mix(in srgb, var(--surface-2) 82%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
     border: 1px solid var(--border);
     border-radius: 999px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
@@ -314,7 +317,9 @@ header h1 .home-link:focus-visible {
     .tabs {
       /* the home indicator never needs more than this */
       --nav-inset: min(env(safe-area-inset-bottom), 34px);
-      --nav-gap: -6px;
+      /* the pill's bottom edge lines up with the home indicator, the way
+         system sheets end */
+      --nav-gap: calc(8px - var(--nav-inset));
       /* iOS 26 home-screen apps size the layout viewport as if the status
          bar were opaque but still draw the page under it, leaving a
          status-bar-high strip of body below `bottom: 0`. The large viewport
@@ -322,19 +327,6 @@ header h1 .home-link:focus-visible {
          correction is 0. */
       bottom: calc(100dvh - 100lvh + var(--nav-inset) + var(--nav-gap));
     }
-  }
-
-  /* an opaque page-coloured dock under the pill: content scrolls to the
-     dock's edge rather than showing through around and beneath the bar */
-  .tabs::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: -8px;
-    left: -12px;
-    right: -12px;
-    height: 100lvh;
-    background: var(--bg-0);
   }
 
   .tab {
@@ -352,7 +344,7 @@ header h1 .home-link:focus-visible {
 
   .tab.active {
     color: var(--text-hi);
-    background: var(--surface-3);
+    background: rgba(255, 255, 255, 0.09);
   }
 
   .tab.active .tab-icon {
