@@ -89,7 +89,7 @@
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --nav-h: 54px;
+  --nav-h: 62px;
   --font-sans: "Nunito Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
 
   --pokeball-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h6.6M14.4 12H21'/%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3C/svg%3E");
@@ -124,10 +124,10 @@ body {
 }
 
 body {
-  /* The canvas colour shows in the strip iOS Safari leaves under the fixed
-     nav (below the layout viewport, above its toolbar); matching the nav's
-     surface makes it read as one bar. The page itself paints on #root. */
-  background: var(--surface-1);
+  /* The canvas colour shows in the strip iOS Safari leaves under the
+     floating nav (below the layout viewport, above its toolbar); it should
+     read as more page. The page itself paints on #root. */
+  background: var(--bg-0);
   color: var(--text-hi);
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -291,21 +291,22 @@ header h1 .home-link:focus-visible {
   .tabs {
     position: fixed;
     top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
+    /* a floating pill: inset from the edges, clear of the home indicator */
+    --nav-gap: 10px;
     /* In a browser the toolbar below already covers the home indicator, so
        only a sliver of inset; a home-screen app gets the full inset. */
     --nav-inset: min(env(safe-area-inset-bottom), 8px);
-    height: calc(var(--nav-h) + var(--nav-inset));
-    padding-bottom: var(--nav-inset);
-    gap: 0;
-    background: var(--surface-1);
-    border-top: 1px solid var(--border);
-    border-bottom: none;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.35);
+    bottom: calc(var(--nav-inset) + var(--nav-gap));
+    left: 12px;
+    right: 12px;
+    z-index: 50;
+    height: var(--nav-h);
+    padding: 5px;
+    gap: 2px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
     margin-bottom: 0;
   }
 
@@ -316,8 +317,9 @@ header h1 .home-link:focus-visible {
       /* iOS 26 home-screen apps size the layout viewport as if the status
          bar were opaque but still draw the page under it, leaving a
          status-bar-high strip of body below `bottom: 0`. The large viewport
-         is the real screen height, so pin to that; elsewhere it's 0. */
-      bottom: calc(100dvh - 100lvh);
+         is the real screen height, so measure from that; elsewhere the
+         correction is 0. */
+      bottom: calc(100dvh - 100lvh + var(--nav-inset) + var(--nav-gap));
     }
   }
 
@@ -325,8 +327,9 @@ header h1 .home-link:focus-visible {
     flex-direction: column;
     gap: 2px;
     justify-content: center;
+    min-height: 0;
     font-size: 0.68rem;
-    border-radius: 0;
+    border-radius: 999px;
   }
 
   .tab::after {
@@ -334,6 +337,11 @@ header h1 .home-link:focus-visible {
   }
 
   .tab.active {
+    color: var(--text-hi);
+    background: var(--surface-3);
+  }
+
+  .tab.active .tab-icon {
     color: var(--accent);
   }
 
@@ -344,7 +352,7 @@ header h1 .home-link:focus-visible {
   }
 
   .app {
-    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 34px);
     /* header sits under the status bar in a browser too; keep it clear */
     padding-top: calc(10px + env(safe-area-inset-top));
   }
