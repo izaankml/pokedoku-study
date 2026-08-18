@@ -977,6 +977,7 @@ header h1 .home-link:focus-visible {
    appears after answering (verdict, facts, schedule) lives in the answer
    area below, so the card never changes height. */
 .flashcards .pokemon-card {
+  position: relative; /* anchors the "View Detail" cue in the corner */
   width: 100%;
   max-width: 480px;
   margin: 0 auto var(--sp-4);
@@ -1015,6 +1016,22 @@ header h1 .home-link:focus-visible {
 
 .flashcards .pokemon-card.clickable:active {
   scale: 0.985;
+}
+
+/* "View Detail" in the bottom-right corner once the card is a button */
+.flashcards .pokemon-card .card-hint {
+  position: absolute;
+  right: var(--sp-3);
+  bottom: var(--sp-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-mid);
+  animation: fade-up var(--dur-med) var(--ease-out) both;
+}
+
+.flashcards .pokemon-card .card-hint::after {
+  content: " ›";
 }
 
 .flashcards .pokemon-card figcaption {

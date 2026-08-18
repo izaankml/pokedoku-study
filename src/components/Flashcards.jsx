@@ -254,7 +254,7 @@ function Flashcards() {
       <p className="hint card-question">{deck.question(card.param)}</p>
       {/* once answered, the card opens the detail sheet (evolution line and
           all); before that it stays inert so nothing gives the answer away */}
-      <PokemonCard pokemon={pokemon} eager onClick={answered ? () => openDetail(pokemon) : undefined} />
+      <PokemonCard pokemon={pokemon} eager hint="View Detail" onClick={answered ? () => openDetail(pokemon) : undefined} />
       {detail ? <PokemonDetail pokemon={detail} onClose={closeDetail} onOpen={openDetail} /> : null}
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
