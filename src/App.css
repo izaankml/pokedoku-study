@@ -113,6 +113,16 @@ body {
   background: var(--bg-0);
 }
 
+/* see .tabs in the phone rules: the layout viewport can be shorter than the
+   screen in an iOS 26 home-screen app; the scroller should reach the nav */
+@media (display-mode: standalone) {
+  html,
+  body,
+  #root {
+    height: 100lvh;
+  }
+}
+
 body {
   /* The canvas colour shows in the strip iOS Safari leaves under the fixed
      nav (below the layout viewport, above its toolbar); matching the nav's
@@ -303,6 +313,11 @@ header h1 .home-link:focus-visible {
     .tabs {
       /* the home indicator never needs more than this */
       --nav-inset: min(env(safe-area-inset-bottom), 34px);
+      /* iOS 26 home-screen apps size the layout viewport as if the status
+         bar were opaque but still draw the page under it, leaving a
+         status-bar-high strip of body below `bottom: 0`. The large viewport
+         is the real screen height, so pin to that; elsewhere it's 0. */
+      bottom: calc(100dvh - 100lvh);
     }
   }
 
