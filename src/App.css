@@ -539,12 +539,6 @@ header h1 .home-link:focus-visible {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Black / White is mostly dark, so it takes light text */
-.pill.region-unova {
-  color: #f5f4f6;
-  text-shadow: none;
-}
-
 .region-kanto { --r1: #e8463a; --r2: #3f78e0; }   /* Red / Blue */
 .region-johto { --r1: #dcae2a; --r2: #b7bcc8; }   /* Gold / Silver */
 .region-hoenn { --r1: #2f9d63; --r2: #63cf94; }   /* Emerald */
@@ -1023,7 +1017,7 @@ header h1 .home-link:focus-visible {
   position: absolute;
   right: var(--sp-3);
   bottom: var(--sp-2);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--text-mid);
