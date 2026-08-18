@@ -338,6 +338,18 @@ function ResetPanel() {
   );
 }
 
+// "Aug 17, 2026, 2:30 PM PT"; older datasets only carried a date
+function formatGenerated(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  if (!iso.includes("T")) return iso;
+  return d.toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }) + " PT";
+}
+
 // TEMP: viewport diagnostics for the iOS home-screen layout issue
 function ViewportProbe() {
   const [txt, setTxt] = React.useState("");
@@ -430,7 +442,7 @@ function StatsView() {
       <section>
         <p className="hint meta">
           Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
-          {POKEMON.length} answers · generated {DATA_META.generatedAt}
+          {POKEMON.length} answers · generated {formatGenerated(DATA_META.generatedAt)}
         </p>
         <ViewportProbe />
       </section>

@@ -786,7 +786,7 @@ const out = {
   meta: {
     source: "@pkmn/dex (Pokémon Showdown data)",
     sourceVersion: dexVersion,
-    generatedAt: new Date().toISOString().slice(0, 10),
+    generatedAt: new Date().toISOString(),
     count: records.length,
     answerCount: baseRecords.length + formRecords.length,
     speciesCount: baseRecords.length,
