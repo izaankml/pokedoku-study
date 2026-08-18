@@ -104,7 +104,7 @@ function Flashcards() {
   // Keyboard: arrows move focus over the options (←/→ one at a time, ↑/↓
   // a row), Space toggles the focused one (native button behaviour), and
   // Enter moves the card along — Submit once something is selected, Next
-  // Card once answered. Cancelling Enter's default keeps a focused option
+  // Card once answered — and Backspace/Delete take back the last pick. Cancelling Enter's default keeps a focused option
   // from also being "clicked".
   useEffect(() => {
     const onKey = (e) => {
@@ -123,7 +123,16 @@ function Flashcards() {
         }
         return;
       }
-      if (picked !== null || !e.key.startsWith("Arrow")) return;
+      if (picked !== null) return;
+      // Backspace / Delete take back the last pick (Escape stays with the sheet)
+      if (e.key === "Backspace" || e.key === "Delete") {
+        if (selection.length) {
+          e.preventDefault();
+          undoPick();
+        }
+        return;
+      }
+      if (!e.key.startsWith("Arrow")) return;
       const grid = document.querySelector(".region-buttons");
       const buttons = grid ? [...grid.querySelectorAll(".region-btn")] : [];
       if (!buttons.length) return;
@@ -179,6 +188,16 @@ function Flashcards() {
     } else {
       next = [option.id];
     }
+    session.selection = next;
+    saveSession();
+    setSelection(next);
+  }
+
+  // Backspace: drop the most recent pick, one at a time (on multi decks
+  // implied picks sit after the one that implied them, so they go first)
+  function undoPick() {
+    if (answered || !selection.length) return;
+    const next = selection.slice(0, -1);
     session.selection = next;
     saveSession();
     setSelection(next);
