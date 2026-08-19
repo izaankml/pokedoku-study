@@ -43,17 +43,23 @@ export function normalizeName(s) {
 
 // Each Pokémon is searchable by its display name ("Growlithe Hisui", as
 // PokeDoku names it), the dataset's own name ("Hisuian Growlithe") and,
-// for forms, the dex slug too ("growlithehisui").
+// for forms, the dex slug too ("growlithehisui"). A match has to reach the
+// species name, though: "venusaur" or "venusaur m" finds Venusaur Mega,
+// but "mega", "galar" or "dusk" (for Lycanroc Dusk) on their own find
+// nothing by their form word — `speciesAt` is where the species starts in
+// each name, so a prefix match must run past it.
 const SEARCH_INDEX = POKEMON.map((p) => {
-  const norms = [normalizeName(p.displayName)];
-  if (p.altName) norms.push(normalizeName(p.altName));
-  if (p.form && !norms.includes(p.name)) norms.push(p.name);
-  return { norms, pokemon: p };
+  const species = normalizeName(p.speciesName || p.displayName);
+  const names = [normalizeName(p.displayName)];
+  if (p.altName) names.push(normalizeName(p.altName));
+  if (p.form && !names.includes(p.name)) names.push(p.name);
+  const norms = names.map((norm) => ({ norm, speciesAt: Math.max(0, norm.indexOf(species)) }));
+  return { species, norms, pokemon: p };
 });
 
 const NORM_TO_POKEMON = new Map();
 for (const { norms, pokemon } of SEARCH_INDEX) {
-  for (const norm of norms) NORM_TO_POKEMON.set(norm, pokemon);
+  for (const { norm } of norms) NORM_TO_POKEMON.set(norm, pokemon);
 }
 
 // `eligible`, when given, keeps only the Pokémon it accepts.
@@ -67,10 +73,13 @@ export function searchNames(query, limit = 8, eligible = null) {
   if (!q) return [];
   const starts = [];
   const contains = [];
-  for (const { norms, pokemon } of SEARCH_INDEX) {
+  for (const { species, norms, pokemon } of SEARCH_INDEX) {
     if (eligible && !eligible(pokemon)) continue;
-    if (norms.some((n) => n.startsWith(q))) starts.push(pokemon);
-    else if (norms.some((n) => n.includes(q))) contains.push(pokemon);
+    if (species.startsWith(q) || norms.some(({ norm, speciesAt }) => q.length > speciesAt && norm.startsWith(q))) {
+      starts.push(pokemon);
+    } else if (species.includes(q)) {
+      contains.push(pokemon);
+    }
   }
   return starts.concat(contains).slice(0, limit);
 }

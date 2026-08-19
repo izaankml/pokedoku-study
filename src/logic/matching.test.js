@@ -41,6 +41,18 @@ describe("searchNames", () => {
   it("falls back to substring matches", () => {
     expect(searchNames("chu").map((p) => p.name)).toContain("raichu");
   });
+
+  it("finds forms by their species, never by the form word alone", () => {
+    expect(searchNames("venusaur").map((p) => p.displayName)).toEqual(["Venusaur", "Venusaur Mega", "Venusaur Gmax"]);
+    expect(searchNames("venusaur m").map((p) => p.displayName)).toEqual(["Venusaur Mega"]);
+    expect(searchNames("galarian z").map((p) => p.displayName)).toContain("Zapdos Galar");
+    expect(searchNames("dusk").map((p) => p.displayName)).toEqual(["Duskull", "Dusknoir"]);
+    for (const formWord of ["gmax", "gigantamax", "hisui", "hisuian", "galar", "galarian", "alola", "paldea"]) {
+      expect(searchNames(formWord, 50)).toEqual([]);
+    }
+    // only species whose own name carries it
+    expect(searchNames("mega", 50).map((p) => p.displayName)).toEqual(["Meganium", "Meganium Mega", "Yanmega"]);
+  });
 });
 
 describe("pairIsValid", () => {
