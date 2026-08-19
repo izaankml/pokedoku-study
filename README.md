@@ -77,11 +77,18 @@ fade out.
 
 ```
 npm install
-npm run dev     # local dev server
-npm test        # dataset invariants + logic tests
+npm run dev        # local dev server
+npm test           # dataset invariants + logic tests
+npm run typecheck  # tsc over the app (tsconfig.app.json) and the scripts (tsconfig.node.json)
 npm run lint
-npm run build
+npm run build      # typecheck, then vite build
 ```
+
+The app is TypeScript throughout (`src/`, `scripts/`, the Vite config):
+strict mode, `.ts`/`.tsx` extensions on relative imports, and the dataset's
+shape spelled out once in `src/data/types.ts`. The scripts run directly on
+Node 22.18+ / 24 (`node scripts/build-dataset.ts`) through its native type
+stripping, so they stay to erasable syntax (no enums or namespaces).
 
 Pushes to `main` deploy to GitHub Pages via `.github/workflows/deploy.yml`.
 
@@ -89,7 +96,7 @@ Pushes to `main` deploy to GitHub Pages via `.github/workflows/deploy.yml`.
 
 `src/data/pokedex.json` is generated — do not hand-edit. It derives from
 [@pkmn/dex](https://www.npmjs.com/package/@pkmn/dex) (Pokémon Showdown's
-data), plus hand-maintained lists in `scripts/manual-lists.mjs` for
+data), plus hand-maintained lists in `scripts/manual-lists.ts` for
 membership the dex data doesn't encode (Ultra Beasts, Paradox, fossils,
 starter lines, babies, Hisui origins, which alternate forms get a record
 and their PokeAPI ids, and a few evolution-method overrides). To regenerate:
@@ -162,7 +169,7 @@ Notes on judgment calls:
   or ability). Kyurem-Black or Lycanroc Midnight add nothing and are
   covered by the base record. Form ids are PokeAPI's, so the same id keys
   sprites, stats, and PokeDoku's own list.
-- `scripts/check-against-helper.mjs` diffs the dataset against
+- `scripts/check-against-helper.ts` diffs the dataset against
   [pokedoku-helper.com](https://www.pokedoku-helper.com)'s PokeAPI-derived
   data; everything but a few dozen move entries (PokeAPI's Mega move lists
   are patchy) agrees.

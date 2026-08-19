@@ -1,4 +1,4 @@
-/* Nunito Variable is imported in main.jsx (bundled woff2, no CDN). */
+/* Nunito Variable is imported in main.tsx (bundled woff2, no CDN). */
 
 * {
   box-sizing: border-box;
@@ -104,7 +104,7 @@ html {
 
 body {
   min-height: 100dvh;
-  overflow-x: hidden; /* scaled sprites (Sprite.jsx) overhang their slots */
+  overflow-x: hidden; /* scaled sprites (Sprite.tsx) overhang their slots */
 }
 
 /* the detail sheet freezes the page behind it: pinned in place at its
@@ -771,7 +771,7 @@ header h1 .home-link:focus-visible {
 
 .sprite {
   image-rendering: pixelated;
-  /* Sprite.jsx scales the image up to fill its slot; the transparent
+  /* Sprite.tsx scales the image up to fill its slot; the transparent
      overhang must neither catch taps meant for a neighbour nor widen the
      page (see #root) */
   pointer-events: none;
@@ -1030,7 +1030,7 @@ header h1 .home-link:focus-visible {
   box-shadow: var(--shadow-1), var(--edge-hi);
 }
 
-/* Sprite.jsx centres and scales each Pokémon's visible box in this slot */
+/* Sprite.tsx centres and scales each Pokémon's visible box in this slot */
 .flashcards .pokemon-card .sprite,
 .flashcards .pokemon-card .sprite-fallback {
   width: 144px;

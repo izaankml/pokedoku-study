@@ -15,7 +15,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
   per-entry category dataset derived from PokeAPI + hand overrides, tuned
   against real puzzles. Used as the oracle for evolution triggers, stage
   semantics, per-entry Mega/Gmax, first partners, and validated moves/
-  abilities. `scripts/check-against-helper.mjs` re-runs the diff.
+  abilities. `scripts/check-against-helper.ts` re-runs the diff.
 
 ## Decisions (data model)
 
@@ -27,7 +27,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
    type "Charizard Mega X" (PokeDoku's naming; "Mega Charizard X" also
    matches), not "Charizard". If PokeDoku actually accepts
    plain "Charizard" too, flip `formFlags`/`speciesFlags` in
-   `scripts/build-dataset.mjs`.
+   `scripts/build-dataset.ts`.
 2. Mega/Gmax forms: no evolution stage/method (helper: `IGNORE_EVOLVE_FORMS`),
    keep Legendary/Mythical/Fossil (Mega Aerodactyl is a Fossil), are **not**
    First Partners (Mega Venusaur isn't). Ash-Greninja likewise has no stage
@@ -41,7 +41,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
    per PokeAPI trigger names (Shedinja/Kingambit/Gholdengo/Annihilape/…
    = level; Alcremie/Urshifu = item; Sirfetch'd/Runerigus/Wyrdeer = none;
    Melmetal = none). Full list: `EVO_METHOD_OVERRIDES` in
-   `scripts/manual-lists.mjs`.
+   `scripts/manual-lists.ts`.
 4. **Added an "Evolved by stone" category** (used evolution stone, not
    held). PokeDoku's bundle has an `EVOLVED_BY-stone` note ("The stone must
    be usable not held") but its link map only lists level/item/trade/
@@ -266,7 +266,7 @@ Delete this file once reviewed; anything worth keeping is in README.md.
     record since the dex's base Minior is the meteor; so is Maushold Family
     of Three, PokeAPI's default 925 being Family of Four), while Cramorant's
     battle forms stay in `ALL_POKEMON` only (trees, forms, the sheet, URL
-    slugs). `scripts/check-against-pokedoku.mjs` compares the two lists
+    slugs). `scripts/check-against-pokedoku.ts` compares the two lists
     both ways: as of Aug 2026 the 1323 entries PokeDoku shows are exactly
     the app's 1322 answers plus its joke cowboy-hat Caterpie (Zygarde 50%
     is the same Pokémon under PokeDoku's own id 10119 vs the species 718).
