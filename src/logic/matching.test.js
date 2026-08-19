@@ -47,9 +47,11 @@ describe("searchNames", () => {
     expect(searchNames("venusaur m")[0].displayName).toBe("Venusaur Mega");
     expect(searchNames("galarian z").map((p) => p.displayName)).toContain("Zapdos Galar");
     expect(searchNames("dusk").map((p) => p.displayName)).toEqual(["Duskull", "Dusknoir"]);
-    for (const formWord of ["gmax", "gigantamax", "hisui", "hisuian", "galar", "galarian", "alola", "paldea"]) {
+    for (const formWord of ["gmax", "gigantamax", "hisui", "hisuian", "galar", "galarian", "paldea"]) {
       expect(searchNames(formWord, 50)).toEqual([]);
     }
+    // ("alola" is a near-miss of Gallade, a species; no Alolan form is offered)
+    expect(searchNames("alola", 50).map((p) => p.displayName)).toEqual(["Gallade", "Gallade Mega"]);
     // only species whose own name carries it
     expect(searchNames("mega", 50).map((p) => p.displayName)).toEqual(["Meganium", "Meganium Mega", "Yanmega"]);
   });
