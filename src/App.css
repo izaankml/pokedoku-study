@@ -1749,6 +1749,17 @@ button.evo-tile:active {
   margin: var(--sp-3) auto 0;
 }
 
+/* Where there's room, the nine cells — not the board including its row
+   labels — sit on the page's centre line: the board is widened by a
+   phantom column on the right the size of the label column (84px + gap) */
+@media (min-width: 641px) {
+  .board,
+  .board-toolbar {
+    max-width: calc(480px + 92px);
+    padding-right: 92px;
+  }
+}
+
 .score {
   color: var(--text-mid);
   font-size: 0.85rem;
@@ -1760,10 +1771,6 @@ button.evo-tile:active {
   margin: var(--sp-2) 0;
   font-size: 0.9rem;
   animation: fade-up var(--dur-med) var(--ease-out);
-}
-
-.cell-panel {
-  margin-bottom: var(--sp-4);
 }
 
 /* ---- stats ---- */
@@ -2261,10 +2268,6 @@ main > * {
 }
 
 /* keep the grid's answer panel clear of the phone nav when scrolled into view */
-.cell-panel {
-  scroll-margin-top: var(--sp-4);
-}
-
 /* ---- Pokémon detail popup ---- */
 
 /* sheets are as tall as their content, but every one starts at the same
@@ -2362,6 +2365,28 @@ main > * {
   color: var(--text-mid);
   font-size: 1.2rem;
   line-height: 1;
+}
+
+/* the guess popup: the suggestion list is in the flow, not floating, so
+   the sheet grows (and scrolls) with it instead of clipping it */
+.modal.guess {
+  max-width: 480px;
+}
+
+.modal.guess h3 {
+  margin: 0 var(--sp-5) var(--sp-2);
+  font-size: 1.25rem;
+}
+
+.modal.guess .question {
+  margin-top: 0;
+}
+
+.modal.guess .suggestions {
+  position: static;
+  margin-top: 6px;
+  max-height: none;
+  animation: none;
 }
 
 /* three blocks — identity, facts, evolution — divided by hairlines,

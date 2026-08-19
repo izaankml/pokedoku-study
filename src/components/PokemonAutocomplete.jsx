@@ -4,7 +4,7 @@ import Sprite from "./Sprite.jsx";
 
 // `eligible` (optional) narrows what can be picked: suggestions and the
 // Enter-to-submit exact match both skip Pokémon it rejects.
-function PokemonAutocomplete({ onSubmit, disabled, placeholder, eligible = null }) {
+function PokemonAutocomplete({ onSubmit, disabled, placeholder, eligible = null, autoFocus = false }) {
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(0);
   const [open, setOpen] = useState(false);
@@ -54,6 +54,7 @@ function PokemonAutocomplete({ onSubmit, disabled, placeholder, eligible = null 
         aria-autocomplete="list"
         value={query}
         disabled={disabled}
+        autoFocus={autoFocus} // eslint-disable-line jsx-a11y/no-autofocus
         placeholder={placeholder || "Type a Pokémon name…"}
         onChange={(e) => {
           setQuery(e.target.value);

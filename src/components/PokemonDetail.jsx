@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
@@ -7,6 +7,7 @@ import PokemonName from "./PokemonName.jsx";
 import Sprite from "./Sprite.jsx";
 import EvolutionLine, { FormsRows } from "./EvolutionLine.jsx";
 import { useFitRows } from "./useFitRows.js";
+import { useModalShell } from "./useModalShell.js";
 
 // The sheet is three blocks: identity (sprite; dex line, then the name
 // with the region pill beside it, then the type pills with the group
@@ -40,20 +41,7 @@ function Fact({ label, children }) {
 
 // `onOpen(pokemon)` opens another Pokémon's sheet (a tile of the tree)
 function PokemonDetail({ pokemon, onClose, onOpen }) {
-  useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    // freeze the page behind the sheet (see body.no-scroll in App.css)
-    const y = window.scrollY;
-    document.body.style.top = `${-y}px`;
-    document.body.classList.add("no-scroll");
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.classList.remove("no-scroll");
-      document.body.style.top = "";
-      window.scrollTo(0, y);
-    };
-  }, [onClose]);
+  useModalShell(onClose);
 
   const evoRef = useRef(null);
   useFitRows(evoRef, [pokemon]); // the tree and forms sized together to fit the sheet

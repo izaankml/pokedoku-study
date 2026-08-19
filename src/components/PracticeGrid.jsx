@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useStats } from "../StatsContext.js";
 import { generateGrid } from "../logic/grid.js";
-import { guessFilterFor, intersection, pairKey } from "../logic/matching.js";
+import { intersection, pairKey } from "../logic/matching.js";
 import { CATEGORY_BY_ID, getCategory, whyNot } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
 import { loadJson, saveJson } from "../logic/hashState.js";
 import CategoryPill from "./CategoryPill.jsx";
 import Sprite from "./Sprite.jsx";
-import PokemonAutocomplete from "./PokemonAutocomplete.jsx";
+import GuessModal from "./GuessModal.jsx";
 import AnswerList from "./AnswerList.jsx";
 
 const emptyCells = () =>
@@ -47,12 +47,6 @@ function PracticeGrid() {
   const [grid, setGrid] = useState(() => saved?.grid || generateGrid(merged));
   const [cells, setCells] = useState(() => saved?.cells || emptyCells());
   const [selected, setSelected] = useState(null);
-  // The answer panel sits above the board; if it has been scrolled past,
-  // bring it back into view when a cell is picked
-  const panelRef = useRef(null);
-  useEffect(() => {
-    if (selected !== null) panelRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }, [selected]);
   const [guesses, setGuesses] = useState(saved?.guesses || 0);
   const [message, setMessage] = useState("");
   useEffect(() => saveBoard(grid, cells, guesses), [grid, cells, guesses]);
@@ -65,6 +59,12 @@ function PracticeGrid() {
   const filled = cells.filter((c) => c.status === "filled").length;
 
   const cellCats = (i) => [grid.rows[Math.floor(i / 3)], grid.cols[i % 3]];
+  // Closing the guess popup (×, backdrop, Escape) drops the selection;
+  // stable so the popup's Escape listener isn't re-bound each render
+  const closeCell = useCallback(() => {
+    setSelected(null);
+    setMessage("");
+  }, []);
 
   function guess(pokemon) {
     if (selected === null) return;
@@ -120,24 +120,6 @@ function PracticeGrid() {
         Fill all nine cells — each Pokémon must fit its row and column, no
         repeats.
       </p>
-      {selected !== null && cells[selected].status === "empty" ? (
-        <div className="cell-panel" ref={panelRef}>
-          <div className="question">
-            <CategoryPill cat={getCategory(cellCats(selected)[0])} />
-            <span className="times">×</span>
-            <CategoryPill cat={getCategory(cellCats(selected)[1])} />
-          </div>
-          <PokemonAutocomplete onSubmit={guess} eligible={guessFilterFor(cellCats(selected))} />
-          <div className="action-row">
-            <button className="ghost" onClick={revealCell}>
-              Reveal This Cell
-            </button>
-          </div>
-        </div>
-      ) : null}
-      <p key={message} className="grid-message">
-        {message || " "}
-      </p>
       <div className="board">
         <div className="corner" />
         {grid.cols.map((c) => (
@@ -186,6 +168,18 @@ function PracticeGrid() {
           New Grid
         </button>
       </div>
+      <p key={message} className="grid-message">
+        {message || " "}
+      </p>
+      {selected !== null && cells[selected].status === "empty" ? (
+        <GuessModal
+          categories={cellCats(selected)}
+          message={message}
+          onGuess={guess}
+          onReveal={revealCell}
+          onClose={closeCell}
+        />
+      ) : null}
       {selected !== null && cells[selected].status !== "empty" ? (
         <AnswerList
           pokemon={intersection(...cellCats(selected))}
