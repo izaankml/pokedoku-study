@@ -54,7 +54,7 @@ function PokemonAutocomplete({ onSubmit, disabled, placeholder, eligible = null,
         aria-autocomplete="list"
         value={query}
         disabled={disabled}
-        autoFocus={autoFocus} // eslint-disable-line jsx-a11y/no-autofocus
+        autoFocus={autoFocus}
         placeholder={placeholder || "Type a Pokémon name…"}
         onChange={(e) => {
           setQuery(e.target.value);
