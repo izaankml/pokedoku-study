@@ -3,6 +3,15 @@ import { intersection, pairIsValid } from "./matching.js";
 import { categoryWeight, pickWeighted } from "./picker.js";
 
 export const MIN_CELL = 2;
+
+// Which category groups a new grid draws from. Moves and abilities are out
+// by default — on PokeDoku they're rare and the rest is what you get
+// quizzed on; the Grid tab lets you change the set.
+export const DEFAULT_EXCLUDED_GROUPS = ["move", "ability"];
+export function gridPool(excludedGroups = DEFAULT_EXCLUDED_GROUPS) {
+  const excluded = new Set(excludedGroups);
+  return CATEGORIES.filter((c) => !excluded.has(c.group));
+}
 const MAX_TRIES = 300;
 
 // A fallback that is always solvable, should rejection sampling somehow fail.
@@ -39,15 +48,16 @@ function pickDistinct(pool, n, merged, random) {
   return picked;
 }
 
-export function generateGrid(merged, { random = Math.random } = {}) {
+// `pool` is the categories rows and columns may be drawn from
+export function generateGrid(merged, { random = Math.random, pool = gridPool() } = {}) {
   for (const min of [MIN_CELL, 1]) {
     for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
-      const rows = pickDistinct(CATEGORIES, 3, merged, random);
+      const rows = pickDistinct(pool, 3, merged, random);
       const rowIds = new Set(rows.map((r) => r.id));
       const cols = [];
       const candidates = pickDistinct(
-        CATEGORIES.filter((c) => !rowIds.has(c.id)),
-        CATEGORIES.length,
+        pool.filter((c) => !rowIds.has(c.id)),
+        pool.length,
         merged,
         random
       );

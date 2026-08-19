@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useStats } from "../StatsContext.js";
-import { generateGrid } from "../logic/grid.js";
+import { DEFAULT_EXCLUDED_GROUPS, generateGrid, gridPool } from "../logic/grid.js";
 import { intersection, pairKey } from "../logic/matching.js";
-import { CATEGORY_BY_ID, getCategory, whyNot } from "../data/categories.js";
+import { CATEGORIES, CATEGORY_BY_ID, CATEGORY_GROUPS, getCategory, whyNot } from "../data/categories.js";
 import { POKEMON_BY_ID } from "../data/pokedex.js";
 import { loadJson, saveJson } from "../logic/hashState.js";
 import CategoryPill from "./CategoryPill.jsx";
@@ -15,6 +15,14 @@ const emptyCells = () =>
 
 // The board in progress survives a reload (cells hold Pokémon ids on disk).
 const BOARD_KEY = "pokedoku-study:grid:v1";
+// Which category groups new grids leave out (see gridPool in logic/grid.js)
+const GROUPS_KEY = "pokedoku-study:grid-excluded-groups:v1";
+const GROUP_IDS = new Set(CATEGORY_GROUPS.map(([group]) => group));
+function loadExcludedGroups() {
+  const saved = loadJson(GROUPS_KEY);
+  if (!Array.isArray(saved)) return DEFAULT_EXCLUDED_GROUPS;
+  return saved.filter((group) => GROUP_IDS.has(group));
+}
 function loadBoard() {
   const b = loadJson(BOARD_KEY);
   const ok =
@@ -47,6 +55,20 @@ function PracticeGrid() {
   const [grid, setGrid] = useState(() => saved?.grid || generateGrid(merged));
   const [cells, setCells] = useState(() => saved?.cells || emptyCells());
   const [selected, setSelected] = useState(null);
+  const [excludedGroups, setExcludedGroups] = useState(loadExcludedGroups);
+  const [showGroups, setShowGroups] = useState(false);
+  useEffect(() => saveJson(GROUPS_KEY, excludedGroups), [excludedGroups]);
+  // Rows/columns of the next grid come from the groups left on; the last
+  // one can't be turned off
+  function toggleGroup(group) {
+    setExcludedGroups((excluded) =>
+      excluded.includes(group)
+        ? excluded.filter((g) => g !== group)
+        : excluded.length < CATEGORY_GROUPS.length - 1
+          ? [...excluded, group]
+          : excluded
+    );
+  }
   const [guesses, setGuesses] = useState(saved?.guesses || 0);
   const [message, setMessage] = useState("");
   useEffect(() => saveBoard(grid, cells, guesses), [grid, cells, guesses]);
@@ -107,7 +129,7 @@ function PracticeGrid() {
   }
 
   function newGame() {
-    setGrid(generateGrid(merged));
+    setGrid(generateGrid(merged, { pool: gridPool(excludedGroups) }));
     setCells(emptyCells());
     setSelected(null);
     setGuesses(0);
@@ -164,10 +186,38 @@ function PracticeGrid() {
           {filled}/9 filled · {guesses} guesses
           {done ? " — done!" : ""}
         </p>
-        <button className="ghost" onClick={newGame}>
-          New Grid
-        </button>
+        <div className="board-actions">
+          <button
+            className={`ghost${showGroups ? " on" : ""}`}
+            aria-expanded={showGroups}
+            aria-controls="grid-groups"
+            onClick={() => setShowGroups((on) => !on)}
+          >
+            Categories
+          </button>
+          <button className="ghost" onClick={newGame}>
+            New Grid
+          </button>
+        </div>
       </div>
+      {showGroups ? (
+        <fieldset id="grid-groups" className="grid-groups">
+          <legend>Category groups for new grids</legend>
+          <div className="grid-groups-list">
+            {CATEGORY_GROUPS.map(([group, label]) => {
+              const on = !excludedGroups.includes(group);
+              const count = CATEGORIES.filter((c) => c.group === group).length;
+              return (
+                <label key={group} className={`group-toggle${on ? " on" : ""}`}>
+                  <input type="checkbox" checked={on} onChange={() => toggleGroup(group)} />
+                  {label} <span className="group-count">{count}</span>
+                </label>
+              );
+            })}
+          </div>
+          <p className="hint">Takes effect on the next New Grid.</p>
+        </fieldset>
+      ) : null}
       <p key={message} className="grid-message">
         {message || " "}
       </p>

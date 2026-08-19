@@ -1,9 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { generateGrid, gridCells, MIN_CELL } from "./grid.js";
+import { generateGrid, gridCells, gridPool, MIN_CELL } from "./grid.js";
+import { getCategory } from "../data/categories.js";
 import { mergeBlocks } from "./stats.js";
 
 describe("generateGrid", () => {
   const merged = mergeBlocks([]);
+
+  it("leaves moves and abilities out by default", () => {
+    for (let i = 0; i < 50; i++) {
+      const grid = generateGrid(merged);
+      for (const id of [...grid.rows, ...grid.cols]) {
+        expect(["move", "ability"]).not.toContain(getCategory(id).group);
+      }
+    }
+  });
+
+  it("draws only from the given pool", () => {
+    const pool = gridPool(["move", "ability", "evo", "stage", "evoLine", "special", "typeCount"]);
+    for (let i = 0; i < 30; i++) {
+      const grid = generateGrid(merged, { pool });
+      for (const id of [...grid.rows, ...grid.cols]) {
+        expect(["region", "type"]).toContain(getCategory(id).group);
+      }
+    }
+  });
 
   it("always produces solvable grids with distinct categories", () => {
     for (let i = 0; i < 50; i++) {

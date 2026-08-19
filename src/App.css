@@ -1749,6 +1749,92 @@ button.evo-tile:active {
   margin: var(--sp-3) auto 0;
 }
 
+.board-actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.board-actions .ghost {
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.ghost.on {
+  border-color: var(--accent);
+  color: var(--text-hi);
+}
+
+/* which category groups the next grid draws from: a row of toggle chips */
+.grid-groups {
+  max-width: 480px;
+  margin: var(--sp-3) auto 0;
+  padding: var(--sp-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  text-align: left;
+}
+
+.grid-groups legend {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-mid);
+}
+
+.grid-groups-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.group-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-1);
+  color: var(--text-low);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+}
+
+.group-toggle.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text-hi);
+}
+
+.group-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.group-toggle:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.group-count {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.grid-groups .hint {
+  margin: var(--sp-2) 0 0;
+  font-size: 0.8rem;
+}
+
 /* Where there's room, the nine cells — not the board including its row
    labels — sit on the page's centre line: the board is widened by a
    phantom column on the right the size of the label column (84px + gap) */
@@ -1757,6 +1843,10 @@ button.evo-tile:active {
   .board-toolbar {
     max-width: calc(480px + 92px);
     padding-right: 92px;
+  }
+
+  .grid-groups {
+    max-width: calc(480px + 92px); /* as wide as the board's box, centred with it */
   }
 }
 
