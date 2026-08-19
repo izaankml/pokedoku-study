@@ -47,10 +47,11 @@ function PracticeGrid() {
   const [grid, setGrid] = useState(() => saved?.grid || generateGrid(merged));
   const [cells, setCells] = useState(() => saved?.cells || emptyCells());
   const [selected, setSelected] = useState(null);
-  // On phones the answer panel sits below the board; bring it into view
+  // The answer panel sits above the board; if it has been scrolled past,
+  // bring it back into view when a cell is picked
   const panelRef = useRef(null);
   useEffect(() => {
-    if (selected !== null) panelRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+    if (selected !== null) panelRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [selected]);
   const [guesses, setGuesses] = useState(saved?.guesses || 0);
   const [message, setMessage] = useState("");
@@ -119,6 +120,24 @@ function PracticeGrid() {
         Fill all nine cells — each Pokémon must fit its row and column, no
         repeats.
       </p>
+      {selected !== null && cells[selected].status === "empty" ? (
+        <div className="cell-panel" ref={panelRef}>
+          <div className="question">
+            <CategoryPill cat={getCategory(cellCats(selected)[0])} />
+            <span className="times">×</span>
+            <CategoryPill cat={getCategory(cellCats(selected)[1])} />
+          </div>
+          <PokemonAutocomplete onSubmit={guess} eligible={guessFilterFor(cellCats(selected))} />
+          <div className="action-row">
+            <button className="ghost" onClick={revealCell}>
+              Reveal This Cell
+            </button>
+          </div>
+        </div>
+      ) : null}
+      <p key={message} className="grid-message">
+        {message || " "}
+      </p>
       <div className="board">
         <div className="corner" />
         {grid.cols.map((c) => (
@@ -167,24 +186,6 @@ function PracticeGrid() {
           New Grid
         </button>
       </div>
-      <p key={message} className="grid-message">
-        {message || " "}
-      </p>
-      {selected !== null && cells[selected].status === "empty" ? (
-        <div className="cell-panel" ref={panelRef}>
-          <div className="question">
-            <CategoryPill cat={getCategory(cellCats(selected)[0])} />
-            <span className="times">×</span>
-            <CategoryPill cat={getCategory(cellCats(selected)[1])} />
-          </div>
-          <PokemonAutocomplete onSubmit={guess} eligible={guessFilterFor(cellCats(selected))} />
-          <div className="action-row">
-            <button className="ghost" onClick={revealCell}>
-              Reveal This Cell
-            </button>
-          </div>
-        </div>
-      ) : null}
       {selected !== null && cells[selected].status !== "empty" ? (
         <AnswerList
           pokemon={intersection(...cellCats(selected))}

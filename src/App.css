@@ -1763,7 +1763,7 @@ button.evo-tile:active {
 }
 
 .cell-panel {
-  margin-top: var(--sp-4);
+  margin-bottom: var(--sp-4);
 }
 
 /* ---- stats ---- */
@@ -2262,7 +2262,7 @@ main > * {
 
 /* keep the grid's answer panel clear of the phone nav when scrolled into view */
 .cell-panel {
-  scroll-margin-bottom: calc(var(--nav-h) + 24px);
+  scroll-margin-top: var(--sp-4);
 }
 
 /* ---- Pokémon detail popup ---- */
