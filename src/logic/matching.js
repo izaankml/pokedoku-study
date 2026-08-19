@@ -68,20 +68,86 @@ export function findByName(query, eligible = null) {
   return p && (!eligible || eligible(p)) ? p : null;
 }
 
+// The fewest edits (insert, delete, substitute, swap two neighbours) that
+// turn `query` into some stretch of `text` — a prefix of it when
+// `anchored`, anywhere in it otherwise. Stops early, returning Infinity,
+// once no stretch can come within `maxEdits`.
+function editsToMatch(query, text, maxEdits, anchored) {
+  const width = text.length + 1;
+  let previousRow = new Array(width);
+  let twoRowsBack = null;
+  for (let column = 0; column < width; column++) previousRow[column] = anchored ? column : 0;
+  let best = Infinity;
+  for (let row = 1; row <= query.length; row++) {
+    const currentRow = new Array(width);
+    currentRow[0] = row;
+    let rowMin = row;
+    for (let column = 1; column < width; column++) {
+      const same = query[row - 1] === text[column - 1];
+      let cost = Math.min(
+        previousRow[column] + 1,
+        currentRow[column - 1] + 1,
+        previousRow[column - 1] + (same ? 0 : 1),
+      );
+      if (
+        row > 1 && column > 1 &&
+        query[row - 1] === text[column - 2] && query[row - 2] === text[column - 1]
+      ) {
+        cost = Math.min(cost, twoRowsBack[column - 2] + 1);
+      }
+      currentRow[column] = cost;
+      if (cost < rowMin) rowMin = cost;
+    }
+    if (rowMin > maxEdits) return Infinity;
+    twoRowsBack = previousRow;
+    previousRow = currentRow;
+  }
+  for (let column = 1; column < width; column++) best = Math.min(best, previousRow[column]);
+  return best;
+}
+
+// How many typos a query of this length may carry: none under five
+// letters, one from five, two from eight, three from twelve — "vensaur"
+// gets one, "pikachoo" and "dusknior" two, "typhlosoin" two.
+const typoAllowance = (q) => (q.length < 5 ? 0 : Math.min(3, Math.floor(q.length / 4)));
+
+// Exact hits first (prefix, then substring of the species), then, only
+// while the list has room, near-misses ordered by how far off they are.
 export function searchNames(query, limit = 8, eligible = null) {
   const q = normalizeName(query);
   if (!q) return [];
   const starts = [];
   const contains = [];
-  for (const { species, norms, pokemon } of SEARCH_INDEX) {
+  const candidates = [];
+  for (const entry of SEARCH_INDEX) {
+    const { species, norms, pokemon } = entry;
     if (eligible && !eligible(pokemon)) continue;
     if (species.startsWith(q) || norms.some(({ norm, speciesAt }) => q.length > speciesAt && norm.startsWith(q))) {
       starts.push(pokemon);
     } else if (species.includes(q)) {
       contains.push(pokemon);
+    } else {
+      candidates.push(entry);
     }
   }
-  return starts.concat(contains).slice(0, limit);
+  const exact = starts.concat(contains);
+  const maxEdits = typoAllowance(q);
+  if (exact.length >= limit || maxEdits === 0) return exact.slice(0, limit);
+
+  // Near-misses are judged on the species name alone, or on the names that
+  // open with it ("Lycanroc Dusk", "lycanrocdusk") — a typo budget must
+  // never be spent on a form-first name's form word ("Mega Chimecho").
+  const fuzzy = [];
+  for (const { species, norms, pokemon } of candidates) {
+    let edits = editsToMatch(q, species, maxEdits, false);
+    for (const { norm, speciesAt } of norms) {
+      if (edits === 0) break;
+      if (speciesAt === 0) edits = Math.min(edits, editsToMatch(q, norm, maxEdits, true));
+    }
+    if (edits <= maxEdits) fuzzy.push({ edits, pokemon });
+  }
+  fuzzy.sort((a, b) => a.edits - b.edits);
+  return exact.concat(fuzzy.map((f) => f.pokemon)).slice(0, limit);
 }
 
 // Every valid category pair, as [catA, catB] with catA.id < catB.id.

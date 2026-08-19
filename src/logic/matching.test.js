@@ -44,7 +44,7 @@ describe("searchNames", () => {
 
   it("finds forms by their species, never by the form word alone", () => {
     expect(searchNames("venusaur").map((p) => p.displayName)).toEqual(["Venusaur", "Venusaur Mega", "Venusaur Gmax"]);
-    expect(searchNames("venusaur m").map((p) => p.displayName)).toEqual(["Venusaur Mega"]);
+    expect(searchNames("venusaur m")[0].displayName).toBe("Venusaur Mega");
     expect(searchNames("galarian z").map((p) => p.displayName)).toContain("Zapdos Galar");
     expect(searchNames("dusk").map((p) => p.displayName)).toEqual(["Duskull", "Dusknoir"]);
     for (const formWord of ["gmax", "gigantamax", "hisui", "hisuian", "galar", "galarian", "alola", "paldea"]) {
@@ -52,6 +52,20 @@ describe("searchNames", () => {
     }
     // only species whose own name carries it
     expect(searchNames("mega", 50).map((p) => p.displayName)).toEqual(["Meganium", "Meganium Mega", "Yanmega"]);
+  });
+
+  it("forgives typos, more of them the longer the query, with exact hits ranked first", () => {
+    expect(searchNames("charzard")[0].displayName).toBe("Charizard");
+    expect(searchNames("dusknior").map((p) => p.displayName)).toEqual(["Dusknoir"]);
+    expect(searchNames("pikachoo")[0].displayName).toBe("Pikachu");
+    expect(searchNames("typhlosoin").map((p) => p.displayName)).toEqual(["Typhlosion", "Typhlosion Hisui"]);
+    expect(searchNames("lycanrock dusk").map((p) => p.displayName)).toEqual(["Lycanroc Dusk"]);
+    expect(searchNames("sneasle").map((p) => p.displayName)).toEqual(["Sneasler", "Sneasel", "Sneasel Hisui"]);
+    // too short to forgive anything
+    expect(searchNames("pikc")).toEqual([]);
+    // a typo budget never lands on a form word, so forms still need their species
+    expect(searchNames("meganuim").map((p) => p.displayName)).toEqual(["Meganium", "Meganium Mega"]);
+    for (const formWord of ["galarian", "hisuian", "alolan", "gigantamax"]) expect(searchNames(formWord, 50)).toEqual([]);
   });
 });
 
