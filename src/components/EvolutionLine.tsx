@@ -3,7 +3,7 @@ import { evolutionTree, evoNote, shortHow } from "../logic/evolution.ts";
 import type { EvolutionNode } from "../logic/evolution.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
-import { formLabel, formTrigger, formsRow, isTransformation, variantNote } from "../logic/forms.ts";
+import { formLabel, formTrigger, formsRow, isTemporary, isTransformation, variantNote } from "../logic/forms.ts";
 import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
 
@@ -19,7 +19,9 @@ import Sprite from "./Sprite.tsx";
 // and ones that evolve again get a row each, so Goomy shows Sliggoo →
 // Goodra over Hisuian Sliggoo → Hisuian Goodra, and Applin has Flapple
 // and Appletun paired above Dipplin → Hydrapple. A lone tile sits centred
-// against whatever it's joined to.
+// against whatever it's joined to. A Pokémon that evolves from two records
+// (Gholdengo, from either Gimmighoul) has them stacked before its arrow.
+// A Pokémon that doesn't evolve at all is a tree of its one tile.
 // the longest word of a name — the tile shrinks the name's font just
 // enough for it to fit (App.css .evo-name), so "Meowscarada" never breaks
 const longestWord = (name: string): number => Math.max(...name.split(/[\s-]+/).map((word) => word.length));
@@ -62,8 +64,10 @@ interface TileProps {
   current?: boolean;
   // replaces the evolution method (a form's trigger, a variant's note)
   note?: string | null;
-  // a transformation: dashed, "becomes, for a while"
+  // a transformation of the same Pokémon (Mega, Rotom Wash …)
   form?: boolean;
+  // a transformation that only holds for a battle: dotted, "becomes, for a while"
+  temporary?: boolean;
   // a variant of the species: another individual
   variant?: boolean;
   onOpen?: OpenSheet;
@@ -72,11 +76,21 @@ interface TileProps {
 // A stage: sprite, name, how it evolved, and a strip along the bottom in
 // its type colours (split for a dual type — the thing that changes along
 // a line: Charmander → Charizard gains Flying, Eevee's eight differ).
-// `note` (a form's trigger) replaces the evolution method; `form` tiles
-// are dashed to read as "becomes, for a while" rather than "evolves into".
-// Tapping a tile opens that Pokémon's own sheet (`onOpen`); the current
-// one is inert.
-function Tile({ pokemon, evolved = false, current = false, note, form = false, variant = false, onOpen }: TileProps) {
+// `note` (a form's trigger) replaces the evolution method; `temporary`
+// tiles (Mega, Gigantamax, an ability's form) are dotted to read as
+// "becomes, for a while" rather than "is"; a variant or a lasting form
+// (Alolan Raichu, Rotom Wash) is solid like a stage. Tapping a tile opens
+// that Pokémon's own sheet (`onOpen`); the current one is inert.
+function Tile({
+  pokemon,
+  evolved = false,
+  current = false,
+  note,
+  form = false,
+  temporary = false,
+  variant = false,
+  onOpen,
+}: TileProps) {
   const method: How | null = note
     ? { short: note, full: note }
     : evolved && pokemon.evoDetail
@@ -84,7 +98,7 @@ function Tile({ pokemon, evolved = false, current = false, note, form = false, v
       : null;
   const [type1, type2 = type1] = pokemon.types;
   const label = pokemon.displayName; // the full PokeDoku name, forms included ("Lycanroc Dusk", "Venusaur Mega")
-  const className = `evo-tile${current ? " current" : ""}${form ? " form" : ""}${variant ? " variant" : ""}`;
+  const className = `evo-tile${current ? " current" : ""}${form ? " form" : ""}${temporary ? " temporary" : ""}${variant ? " variant" : ""}`;
   const style = { "--t1": `var(--type-${type1})`, "--t2": `var(--type-${type2})` } as CSSProperties;
   const content = (
     <>
@@ -122,20 +136,34 @@ const Arrow = ({ glyph = "→" }: { glyph?: string }) => (
 interface NodeProps {
   node: EvolutionNode;
   evolved: boolean;
-  focusId: number;
+  focusIds: Set<number>;
+  // the other records this node's evolutions also evolve from (the root only)
+  coRoots?: Pokemon[];
   onOpen?: OpenSheet;
 }
 
-function Node({ node, evolved, focusId, onOpen }: NodeProps) {
+function Node({ node, evolved, focusIds, coRoots = [], onOpen }: NodeProps) {
   const { pokemon, children } = node;
-  const tile = <Tile pokemon={pokemon} evolved={evolved} current={pokemon.id === focusId} onOpen={onOpen} />;
+  const own = <Tile pokemon={pokemon} evolved={evolved} current={focusIds.has(pokemon.id)} onOpen={onOpen} />;
+  // two pre-evolutions stack before the one arrow (Gimmighoul over Roaming
+  // Form Gimmighoul → Gholdengo)
+  const tile = coRoots.length ? (
+    <div className="evo-col">
+      {own}
+      {coRoots.map((coRoot) => (
+        <Tile key={coRoot.id} pokemon={coRoot} current={focusIds.has(coRoot.id)} onOpen={onOpen} />
+      ))}
+    </div>
+  ) : (
+    own
+  );
   if (!children.length) return tile;
   if (children.length === 1) {
     return (
       <div className="evo-node">
         {tile}
         <Arrow />
-        <Node node={children[0]} evolved focusId={focusId} onOpen={onOpen} />
+        <Node node={children[0]} evolved focusIds={focusIds} onOpen={onOpen} />
       </div>
     );
   }
@@ -155,7 +183,7 @@ function Node({ node, evolved, focusId, onOpen }: NodeProps) {
                     key={leaf.pokemon.id}
                     pokemon={leaf.pokemon}
                     evolved
-                    current={leaf.pokemon.id === focusId}
+                    current={focusIds.has(leaf.pokemon.id)}
                     onOpen={onOpen}
                   />
                 ))}
@@ -164,7 +192,7 @@ function Node({ node, evolved, focusId, onOpen }: NodeProps) {
           </div>
         ) : null}
         {chains.map((chain) => (
-          <Node key={chain.pokemon.id} node={chain} evolved focusId={focusId} onOpen={onOpen} />
+          <Node key={chain.pokemon.id} node={chain} evolved focusIds={focusIds} onOpen={onOpen} />
         ))}
       </div>
     </div>
@@ -178,11 +206,10 @@ interface EvolutionLineProps {
 
 function EvolutionLine({ pokemon, onOpen }: EvolutionLineProps) {
   const tree = evolutionTree(pokemon);
-  if (!tree) return <p className="evo-none">Doesn&apos;t evolve</p>;
   return (
     <div className="evo-scroll">
       <div className="evo-line">
-        <Node node={tree.root} evolved={false} focusId={tree.focusId} onOpen={onOpen} />
+        <Node node={tree.root} evolved={false} focusIds={tree.focusIds} coRoots={tree.coRoots} onOpen={onOpen} />
       </div>
     </div>
   );
@@ -207,6 +234,7 @@ export function FormsRows({ pokemon, onOpen }: EvolutionLineProps) {
               key={entry.id}
               pokemon={entry}
               form={transformation}
+              temporary={isTemporary(entry)}
               variant={variant}
               note={
                 transformation

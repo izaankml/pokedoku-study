@@ -296,15 +296,23 @@ header h1 .home-link:focus-visible {
 }
 
 @media (max-width: 640px) {
+  :root {
+    /* where the floating pill's bottom edge sits: --nav-inset + --nav-gap
+       above the bottom of the layout viewport, itself --nav-lift above
+       the screen's bottom (0 in a browser; see the home-screen rules).
+       In a browser the toolbar below already covers the home indicator,
+       so the pill sits just above the toolbar; a home-screen app gets the
+       inset (dipping into it a touch). */
+    --nav-inset: min(env(safe-area-inset-bottom), 8px);
+    --nav-gap: 8px;
+    --nav-lift: 0px;
+  }
+
   .tabs {
     position: fixed;
     top: auto;
-    /* a floating pill, inset from the edges. In a browser the toolbar
-       below already covers the home indicator, so it sits just above the
-       toolbar; a home-screen app gets the inset (dipping into it a touch). */
-    --nav-inset: min(env(safe-area-inset-bottom), 8px);
-    --nav-gap: 8px;
-    bottom: calc(var(--nav-inset) + var(--nav-gap));
+    /* a floating pill, inset from the edges */
+    bottom: calc(var(--nav-lift) + var(--nav-inset) + var(--nav-gap));
     left: 12px;
     right: 12px;
     z-index: 50;
@@ -322,7 +330,7 @@ header h1 .home-link:focus-visible {
   }
 
   @media (display-mode: standalone) {
-    .tabs {
+    :root {
       /* the home indicator never needs more than this */
       --nav-inset: min(env(safe-area-inset-bottom), 34px);
       /* the pill's bottom edge lines up with the home indicator, the way
@@ -333,7 +341,7 @@ header h1 .home-link:focus-visible {
          status-bar-high strip of body below `bottom: 0`. The large viewport
          is the real screen height, so measure from that; elsewhere the
          correction is 0. */
-      bottom: calc(100dvh - 100lvh + var(--nav-inset) + var(--nav-gap));
+      --nav-lift: calc(100dvh - 100lvh);
     }
 
     .app {
@@ -341,6 +349,21 @@ header h1 .home-link:focus-visible {
          (100lvh - 100dvh) below the page's bottom */
       padding-bottom: calc(var(--nav-h) + 20px + 100dvh - 100lvh);
     }
+  }
+
+  /* the page ends where the pill ends: an opaque strip from the screen's
+     bottom up to the pill's bottom edge, so content scrolls under the pill
+     (which lets it show through) but not on below it */
+  body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--nav-lift);
+    height: calc(var(--nav-inset) + var(--nav-gap));
+    background: var(--bg-0);
+    z-index: 45;
+    pointer-events: none;
   }
 
   .tab {
@@ -676,7 +699,8 @@ header h1 .home-link:focus-visible {
 
 .autocomplete input,
 .sync-actions input,
-.browser-search {
+.browser-search,
+.category-search {
   width: 100%;
   min-height: 44px;
   padding: 0 var(--sp-3);
@@ -691,13 +715,15 @@ header h1 .home-link:focus-visible {
 
 .autocomplete input::placeholder,
 .sync-actions input::placeholder,
-.browser-search::placeholder {
+.browser-search::placeholder,
+.category-search::placeholder {
   color: var(--text-low);
 }
 
 .autocomplete input:focus-visible,
 .sync-actions input:focus-visible,
-.browser-search:focus-visible {
+.browser-search:focus-visible,
+.category-search:focus-visible {
   border-color: var(--accent);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 3px var(--accent-glow);
 }
@@ -934,9 +960,7 @@ header h1 .home-link:focus-visible {
   gap: var(--sp-1);
   flex-wrap: wrap;
   padding: var(--sp-2) 0;
-  background: color-mix(in srgb, var(--bg-0) 88%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: var(--bg-0); /* opaque: no blur of the list scrolling under it */
 }
 
 @media (max-width: 640px) {
@@ -958,10 +982,27 @@ header h1 .home-link:focus-visible {
   -webkit-appearance: none;
 }
 
-.category-select {
+/* A category picker: the field (a button) and, while open, a panel of
+   every category with a search box, laid under the whole controls bar
+   (.browser-controls is the positioned ancestor, so the panel spans it) */
+.category-picker {
   flex: 1;
   min-width: 160px;
+  display: flex;
+}
+
+.category-field-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.category-field {
+  flex: 1;
+  min-width: 0;
   min-height: 44px;
+  text-align: left;
   font: inherit;
   font-weight: 600;
   color: var(--text-hi);
@@ -969,11 +1010,154 @@ header h1 .home-link:focus-visible {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 0 32px 0 var(--sp-3);
-  appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%238b8992' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 12px;
+}
+
+.category-field:not(.has-value) .category-field-text {
+  color: var(--text-low);
+  font-weight: 500;
+}
+
+/* the × takes the chevron's place once something is chosen */
+.category-field.has-value {
+  background-image: none;
+}
+
+.category-picker.open .category-field {
+  border-color: var(--accent);
+}
+
+.category-field-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.category-clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-mid);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  .category-clear:hover {
+    background: var(--surface-2);
+    color: var(--text-hi);
+  }
+}
+
+.category-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-height: min(60dvh, 440px);
+  padding: var(--sp-2);
+  text-align: left;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+  animation: fade-up var(--dur-fast) var(--ease-out) both;
+}
+
+.category-search {
+  flex: none;
+  min-height: 40px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.category-search::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+.category-options,
+.category-options ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-options {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.category-group-head {
+  position: sticky;
+  top: 0;
+  padding: 8px 10px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-low);
+  background: var(--surface-1);
+}
+
+.category-option {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-hi);
+}
+
+.category-option.highlighted {
+  background: var(--surface-2);
+}
+
+@media (hover: hover) {
+  .category-option:not(:disabled):hover {
+    background: var(--surface-2);
+  }
+}
+
+.category-option.selected {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.category-option:disabled {
+  color: var(--text-low);
+  opacity: 0.55;
+  cursor: default;
+}
+
+.category-tick {
+  font-weight: 800;
+}
+
+.category-empty {
+  padding: var(--sp-3);
+  color: var(--text-mid);
+  font-size: 0.9rem;
 }
 
 /* ---- drill / flashcards / practice ---- */
@@ -1058,11 +1242,13 @@ header h1 .home-link:focus-visible {
   scale: 0.985;
 }
 
-/* "View Detail" in the bottom-right corner once the card is a button */
+/* "View Detail" in the top-right corner once the card is a button — up
+   there it's clear of the name, which can run the card's full width
+   ("Tauros Paldea Combat Breed") */
 .flashcards .pokemon-card .card-hint {
   position: absolute;
   right: var(--sp-3);
-  bottom: var(--sp-2);
+  top: var(--sp-2);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -1234,6 +1420,21 @@ header h1 .home-link:focus-visible {
   min-width: 130px; /* Skip / Submit / Don't Know the same size */
 }
 
+/* ‹ back to the previous card: a square at the row's left */
+.card-actions .card-back {
+  min-width: 44px;
+  width: 44px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  flex: none;
+}
+
+.card-actions .card-back:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 /* what else PokeDoku can ask about this Pokémon, shown once answered */
 .card-facts {
   display: flex;
@@ -1366,24 +1567,17 @@ header h1 .home-link:focus-visible {
   min-width: 0;
 }
 
-/* a transformation (Mega, Gigantamax, Primal …): dashed, like its arrow */
-.evo-tile.form {
-  border-style: dashed;
+/* a transformation that only holds for a battle (Mega, Gigantamax,
+   Primal, an ability's form): dotted — "becomes, for a while". Variants
+   (regional forms, Own Tempo Rockruff) and lasting forms (Rotom Wash,
+   Origin Dialga) are solid like any stage: they are that Pokémon. */
+.evo-tile.temporary {
+  border-style: dotted;
   border-color: var(--border);
 }
 
 .evo-arrow.form {
   font-size: 1.2rem;
-}
-
-/* a variant (another form of the same species): dotted, ≈ */
-.evo-tile.variant {
-  border-style: dotted;
-  border-color: var(--border);
-}
-
-.evo-arrow.variant {
-  font-size: 1.15rem;
 }
 
 /* the Forms row sits under the tree: one flat row of tiles, wrapping and
@@ -1473,12 +1667,6 @@ button.evo-tile:active {
   color: var(--text-low);
 }
 
-.evo-none {
-  margin-bottom: var(--sp-2);
-  font-size: 0.85rem;
-  color: var(--text-low);
-}
-
 /* small caps caption on a pill row ("Abilities"), styled like the
    detail sheet's group headings */
 .tags-label {
@@ -1564,8 +1752,8 @@ button.evo-tile:active {
     font-size: 0.8rem;
   }
 
-  /* one scrollable row of deck chips, faded at the edges so it reads as
-     scrollable */
+  /* one scrollable row of deck chips, out to the screen's edges (no
+     fade over the edges: the chips there stay crisp) */
   .deck-picker {
     flex-wrap: nowrap;
     justify-content: flex-start;
@@ -1574,8 +1762,6 @@ button.evo-tile:active {
     max-width: none;
     margin: 0 -16px 4px;
     padding: 0 16px;
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
-    mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
   }
 
   .deck-picker::-webkit-scrollbar {
@@ -1626,6 +1812,11 @@ button.evo-tile:active {
     flex: 1 1 0;
     max-width: 150px;
     padding: 0 8px;
+  }
+
+  .card-actions .card-back {
+    flex: none;
+    width: 40px;
   }
 
   /* the Cards tab fills the screen; the answer area centres itself in the

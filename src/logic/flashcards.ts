@@ -53,6 +53,10 @@ type DeckDefinition = Omit<Deck, "question" | "categories" | "bias"> &
 
 const isMegaOrGmax = (pokemon: Pokemon): boolean =>
   pokemon.flags.includes("mega") || pokemon.flags.includes("gmax");
+// A regional form is named for its region ("Growlithe Hisui", "Tauros
+// Paldea Combat Breed"), so a region question about it answers itself
+const REGIONAL_FORM = /^(Alola|Galar|Hisui|Paldea)(-|$)/;
+const isRegionalForm = (pokemon: Pokemon): boolean => pokemon.form !== null && REGIONAL_FORM.test(pokemon.form);
 const baseOf = (pokemon: Pokemon): Pokemon => POKEMON_BY_ID.get(pokemon.species) ?? pokemon;
 const sameList = (a: readonly string[], b: readonly string[]): boolean =>
   a.length === b.length && a.every((item, index) => item === b[index]);
@@ -81,7 +85,9 @@ export const DECKS: Deck[] = (
       questionText: "Which region is this Pokémon from?",
       options: CATEGORIES.filter((category) => category.group === "region"),
       answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
-      eligible: (pokemon) => pokemon.regions.length > 0 && !isMegaOrGmax(pokemon),
+      // not the regional forms, whose names give the answer away; dual-region
+      // forms (White-Striped Basculin, Bloodmoon Ursaluna) stay — theirs don't
+      eligible: (pokemon) => pokemon.regions.length > 0 && !isMegaOrGmax(pokemon) && !isRegionalForm(pokemon),
       // Gen 5+ regions are the user's known weak spot
       bias: (pokemon) => (pokemon.gen >= 5 ? 2 : 1),
     },
@@ -218,6 +224,16 @@ export interface Card {
 // What was submitted: the option ids, "gaveup", or null while unanswered.
 export type Picked = string[] | "gaveup" | null;
 
+// A card as it was left: answered (or not), with whatever was picked.
+export interface CardState {
+  card: Card;
+  picked: Picked;
+  selection: string[];
+}
+
+// How many cards Back can step through
+export const HISTORY_LIMIT = 30;
+
 export interface CardSession {
   // the deck in play, or "all"
   deckId: string;
@@ -229,10 +245,20 @@ export interface CardSession {
   selection: string[];
   // last few pokemon ids, to avoid immediate repeats
   recent: number[];
+  // the cards before this one, oldest first (Back steps through them)
+  history: CardState[];
+  // the cards Back stepped away from, nearest last (Next returns to them)
+  forward: CardState[];
 }
 
 // What saveSession writes: everything but `next`, which is cheap to re-pick.
 type StoredSession = Omit<CardSession, "next">;
+
+const isCardState = (value: unknown): value is CardState => {
+  if (typeof value !== "object" || value === null) return false;
+  const state = value as Partial<CardState>;
+  return typeof state.card === "object" && state.card !== null && DECK_BY_ID.has(state.card.deckId) && Array.isArray(state.selection);
+};
 
 function isStoredSession(value: unknown): value is StoredSession {
   if (typeof value !== "object" || value === null) return false;
@@ -259,10 +285,15 @@ export const session: CardSession = {
   picked: null,
   selection: [],
   recent: [],
+  history: [],
+  forward: [],
   ...(isStoredSession(stored) ? stored : {}),
 };
+// sessions stored before Back existed have no history; a damaged one is dropped
+session.history = Array.isArray(session.history) ? session.history.filter(isCardState) : [];
+session.forward = Array.isArray(session.forward) ? session.forward.filter(isCardState) : [];
 
 export function saveSession(): void {
-  const { deckId, card, picked, selection, recent } = session;
-  saveJson(SESSION_KEY, { deckId, card, picked, selection, recent } satisfies StoredSession);
+  const { deckId, card, picked, selection, recent, history, forward } = session;
+  saveJson(SESSION_KEY, { deckId, card, picked, selection, recent, history, forward } satisfies StoredSession);
 }

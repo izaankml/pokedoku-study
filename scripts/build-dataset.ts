@@ -48,6 +48,7 @@ import {
   EVO_ITEM_OVERRIDES,
   EVO_DETAIL_OVERRIDES,
   PREVO_OVERRIDES,
+  EXTRA_PREVOS,
   DISPLAY_NAME_OVERRIDES,
   CLONED_FORMS,
 } from "./manual-lists.ts";
@@ -161,18 +162,28 @@ const hasNoEvolution = (entry: DexSpecies): boolean =>
 const pool = species.concat(formes);
 const byName = new Map(pool.map((entry) => [entry.name, entry]));
 
+const lookUp = (name: string, child: DexSpecies): DexSpecies => {
+  const parent = byName.get(name);
+  if (!parent) throw new Error(`unknown prevo "${name}" for ${child.name}`);
+  return parent;
+};
+
+// The dex's pre-evolution (the record's `prevo`)
 function parentOf(entry: DexSpecies): DexSpecies | null {
   const prevoName = PREVO_OVERRIDES[entry.id] || entry.prevo;
-  if (!prevoName) return null;
-  const parent = byName.get(prevoName);
-  if (!parent) throw new Error(`unknown prevo "${prevoName}" for ${entry.name}`);
-  return parent;
+  return prevoName ? lookUp(prevoName, entry) : null;
+}
+
+// Every pre-evolution: the dex's, then any EXTRA_PREVOS (Gholdengo: Chest
+// Form Gimmighoul, then Roaming Form)
+function parentsOf(entry: DexSpecies): DexSpecies[] {
+  const parent = parentOf(entry);
+  return (parent ? [parent] : []).concat((EXTRA_PREVOS[entry.id] || []).map((name) => lookUp(name, entry)));
 }
 
 const childrenOf = new Map<string, DexSpecies[]>();
 for (const entry of pool) {
-  const parent = parentOf(entry);
-  if (parent) {
+  for (const parent of parentsOf(entry)) {
     const siblings = childrenOf.get(parent.name);
     if (siblings) siblings.push(entry);
     else childrenOf.set(parent.name, [entry]);
@@ -180,7 +191,7 @@ for (const entry of pool) {
 }
 
 function stageOf(entry: DexSpecies): Stage {
-  const hasParent = parentOf(entry) !== null;
+  const hasParent = parentsOf(entry).length > 0;
   const hasChildren = childrenOf.has(entry.name);
   if (!hasParent && !hasChildren) return "single";
   if (!hasParent) return "first";
@@ -550,8 +561,11 @@ function coversNothingNew(form: Record_, base: Record_): boolean {
   );
 }
 
-// the dex's name for a form where it isn't the game's
-const FORM_NAME_OVERRIDES: Record<string, string> = { rockruffdusk: "Own-Tempo" };
+// the dex's name for a form where it isn't the game's — and a transformation
+// that belongs to one particular form carries that form's name first, the
+// way the dex's own "Droopy-Mega" and "Galar-Zen" do, so the app can tell
+// whose it is: Mega Floette is Eternal Flower Floette's (dex: changesFrom)
+const FORM_NAME_OVERRIDES: Record<string, string> = { rockruffdusk: "Own-Tempo", floettemega: "Eternal-Mega" };
 const candidateForms = formes.filter((entry) => entry.id in FORM_IDS);
 const droppedForms: Record_[] = [];
 const formRecords: Record_[] = [];
@@ -582,12 +596,12 @@ for (const entry of candidateForms) {
 // prevo: the record this Pokémon evolved from (null at the start of a line
 // or for Mega/Gigantamax/battle forms, which have no evolution categories)
 const keptFormIds = new Set(formRecords.concat(droppedForms).map((record) => record.id));
+const recordIdOf = (parent: DexSpecies): number =>
+  parent.forme && parent.id in FORM_IDS && keptFormIds.has(FORM_IDS[parent.id]) ? FORM_IDS[parent.id] : parent.num;
 function prevoIdOf(entry: DexSpecies): number | null {
   if (hasNoEvolution(entry)) return null;
   const parent = parentOf(entry);
-  if (!parent) return null;
-  if (parent.forme && parent.id in FORM_IDS && keptFormIds.has(FORM_IDS[parent.id])) return FORM_IDS[parent.id];
-  return parent.num;
+  return parent ? recordIdOf(parent) : null;
 }
 const poolById = new Map(pool.map((entry) => [entry.id, entry]));
 const dexEntryOf = (record: Record_): DexSpecies => {
@@ -595,9 +609,13 @@ const dexEntryOf = (record: Record_): DexSpecies => {
   if (!entry) throw new Error(`no dex entry for ${record.name}`);
   return entry;
 };
-for (const record of baseRecords) record.prevo = prevoIdOf(dexEntryOf(record));
-for (const record of formRecords) record.prevo = prevoIdOf(dexEntryOf(record));
-for (const record of droppedForms) record.prevo = prevoIdOf(dexEntryOf(record));
+for (const record of baseRecords.concat(formRecords, droppedForms)) {
+  const entry = dexEntryOf(record);
+  record.prevo = prevoIdOf(entry);
+  // the other pre-evolutions (EXTRA_PREVOS), only where there are any
+  const others = hasNoEvolution(entry) ? [] : parentsOf(entry).slice(1).map(recordIdOf);
+  if (others.length) record.otherPrevos = others;
+}
 
 // The entries PokeDoku lists on its own with no dex forme behind them:
 // clones of the species record, display-only (see CLONED_FORMS)
@@ -694,7 +712,9 @@ for (const ability of ABILITIES) check(count((record) => record.abilities.includ
 
 // forms
 const formCount = (predicate: (record: Record_) => boolean): number => formRecords.filter(predicate).length;
-const EXPECTED_FORM_COUNT = 232;
+// (Roaming Form Gimmighoul is first stage like the Chest Form, so the builder
+// files it as covered by its base; it is still an answer, by PokeDoku's list)
+const EXPECTED_FORM_COUNT = 231;
 check(
   formRecords.length === EXPECTED_FORM_COUNT,
   `form count ${formRecords.length} != ${EXPECTED_FORM_COUNT}`,
@@ -801,6 +821,11 @@ check(get("meowthgalar").stage === "first", "Galarian Meowth is first (Perrserke
 check(get("slowpokegalar").branched, "Galarian Slowpoke is branched");
 check(same(get("taurospaldeacombat").regions, ["paldea"]), "Paldean Tauros is paldea");
 check(get("taurospaldeacombat").stage === "single", "Paldean Tauros has no evolution line");
+check(get("gimmighoulroaming").stage === "first" && get("gimmighoul").stage === "first", "both Gimmighoul forms evolve");
+check(same(get("gholdengo").otherPrevos, [FORM_IDS.gimmighoulroaming]) && get("gholdengo").prevo === 999, "Gholdengo evolves from both Gimmighoul forms");
+check(same(get("mothim").otherPrevos, [FORM_IDS.burmysandy, FORM_IDS.burmytrash]) && get("mothim").prevo === 412, "Mothim evolves from any Burmy cloak");
+check(get("floetteeternal").stage === "single", "Eternal Flower Floette has no evolution line");
+check(get("floettemega").form === "Eternal-Mega", "Mega Floette belongs to Eternal Flower Floette");
 check(same(get("charizardmegax").regions, ["kanto"]), "Mega Charizard X uses base region");
 check(get("charizardmegax").types.includes("dragon"), "Mega Charizard X is Dragon");
 check(same(get("charizardmegax").flags, ["mega"]), "Mega Charizard X: mega only (not starter)");

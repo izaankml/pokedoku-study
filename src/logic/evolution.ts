@@ -1,39 +1,63 @@
 // Evolution lines, drawn from each record's `prevo` (the record it evolved
-// from). A line is a list of levels — [[Eevee], [Vaporeon, Jolteon, …]] —
-// walked from the root of whatever line the Pokémon belongs to. Mega,
-// Gigantamax and the other transformations (forms.ts) have no evolution
-// of their own, so they show their base's line.
+// from) — and its `otherPrevos`, where a Pokémon evolves from two records
+// (Gholdengo: Chest and Roaming Form Gimmighoul). A line is a tree walked
+// from the root of whatever line the Pokémon belongs to; a Pokémon that
+// doesn't evolve is a tree of one. Mega, Gigantamax and the other
+// transformations (forms.ts) have no evolution of their own, so they show
+// their base's line.
 
 import { ALL_POKEMON, POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
-import { baseOf } from "./forms.ts";
+import { baseOf, sharersOf } from "./forms.ts";
+
+const byId = (id: number | null | undefined): Pokemon | undefined => (id === null || id === undefined ? undefined : POKEMON_BY_ID.get(id));
 
 const childrenOf = new Map<number, Pokemon[]>();
 for (const pokemon of ALL_POKEMON) {
-  if (pokemon.prevo === null || pokemon.prevo === undefined) continue;
-  const siblings = childrenOf.get(pokemon.prevo);
-  if (siblings) siblings.push(pokemon);
-  else childrenOf.set(pokemon.prevo, [pokemon]);
+  for (const parentId of [pokemon.prevo, ...(pokemon.otherPrevos ?? [])]) {
+    if (parentId === null || parentId === undefined) continue;
+    const siblings = childrenOf.get(parentId);
+    if (siblings) siblings.push(pokemon);
+    else childrenOf.set(parentId, [pokemon]);
+  }
 }
 // dex order: by species number, forms after their base (a form's own id
 // is beyond the dex, so Wormadam Sandy would otherwise trail Mothim)
 for (const kids of childrenOf.values()) kids.sort((a, b) => a.species - b.species || a.id - b.id);
 
-// The root of the line a Pokémon belongs to, and the record to highlight
-// (the Pokémon itself, or what it's a transformation of — Charizard for
-// Mega Charizard X; see forms.ts).
-function rootOf(pokemon: Pokemon): { root: Pokemon; focus: Pokemon } {
-  let focus = baseOf(pokemon);
-  if (focus.stage === null && focus.species !== focus.id) focus = POKEMON_BY_ID.get(focus.species) || focus;
-  let root = focus;
+// The start of a Pokémon's line, climbing `prevo`
+function climb(pokemon: Pokemon): Pokemon {
+  let root = pokemon;
   const seen = new Set([root.id]);
   for (;;) {
-    const prevo = root.prevo === null || root.prevo === undefined ? undefined : POKEMON_BY_ID.get(root.prevo);
+    const prevo = byId(root.prevo);
     if (!prevo || seen.has(prevo.id)) break;
     root = prevo;
     seen.add(root.id);
   }
-  return { root, focus };
+  return root;
+}
+
+// The root of the line a Pokémon belongs to, and the records to highlight:
+// the Pokémon itself, or what it's a transformation of (Charizard for Mega
+// Charizard X — see forms.ts) along with whoever shares that transformation
+// (Mega Meowstic is both Meowstics').
+function rootOf(pokemon: Pokemon): { root: Pokemon; focusIds: Set<number> } {
+  let focus = baseOf(pokemon);
+  // a transformation, or a cosmetic clone that has a stage but no line of
+  // its own (Cowboy Hat Caterpie), shows its species' line
+  const hasOwnLine = (entry: Pokemon): boolean => entry.prevo !== null || childrenOf.has(entry.id);
+  if (focus.species !== focus.id && (focus.stage === null || (focus.stage !== "single" && !hasOwnLine(focus)))) {
+    focus = POKEMON_BY_ID.get(focus.species) || focus;
+  }
+  let root = climb(focus);
+  // a root that is only ever a second pre-evolution (Roaming Form
+  // Gimmighoul: everything it evolves into has another record as its
+  // `prevo`) belongs to that record's own line — unlike Burmy Sandy Cloak,
+  // which has Wormadam Sandy of its own as well as Mothim
+  const kids = childrenOf.get(root.id) || [];
+  if (kids.length && kids.every((child) => child.prevo !== root.id)) root = climb(kids[0]);
+  return { root, focusIds: new Set([focus.id, ...sharersOf(pokemon).map((sharer) => sharer.id)]) };
 }
 
 export interface EvolutionNode {
@@ -44,44 +68,36 @@ export interface EvolutionNode {
 
 export interface EvolutionTree {
   root: EvolutionNode;
-  // the record to highlight
-  focusId: number;
+  // the other records that evolve into exactly what the root does (Roaming
+  // Form Gimmighoul beside Gimmighoul, both → Gholdengo) — nearly always
+  // none. A record that shares only some evolutions (Burmy Sandy Cloak:
+  // Mothim, but its own Wormadam) keeps its own tree instead.
+  coRoots: Pokemon[];
+  // the records to highlight
+  focusIds: Set<number>;
 }
 
 // The line as a tree, so each Pokémon is joined to its own evolutions:
 // Sliggoo → Goodra and Hisuian Sliggoo → Hisuian Goodra are two chains
-// under Goomy, not one branch of four. Null when the Pokémon doesn't
-// evolve at all.
-export function evolutionTree(pokemon: Pokemon): EvolutionTree | null {
-  const { root, focus } = rootOf(pokemon);
-  if (!childrenOf.has(root.id)) return null;
+// under Goomy, not one branch of four. A Pokémon that doesn't evolve is a
+// tree of just itself.
+export function evolutionTree(pokemon: Pokemon): EvolutionTree {
+  const { root, focusIds } = rootOf(pokemon);
   const node = (current: Pokemon): EvolutionNode => ({
     pokemon: current,
     children: (childrenOf.get(current.id) || []).map(node),
   });
-  return { root: node(root), focusId: focus.id };
-}
-
-export interface EvolutionLevels {
-  // the records of each stage, root first
-  levels: Pokemon[][];
-  focusId: number;
-}
-
-// The same line as arrays of records per stage, root first. Null when
-// the Pokémon doesn't evolve at all.
-export function evolutionLine(pokemon: Pokemon): EvolutionLevels | null {
-  const { root, focus } = rootOf(pokemon);
-  const levels: Pokemon[][] = [[root]];
-  let frontier: Pokemon[] = [root];
-  while (frontier.length) {
-    const next = frontier.flatMap((current) => childrenOf.get(current.id) || []);
-    if (!next.length) break;
-    levels.push(next);
-    frontier = next;
-  }
-  if (levels.length === 1 && levels[0].length === 1) return null;
-  return { levels, focusId: focus.id };
+  const rootKids = childrenOf.get(root.id) || [];
+  const sameKids = (other: Pokemon): boolean => {
+    const kids = childrenOf.get(other.id) || [];
+    return kids.length === rootKids.length && kids.every((kid) => rootKids.includes(kid));
+  };
+  const coRootIds = new Set(rootKids.flatMap((child) => (child.otherPrevos ?? []).filter((id) => id !== root.id)));
+  const coRoots = [...coRootIds]
+    .map(byId)
+    .filter((entry): entry is Pokemon => entry !== undefined)
+    .filter(sameKids);
+  return { root: node(root), coRoots, focusIds };
 }
 
 // The chip has room for a phrase, not a sentence: "Use a Water Stone" →

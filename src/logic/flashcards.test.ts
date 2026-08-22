@@ -52,9 +52,19 @@ describe("flashcard decks", () => {
 
   it("only asks about forms whose answer differs from the base species", () => {
     const region = deckPool(deck("region"));
-    expect(region).toContain(by("growlithehisui"));
+    expect(region).toContain(by("basculinwhitestriped")); // Unova and Hisui, unlike Basculin
+    expect(region).toContain(by("ursalunabloodmoon"));
     expect(region).not.toContain(by("charizardmegax")); // same region as Charizard
     expect(region).not.toContain(by("meltan")); // no region at all
+    // regional forms answer themselves by name
+    expect(region).not.toContain(by("growlithehisui"));
+    expect(region).not.toContain(by("taurospaldeacombat"));
+    expect(region).not.toContain(by("darmanitangalarzen"));
+    expect(region.some((pokemon) => /^(Alola|Galar|Hisui|Paldea)/.test(pokemon.form ?? ""))).toBe(false);
+    // species from those regions — and the evolutions of regional forms — are still asked
+    for (const name of ["sneasler", "cursola", "perrserker", "sirfetchd", "mrrime", "runerigus", "obstagoon", "kleavor", "wyrdeer", "overqwil", "basculegion", "enamorus"]) {
+      expect(region, name).toContain(by(name));
+    }
     const special = deckPool(deck("special"));
     expect(special).not.toContain(by("typhlosionhisui")); // starter, same as Typhlosion
     expect(special).toContain(by("koraidon"));

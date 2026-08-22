@@ -67,6 +67,9 @@ export interface Pokemon {
   abilityList: AbilitySlot[];
   // the record it evolved from, null at the start of a line
   prevo: number | null;
+  // any other records it evolves from (Gholdengo: Roaming Form Gimmighoul
+  // as well as the Chest Form) — absent for nearly everyone
+  otherPrevos?: number[];
   // false for a display-only form that is never an answer
   answer?: boolean;
 }

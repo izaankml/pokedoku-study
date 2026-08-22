@@ -161,6 +161,15 @@ export const PREVO_OVERRIDES: Record<string, string> = {
   gastrodoneast: "Shellos-East",
 };
 
+// Further pre-evolutions the dex's single `prevo` can't express (child slug
+// -> the other parents' names): both Gimmighoul forms evolve into the one
+// Gholdengo, and a male Burmy of any cloak becomes Mothim. The child's
+// `prevo` stays the dex's; these become its `otherPrevos`.
+export const EXTRA_PREVOS: Record<string, string[]> = {
+  gholdengo: ["Gimmighoul-Roaming"],
+  mothim: ["Burmy-Sandy", "Burmy-Trash"],
+};
+
 // Species PokeDoku assigns no region at all (Meltan and Melmetal come from
 // Pokémon GO / Let's Go and are neither Alola nor Galar).
 export const NO_REGION_IDS = new Set<number>([808, 809]);

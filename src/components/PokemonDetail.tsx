@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.ts";
+import { CATEGORIES, CATEGORY_GROUPS, getCategory } from "../data/categories.ts";
 import type { Category, CategoryGroup } from "../data/categories.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
@@ -124,7 +124,8 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
   const base = pokemon.form ? POKEMON_BY_ID.get(pokemon.species) : null;
   const of = (group: CategoryGroup): Category[] =>
     CATEGORIES.filter((category) => category.group === group && category.predicate(pokemon));
-  const types = of("type");
+  // in the Pokémon's own order (Ghost/Poison for Gengar), as everywhere else
+  const types = pokemon.types.map((type) => getCategory(`type-${type}`));
   const regions = of("region");
   const groups = of("special");
   const facts = factsOf(pokemon);

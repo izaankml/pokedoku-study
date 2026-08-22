@@ -110,6 +110,33 @@ export function isTransformation(pokemon: Pokemon): boolean {
   return Boolean(pokemon.form) && (isMega(pokemon) || isGmax(pokemon) || pokemon.name in TRIGGERS);
 }
 
+// The transformations that last outside battle — switched by an item or a
+// state and kept until switched back: Rotom's appliances, Deoxys' formes,
+// the Therian and Origin formes, Sky Shaymin, the Kyurem and Necrozma
+// fusions, Hoopa Unbound, 10% Zygarde, the Calyrex riders, Ogerpon's
+// masks, Resolute Keldeo. Every other transformation holds for a battle
+// only: Mega, Gigantamax, Primal, Eternamax, and whatever an ability, a
+// move or a held item does once the battle starts (Zen Mode, Schooling,
+// Disguise, Battle Bond, the Crowned forms, Terastal Terapagos …).
+const LASTING = new Set([
+  "rotomheat", "rotomwash", "rotomfrost", "rotomfan", "rotommow",
+  "deoxysattack", "deoxysdefense", "deoxysspeed",
+  "tornadustherian", "thundurustherian", "landorustherian", "enamorustherian",
+  "dialgaorigin", "palkiaorigin", "giratinaorigin",
+  "shayminsky",
+  "kyuremblack", "kyuremwhite",
+  "necrozmaduskmane", "necrozmadawnwings",
+  "hoopaunbound",
+  "zygarde10",
+  "calyrexice", "calyrexshadow",
+  "ogerponwellspring", "ogerponhearthflame", "ogerponcornerstone",
+  "keldeoresolute",
+]);
+// Whether a record is a transformation that only holds for a battle.
+export function isTemporary(pokemon: Pokemon): boolean {
+  return isTransformation(pokemon) && !LASTING.has(pokemon.name);
+}
+
 // Records grouped under a key, in record order.
 function groupBy(records: readonly Pokemon[], keyOf: (pokemon: Pokemon) => number): Map<number, Pokemon[]> {
   const groups = new Map<number, Pokemon[]>();
@@ -261,18 +288,21 @@ const sharedFormsOf = (female: Pokemon, base: Pokemon): Pokemon[] => {
   const own = new Set(formsOf(female).map(formKind));
   return formsOf(base).filter((form) => !own.has(formKind(form)));
 };
-const genderMatesOf = (transformation: Pokemon): Pokemon[] => {
+// The gender forms that share a transformation with its base (Meowstic
+// Female for Mega Meowstic); empty for anything that isn't one.
+export function sharersOf(transformation: Pokemon): Pokemon[] {
+  if (!isTransformation(transformation)) return [];
   const base = baseOf(transformation);
   return variantsOf(base).filter(
     (variant) => variant.form === "F" && sharedFormsOf(variant, base).includes(transformation),
   );
-};
+}
 export function formsRow(pokemon: Pokemon): Pokemon[] {
   const species = POKEMON_BY_ID.get(pokemon.species) || pokemon;
   let list: Pokemon[];
   if (isTransformation(pokemon)) {
     const base = baseOf(pokemon);
-    list = [base, ...formsOf(base), ...counterpartsOf(pokemon), ...genderMatesOf(pokemon)];
+    list = [base, ...formsOf(base), ...counterpartsOf(pokemon), ...sharersOf(pokemon)];
   } else if (pokemon === species) {
     list = [species, ...formsOf(species), ...variantsOf(species)];
   } else {

@@ -1,7 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { ALL_POKEMON as POKEMON } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
-import { baseOf, counterpartsOf, formLabel, formRank, formTrigger, formsOf, formsRow, isTransformation, variantNote, variantsOf } from "./forms.ts";
+import {
+  baseOf,
+  counterpartsOf,
+  formLabel,
+  formRank,
+  formTrigger,
+  formsOf,
+  formsRow,
+  isTemporary,
+  isTransformation,
+  sharersOf,
+  variantNote,
+  variantsOf,
+} from "./forms.ts";
 
 const byName = (name: string): Pokemon => {
   const pokemon = POKEMON.find((candidate) => candidate.displayName === name || candidate.altName === name);
@@ -29,6 +42,25 @@ describe("forms", () => {
     expect(formsOf(byName("Rotom")).length).toBe(5);
     expect(formsOf(byName("Kyurem")).map((p) => p.displayName)).toEqual(["Kyurem Black", "Kyurem White"]);
     expect(formTrigger(byName("Kyogre Primal"))).toBe("Blue Orb");
+    // only Eternal Flower Floette Mega Evolves
+    expect(baseOf(byName("Floette Mega")).displayName).toBe("Floette Eternal");
+    expect(formsOf(byName("Floette"))).toEqual([]);
+    expect(formsOf(byName("Floette Eternal")).map((p) => p.displayName)).toEqual(["Floette Mega"]);
+    expect(formTrigger(byName("Floette Mega"))).toBe("Floettite");
+  });
+  it("tells the battle-only transformations from the lasting ones", () => {
+    for (const n of ["Charizard Mega X", "Charizard Gmax", "Groudon Primal", "Darmanitan Zen", "Greninja Ash", "Zacian Crowned", "Eternatus Eternamax", "Terapagos Terastal", "Meloetta Pirouette"]) {
+      expect(isTemporary(byName(n)), n).toBe(true);
+    }
+    for (const n of ["Rotom Wash", "Deoxys Attack", "Dialga Origin", "Shaymin Sky", "Kyurem Black", "Hoopa Unbound", "Calyrex Ice", "Ogerpon Wellspring Mask", "Rattata Alola", "Charizard"]) {
+      expect(isTemporary(byName(n)), n).toBe(false);
+    }
+  });
+  it("knows which gender forms share a transformation", () => {
+    expect(sharersOf(byName("Meowstic Mega")).map((p) => p.displayName)).toEqual(["Meowstic Female"]);
+    expect(sharersOf(byName("Pyroar Mega")).map((p) => p.displayName)).toEqual(["Pyroar Female"]);
+    expect(sharersOf(byName("Charizard Mega X"))).toEqual([]);
+    expect(sharersOf(byName("Pyroar Female"))).toEqual([]);
   });
   it("labels a form by its own name", () => {
     expect(formLabel(byName("Charizard Mega X"))).toBe("Mega X");
@@ -83,6 +115,9 @@ describe("formsRow", () => {
     expect(names(byName("Meowstic Female"))).toEqual(["Meowstic Male", "Meowstic Female", "Meowstic Mega"]);
     expect(names(byName("Minior Meteor")).slice(0, 3)).toEqual(["Minior Meteor", "Minior Red", "Minior Orange"]);
     expect(names(byName("Charizard Mega X"))).toEqual(["Charizard", "Charizard Mega X", "Charizard Mega Y", "Charizard Gmax"]);
+    expect(names(byName("Floette"))).toEqual(["Floette", "Floette Eternal"]);
+    expect(names(byName("Floette Eternal"))).toEqual(["Floette", "Floette Eternal", "Floette Mega"]);
+    expect(names(byName("Floette Mega"))).toEqual(["Floette Eternal", "Floette Mega"]);
   });
   it("shows every Lycanroc on every Lycanroc, and Gigantamax Urshifu as counterparts", () => {
     expect(names(byName("Lycanroc Midnight"))).toEqual(["Lycanroc Midday", "Lycanroc Midnight", "Lycanroc Dusk"]);

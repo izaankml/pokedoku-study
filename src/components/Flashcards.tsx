@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useStats } from "../StatsContext.ts";
 import { pickFlashcard } from "../logic/picker.ts";
-import { DECKS, DECK_BY_ID, cardKey, saveSession, session } from "../logic/flashcards.ts";
-import type { Card, Deck, DeckOption, Picked } from "../logic/flashcards.ts";
+import { DECKS, DECK_BY_ID, HISTORY_LIMIT, cardKey, saveSession, session } from "../logic/flashcards.ts";
+import type { Card, CardState, Deck, DeckOption, Picked } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
 import { POKEMON_BY_ID, POKEMON_BY_NAME, preloadSprite } from "../data/pokedex.ts";
@@ -193,15 +193,17 @@ function Flashcards() {
     ids.length > 0 && ids.every((id) => answerIds.has(id)) && (!multi || ids.length === answerIds.size);
   const wasCorrect = answered && !gaveUp && isRight([...pickedIds]);
 
-  function commit(nextCard: Card, nextPicked: Picked) {
+  function commit(nextCard: Card, nextPicked: Picked, nextSelection: string[] = []) {
     session.card = nextCard;
     session.picked = nextPicked;
-    session.selection = [];
+    session.selection = nextSelection;
     saveSession();
     setCard(nextCard);
     setPicked(nextPicked);
-    setSelection([]);
+    setSelection(nextSelection);
   }
+  // this card as it stands, for the history
+  const currentState = (): CardState => ({ card, picked, selection });
 
   // Nothing is graded on click: options toggle (multi decks) or swap
   // (single-pick decks) until Submit.
@@ -243,8 +245,16 @@ function Flashcards() {
     commit(card, GAVE_UP);
   }
 
+  // On to the next card: the one Back stepped away from, if any (as it was
+  // left), else the one lined up. This card joins the history.
   function next(forDeck: string = deckId) {
     session.recent = [...session.recent, pokemon.id].slice(-10);
+    session.history = [...session.history, currentState()].slice(-HISTORY_LIMIT);
+    const ahead = session.forward.pop();
+    if (ahead) {
+      commit(ahead.card, ahead.picked, ahead.selection);
+      return;
+    }
     const upcoming =
       session.next && (forDeck === "all" || session.next.deckId === forDeck) && session.next.pokemonId !== pokemon.id
         ? session.next
@@ -253,8 +263,19 @@ function Flashcards() {
     commit(upcoming, null);
   }
 
+  // Back to the previous card, as it was left (answered cards stay
+  // answered); this card waits ahead for Next
+  function back() {
+    const previous = session.history[session.history.length - 1];
+    if (!previous) return;
+    session.history = session.history.slice(0, -1);
+    session.forward = [...session.forward, currentState()];
+    commit(previous.card, previous.picked, previous.selection);
+  }
+
   function changeDeck(id: string) {
     session.deckId = id;
+    session.forward = []; // cards stepped away from may not fit the new deck
     saveSession();
     setDeckId(id);
     // Switching decks moves on: an answered card is done, and an
@@ -285,13 +306,14 @@ function Flashcards() {
   return (
     <div className="flashcards">
       <div className="deck-picker" role="tablist" aria-label="Deck" ref={pickerRef}>
+        {/* tapping the deck already in play deselects it: back to All */}
         {[{ id: "all", label: "All" }, ...DECKS].map((option) => (
           <button
             key={option.id}
             role="tab"
             aria-selected={deckId === option.id}
             className={`chip${deckId === option.id ? " active" : ""}`}
-            onClick={() => changeDeck(option.id)}
+            onClick={() => changeDeck(deckId === option.id && option.id !== "all" ? "all" : option.id)}
           >
             {option.label}
           </button>
@@ -343,6 +365,15 @@ function Flashcards() {
           {answered && nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
         </div>
         <div className="card-actions">
+          <button
+            className="ghost card-back"
+            aria-label="Previous card"
+            title="Previous card"
+            disabled={!session.history.length}
+            onClick={back}
+          >
+            ‹
+          </button>
           {answered ? (
             <button className="primary" onClick={() => next()}>
               Next Card

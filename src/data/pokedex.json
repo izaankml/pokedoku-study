@@ -2,9 +2,9 @@
  "meta": {
   "source": "@pkmn/dex (Pokémon Showdown data)",
   "sourceVersion": "0.10.11",
-  "generatedAt": "2026-08-17T21:30:20.000Z",
+  "generatedAt": "2026-08-22T21:21:32.645Z",
   "count": 1325,
-  "answerCount": 1257,
+  "answerCount": 1256,
   "speciesCount": 1025
  },
  "pokemon": [
@@ -23721,7 +23721,11 @@
      "hidden": true
     }
    ],
-   "prevo": 412
+   "prevo": 412,
+   "otherPrevos": [
+    90412,
+    91412
+   ]
   },
   {
    "id": 415,
@@ -37888,7 +37892,7 @@
   {
    "id": 10296,
    "species": 670,
-   "form": "Mega",
+   "form": "Eternal-Mega",
    "name": "floettemega",
    "displayName": "Mega Floette",
    "types": [
@@ -55931,7 +55935,7 @@
    "regions": [
     "paldea"
    ],
-   "stage": "single",
+   "stage": "first",
    "evoMethods": [],
    "evoItem": null,
    "evoDetail": null,
@@ -55948,6 +55952,7 @@
      "hidden": false
     }
    ],
+   "answer": false,
    "prevo": null
   },
   {
@@ -55987,7 +55992,10 @@
      "hidden": false
     }
    ],
-   "prevo": 999
+   "prevo": 999,
+   "otherPrevos": [
+    10263
+   ]
   },
   {
    "id": 1001,

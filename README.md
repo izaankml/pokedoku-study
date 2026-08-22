@@ -12,12 +12,17 @@ Rotom appliances, Lycanroc's three, the female Pyroar, …).
 ## Modes
 
 - **Browse** — every Pokémon, or pick one category, or a pair like a
-  PokeDoku cell, and see who qualifies; a search box narrows the list by
+  PokeDoku cell, and see who qualifies; each category picker opens a
+  searchable list (type "galar", "stone", "earthquake"; tapping the chosen
+  one again clears it), and a search box narrows the list by
   name. Tap any Pokémon (here or in a Drill/Grid
   answer list) for its detail sheet: every category it counts for, its
   abilities (hidden one marked), its whole evolution line with how each
-  stage evolves (tap a stage for its own sheet), and the line's Mega,
-  Gigantamax and other transformations with what triggers them. A form is
+  stage evolves (tap a stage for its own sheet; a Pokémon that doesn't
+  evolve is a line of one), and the line's Mega,
+  Gigantamax and other transformations with what triggers them — dotted
+  tiles for the ones that last a battle (Mega, Gigantamax, an ability's
+  form), solid for the rest (regional forms, Rotom's appliances). A form is
   an answer exactly when PokeDoku lists it as one; the few it hides
   (Cramorant's battle forms, Minior's colours) are in the data only so the
   sheet can draw a whole line.
@@ -33,8 +38,11 @@ Rotom appliances, Lycanroc's three, the female Pyroar, …).
   every answer (both types of a dual type; Stone implies Item and
   Friendship implies Level-Up). Skip or Don't Know on a card. Once
   answered, the card shows the Pokémon's types, region, group and
-  abilities, and tapping it opens the detail sheet. Keyboard: arrows move
-  over the options, Space picks, Enter submits / moves on.
+  abilities, and tapping it opens the detail sheet. ‹ steps back through
+  the last 30 cards as they were left (answered ones stay answered); Next
+  returns. The Region deck skips regional forms, whose names give the
+  answer away. Tapping the deck in play again goes back to All. Keyboard:
+  arrows move over the options, Space picks, Enter submits / moves on.
 - **Grid** — a full 3×3 practice board, generated so every cell is
   solvable with distinct Pokémon; wrong guesses say why.
 - **Stats** — per-category accuracy, weak spots highlighted (Mono-/Dual-
@@ -119,7 +127,9 @@ whenever records are added:
 - `src/data/sprites.json` — which sprite to show and the visible box
   inside it. Sprites are PokeDoku's own 96×96 pixel art (its CDN; the art
   you see in the game, with truer colours than the fan sprites elsewhere
-  for Gen 6+), PokeAPI's as the fallback. Every sprite is normalised to
+  for Gen 6+), PokeAPI's as the fallback — and first for the couple of
+  entries PokeDoku draws in another style (Ash-Greninja, Own Tempo
+  Rockruff: 128px renders that look blurry beside pixel art). Every sprite is normalised to
   fill its slot (a Charmander no longer sits as a speck beside its
   Gigantamax), which needs each sprite's bounding box; PokeDoku's CDN
   sends no CORS headers, so the boxes are measured here at build time
@@ -140,7 +150,11 @@ Notes on judgment calls:
   evolutions record the item (`evoItem`).
 - Evolution is form-aware: Kantonian Farfetch'd, Corsola, Qwilfish and
   Red-Striped Basculin have no evolution line (their evolutions belong to
-  regional forms); Kantonian Mr. Mime and Linoone are final stage.
+  regional forms); Kantonian Mr. Mime and Linoone are final stage. Both
+  Gimmighoul forms evolve into Gholdengo and a male Burmy of any cloak
+  becomes Mothim (`otherPrevos` carries the further pre-evolutions);
+  Eternal Flower Floette doesn't evolve, and Mega Floette is its (form
+  `Eternal-Mega`), not Floette's.
   "Not fully evolved" = first or middle stage. "Branched" = can evolve
   into different species (Eevee, Scyther, Cosmoem — not Rockruff, whose
   Lycanroc forms are one species).

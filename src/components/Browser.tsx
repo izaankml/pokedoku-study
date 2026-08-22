@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import CategorySelect from "./CategorySelect.tsx";
+import CategoryPicker from "./CategoryPicker.tsx";
 import AnswerList from "./AnswerList.tsx";
 import { intersection, membersOf, normalizeName, pairIsValid } from "../logic/matching.ts";
 import { CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
@@ -40,7 +40,7 @@ function Browser() {
     writeHash("browse", [first, second].filter(Boolean));
   }, [first, second]);
 
-  // The other dropdown only offers categories that pair with this one;
+  // The other picker only offers categories that pair with this one;
   // changing one drops the other if they no longer work together.
   const changeFirst = (id: string) => {
     setPick((pick) => ({
@@ -64,9 +64,9 @@ function Browser() {
         Pick a category — or two, like a PokeDoku cell — and study who fits.
       </p>
       <div className="browser-controls">
-        <CategorySelect value={first} onChange={changeFirst} partner={second} label="First category" />
+        <CategoryPicker value={first} onChange={changeFirst} partner={second} label="First category" />
         <span className="times">×</span>
-        <CategorySelect value={second} onChange={setSecond} partner={first} label="Second category" />
+        <CategoryPicker value={second} onChange={setSecond} partner={first} label="Second category" />
         <input
           type="search"
           className="browser-search"

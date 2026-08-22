@@ -73,11 +73,15 @@ const counts = { pokedoku: 0, pokedokuBase: 0, pokeapi: 0, pokeapiBase: 0, none:
 type CountKey = keyof typeof counts;
 // a form with no sprite of its own anywhere: the closest form to stand in
 const STAND_IN: Record<number, number> = {};
+// PokeDoku's sprite for these is a 128px rendered-style image, not pixel art
+// like the rest (it reads as a blurry odd one out beside its line), and
+// PokeAPI's 96px pixel sprite exists: Ash-Greninja, Own Tempo Rockruff
+const PREFER_POKEAPI = new Set<number>([10117, 10151]);
 let done = 0;
 for (const record of pokemon) {
   // own id on PokeDoku, then a stand-in, then base species on PokeDoku, then the same on PokeAPI
   const tries: [host: number, id: number][] = [];
-  for (const host of [0, 1]) {
+  for (const host of PREFER_POKEAPI.has(record.id) ? [1, 0] : [0, 1]) {
     tries.push([host, record.id]);
     if (STAND_IN[record.id]) tries.push([host, STAND_IN[record.id]]);
     if (record.species !== record.id) tries.push([host, record.species]);
