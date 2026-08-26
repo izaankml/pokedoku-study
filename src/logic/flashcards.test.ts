@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
-import { DECKS, DECK_BY_ID, allCardKeys, cardKey, deckPool } from "./flashcards.ts";
+import { DECKS, DECK_BY_ID, allCardKeys, cardKey, deckPool, filterFor, passesFilter } from "./flashcards.ts";
 import type { Deck } from "./flashcards.ts";
 import type { Pokemon } from "../data/types.ts";
 import { pickFlashcard } from "./picker.ts";
@@ -39,15 +39,46 @@ describe("flashcard decks", () => {
     expect(deck("ability").answers(by("gengar"))).toEqual(["none"]);
   });
 
-  it("marks Type and Region as multi-select (both types / regions needed)", () => {
-    expect(DECKS.filter((d) => d.multi).map((d) => d.id)).toEqual(["region", "type", "method"]);
+  it("marks the pick-everything decks as multi-select", () => {
+    expect(DECKS.filter((each) => each.multi).map((each) => each.id)).toEqual([
+      "region", "type", "method", "matchup", "combo",
+    ]);
     expect(deck("method").implies).toEqual({ "evo-stone": ["evo-item"], "evo-friendship": ["evo-level"] });
   });
 
   it("covers every category group in Stats except Type Count (the Type deck implies it)", () => {
-    expect(DECKS.map((d) => d.id)).toEqual([
-      "region", "type", "method", "stage", "branched", "special", "move", "ability",
+    expect(DECKS.map((each) => each.id)).toEqual([
+      "region", "type", "method", "stage", "branched", "special", "move", "matchup", "name", "ability", "combo",
     ]);
+  });
+
+  it("combo cards union their sub-decks' answers", () => {
+    const combo = deck("combo");
+    expect(combo.answers(by("koraidon"), "type+special")).toEqual([
+      "type-fighting", "type-dragon", "flag-legendary", "flag-paradox",
+    ]);
+    expect(combo.question("type+region")).toBe("Pick every answer: Type + Region");
+    // an in-no-group Pokémon can only be asked group-free combos
+    expect(combo.eligible(by("pikachu"))).toBe(true); // type+region
+    expect(combo.pickParam?.(by("pikachu"), () => 0)).toBe("type+region");
+    // "none" flows through from the Ability sub-deck
+    expect(combo.answers(by("gengar"), "type+special+ability")).toContain("none");
+    expect(combo.categories(by("gengar"), "type+special+ability")).not.toContain("none");
+  });
+
+  it("asks matchup weaknesses and typed names", () => {
+    const matchup = deck("matchup");
+    // Charizard (Fire/Flying): Water, Electric, Rock
+    expect(matchup.answers(by("charizard"))).toEqual(["type-water", "type-electric", "type-rock"]);
+    expect(matchup.categories(by("charizard"))).toEqual([]); // never pollutes type accuracy
+    // Gmax keeps its base's typing, so it is never asked; a type-changing
+    // Mega is, with its own weaknesses
+    expect(deckPool(matchup)).not.toContain(by("charizardgmax"));
+    expect(matchup.answers(by("charizardmegax"))).toEqual(["type-ground", "type-rock", "type-dragon"]);
+    const name = deck("name");
+    expect(name.answers(by("pikachu"))).toEqual([String(by("pikachu").id)]);
+    expect(name.input).toBe("name");
+    expect(deckPool(name)).toContain(by("charizardmegax")); // forms are their own card
   });
 
   it("only asks about forms whose answer differs from the base species", () => {
@@ -77,6 +108,28 @@ describe("flashcard decks", () => {
     expect(type).toContain(by("charizardmegax")); // Fire/Dragon, unlike Charizard
     expect(type).not.toContain(by("charizardmegay")); // same types
     expect(deckPool(deck("branched"))).not.toContain(by("charizard")); // final stage
+  });
+
+  it("filters keep the Pokémon that have some chosen answer", () => {
+    const region = deck("region");
+    // empty, missing, or all-selected lists mean no filter
+    expect(filterFor({}, "region")).toBe(null);
+    expect(filterFor({ region: [] }, "region")).toBe(null);
+    expect(filterFor({ region: region.options.map((option) => option.id) }, "region")).toBe(null);
+    const unovaOnly = filterFor({ region: ["region-unova"] }, "region");
+    expect(unovaOnly).toEqual(new Set(["region-unova"]));
+    expect(passesFilter(region, by("snivy"), unovaOnly)).toBe(true);
+    expect(passesFilter(region, by("pikachu"), unovaOnly)).toBe(false);
+    // a dual-region form counts for either of its regions
+    expect(passesFilter(region, by("basculinwhitestriped"), unovaOnly)).toBe(true);
+    // "Stone only" keeps stone evolvers even though stone implies item
+    expect(passesFilter(deck("method"), by("raichu"), new Set(["evo-stone"]))).toBe(true);
+    expect(passesFilter(deck("method"), by("alakazam"), new Set(["evo-stone"]))).toBe(false);
+    // "Levitate only" skips the many whose answer is None of These
+    expect(passesFilter(deck("ability"), by("gengar"), new Set(["ability-levitate"]))).toBe(false);
+    // the Move deck filters the asked move, not the Pokémon
+    expect(passesFilter(deck("move"), by("pikachu"), new Set(["move-surf"]))).toBe(true);
+    expect(deck("move").pickParam?.(by("pikachu"), () => 0.9, new Set(["move-surf"]))).toBe("surf");
   });
 
   it("keeps the region deck's stats keys backwards compatible", () => {

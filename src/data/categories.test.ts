@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CATEGORIES, getCategory, whyNot } from "./categories.ts";
+import { CATEGORIES, QUIZ_CATEGORIES, getCategory, whyNot } from "./categories.ts";
 import { POKEMON_BY_ID } from "./pokedex.ts";
 import type { Pokemon } from "./types.ts";
 import { intersection, membersOf, pairIsValid } from "../logic/matching.ts";
@@ -12,11 +12,28 @@ const p = (id: number): Pokemon => {
 const inCat = (catId: string, pokemonId: number): boolean => getCategory(catId).predicate(p(pokemonId));
 
 describe("categories", () => {
-  it("defines 77 categories with unique ids", () => {
+  it("defines 80 categories with unique ids", () => {
     // 18 types + 2 type counts + 10 regions + 5 evo methods + 5 stages
-    // + branched + 9 special + 22 moves + 5 abilities
-    expect(CATEGORIES.length).toBe(77);
-    expect(new Set(CATEGORIES.map((c) => c.id)).size).toBe(77);
+    // + branched + 9 special + 22 moves + 5 abilities + 3 fun
+    expect(CATEGORIES.length).toBe(80);
+    expect(new Set(CATEGORIES.map((category) => category.id)).size).toBe(80);
+    // the fun filters are Browse-only: never quizzed
+    expect(QUIZ_CATEGORIES.length).toBe(77);
+    expect(QUIZ_CATEGORIES.some((category) => category.group === "fun")).toBe(false);
+  });
+
+  it("classifies the fun Browse-only filters", () => {
+    expect(inCat("fun-pikachuClone", 25)).toBe(true); // Pikachu
+    expect(inCat("fun-pikachuClone", 702)).toBe(true); // Dedenne
+    expect(inCat("fun-pikachuClone", 1)).toBe(false);
+    // the hand-list's every id is a real species (a typo would silently
+    // shrink the category), and the archetype spans 12 species
+    const clones = membersOf("fun-pikachuClone");
+    expect(new Set(clones.map((pokemon) => pokemon.species)).size).toBe(12);
+    expect(inCat("fun-evoTypeChange", 130)).toBe(true); // Magikarp → Gyarados
+    expect(inCat("fun-evoTypeChange", 2)).toBe(false); // Ivysaur keeps Grass/Poison
+    expect(inCat("fun-formTypeChange", 10034)).toBe(true); // Mega Charizard X
+    expect(inCat("fun-formTypeChange", 10196)).toBe(false); // Gmax keeps its typing
   });
 
   it("classifies known Pokémon correctly", () => {

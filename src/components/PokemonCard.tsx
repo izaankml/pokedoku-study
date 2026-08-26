@@ -11,9 +11,14 @@ interface PokemonCardProps {
   eager?: boolean;
   // a small cue in the corner, shown once the card is clickable
   hint?: string;
+  // keep the name off the card entirely — caption, tooltip and alt text
+  // (the Name deck asks who this is)
+  hideName?: boolean;
 }
 
-function PokemonCard({ pokemon, onClick, eager = false, hint }: PokemonCardProps) {
+const MYSTERY = "Mystery Pokémon";
+
+function PokemonCard({ pokemon, onClick, eager = false, hint, hideName = false }: PokemonCardProps) {
   const clickable = typeof onClick === "function";
   return (
     <figure
@@ -32,10 +37,10 @@ function PokemonCard({ pokemon, onClick, eager = false, hint }: PokemonCardProps
           : undefined
       }
     >
-      <Sprite pokemon={pokemon} eager={eager} />
-      <figcaption title={pokemon.displayName}>
-        <span className="card-name">
-          <PokemonName name={pokemon.displayName} />
+      <Sprite pokemon={pokemon} eager={eager} label={hideName ? MYSTERY : undefined} />
+      <figcaption title={hideName ? MYSTERY : pokemon.displayName}>
+        <span className={hideName ? "card-name card-name-hidden" : "card-name"}>
+          {hideName ? "???" : <PokemonName name={pokemon.displayName} />}
         </span>
       </figcaption>
       {/* a small cue in the corner (e.g. "View Detail" once a card can be clicked) */}

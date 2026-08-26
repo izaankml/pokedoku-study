@@ -539,6 +539,20 @@ header h1 .home-link:focus-visible {
   box-shadow: var(--edge-hi);
 }
 
+/* a pill that is a button (clicking jumps to Browse): same look, a hand */
+button.pill {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .pill-link:hover {
+    filter: brightness(1.15);
+  }
+}
+
 /* the type's in-game symbol before its name (CategoryPill TypeIcon) */
 .type-icon {
   width: 1em;
@@ -632,6 +646,7 @@ header h1 .home-link:focus-visible {
 .cat-typeCount { --g: #a3a3ad; } /* mono/dual: silver */
 .cat-move { --g: #cf5c9a; }      /* moves: raspberry */
 .cat-ability { --g: #9c8ee0; }   /* the five tracked abilities, as categories */
+.cat-fun { --g: #f2b337; }       /* the Browse-only fun filters: spark */
 
 .group-legendary { --g: #e6b422; }  /* gold */
 .group-mythical { --g: #f27c9c; }   /* rose */
@@ -971,9 +986,11 @@ header h1 .home-link:focus-visible {
   }
 }
 
-/* the search box takes its own row under the two dropdowns */
+/* the search box takes its own row under the two dropdowns, with a
+   little air between it and them */
 .browser-search {
   flex: 1 1 100%;
+  margin-top: var(--sp-1);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -1285,6 +1302,38 @@ header h1 .home-link:focus-visible {
   width: 100%;
 }
 
+/* the Name deck's text box (align-items: center would shrink-wrap it) */
+.answer-body .autocomplete {
+  width: 100%;
+}
+
+/* a Combo card: one labelled option grid per asked group */
+.combo-sections {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+}
+
+.combo-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.combo-section .region-buttons {
+  min-height: 0; /* sections size to their own rows */
+}
+
+/* the mystery card's stand-in for the hidden name */
+.card-name-hidden {
+  color: var(--text-low);
+  letter-spacing: 0.2em;
+}
+
 .answer-area .verdict {
   margin: 0;
 }
@@ -1300,7 +1349,8 @@ header h1 .home-link:focus-visible {
    phone and the desktop (muscle memory) */
 .region-buttons {
   --cols: 3;
-  --gap: var(--sp-2);
+  --gap: 10px;
+  --btn-h: 48px; /* generous targets: fast taps were landing on neighbours */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -1309,12 +1359,12 @@ header h1 .home-link:focus-visible {
   width: 100%; /* auto side margins would shrink it inside the flex column */
   max-width: 480px;
   /* four rows (the Type deck) so the action row sits still across decks */
-  min-height: calc(4 * 44px + 3 * var(--gap));
+  min-height: calc(4 * var(--btn-h) + 3 * var(--gap));
 }
 
 .region-btn {
   flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
-  height: 44px;
+  height: var(--btn-h);
   padding: 0 6px;
   white-space: nowrap;
   font-size: 0.92rem;
@@ -1406,13 +1456,22 @@ header h1 .home-link:focus-visible {
   animation: shake var(--dur-slow) var(--ease-out) both;
 }
 
+/* the ‹ row and the Skip/Submit row, kept together as one block so
+   .answer-area's space distribution can't drift them apart */
+.card-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
 .card-actions {
   min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
-  margin-top: var(--sp-1);
 }
 
 .card-actions .ghost,
@@ -1420,17 +1479,17 @@ header h1 .home-link:focus-visible {
   min-width: 130px; /* Skip / Submit / Don't Know the same size */
 }
 
-/* ‹ back to the previous card: a square at the row's left */
-.card-actions .card-back {
-  min-width: 44px;
+/* ‹ back to the previous card: a square on its own row above the
+   Skip/Submit row, out of misclick range (.card-controls centres it) */
+.card-controls .card-back {
   width: 44px;
+  min-width: 44px;
   padding: 0;
   font-size: 1.5rem;
   line-height: 1;
-  flex: none;
 }
 
-.card-actions .card-back:disabled {
+.card-controls .card-back:disabled {
   opacity: 0.35;
   cursor: default;
 }
@@ -1699,6 +1758,18 @@ button.evo-tile:active {
   margin: 0 auto var(--sp-3);
 }
 
+/* Cards: the per-deck filter row under the deck chips */
+.deck-filter {
+  text-align: center;
+  margin: 0 auto var(--sp-2);
+  max-width: 480px;
+}
+
+.deck-filter .grid-groups {
+  margin-top: var(--sp-2);
+  text-align: left;
+}
+
 .chip {
   min-height: 32px;
   padding: 0 12px;
@@ -1725,7 +1796,8 @@ button.evo-tile:active {
 }
 
 /* per-deck column counts */
-.region-buttons.deck-type {
+.region-buttons.deck-type,
+.region-buttons.deck-matchup {
   --cols: 5;
 }
 
@@ -1739,8 +1811,24 @@ button.evo-tile:active {
   /* Everything (chips, card, options, Skip/Don't Know) has to fit above
      the nav without scrolling, inside Safari's ~680px of visible height. */
   .region-buttons {
-    --gap: 6px;
+    --gap: 8px;
+    --btn-h: 46px;
     min-height: 0; /* the answer area centres itself in the free space */
+  }
+
+  /* short screens (an iPhone with Safari's bars out): the sprite and the
+     options give height back so the whole card still fits above the nav */
+  @media (max-height: 700px) {
+    .flashcards .pokemon-card .sprite,
+    .flashcards .pokemon-card .sprite-fallback {
+      width: 112px;
+      height: 112px;
+    }
+
+    .region-buttons {
+      --gap: 6px;
+      --btn-h: 44px;
+    }
   }
 
   .region-btn {
@@ -1748,7 +1836,8 @@ button.evo-tile:active {
     padding: 0 2px;
   }
 
-  .region-buttons.deck-type .region-btn {
+  .region-buttons.deck-type .region-btn,
+  .region-buttons.deck-matchup .region-btn {
     font-size: 0.8rem;
   }
 
@@ -1801,8 +1890,12 @@ button.evo-tile:active {
     font-size: 0.78rem;
   }
 
+  .card-controls,
   .card-actions {
     align-self: stretch;
+  }
+
+  .card-actions {
     gap: 6px;
   }
 
@@ -1814,9 +1907,17 @@ button.evo-tile:active {
     padding: 0 8px;
   }
 
-  .card-actions .card-back {
-    flex: none;
+  /* the ‹ row pays rent in the tight height budget: slimmer, no gaps */
+  .card-controls {
+    gap: var(--sp-1);
+    margin-top: 0;
+  }
+
+  .card-controls .card-back {
     width: 40px;
+    min-width: 40px;
+    height: 34px;
+    min-height: 34px;
   }
 
   /* the Cards tab fills the screen; the answer area centres itself in the
@@ -1956,7 +2057,8 @@ button.evo-tile:active {
   color: var(--text-hi);
 }
 
-/* which category groups the next grid draws from: a row of toggle chips */
+/* A panel of toggle chips: the Grid tab's category groups and the Cards
+   tab's per-deck filter both use it */
 .grid-groups {
   max-width: 480px;
   margin: var(--sp-3) auto 0;
@@ -1967,8 +2069,8 @@ button.evo-tile:active {
   text-align: left;
 }
 
-.grid-groups legend {
-  padding: 0 6px;
+.grid-groups-title {
+  margin: 0 0 var(--sp-2);
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-mid);
@@ -2026,6 +2128,34 @@ button.evo-tile:active {
   font-size: 0.8rem;
 }
 
+/* The wrong guess: its tile wears the miss colour; tapping opens the
+   detail sheet, where "why doesn't it fit" lives */
+.wrong-guess .pokemon-card {
+  border-color: color-mix(in srgb, var(--wrong) 60%, var(--border));
+  background: var(--wrong-soft);
+}
+
+/* in the guess popup it sits alone under the verdict, card-sized */
+.modal.guess .wrong-guess {
+  display: flex;
+  justify-content: center;
+  margin: var(--sp-2) 0;
+}
+
+.modal.guess .wrong-guess .pokemon-card {
+  width: 140px;
+  padding: 10px 6px 8px;
+  border: 1px solid color-mix(in srgb, var(--wrong) 60%, var(--border));
+  border-radius: var(--radius-md);
+  background: var(--wrong-soft);
+}
+
+.modal.guess .wrong-guess .pokemon-card .sprite,
+.modal.guess .wrong-guess .pokemon-card .sprite-fallback {
+  width: 72px;
+  height: 72px;
+}
+
 /* Where there's room, the nine cells — not the board including its row
    labels — sit on the page's centre line: the board is widened by a
    phantom column on the right the size of the label column (84px + gap) */
@@ -2036,7 +2166,7 @@ button.evo-tile:active {
     padding-right: 92px;
   }
 
-  .grid-groups {
+  .practice .grid-groups {
     max-width: calc(480px + 92px); /* as wide as the board's box, centred with it */
   }
 }
@@ -2210,11 +2340,15 @@ button.evo-tile:active {
 .acc-fill {
   display: block;
   height: 100%;
+  min-width: 5px; /* percentages that round to a hairline still show a sliver */
   border-radius: inherit;
   background: var(--correct);
 }
 
-tr.weak .acc-fill {
+/* red fill: a weak row, or one never answered right (whose only visible
+   fill is the min-width sliver) */
+tr.weak .acc-fill,
+.acc-fill.all-miss {
   background: var(--wrong);
 }
 
@@ -2416,6 +2550,81 @@ tr.weak .acc-fill {
   background: var(--surface-2);
   border: 1px solid var(--border-subtle);
   line-height: 1.2;
+}
+
+/* the Flashcards row's tiles are buttons: tapping one lists its cards */
+button.srs-tile {
+  font: inherit;
+  cursor: pointer;
+}
+
+.srs-tile.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* the tapped status's cards: sprite, name, deck and when it's due */
+.card-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: var(--sp-3);
+  text-align: left;
+}
+
+.card-status-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 4px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .card-status-row:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+}
+
+.card-status-thumb {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.card-status-thumb img,
+.card-status-thumb .sprite-fallback {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.card-status-name {
+  font-weight: 600;
+  color: var(--text-hi);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-status-meta {
+  font-size: 0.78rem;
+  color: var(--text-mid);
+  white-space: nowrap;
+}
+
+.card-status-list > .ghost.small {
+  align-self: center;
+  margin-top: var(--sp-2);
 }
 
 .srs-num {

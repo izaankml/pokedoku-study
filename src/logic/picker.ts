@@ -1,8 +1,8 @@
-import { CATEGORIES } from "../data/categories.ts";
+import { QUIZ_CATEGORIES } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
-import { DECKS, DECK_BY_ID, cardKey, deckPool } from "./flashcards.ts";
-import type { Deck } from "./flashcards.ts";
+import { DECKS, DECK_BY_ID, cardKey, deckPool, filterFor, filteredDeckPool } from "./flashcards.ts";
+import type { Deck, DeckFilters } from "./flashcards.ts";
 import { allValidPairs, pairKey } from "./matching.ts";
 import type { CategoryPair } from "./matching.ts";
 import { dueFactor } from "./schedule.ts";
@@ -32,8 +32,8 @@ export function pickWeighted<T>(items: T[], weightFn: (item: T) => number, rando
 let partnersCache: Map<string, Category[]> | null = null;
 function partnersOf(catId: string): Category[] {
   if (!partnersCache) {
-    const cache = new Map<string, Category[]>(CATEGORIES.map((category) => [category.id, []]));
-    for (const [a, b] of allValidPairs(CATEGORIES)) {
+    const cache = new Map<string, Category[]>(QUIZ_CATEGORIES.map((category) => [category.id, []]));
+    for (const [a, b] of allValidPairs(QUIZ_CATEGORIES)) {
       cache.get(a.id)?.push(b);
       cache.get(b.id)?.push(a);
     }
@@ -66,20 +66,20 @@ export function pickDrillPair(
     return sum / partners.length;
   };
   for (let attempt = 0; attempt < 50; attempt++) {
-    const a = pickWeighted(CATEGORIES, (category) => categoryWeight(category, merged) * meanDue(category), random);
-    const partners = partnersOf(a.id);
+    const first = pickWeighted(QUIZ_CATEGORIES, (category) => categoryWeight(category, merged) * meanDue(category), random);
+    const partners = partnersOf(first.id);
     if (!partners.length) continue;
-    const b = pickWeighted(
+    const second = pickWeighted(
       partners,
-      (category) => categoryWeight(category, merged) * pairDue(a, category),
+      (category) => categoryWeight(category, merged) * pairDue(first, category),
       random,
     );
-    if (avoid && avoid.has(pairKey(a.id, b.id))) continue;
-    return [a, b];
+    if (avoid && avoid.has(pairKey(first.id, second.id))) continue;
+    return [first, second];
   }
   // practically unreachable (every category has at least one valid partner,
   // and `avoid` holds one pair): any valid pair will do
-  return allValidPairs(CATEGORIES)[0];
+  return allValidPairs(QUIZ_CATEGORIES)[0];
 }
 
 export interface PickFlashcardOptions {
@@ -87,6 +87,8 @@ export interface PickFlashcardOptions {
   deckId?: string;
   // Pokémon ids not to pick (the last few cards)
   exclude?: Set<number>;
+  // the user's per-deck filters (flashcards.ts DeckFilters)
+  filters?: DeckFilters;
   random?: RandomSource;
   now?: number;
 }
@@ -104,14 +106,23 @@ export interface FlashcardPick {
 // pick that.
 export function pickFlashcard(
   merged: MergedStats,
-  { deckId = "all", exclude = new Set<number>(), random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
+  { deckId = "all", exclude = new Set<number>(), filters = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
 ): FlashcardPick {
   const decks = deckId === "all" ? DECKS : [deckById(deckId)];
-  const cards = decks.flatMap((deck) =>
-    deckPool(deck)
-      .filter((pokemon) => !exclude.has(pokemon.id))
-      .map((pokemon) => ({ deck, pokemon })),
-  );
+  const chosenFor = new Map(decks.map((deck) => [deck.id, filterFor(filters, deck.id)]));
+  // Per deck: prefer the filtered pool without the recent cards; a filter
+  // narrow enough to exhaust it drops the recent-exclusion first and the
+  // filter only as a last resort — and each deck falls back on its own,
+  // so a tight filter never silently removes a deck from the All mix.
+  const cards = decks.flatMap((deck) => {
+    const pool = deckPool(deck);
+    const filteredPool = filteredDeckPool(deck, chosenFor.get(deck.id) ?? null);
+    let members = filteredPool.filter((pokemon) => !exclude.has(pokemon.id));
+    if (!members.length) members = filteredPool;
+    if (!members.length) members = pool.filter((pokemon) => !exclude.has(pokemon.id));
+    if (!members.length) members = pool;
+    return members.map((pokemon) => ({ deck, pokemon }));
+  });
   const pick = pickWeighted(
     cards,
     ({ deck, pokemon }) => {
@@ -120,7 +131,7 @@ export function pickFlashcard(
     },
     random,
   );
-  const param = pick.deck.pickParam ? pick.deck.pickParam(pick.pokemon, random) : null;
+  const param = pick.deck.pickParam ? pick.deck.pickParam(pick.pokemon, random, chosenFor.get(pick.deck.id)) : null;
   return { ...pick, param };
 }
 

@@ -4,6 +4,7 @@
 // history exists (3 = the user's known weak spots). `miss` is the clause
 // shown when a guess fails the category ("isn't Fire-type").
 
+import { POKEMON_BY_ID } from "./pokedex.ts";
 import { ABILITIES, MOVES } from "./traits.ts";
 import { TYPE_NAMES } from "./types.ts";
 import type { EvoMethod, Flag, Pokemon, Region, Stage } from "./types.ts";
@@ -17,7 +18,8 @@ export type CategoryGroup =
   | "evoLine"
   | "special"
   | "move"
-  | "ability";
+  | "ability"
+  | "fun";
 
 export interface Category {
   id: string;
@@ -30,6 +32,8 @@ export interface Category {
   predicate: (pokemon: Pokemon) => boolean;
   // the clause for a Pokémon that fails this category alone
   miss: string;
+  // a Browse-only curiosity: never drawn by Drill or Grid, no stats row
+  browseOnly?: boolean;
 }
 
 const REGIONS: ReadonlyArray<readonly [Region, string, number]> = [
@@ -45,12 +49,15 @@ const REGIONS: ReadonlyArray<readonly [Region, string, number]> = [
   ["paldea", "Paldea", 3],
 ];
 
-const EVO_CATEGORIES: ReadonlyArray<readonly [EvoMethod, string, string, number, string]> = [
-  ["level", "Evolved by Level-Up", "Level Evolution", 2, "didn't evolve by levelling up"],
-  ["item", "Evolved by Item", "Item Evolution", 2, "didn't evolve with an item"],
-  ["stone", "Evolved by Stone", "Stone Evolution", 2, "didn't evolve with a stone"],
-  ["trade", "Evolved by Trade", "Trade Evolution", 2, "didn't evolve by trade"],
-  ["friendship", "Evolved by Friendship", "Friendship Evolution", 2, "didn't evolve by friendship"],
+// The short is the full label here: "Item Evolution" read as if the
+// pre-evolution counted too (Eevee for Item), which it doesn't. The
+// Cards deck carries its own terse button labels (flashcards.ts).
+const EVO_CATEGORIES: ReadonlyArray<readonly [EvoMethod, string, number, string]> = [
+  ["level", "Evolved by Level-Up", 2, "didn't evolve by levelling up"],
+  ["item", "Evolved by Item", 2, "didn't evolve with an item"],
+  ["stone", "Evolved by Stone", 2, "didn't evolve with a stone"],
+  ["trade", "Evolved by Trade", 2, "didn't evolve by trade"],
+  ["friendship", "Evolved by Friendship", 2, "didn't evolve by friendship"],
 ];
 
 const STAGE_CATEGORIES: ReadonlyArray<readonly [Stage, string, string, string]> = [
@@ -73,6 +80,63 @@ const FLAG_CATEGORIES: ReadonlyArray<readonly [Flag, string, number, string]> = 
 ];
 
 const cap = (text: string): string => text[0].toUpperCase() + text.slice(1);
+
+// ---- fun, Browse-only filters ----
+
+// The Pikachu-clone archetype: each generation's electric rodent, plus
+// the Pikachu line and its imitator. A judgment-call list — edit freely.
+const PIKACHU_CLONES = new Set([
+  25, // Pikachu
+  26, // Raichu
+  172, // Pichu
+  311, // Plusle
+  312, // Minun
+  417, // Pachirisu
+  587, // Emolga
+  702, // Dedenne
+  777, // Togedemaru
+  778, // Mimikyu
+  877, // Morpeko
+  921, // Pawmi
+]);
+
+const typesDiffer = (one: Pokemon | undefined, other: Pokemon | undefined): boolean =>
+  !!one &&
+  !!other &&
+  (one.types.length !== other.types.length || one.types.some((type, index) => type !== other.types[index]));
+
+const FUN_CATEGORIES: Category[] = [
+  {
+    id: "fun-pikachuClone",
+    label: "Pikachu Clone",
+    short: "Pikachu Clone",
+    group: "fun",
+    priorWeight: 1,
+    predicate: (pokemon) => PIKACHU_CLONES.has(pokemon.species),
+    miss: "isn't a Pikachu clone",
+    browseOnly: true,
+  },
+  {
+    id: "fun-evoTypeChange",
+    label: "Changed Type Evolving",
+    short: "Changed Type Evolving",
+    group: "fun",
+    priorWeight: 1,
+    predicate: (pokemon) => pokemon.prevo !== null && typesDiffer(pokemon, POKEMON_BY_ID.get(pokemon.prevo)),
+    miss: "kept its pre-evolution's typing",
+    browseOnly: true,
+  },
+  {
+    id: "fun-formTypeChange",
+    label: "Form With New Type",
+    short: "Form With New Type",
+    group: "fun",
+    priorWeight: 1,
+    predicate: (pokemon) => pokemon.form !== null && typesDiffer(pokemon, POKEMON_BY_ID.get(pokemon.species)),
+    miss: "keeps its base form's typing",
+    browseOnly: true,
+  },
+];
 
 export const CATEGORIES: Category[] = [
   ...TYPE_NAMES.map(
@@ -122,10 +186,10 @@ export const CATEGORIES: Category[] = [
   // (Alakazam: trade and item, via the Linking Cord). Stone is the subset
   // of item where an evolution stone is used, not held.
   ...EVO_CATEGORIES.map(
-    ([method, label, short, priorWeight, miss]): Category => ({
+    ([method, label, priorWeight, miss]): Category => ({
       id: `evo-${method}`,
       label,
-      short,
+      short: label,
       group: "evo",
       priorWeight,
       predicate: (pokemon) => pokemon.evoMethods.includes(method),
@@ -196,7 +260,12 @@ export const CATEGORIES: Category[] = [
       miss: `doesn't have ${ability.name}`,
     }),
   ),
+  ...FUN_CATEGORIES,
 ];
+
+// What Drill and Grid draw from and Stats tables show — everything but
+// the Browse-only curiosities.
+export const QUIZ_CATEGORIES: Category[] = CATEGORIES.filter((category) => !category.browseOnly);
 
 export const CATEGORY_BY_ID = new Map<string, Category>(CATEGORIES.map((category) => [category.id, category]));
 
@@ -231,7 +300,14 @@ export const CATEGORY_GROUPS: ReadonlyArray<readonly [CategoryGroup, string]> = 
   ["special", "Group"],
   ["move", "Moves"],
   ["ability", "Abilities"],
+  ["fun", "Fun"],
 ];
+
+// The groups the quizzed categories span (drives the Grid panel and the
+// Stats tables; the Browse picker keeps the full CATEGORY_GROUPS).
+export const QUIZ_CATEGORY_GROUPS = CATEGORY_GROUPS.filter(([group]) =>
+  QUIZ_CATEGORIES.some((category) => category.group === group),
+);
 
 // Groups where one Pokémon can never satisfy two categories, so such pairs
 // are structurally empty. Everything else (types → dual types, evolution
@@ -243,4 +319,11 @@ export function getCategory(id: string): Category {
   const category = CATEGORY_BY_ID.get(id);
   if (!category) throw new Error(`unknown category: ${id}`);
   return category;
+}
+
+// The type-colour CSS class for a type category (" type-fire", leading
+// space included), "" for everything else — the one rule for colouring
+// UI by a category (pills, the Cards option buttons).
+export function typeClassOf(cat: Pick<Category, "id" | "group"> | undefined): string {
+  return cat?.group === "type" ? ` type-${cat.id.slice(5)}` : "";
 }

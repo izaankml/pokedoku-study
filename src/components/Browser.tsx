@@ -1,25 +1,31 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CategoryPicker from "./CategoryPicker.tsx";
 import AnswerList from "./AnswerList.tsx";
-import { intersection, membersOf, normalizeName, pairIsValid } from "../logic/matching.ts";
+import { canJoin, intersectAll, normalizeName } from "../logic/matching.ts";
 import { CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
-import { POKEMON } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
-import { hashStateFor, writeHash } from "../logic/hashState.ts";
+import { hashStateFor, useHashChange, writeHash } from "../logic/hashState.ts";
 
-// The two dropdowns' category ids, "" for none.
-interface Pick {
-  first: string;
-  second: string;
+// Up to three picked category ids, "" for an empty slot.
+const SLOTS = 3;
+
+// Keeps ids greedily in order (earlier wins), dropping unknowns and any
+// that no longer combine — the one rule for which picks may coexist.
+function keepValid(ids: string[]): string[] {
+  const kept: string[] = [];
+  for (const id of ids) {
+    if (kept.length < SLOTS && id && CATEGORY_BY_ID.has(id) && canJoin(kept, id)) kept.push(id);
+  }
+  return kept;
 }
 
 // The picked categories live in the URL (#browse, #browse/type-fire,
-// #browse/region-kanto/type-fire); both start blank, which lists everyone.
-function initialPick(): Pick {
-  const [a = "", b = ""] = hashStateFor("browse") || [];
-  const first = CATEGORY_BY_ID.has(a) ? a : "";
-  const second = CATEGORY_BY_ID.has(b) && (!first || pairIsValid(first, b)) ? b : "";
-  return { first, second };
+// #browse/region-kanto/type-fire/flag-legendary); all slots start blank,
+// which lists everyone. Ids are kept only while they still combine.
+function picksFromHash(): string[] {
+  const picks = keepValid(hashStateFor("browse") || []);
+  while (picks.length < SLOTS) picks.push("");
+  return picks;
 }
 
 // A Pokémon matches the search when the query is inside its name (the
@@ -33,40 +39,66 @@ function matches(pokemon: Pokemon, normalizedQuery: string): boolean {
 }
 
 function Browser() {
-  const [{ first, second }, setPick] = useState<Pick>(initialPick);
+  const [picks, setPicks] = useState<string[]>(picksFromHash);
   const [query, setQuery] = useState("");
-  const setSecond = (id: string) => setPick((pick) => ({ ...pick, second: id }));
+  const chosen = picks.filter(Boolean);
   useEffect(() => {
-    writeHash("browse", [first, second].filter(Boolean));
-  }, [first, second]);
+    writeHash("browse", chosen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [picks]);
 
-  // The other picker only offers categories that pair with this one;
-  // changing one drops the other if they no longer work together.
-  const changeFirst = (id: string) => {
-    setPick((pick) => ({
-      first: id,
-      second: pick.second && id && !pairIsValid(id, pick.second) ? "" : pick.second,
-    }));
+  // A pill clicked elsewhere jumps here through the hash (jumpToBrowse
+  // dispatches a synthetic hashchange); Back/forward land here too. An
+  // event that didn't change the picks (a detail sheet closing pops
+  // history) keeps the current array so the list memo survives.
+  useHashChange(
+    useCallback(() => {
+      if (!hashStateFor("browse")) return;
+      setPicks((current) => {
+        const next = picksFromHash();
+        return current.length === next.length && current.every((value, slot) => value === next[slot]) ? current : next;
+      });
+    }, []),
+  );
+
+  // Changing one slot drops any other pick that no longer combines. The
+  // edited pick is validated first so it always survives; the rest keep
+  // their slots (keepValid drops only genuine conflicts).
+  const changeAt = (index: number) => (id: string) => {
+    setPicks((current) => {
+      const next = [...current];
+      next[index] = id;
+      const survivors = new Set(keepValid([id, ...next.filter((value, slot) => value && slot !== index)]));
+      return next.map((value, slot) => (slot === index ? value : value && survivors.has(value) ? value : ""));
+    });
   };
 
-  const cats = [first, second].filter(Boolean);
   const pokemon = useMemo(
-    () => (cats.length === 2 ? intersection(cats[0], cats[1]) : cats.length === 1 ? membersOf(cats[0]) : POKEMON),
-    [first, second], // eslint-disable-line react-hooks/exhaustive-deps
+    () => intersectAll(chosen),
+    [picks], // eslint-disable-line react-hooks/exhaustive-deps
   );
   const normalizedQuery = normalizeName(query);
   const shown = normalizedQuery ? pokemon.filter((entry) => matches(entry, normalizedQuery)) : pokemon;
-  const title = cats.length ? cats.map((id) => getCategory(id).label).join(" × ") : "All Pokémon";
+  const title = chosen.length ? chosen.map((id) => getCategory(id).label).join(" × ") : "All Pokémon";
+  // the third picker earns its place once the first two are set
+  const showThird = Boolean((picks[0] && picks[1]) || picks[2]);
 
   return (
     <div className="browser">
       <p className="hint">
-        Pick a category — or two, like a PokeDoku cell — and study who fits.
+        Pick a category — or two or three, like a PokeDoku cell — and study
+        who fits.
       </p>
       <div className="browser-controls">
-        <CategoryPicker value={first} onChange={changeFirst} partner={second} label="First category" />
+        <CategoryPicker value={picks[0]} onChange={changeAt(0)} partners={[picks[1], picks[2]]} label="First category" />
         <span className="times">×</span>
-        <CategoryPicker value={second} onChange={setSecond} partner={first} label="Second category" />
+        <CategoryPicker value={picks[1]} onChange={changeAt(1)} partners={[picks[0], picks[2]]} label="Second category" />
+        {showThird ? (
+          <>
+            <span className="times">×</span>
+            <CategoryPicker value={picks[2]} onChange={changeAt(2)} partners={[picks[0], picks[1]]} label="Third category" />
+          </>
+        ) : null}
         <input
           type="search"
           className="browser-search"
@@ -84,7 +116,7 @@ function Browser() {
         <AnswerList pokemon={shown} title={title} />
       ) : (
         <p className="hint">
-          {normalizedQuery ? `Nothing here matches “${query.trim()}”.` : "No Pokémon matches both categories."}
+          {normalizedQuery ? `Nothing here matches “${query.trim()}”.` : "No Pokémon matches these categories."}
         </p>
       )}
     </div>

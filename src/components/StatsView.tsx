@@ -1,18 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 import { useStats } from "../StatsContext.ts";
 import type { DeviceInfo } from "../StatsContext.ts";
 import { handoffUrl } from "../logic/sync.ts";
-import { CATEGORIES, CATEGORY_GROUPS } from "../data/categories.ts";
+import { QUIZ_CATEGORIES, QUIZ_CATEGORY_GROUPS } from "../data/categories.ts";
 import { smoothedAccuracy } from "../logic/stats.ts";
 import type { MergedStats, StatEntry } from "../logic/stats.ts";
 import { allValidPairs, pairKey } from "../logic/matching.ts";
 import { scheduleSummary } from "../logic/schedule.ts";
 import type { ScheduleStatus, ScheduleSummary } from "../logic/schedule.ts";
-import { DATA_META, POKEMON } from "../data/pokedex.ts";
-import { allCardKeys } from "../logic/flashcards.ts";
+import { allCardRefs } from "../logic/flashcards.ts";
+import type { CardRef } from "../logic/flashcards.ts";
+import { pokemonBySlug } from "../data/pokedex.ts";
+import type { Pokemon } from "../data/types.ts";
+import { dueAt, formatInterval, scheduleStatus } from "../logic/schedule.ts";
+import { useDetailHash } from "../logic/hashState.ts";
+import Sprite from "./Sprite.tsx";
+import PokemonName from "./PokemonName.tsx";
+import PokemonDetail from "./PokemonDetail.tsx";
+import { usePagedList } from "./usePagedList.ts";
 
-const FLASHCARD_KEYS = allCardKeys();
+// Built on first use, not at app start: enumerating every deck's pool is
+// real work and only the Stats tab needs the full list.
+let cardRefsCache: CardRef[] | null = null;
+const cardRefs = (): CardRef[] => (cardRefsCache ??= allCardRefs());
 
 const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
   ["due", "Due"],
@@ -21,42 +32,122 @@ const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
   ["new", "New"],
 ];
 
-function ReviewRow({ label, summary }: { label: string; summary: ScheduleSummary }) {
+interface ReviewRowProps {
+  label: string;
+  summary: ScheduleSummary;
+  // when given, the tiles are buttons and `active` marks the open one
+  onSelect?: (status: ScheduleStatus) => void;
+  active?: ScheduleStatus | null;
+}
+
+function ReviewRow({ label, summary, onSelect, active = null }: ReviewRowProps) {
+  // one tile body; the tag (button vs span) is the only difference
+  const Tile = onSelect ? "button" : "span";
   return (
     <div className="srs-row">
       <span className="srs-label">{label}</span>
       <div className="srs-tiles">
         {STATUS_LABELS.map(([key, text]) => (
-          <span key={key} className={`srs-tile ${key}`}>
+          <Tile
+            key={key}
+            className={`srs-tile ${key}${active === key ? " active" : ""}`}
+            {...(onSelect
+              ? { type: "button" as const, "aria-pressed": active === key, onClick: () => onSelect(key) }
+              : {})}
+          >
             <span className="srs-num">{summary[key]}</span>
             <span className="srs-key">{text}</span>
-          </span>
+          </Tile>
         ))}
       </div>
     </div>
   );
 }
 
+const LIST_PAGE = 60;
+
+interface CardStatusListProps {
+  status: ScheduleStatus;
+  merged: MergedStats;
+  now: number;
+  onOpen: (pokemon: Pokemon) => void;
+}
+
+// Every card currently in `status`, most urgent first, batched (more
+// load as the end scrolls near, like every other long list here).
+function CardStatusList({ status, merged, now, onOpen }: CardStatusListProps) {
+  const refs = useMemo(() => {
+    const matching = cardRefs().filter((ref) => scheduleStatus(merged.flashcards[ref.key], now) === status);
+    // due: most overdue first; learning/mastered: next up first; new: dex order
+    if (status !== "new") {
+      matching.sort((a, b) => dueAt(merged.flashcards[a.key]) - dueAt(merged.flashcards[b.key]));
+    }
+    return matching;
+  }, [status, merged, now]);
+  const { shown, done, sentinelRef } = usePagedList(refs, LIST_PAGE);
+
+  const timing = (ref: CardRef): string => {
+    if (status === "new") return "not seen yet";
+    const dueTime = dueAt(merged.flashcards[ref.key]);
+    if (dueTime <= now) return `due ${formatInterval(now - dueTime)} ago`;
+    return `next in ${formatInterval(dueTime - now)}`;
+  };
+
+  return (
+    <div className="card-status-list">
+      {shown.map((ref) => (
+        <button key={ref.key} type="button" className="card-status-row" onClick={() => onOpen(ref.pokemon)}>
+          <span className="card-status-thumb">
+            <Sprite pokemon={ref.pokemon} />
+          </span>
+          <span className="card-status-name">
+            <PokemonName name={ref.pokemon.displayName} />
+          </span>
+          <span className="card-status-meta">
+            {ref.deck.label} · {timing(ref)}
+          </span>
+        </button>
+      ))}
+      {!done ? <div ref={sentinelRef} aria-hidden="true" /> : null}
+      {!refs.length ? <p className="hint">Nothing here right now.</p> : null}
+    </div>
+  );
+}
+
 function ReviewPanel({ merged }: { merged: MergedStats }) {
-  const now = Date.now();
-  const cards = scheduleSummary(merged.flashcards, FLASHCARD_KEYS, now);
-  const pairKeys = allValidPairs(CATEGORIES).map(([a, b]) => pairKey(a.id, b.id));
-  const pairs = scheduleSummary(merged.pairs, pairKeys, now);
+  // a slow clock: fresh enough that cards falling due while the tab sits
+  // open show up, coarse enough that the memos below still do their job
+  // (a per-render Date.now() would defeat all of them)
+  const now = useNow(60_000);
+  const flashcardKeys = useMemo(() => cardRefs().map((ref) => ref.key), []);
+  const cards = useMemo(() => scheduleSummary(merged.flashcards, flashcardKeys, now), [merged, flashcardKeys, now]);
+  const pairKeys = useMemo(() => allValidPairs(QUIZ_CATEGORIES).map(([a, b]) => pairKey(a.id, b.id)), []);
+  const pairs = useMemo(() => scheduleSummary(merged.pairs, pairKeys, now), [merged, pairKeys, now]);
+  // the tapped tile's status — its cards list below (tap again to close)
+  const [openStatus, setOpenStatus] = useState<ScheduleStatus | null>(null);
+  const [detail, openDetail, closeDetail] = useDetailHash(pokemonBySlug);
   return (
     <section className="srs-panel">
       <h3>Spaced Review</h3>
       <p className="hint">
         Answered items come back on a growing schedule (10 min → 1 → 3 → 7 → 16
         → 35 → 80 → 180 days) and reset on a miss. Due items are favoured;
-        mastered ones fade out.
+        mastered ones fade out. Tap a flashcard number to see its cards.
       </p>
-      <ReviewRow label="Flashcards" summary={cards} />
+      <ReviewRow
+        label="Flashcards"
+        summary={cards}
+        active={openStatus}
+        onSelect={(status) => setOpenStatus((current) => (current === status ? null : status))}
+      />
       <ReviewRow label="Drill Pairs" summary={pairs} />
+      {openStatus ? <CardStatusList status={openStatus} merged={merged} now={now} onOpen={openDetail} /> : null}
+      {detail ? <PokemonDetail pokemon={detail} onClose={closeDetail} onOpen={openDetail} /> : null}
     </section>
   );
 }
 
-function AccuracyBar({ entry, weakRow }: { entry: StatEntry | undefined; weakRow: boolean }) {
+function AccuracyBar({ entry }: { entry: StatEntry | undefined }) {
   if (!entry || !entry.a) {
     return (
       <div className="acc">
@@ -65,14 +156,12 @@ function AccuracyBar({ entry, weakRow }: { entry: StatEntry | undefined; weakRow
     );
   }
   const pct = Math.round((entry.c / entry.a) * 100);
+  // A row with no correct answers shows a sliver of red (CSS min-width
+  // keeps the bar visible), not an empty track
   return (
     <div className="acc">
       <span className="acc-track">
-        <span
-          className="acc-fill"
-          style={{ width: `${pct}%` }}
-          data-weak={weakRow || undefined}
-        />
+        <span className={entry.c === 0 ? "acc-fill all-miss" : "acc-fill"} style={{ width: `${pct}%` }} />
       </span>
       <span className="acc-num">{pct}%</span>
     </div>
@@ -353,61 +442,13 @@ function ResetPanel() {
   );
 }
 
-// "Aug 17, 2026, 2:30 PM PT"; older datasets only carried a date
-function formatGenerated(iso: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return iso;
-  if (!iso.includes("T")) return iso;
-  return date.toLocaleString("en-US", {
+// "Aug 17, 2026, 2:30 PM PT" — __BUILD_TIME__ is always a full ISO stamp
+function formatBuildTime(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", {
     timeZone: "America/Los_Angeles",
     dateStyle: "medium",
     timeStyle: "short",
   }) + " PT";
-}
-
-// TEMP: viewport diagnostics for the iOS home-screen layout issue
-function ViewportProbe() {
-  const [text, setText] = useState("");
-  useEffect(() => {
-    const px = (value: string): number => {
-      const probe = document.createElement("div");
-      probe.style.cssText = `position:fixed;top:0;left:0;visibility:hidden;height:${value}`;
-      document.body.appendChild(probe);
-      const height = probe.getBoundingClientRect().height;
-      probe.remove();
-      return Math.round(height);
-    };
-    const update = () => {
-      const rootRect = document.getElementById("root")?.getBoundingClientRect();
-      const nav = document.querySelector(".tabs")?.getBoundingClientRect();
-      const modes = ["standalone", "fullscreen", "minimal-ui", "browser"].filter(
-        (mode) => matchMedia(`(display-mode: ${mode})`).matches,
-      );
-      // Safari's own flag for a home-screen app, outside the Navigator type
-      const standalone = (navigator as Navigator & { standalone?: boolean }).standalone;
-      setText(
-        [
-          `inner ${window.innerWidth}×${window.innerHeight}`,
-          `screen ${screen.width}×${screen.height}`,
-          `vv ${Math.round(visualViewport?.height ?? 0)}`,
-          `dvh ${px("100dvh")} lvh ${px("100lvh")} svh ${px("100svh")} vh ${px("100vh")}`,
-          `sat ${px("env(safe-area-inset-top)")} sab ${px("env(safe-area-inset-bottom)")}`,
-          rootRect ? `root ${Math.round(rootRect.top)}→${Math.round(rootRect.bottom)}` : "no root",
-          nav ? `nav ${Math.round(nav.top)}→${Math.round(nav.bottom)}` : "no nav",
-          `mode ${modes.join(",") || "?"}`,
-          `nav.standalone ${String(standalone)}`,
-        ].join(" · "),
-      );
-    };
-    update();
-    const timer = setTimeout(update, 500);
-    window.addEventListener("resize", update);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-  return <p className="hint meta" style={{ fontFamily: "monospace", fontSize: "0.7rem" }}>{text}</p>;
 }
 
 function StatsView() {
@@ -419,10 +460,12 @@ function StatsView() {
       <ResetPanel />
       <SyncPanel />
 
-      {/* Type count has no deck and the type table says it all; the two
-          categories still count for Drill/Grid weighting behind the scenes */}
-      {CATEGORY_GROUPS.filter(([group]) => group !== "typeCount").map(([group, label]) => {
-        const cats = CATEGORIES.filter((category) => category.group === group);
+      {/* Type count has no deck and the type table says it all (the two
+          categories still count for Drill/Grid weighting); the Browse-only
+          groups are never quizzed, so QUIZ_CATEGORY_GROUPS already skips
+          them */}
+      {QUIZ_CATEGORY_GROUPS.filter(([group]) => group !== "typeCount").map(([group, label]) => {
+        const cats = QUIZ_CATEGORIES.filter((category) => category.group === group);
         return (
           <section key={group}>
             <h3>{label}</h3>
@@ -447,7 +490,7 @@ function StatsView() {
                       </td>
                       <td className={entry?.a ? undefined : "zero"}>{entry ? entry.a : 0}</td>
                       <td>
-                        <AccuracyBar entry={entry} weakRow={weak} />
+                        <AccuracyBar entry={entry} />
                       </td>
                     </tr>
                   );
@@ -459,12 +502,7 @@ function StatsView() {
       })}
 
       <section>
-        <p className="hint meta">
-          Data: {DATA_META.source} v{DATA_META.sourceVersion} ·{" "}
-          {POKEMON.length} answers · generated {formatGenerated(DATA_META.generatedAt)}
-        </p>
-        <p className="hint meta">Site built {formatGenerated(__BUILD_TIME__)}</p>
-        <ViewportProbe />
+        <p className="hint meta">Site built {formatBuildTime(__BUILD_TIME__)}</p>
       </section>
     </div>
   );

@@ -30,7 +30,7 @@ import {
   syncBlock,
 } from "./logic/sync.ts";
 
-const TABS = ["Browse", "Drill", "Cards", "Grid", "Stats"] as const;
+const TABS = ["Browse", "Grid", "Cards", "Drill", "Stats"] as const;
 type Tab = (typeof TABS)[number];
 const DEFAULT_TAB: Tab = "Browse";
 
@@ -135,16 +135,52 @@ function App() {
     };
   }, [syncNow]);
 
+  // One-deep undo: each attempt remembers the block as it stood before
+  // and after (withAttempt returns a fresh clone, so both objects stay
+  // intact) and a token; only the newest attempt can be taken back, and
+  // only while the current block IS that attempt's result — so any path
+  // that replaces the block (reset, merge, a future import) invalidates
+  // the undo structurally, clearUndo or not. Memory-only — a reload
+  // forgets it, which is fine for an oops-misclick affordance.
+  const undoRef = useRef<{ token: number; before: StatsBlock; after: StatsBlock } | null>(null);
+  const attemptCounterRef = useRef(0);
+  // mirrors undoRef's token as state, so an Undo button can render away
+  // the moment a newer attempt supersedes it
+  const [undoableAttempt, setUndoableAttempt] = useState<number | null>(null);
+
+  const clearUndo = useCallback(() => {
+    undoRef.current = null;
+    setUndoableAttempt(null);
+  }, []);
+
   const recordAttempt = useCallback(
-    (event: AttemptEvent) => {
+    (event: AttemptEvent): number => {
+      const token = ++attemptCounterRef.current;
       setBlock((previous) => {
         const next = withAttempt(previous, event, { merged: mergedRef.current });
+        undoRef.current = { token, before: previous, after: next };
         saveBlock(next);
         return next;
       });
+      setUndoableAttempt(token);
       scheduleSync();
+      return token;
     },
     [scheduleSync],
+  );
+
+  const undoLastAttempt = useCallback(
+    (token: number): boolean => {
+      const undo = undoRef.current;
+      if (!undo || undo.token !== token || blockRef.current !== undo.after) return false;
+      clearUndo();
+      saveBlock(undo.before);
+      setBlock(undo.before);
+      blockRef.current = undo.before; // a sync firing before the re-render must not upload the undone attempt
+      scheduleSync(); // the synced block is device-owned, so re-writing it is safe
+      return true;
+    },
+    [clearUndo, scheduleSync],
   );
 
   const saveToken = useCallback(
@@ -163,14 +199,16 @@ function App() {
   // block behind in the gist.
   const resetLocal = useCallback(() => {
     const fresh = { ...emptyBlock(blockRef.current.deviceId), deviceName: blockRef.current.deviceName };
+    clearUndo(); // undoing across a reset would resurrect it
     saveBlock(fresh);
     setBlock(fresh);
     scheduleSync();
-  }, [scheduleSync]);
+  }, [clearUndo, scheduleSync]);
 
   // Wipe everything: this device and every synced device's block.
   const resetAll = useCallback(async (): Promise<void> => {
     const fresh = { ...emptyBlock(blockRef.current.deviceId), deviceName: blockRef.current.deviceName };
+    clearUndo();
     saveBlock(fresh);
     setBlock(fresh);
     blockRef.current = fresh;
@@ -184,7 +222,7 @@ function App() {
     } catch (reason) {
       setSyncState((state) => ({ ...state, status: "error", lastError: errorMessage(reason) }));
     }
-  }, []);
+  }, [clearUndo]);
 
   // Fold another device's history into this one and drop its block from
   // the gist (for stale duplicates: reinstalled apps, cleared storage,
@@ -194,6 +232,7 @@ function App() {
       const other = remoteBlocks.find((remote) => remote.deviceId === deviceId);
       if (!other) return;
       const next = absorbBlock(blockRef.current, other);
+      clearUndo(); // undoing across a merge would drop the absorbed counts
       saveBlock(next);
       setBlock(next);
       blockRef.current = next;
@@ -207,7 +246,7 @@ function App() {
         setSyncState((state) => ({ ...state, status: "error", lastError: errorMessage(reason) }));
       }
     },
-    [remoteBlocks],
+    [clearUndo, remoteBlocks],
   );
 
   const devices = useMemo(
@@ -232,6 +271,8 @@ function App() {
       block,
       merged,
       recordAttempt,
+      undoLastAttempt,
+      undoableAttempt,
       syncState,
       token,
       saveToken,
@@ -241,7 +282,7 @@ function App() {
       devices,
       absorbDevice,
     }),
-    [block, merged, recordAttempt, syncState, token, saveToken, syncNow, resetLocal, resetAll, devices, absorbDevice],
+    [block, merged, recordAttempt, undoLastAttempt, undoableAttempt, syncState, token, saveToken, syncNow, resetLocal, resetAll, devices, absorbDevice],
   );
 
   const selectTab = useCallback((next: Tab) => {
@@ -271,6 +312,13 @@ function App() {
       window.removeEventListener("hashchange", onHash);
     };
   }, []);
+
+  // Every route to another tab starts it at the top — including a pill's
+  // jumpToBrowse, whose unmounting modal shell restores the OLD tab's
+  // scroll offset during the same commit (this effect runs after it)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [tab]);
 
   return (
     <div className="app">

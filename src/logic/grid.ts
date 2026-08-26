@@ -1,4 +1,4 @@
-import { CATEGORIES, getCategory } from "../data/categories.ts";
+import { QUIZ_CATEGORIES, getCategory } from "../data/categories.ts";
 import type { Category, CategoryGroup } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
 import { intersection, pairIsValid } from "./matching.ts";
@@ -20,7 +20,8 @@ export interface Grid {
 export const DEFAULT_EXCLUDED_GROUPS: CategoryGroup[] = ["move", "ability"];
 export function gridPool(excludedGroups: ReadonlyArray<CategoryGroup> = DEFAULT_EXCLUDED_GROUPS): Category[] {
   const excluded = new Set<CategoryGroup>(excludedGroups);
-  return CATEGORIES.filter((category) => !excluded.has(category.group));
+  // QUIZ_CATEGORIES: the Browse-only fun filters never label a grid
+  return QUIZ_CATEGORIES.filter((category) => !excluded.has(category.group));
 }
 const MAX_TRIES = 300;
 

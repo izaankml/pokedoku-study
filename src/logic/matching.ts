@@ -37,6 +37,40 @@ export function pairIsValid(catA: string, catB: string, min = 1): boolean {
   return intersection(catA, catB).length >= min;
 }
 
+// Everyone matching every category — Browse with up to three filters.
+// One and two ids reuse the pair caches; more get their own.
+const intersectAllCache = new Map<string, Pokemon[]>();
+export function intersectAll(catIds: string[]): Pokemon[] {
+  const ids = [...catIds].sort();
+  if (ids.length === 0) return POKEMON;
+  if (ids.length === 1) return membersOf(ids[0]);
+  if (ids.length === 2) return intersection(ids[0], ids[1]);
+  const key = ids.join("|");
+  let members = intersectAllCache.get(key);
+  if (!members) {
+    const restPredicates = ids.slice(2).map((id) => getCategory(id).predicate);
+    members = intersection(ids[0], ids[1]).filter((pokemon) => restPredicates.every((predicate) => predicate(pokemon)));
+    intersectAllCache.set(key, members);
+  }
+  return members;
+}
+
+// Whether `candidate` can be added to the picked categories: not a
+// repeat, and someone still matches them all. Existence-only — the
+// pairwise checks are cached, and the three-way case stops at the first
+// match instead of materializing (and caching) the whole member list.
+export function canJoin(catIds: string[], candidate: string): boolean {
+  if (catIds.includes(candidate)) return false;
+  const others = catIds.filter(Boolean);
+  if (!others.length) return true;
+  // pairIsValid also rules out exclusive-group clashes
+  if (others.some((id) => !pairIsValid(id, candidate))) return false;
+  if (others.length === 1) return true;
+  const [firstId, ...restIds] = others;
+  const restPredicates = [...restIds, candidate].map((id) => getCategory(id).predicate);
+  return membersOf(firstId).some((pokemon) => restPredicates.every((predicate) => predicate(pokemon)));
+}
+
 export const pairKey = (catA: string, catB: string): string =>
   catA < catB ? `${catA}|${catB}` : `${catB}|${catA}`;
 
@@ -186,13 +220,16 @@ export function guessFilterFor(catIds: string[]): PokemonFilter {
 }
 
 // Every valid category pair, as [catA, catB] with catA.id < catB.id.
-// Computed once; used for drill selection and schedule summaries.
+// Cached per category list — by ARRAY IDENTITY, so pass a module-level
+// list (QUIZ_CATEGORIES, CATEGORIES); an inline .filter() would miss the
+// cache every call. Used for drill selection and schedule summaries.
 export type CategoryPair = [Category, Category];
-let validPairsCache: CategoryPair[] | null = null;
+const validPairsCache = new WeakMap<Category[], CategoryPair[]>();
 
 export function allValidPairs(categories: Category[]): CategoryPair[] {
-  if (!validPairsCache) {
-    const pairs: CategoryPair[] = [];
+  let pairs = validPairsCache.get(categories);
+  if (!pairs) {
+    pairs = [];
     for (let i = 0; i < categories.length; i++) {
       for (let j = i + 1; j < categories.length; j++) {
         const a = categories[i];
@@ -200,7 +237,7 @@ export function allValidPairs(categories: Category[]): CategoryPair[] {
         if (pairIsValid(a.id, b.id, 1)) pairs.push(a.id < b.id ? [a, b] : [b, a]);
       }
     }
-    validPairsCache = pairs;
+    validPairsCache.set(categories, pairs);
   }
-  return validPairsCache;
+  return pairs;
 }

@@ -10,7 +10,7 @@
 // line) pushes another, so Back returns to the previous sheet while ×
 // closes them all (the entry's state counts the depth).
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Pokemon } from "../data/types.ts";
 
 const DETAIL = "pokemon-";
@@ -61,12 +61,38 @@ export function hashStateFor(tab: string): string[] | null {
   return current === tab.toLowerCase() ? rest : null;
 }
 
+// Jump to the Browse tab filtered to these categories (a clicked pill on
+// a card or detail sheet). history.pushState fires no events, so the
+// synthetic hashchange is what tells App to switch tab — and Browser, if
+// already mounted, to re-read its filters. With a detail sheet open, its
+// pushed history entry is REPLACED rather than pushed onto: otherwise
+// Back would land on the sheet the user just left and reopen it.
+export function jumpToBrowse(catIds: string[]): void {
+  writeHash("browse", catIds.filter(Boolean), { push: historyDepth() === 0, detail: null });
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+}
+
 // The depth recorded in the current history entry, if a sheet pushed it.
 function historyDepth(): number {
   const state: unknown = window.history.state;
   return typeof state === "object" && state !== null && typeof (state as { depth?: unknown }).depth === "number"
     ? (state as DetailHistoryState).depth
     : 0;
+}
+
+// Runs `handler` whenever the location's hash may have changed: real
+// navigation (hashchange/popstate) and jumpToBrowse's synthetic event.
+// `handler` should be stable (module fn or useCallback) or re-subscribing
+// is fine — the effect re-binds when it changes.
+export function useHashChange(handler: () => void): void {
+  useEffect(() => {
+    window.addEventListener("hashchange", handler);
+    window.addEventListener("popstate", handler);
+    return () => {
+      window.removeEventListener("hashchange", handler);
+      window.removeEventListener("popstate", handler);
+    };
+  }, [handler]);
 }
 
 export type DetailResolver = (slug: string | null) => Pokemon | null;
@@ -76,16 +102,8 @@ export type DetailResolver = (slug: string | null) => Pokemon | null;
 // view is dropped from the hash). Returns [pokemon | null, open, close].
 export function useDetailHash(resolve: DetailResolver): [Pokemon | null, (pokemon: Pokemon) => void, () => void] {
   const [selected, setSelected] = useState<Pokemon | null>(() => resolve(readHash().detail));
-  useEffect(() => {
-    // Back/forward (or a hand-edited hash) opens or closes the sheet
-    const onHash = () => setSelected(resolve(readHash().detail));
-    window.addEventListener("popstate", onHash);
-    window.addEventListener("hashchange", onHash);
-    return () => {
-      window.removeEventListener("popstate", onHash);
-      window.removeEventListener("hashchange", onHash);
-    };
-  }, [resolve]);
+  // Back/forward (or a hand-edited hash) opens or closes the sheet
+  useHashChange(useCallback(() => setSelected(resolve(readHash().detail)), [resolve]));
   useEffect(() => {
     const { tab, rest, detail } = readHash();
     if (detail && !selected) writeHash(tab, rest, { detail: null });

@@ -6,6 +6,7 @@ import type { Category, CategoryGroup } from "../data/categories.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
 import CategoryPill, { AbilityPill } from "./CategoryPill.tsx";
+import { jumpToBrowse } from "../logic/hashState.ts";
 import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
 import EvolutionLine, { FormsRows } from "./EvolutionLine.tsx";
@@ -132,10 +133,12 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
   // abilities go after the category rows but before the (long) move row
   const before = facts.filter((fact) => fact.group !== "move");
   const moves = facts.filter((fact) => fact.group === "move");
+  // every pill jumps to Browse filtered to it — a type pill takes the
+  // whole typing along (a dual type browses both)
   const renderFact = (fact: FactGroup) => (
     <Fact key={fact.group} label={fact.label}>
       {fact.cats.map((category) => (
-        <CategoryPill key={category.id} cat={category} useShort />
+        <CategoryPill key={category.id} cat={category} useShort onSelect={() => jumpToBrowse([category.id])} />
       ))}
     </Fact>
   );
@@ -169,7 +172,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
             </h3>
             <div className="detail-pills detail-region">
               {regions.map((category) => (
-                <CategoryPill key={category.id} cat={category} useShort />
+                <CategoryPill key={category.id} cat={category} useShort onSelect={() => jumpToBrowse([category.id])} />
               ))}
             </div>
           </div>
@@ -178,12 +181,17 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
           <div className="detail-tags">
             <div className="detail-pills detail-types">
               {types.map((category) => (
-                <CategoryPill key={category.id} cat={category} useShort />
+                <CategoryPill
+                  key={category.id}
+                  cat={category}
+                  useShort
+                  onSelect={() => jumpToBrowse(types.map((type) => type.id))}
+                />
               ))}
             </div>
             <div className="detail-pills detail-groups">
               {groups.map((category) => (
-                <CategoryPill key={category.id} cat={category} useShort />
+                <CategoryPill key={category.id} cat={category} useShort onSelect={() => jumpToBrowse([category.id])} />
               ))}
             </div>
           </div>

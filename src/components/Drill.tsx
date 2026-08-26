@@ -101,6 +101,13 @@ function Drill() {
                 : `${result.pokemon.displayName} doesn't fit — it ${whyNot(result.pokemon, [a.id, b.id])}.`
               : "Revealed."}
           </p>
+          {result.correct ? (
+            <p className="due-note">
+              {/* PokeDoku's own pick rates need a login; the pool size is
+                  the local stand-in for how findable the answer was */}
+              {answers.length === 1 ? "The only valid answer!" : `One of ${answers.length} valid answers.`}
+            </p>
+          ) : null}
           {nextIn ? <p className="due-note">This pair comes back in {nextIn}.</p> : null}
           <button className="primary" onClick={next}>
             Next Question
@@ -109,6 +116,7 @@ function Drill() {
             pokemon={answers}
             title="Valid Answers"
             highlightId={result.pokemon?.id}
+            guess={result.correct ? null : result.pokemon}
           />
         </>
       )}

@@ -99,10 +99,13 @@ interface SpriteProps {
   className?: string;
   // load right away rather than lazily
   eager?: boolean;
+  // what alt/title call the Pokémon when its name must not leak
+  // (the Name deck's mystery card)
+  label?: string;
 }
 
 // Falls back to the base species' sprite, then the silhouette.
-function Sprite({ pokemon, className = "sprite", eager = false }: SpriteProps) {
+function Sprite({ pokemon, className = "sprite", eager = false, label }: SpriteProps) {
   const [attempt, setAttempt] = useState(0);
   const candidates = spriteCandidates(pokemon);
   const candidate = candidates[Math.min(attempt, candidates.length - 1)];
@@ -123,7 +126,7 @@ function Sprite({ pokemon, className = "sprite", eager = false }: SpriteProps) {
 
   if (attempt >= candidates.length) {
     return (
-      <div className={`sprite-fallback ${className}`} title={pokemon.displayName}>
+      <div className={`sprite-fallback ${className}`} title={label ?? pokemon.displayName}>
         <PokeballIcon />
       </div>
     );
@@ -140,7 +143,7 @@ function Sprite({ pokemon, className = "sprite", eager = false }: SpriteProps) {
       ref={imgRef}
       className={className}
       src={src}
-      alt={pokemon.displayName}
+      alt={label ?? pokemon.displayName}
       loading={eager ? "eager" : "lazy"}
       decoding="sync"
       crossOrigin={candidate.cors ? "anonymous" : undefined}

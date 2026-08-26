@@ -1,29 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useStats } from "../StatsContext.ts";
 import { pickFlashcard } from "../logic/picker.ts";
-import { DECKS, DECK_BY_ID, HISTORY_LIMIT, cardKey, saveSession, session } from "../logic/flashcards.ts";
-import type { Card, CardState, Deck, DeckOption, Picked } from "../logic/flashcards.ts";
-import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
+import {
+  DECKS,
+  DECK_BY_ID,
+  FILTERABLE_DECKS,
+  HISTORY_LIMIT,
+  cardKey,
+  comboDecks,
+  filterFor,
+  filterableOptions,
+  loadFilters,
+  passesFilter,
+  saveFilters,
+  saveSession,
+  session,
+} from "../logic/flashcards.ts";
+import type { Card, CardState, Deck, DeckFilters, DeckOption, Picked } from "../logic/flashcards.ts";
+import { hashStateFor, jumpToBrowse, useDetailHash, writeHash } from "../logic/hashState.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
-import { POKEMON_BY_ID, POKEMON_BY_NAME, preloadSprite } from "../data/pokedex.ts";
-import { CATEGORIES } from "../data/categories.ts";
-import type { Category } from "../data/categories.ts";
+import { POKEMON_BY_ID, pokemonBySlug, preloadSprite } from "../data/pokedex.ts";
+import { CATEGORY_BY_ID, getCategory, typeClassOf } from "../data/categories.ts";
+import { FLAGS } from "../data/types.ts";
 import type { Flag, Pokemon } from "../data/types.ts";
 import CategoryPill, { AbilityPill } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
+import PokemonAutocomplete from "./PokemonAutocomplete.tsx";
 import PokemonCard from "./PokemonCard.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
+import ToggleGroup from "./ToggleGroup.tsx";
 
-const GROUP_FLAGS: Flag[] = ["legendary", "mythical", "ultraBeast", "paradox", "fossil", "starter", "baby", "mega", "gmax"];
-const CAT = new Map<string, Category>(CATEGORIES.map((category) => [category.id, category]));
+// the summary strip shows every group flag, in the canonical order
+const GROUP_FLAGS: readonly Flag[] = FLAGS;
 // Shown in the group slot when a Pokémon is in no group at all
 const REGULAR: PillCategory = { id: "flag-regular", label: "Regular", short: "Regular", group: "special" };
-
-const categoryOf = (id: string): Category => {
-  const category = CAT.get(id);
-  if (!category) throw new Error(`unknown category: ${id}`);
-  return category;
-};
 
 // Typing, region and group of a Pokémon as pills, shown once a card is
 // answered — the same strip whatever the deck asked: types on the left,
@@ -31,9 +41,9 @@ const categoryOf = (id: string): Category => {
 // in the same place. Abilities follow as their own row of pills.
 function summaryPills(pokemon: Pokemon): PillCategory[][] {
   const strips: PillCategory[][] = [
-    pokemon.types.map((type) => categoryOf(`type-${type}`)),
-    pokemon.regions.map((region) => categoryOf(`region-${region}`)),
-    GROUP_FLAGS.filter((flag) => pokemon.flags.includes(flag)).map((flag) => categoryOf(`flag-${flag}`)),
+    pokemon.types.map((type) => getCategory(`type-${type}`)),
+    pokemon.regions.map((region) => getCategory(`region-${region}`)),
+    GROUP_FLAGS.filter((flag) => pokemon.flags.includes(flag)).map((flag) => getCategory(`flag-${flag}`)),
   ];
   return strips.map((cats, index) => (index === 2 && !cats.length ? [REGULAR] : cats));
 }
@@ -58,7 +68,11 @@ const deckOf = (card: Card): Deck => {
 };
 
 function Flashcards() {
-  const { merged, recordAttempt } = useStats();
+  const { merged, recordAttempt, undoLastAttempt, undoableAttempt } = useStats();
+  // what each deck may ask about (persisted; empty = everything) —
+  // declared before the card state, whose initializer picks under it
+  const [filters, setFilters] = useState<DeckFilters>(loadFilters);
+  const [showFilter, setShowFilter] = useState(false);
   // The card lives in the module-level session (mirrored to localStorage)
   // so switching tabs and back, or reloading, shows the same card.
   const [deckId, setDeckId] = useState<string>(() => {
@@ -88,17 +102,41 @@ function Flashcards() {
   // once the card is answered, so nothing gives the answer away (any
   // Pokémon then: a sheet's evolution tiles lead on to other sheets)
   const resolve = useCallback(
-    (slug: string | null): Pokemon | null => (picked !== null && slug ? POKEMON_BY_NAME.get(slug) || null : null),
+    (slug: string | null): Pokemon | null => (picked !== null ? pokemonBySlug(slug) : null),
     [picked],
   );
   const [detail, openDetail, closeDetail] = useDetailHash(resolve); // the open sheet's Pokémon
 
-  function freshCard(forDeck: string, alsoExclude: number[] = []): Card {
+  function freshCard(forDeck: string, alsoExclude: number[] = [], withFilters: DeckFilters = filters): Card {
     const pick = pickFlashcard(merged, {
       deckId: forDeck,
       exclude: new Set([...session.recent, ...alsoExclude]),
+      filters: withFilters,
     });
     return { deckId: pick.deck.id, pokemonId: pick.pokemon.id, param: pick.param };
+  }
+
+  // Include or exclude one subject of the current deck's filter. Takes
+  // effect immediately: the lined-up card is re-picked, and so is the
+  // current one if it no longer passes. The included set is derived from
+  // filterFor — the same truth the checkboxes render — so stale stored
+  // ids can never invert a toggle.
+  function toggleFilter(optionId: string) {
+    if (!filterDeck) return;
+    const options = filterableOptions(filterDeck);
+    const chosenNow = filterFor(filters, deckId);
+    const active = chosenNow ? [...chosenNow] : options.map((option) => option.id);
+    const nextList = active.includes(optionId) ? active.filter((id) => id !== optionId) : [...active, optionId];
+    if (!nextList.length) return; // at least one subject stays on
+    // everything selected = no filter; store [] so the panel reads clean
+    const next = { ...filters, [deckId]: nextList.length === options.length ? [] : nextList };
+    setFilters(next);
+    saveFilters(next);
+    session.next = null;
+    if (answered || card.deckId !== deckId) return;
+    if (!passesFilter(deck, pokemon, filterFor(next, deckId), card.param)) {
+      commit(freshCard(deckId, [pokemon.id], next), null);
+    }
   }
 
   // Line up the following card now and warm its sprite, so "Next" swaps
@@ -135,9 +173,10 @@ function Flashcards() {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
-      // a focused tab or deck chip keeps its own keyboard behaviour; with
-      // the detail sheet open, keys belong to it (Escape closes)
-      if (detail || document.activeElement?.closest(".tabs, .deck-picker")) return;
+      // a focused tab, deck chip or the Name deck's text box keeps its own
+      // keyboard behaviour; with the detail sheet open, keys belong to it
+      // (Escape closes)
+      if (detail || document.activeElement?.closest(".tabs, .deck-picker, .autocomplete")) return;
       if (event.key === "Enter") {
         if (picked !== null) {
           event.preventDefault();
@@ -159,11 +198,15 @@ function Flashcards() {
         return;
       }
       if (!event.key.startsWith("Arrow")) return;
-      const grid = document.querySelector<HTMLElement>(".region-buttons");
-      const buttons = grid ? [...grid.querySelectorAll<HTMLElement>(".region-btn")] : [];
-      if (!grid || !buttons.length) return;
-      const cols = parseInt(getComputedStyle(grid).getPropertyValue("--cols"), 10) || 1;
+      // all option buttons in DOM order — a Combo card has one grid per
+      // section, and the arrows walk across them; ↑/↓ step by the
+      // focused grid's column count
+      const grids = [...document.querySelectorAll<HTMLElement>(".region-buttons")];
+      const buttons = grids.flatMap((each) => [...each.querySelectorAll<HTMLElement>(".region-btn")]);
+      if (!buttons.length) return;
       const focused = document.activeElement;
+      const grid = grids.find((each) => focused instanceof HTMLElement && each.contains(focused)) ?? grids[0];
+      const cols = parseInt(getComputedStyle(grid).getPropertyValue("--cols"), 10) || 1;
       const at = focused instanceof HTMLElement ? buttons.indexOf(focused) : -1;
       const STEPS: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: cols, ArrowUp: -cols };
       const step = STEPS[event.key];
@@ -187,6 +230,8 @@ function Flashcards() {
   const gaveUp = picked === GAVE_UP;
   const pickedIds = new Set(Array.isArray(picked) ? picked : []);
   const multi = Boolean(deck.multi);
+  // the Name deck types its answer instead of picking options
+  const nameDeck = deck.input === "name";
   // Multi decks need every answer; single-pick decks accept any one of them
   // (Koraidon is Legendary and Paradox)
   const isRight = (ids: string[]): boolean =>
@@ -234,13 +279,46 @@ function Flashcards() {
   }
 
   function submit() {
-    if (answered || !selection.length) return;
-    recordAttempt({ categories: recordCategories, speciesId: key, correct: isRight(selection) });
+    // the Name deck grades through its text box only — without this, the
+    // Enter key could re-submit a selection restored by Undo
+    if (answered || nameDeck || !selection.length) return;
+    const token = recordAttempt({ categories: recordCategories, speciesId: key, correct: isRight(selection) });
+    session.undo = { token, key };
     commit(card, selection);
+  }
+
+  // The Name deck grades the typed (or suggestion-tapped) Pokémon right
+  // away, like Drill does.
+  function gradeName(guess: Pokemon) {
+    if (answered) return;
+    const token = recordAttempt({ categories: recordCategories, speciesId: key, correct: guess.id === pokemon.id });
+    session.undo = { token, key };
+    commit(card, [String(guess.id)]);
+  }
+
+  // A submitted card can be taken back once — the grade is un-recorded
+  // and the card returns unanswered with the picks still in place, so a
+  // stray tap can be fixed and resubmitted.
+  function undoSubmit() {
+    const undo = session.undo;
+    if (!undo || undo.key !== key) return;
+    if (!undoLastAttempt(undo.token)) {
+      // the attempt can no longer be reverted (superseded elsewhere) —
+      // drop the stale undo and re-render so the button disappears
+      session.undo = null;
+      setSelection((current) => [...current]);
+      return;
+    }
+    session.undo = null;
+    // the Name deck's picked is a Pokémon id, not an option — nothing to
+    // restore into the (empty) option grid
+    commit(card, null, !nameDeck && Array.isArray(picked) ? picked : []);
   }
 
   function giveUp() {
     if (answered) return;
+    // Don't Know is deliberate, not a misclick; recording it also
+    // supersedes any pending undo
     recordAttempt({ categories: recordCategories, speciesId: key, correct: false });
     commit(card, GAVE_UP);
   }
@@ -278,6 +356,7 @@ function Flashcards() {
     session.forward = []; // cards stepped away from may not fit the new deck
     saveSession();
     setDeckId(id);
+    setShowFilter(false); // the panel is per-deck
     // Switching decks moves on: an answered card is done, and an
     // unanswered one is replaced unless it already fits the new deck.
     if (answered) next(id);
@@ -291,9 +370,31 @@ function Flashcards() {
   const shownOptions = answered
     ? deck.options.filter((option) => answerIds.has(option.id) || pickedIds.has(option.id))
     : deck.options;
+  // one grid of option buttons — the plain decks' whole answer area, and
+  // each labelled section of a combo card
+  const optionGrid = (gridDeck: Deck, options: DeckOption[]) => (
+    <div className={`region-buttons deck-${gridDeck.id}${answered ? " answered" : ""}`}>
+      {options.map((option) => (
+        <button key={option.id} className={optionClass(option)} onClick={() => choose(option)}>
+          {option.short}
+        </button>
+      ))}
+    </div>
+  );
+  const guessedName =
+    nameDeck && Array.isArray(picked) && picked.length ? POKEMON_BY_ID.get(Number(picked[0]))?.displayName : null;
+  // the current deck's active filter (null = everything), its subjects,
+  // and whether any deck is filtered — all cheap (filterableOptions is
+  // cached per deck), so plain derivations beat memo bookkeeping
+  const activeFilter = filterFor(filters, deckId);
+  const filterDeck = DECK_BY_ID.get(deckId);
+  const filterSubjects = filterDeck && FILTERABLE_DECKS.has(deckId) ? filterableOptions(filterDeck) : [];
+  const anyDeckFiltered = DECKS.some((each) => filterFor(filters, each.id) !== null);
   const optionClass = (option: DeckOption): string => {
     let className = "region-btn";
-    if (deck.id === "type") className += ` type-${option.id.slice(5)}`;
+    // a type option is type-coloured wherever it appears (Type, Matchup,
+    // a Combo section, the answered reveal) — CategoryPill's rule exactly
+    className += typeClassOf(CATEGORY_BY_ID.get(option.id));
     if (answered) {
       if (answerIds.has(option.id)) className += pickedIds.has(option.id) ? " correct" : " correct missed";
       else if (pickedIds.has(option.id)) className += " wrong";
@@ -319,19 +420,71 @@ function Flashcards() {
           </button>
         ))}
       </div>
+      {/* per-deck filter: which of this deck's subjects may be asked */}
+      {deckId !== "all" && FILTERABLE_DECKS.has(deckId) ? (
+        <div className="deck-filter">
+          <button
+            className={`ghost small${activeFilter ? " on" : ""}`}
+            aria-expanded={showFilter}
+            aria-controls={showFilter ? "deck-filter-panel" : undefined}
+            onClick={() => setShowFilter((visible) => !visible)}
+          >
+            Filter{activeFilter ? ` · ${activeFilter.size}` : ""}
+          </button>
+          {showFilter ? (
+            <ToggleGroup
+              id="deck-filter-panel"
+              title="Ask only about"
+              toggles={filterSubjects.map((option) => ({
+                id: option.id,
+                label: option.short,
+                included: !activeFilter || activeFilter.has(option.id),
+              }))}
+              onToggle={toggleFilter}
+              hint="Everything on means no filter. Progress still counts the same."
+            />
+          ) : null}
+        </div>
+      ) : deckId === "all" && anyDeckFiltered ? (
+        // filters keep applying in the All mix; say so, since the panel
+        // only shows on a single deck
+        <p className="hint deck-filter-note">Some decks are filtered — open a deck to change its filter.</p>
+      ) : null}
       <p className="hint card-question">{deck.question(card.param)}</p>
       {/* once answered, the card opens the detail sheet (evolution line and
-          all); before that it stays inert so nothing gives the answer away */}
-      <PokemonCard pokemon={pokemon} eager hint="View Detail" onClick={answered ? () => openDetail(pokemon) : undefined} />
+          all); before that it stays inert so nothing gives the answer away —
+          and on the Name deck the name itself is the answer */}
+      <PokemonCard
+        pokemon={pokemon}
+        eager
+        hint="View Detail"
+        hideName={nameDeck && !answered}
+        onClick={answered ? () => openDetail(pokemon) : undefined}
+      />
       {detail ? <PokemonDetail pokemon={detail} onClose={closeDetail} onOpen={openDetail} /> : null}
       <div className={`answer-area${answered ? " answered" : ""}`}>
         {answered ? (
           <div className="card-facts">
             <div className="card-tags card-tags-spread">
+              {/* pills jump to Browse: a type pill brings the whole typing
+                  (a dual type browses both), the rest just themselves; the
+                  "Regular" stand-in is no category, so it stays inert */}
               {summaryPills(pokemon).map((cats, index) => (
                 <span key={index} className="tag-group">
                   {cats.map((category) => (
-                    <CategoryPill key={category.id} cat={category} useShort />
+                    <CategoryPill
+                      key={category.id}
+                      cat={category}
+                      useShort
+                      onSelect={
+                        category.id === REGULAR.id
+                          ? undefined
+                          : () =>
+                              jumpToBrowse(
+                                index === 0 ? pokemon.types.map((type) => `type-${type}`) : [category.id],
+                              )
+                      }
+                    />
                   ))}
                 </span>
               ))}
@@ -355,16 +508,32 @@ function Flashcards() {
               {gaveUp ? "Revealed." : wasCorrect ? "Correct!" : "Not quite."}
             </p>
           ) : null}
-          <div className={`region-buttons deck-${deck.id}${answered ? " answered" : ""}`}>
-            {shownOptions.map((option) => (
-              <button key={option.id} className={optionClass(option)} onClick={() => choose(option)}>
-                {option.short}
-              </button>
-            ))}
-          </div>
+          {nameDeck && !answered ? (
+            <PokemonAutocomplete onSubmit={gradeName} placeholder="Who's that Pokémon?" />
+          ) : deck.id === "combo" && !answered ? (
+            // a combo card: one option grid per asked group, labelled
+            <div className="combo-sections">
+              {comboDecks(card.param).map((sub) => (
+                <div key={sub.id} className="combo-section">
+                  <span className="tags-label">{sub.label}</span>
+                  {optionGrid(sub, sub.options)}
+                </div>
+              ))}
+            </div>
+          ) : shownOptions.length ? (
+            // the Name deck's answered state has no options at all — an
+            // empty grid would still claim its reserved rows
+            optionGrid(deck, shownOptions)
+          ) : null}
+          {nameDeck && answered && !gaveUp && !wasCorrect && guessedName ? (
+            <p className="hint">You guessed {guessedName}.</p>
+          ) : null}
           {answered && nextIn ? <p className="due-note">This card comes back in {nextIn}.</p> : null}
         </div>
-        <div className="card-actions">
+        {/* ‹ sits on its own row above Skip/Submit, clear of the row it
+            was too easy to hit by mistake in; one wrapper keeps the two
+            rows together when .answer-area spreads its children out */}
+        <div className="card-controls">
           <button
             className="ghost card-back"
             aria-label="Previous card"
@@ -374,23 +543,37 @@ function Flashcards() {
           >
             ‹
           </button>
-          {answered ? (
-            <button className="primary" onClick={() => next()}>
-              Next Card
-            </button>
-          ) : (
-            <>
-              <button className="ghost" onClick={() => next()}>
-                Skip
-              </button>
-              <button className="primary" disabled={!selection.length} onClick={submit}>
-                Submit
-              </button>
-              <button className="ghost" onClick={giveUp}>
-                Don&apos;t Know
-              </button>
-            </>
-          )}
+          <div className="card-actions">
+            {answered ? (
+              <>
+                {/* only on the card it graded, and only while that Submit
+                    is still the newest recorded attempt anywhere */}
+                {!gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt ? (
+                  <button className="ghost" onClick={undoSubmit}>
+                    Undo
+                  </button>
+                ) : null}
+                <button className="primary" onClick={() => next()}>
+                  Next Card
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="ghost" onClick={() => next()}>
+                  Skip
+                </button>
+                {/* the Name deck submits from its text box */}
+                {!nameDeck ? (
+                  <button className="primary" disabled={!selection.length} onClick={submit}>
+                    Submit
+                  </button>
+                ) : null}
+                <button className="ghost" onClick={giveUp}>
+                  Don&apos;t Know
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

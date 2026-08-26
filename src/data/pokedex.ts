@@ -24,10 +24,13 @@ const isAnswer = (pokemon: Pokemon): boolean => {
   return pokedokuName ? !pokedokuName.hidden : pokemon.answer !== false;
 };
 export const POKEMON: Pokemon[] = ALL_POKEMON.filter(isAnswer);
-export const DATA_META = data.meta;
 
 export const POKEMON_BY_ID = new Map<number, Pokemon>(ALL_POKEMON.map((pokemon) => [pokemon.id, pokemon]));
 export const POKEMON_BY_NAME = new Map<string, Pokemon>(ALL_POKEMON.map((pokemon) => [pokemon.name, pokemon]));
+
+// The detail-sheet slug resolver (useDetailHash): any record, or null for
+// a slug left over from another view.
+export const pokemonBySlug = (slug: string | null): Pokemon | null => (slug && POKEMON_BY_NAME.get(slug)) || null;
 
 // Pokémon are named the way PokeDoku names them — species first, then the
 // form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner"), and base

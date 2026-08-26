@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { CATEGORIES, CATEGORY_GROUPS, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
-import { normalizeName, pairIsValid } from "../logic/matching.ts";
+import { canJoin, normalizeName } from "../logic/matching.ts";
 
 interface CategoryPickerProps {
   // the chosen category id, "" for none
   value: string;
   onChange: (categoryId: string) => void;
-  // the category chosen in the other picker, "" for none
-  partner?: string;
+  // the categories chosen in the other pickers ("" slots allowed)
+  partners?: string[];
   label: string;
 }
 
@@ -17,11 +17,11 @@ interface CategoryPickerProps {
 // opens a panel with a search box over every category, grouped as in
 // Stats. Typing narrows the list by label or group ("fire", "galar",
 // "stone", "move"); the arrows and Enter pick from the keyboard. Tapping
-// the chosen category again — or the ×on the field — clears it. `partner`
-// is the category chosen in the other picker: options that can't pair with
-// it (no Pokémon fits both, or the same exclusive group, like two
-// evolution stages) are disabled.
-function CategoryPicker({ value, onChange, partner = "", label }: CategoryPickerProps) {
+// the chosen category again — or the × on the field — clears it.
+// `partners` are the categories chosen in the other pickers: options that
+// can't combine with them (no Pokémon fits them all, or the same
+// exclusive group, like two evolution stages) are disabled.
+function CategoryPicker({ value, onChange, partners = [], label }: CategoryPickerProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(0);
@@ -67,7 +67,20 @@ function CategoryPicker({ value, onChange, partner = "", label }: CategoryPicker
     groupLabel,
     categories: CATEGORIES.filter((category) => category.group === group && matches(category, groupLabel)),
   })).filter((entry) => entry.categories.length);
-  const disabled = (category: Category): boolean => Boolean(partner) && !pairIsValid(partner, category.id);
+  // canJoin over ~95 categories isn't free: compute the disabled set only
+  // while the panel is open, keyed on the partners themselves (derived
+  // inside the memo from the string key, so the deps stay honest)
+  const partnersKey = partners.filter(Boolean).join("|");
+  const disabledIds = useMemo(() => {
+    const chosenPartners = partnersKey ? partnersKey.split("|") : [];
+    if (!open || !chosenPartners.length) return new Set<string>();
+    return new Set(
+      CATEGORIES.filter((category) => category.id !== value && !canJoin(chosenPartners, category.id)).map(
+        (category) => category.id,
+      ),
+    );
+  }, [open, partnersKey, value]);
+  const disabled = (category: Category): boolean => disabledIds.has(category.id);
   // what the keyboard can land on, top to bottom
   const selectable = groups.flatMap((entry) => entry.categories).filter((category) => !disabled(category));
   const highlightedId = selectable[Math.min(highlighted, selectable.length - 1)]?.id;

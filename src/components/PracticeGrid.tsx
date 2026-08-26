@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStats } from "../StatsContext.ts";
 import { DEFAULT_EXCLUDED_GROUPS, generateGrid, gridPool } from "../logic/grid.ts";
 import type { Grid } from "../logic/grid.ts";
 import { intersection, pairKey } from "../logic/matching.ts";
-import { CATEGORIES, CATEGORY_BY_ID, CATEGORY_GROUPS, getCategory, whyNot } from "../data/categories.ts";
+import { CATEGORY_BY_ID, QUIZ_CATEGORIES, QUIZ_CATEGORY_GROUPS, getCategory, whyNot } from "../data/categories.ts";
 import type { CategoryGroup } from "../data/categories.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
@@ -12,6 +12,7 @@ import CategoryPill from "./CategoryPill.tsx";
 import Sprite from "./Sprite.tsx";
 import GuessModal from "./GuessModal.tsx";
 import AnswerList from "./AnswerList.tsx";
+import ToggleGroup from "./ToggleGroup.tsx";
 
 type CellStatus = "empty" | "filled" | "revealed";
 
@@ -27,8 +28,14 @@ const emptyCells = (): Cell[] => Array.from({ length: 9 }, () => ({ status: "emp
 const BOARD_KEY = "pokedoku-study:grid:v1";
 // Which category groups new grids leave out (see gridPool in logic/grid.ts)
 const GROUPS_KEY = "pokedoku-study:grid-excluded-groups:v1";
-const GROUP_IDS = new Set<string>(CATEGORY_GROUPS.map(([group]) => group));
+// only the quizzed groups: a stored Browse-only id would count against
+// the "last group can't be turned off" budget without a visible toggle
+const GROUP_IDS = new Set<string>(QUIZ_CATEGORY_GROUPS.map(([group]) => group));
 const isCategoryGroup = (value: unknown): value is CategoryGroup => typeof value === "string" && GROUP_IDS.has(value);
+// how many grid-drawable categories each group holds (the panel's badges)
+const GROUP_COUNTS = new Map<CategoryGroup, number>(
+  QUIZ_CATEGORY_GROUPS.map(([group]) => [group, QUIZ_CATEGORIES.filter((category) => category.group === group).length]),
+);
 function loadExcludedGroups(): CategoryGroup[] {
   const saved = loadJson(GROUPS_KEY);
   if (!Array.isArray(saved)) return DEFAULT_EXCLUDED_GROUPS;
@@ -89,18 +96,22 @@ function PracticeGrid() {
   const [showGroups, setShowGroups] = useState(false);
   useEffect(() => saveJson(GROUPS_KEY, excludedGroups), [excludedGroups]);
   // Rows/columns of the next grid come from the groups left on; the last
-  // one can't be turned off
+  // one can't be turned off (QUIZ_CATEGORY_GROUPS is what the panel
+  // shows — the Browse-only fun group isn't part of the budget)
   function toggleGroup(group: CategoryGroup) {
     setExcludedGroups((excluded) =>
       excluded.includes(group)
         ? excluded.filter((other) => other !== group)
-        : excluded.length < CATEGORY_GROUPS.length - 1
+        : excluded.length < QUIZ_CATEGORY_GROUPS.length - 1
           ? [...excluded, group]
           : excluded,
     );
   }
   const [guesses, setGuesses] = useState(saved?.guesses || 0);
   const [message, setMessage] = useState("");
+  // the Pokémon behind the current wrong-guess message (its tile in the
+  // popup opens the detail sheet)
+  const [wrongGuess, setWrongGuess] = useState<Pokemon | null>(null);
   useEffect(() => saveBoard(grid, cells, guesses), [grid, cells, guesses]);
 
   const usedIds = useMemo(
@@ -111,18 +122,43 @@ function PracticeGrid() {
   const filled = cells.filter((cell) => cell.status === "filled").length;
 
   const cellCats = (index: number): [string, string] => [grid.rows[Math.floor(index / 3)], grid.cols[index % 3]];
-  // Closing the guess popup (×, backdrop, Escape) drops the selection;
-  // stable so the popup's Escape listener isn't re-bound each render
+  // Closing the guess popup (×, backdrop, Escape) drops the selection —
+  // and the tapped cell's focus, whose ring reads as "still selected" on
+  // iOS; stable so the popup's Escape listener isn't re-bound each render
   const closeCell = useCallback(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && active.closest(".board")) active.blur();
     setSelected(null);
     setMessage("");
+    setWrongGuess(null);
   }, []);
+
+  // A filled cell's highlight (and its answer panel) clears when a tap
+  // lands outside this tab's own content, instead of lingering until
+  // another cell is picked. `click`, not pointerdown: a drag that starts
+  // on dead space (scrolling toward the panel) must not tear it down.
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const selectedStatus = selected === null ? null : cells[selected].status;
+  useEffect(() => {
+    if (selected === null || selectedStatus === "empty") return undefined;
+    const onClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+      // inside the tab (board, toolbar, answer panel) keeps the selection;
+      // so does the detail sheet, which portals to <body>
+      if (rootRef.current?.contains(target) || target.closest(".modal-backdrop")) return;
+      setSelected(null);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [selected, selectedStatus]);
 
   function guess(pokemon: Pokemon) {
     if (selected === null) return;
     const [rowId, colId] = cellCats(selected);
     if (usedIds.has(pokemon.id)) {
       setMessage(`${pokemon.displayName} is already on the board.`);
+      setWrongGuess(null); // the previous miss's tile must not outlive its message
       return;
     }
     const answers = intersection(rowId, colId);
@@ -137,10 +173,26 @@ function PracticeGrid() {
       setCells((current) =>
         current.map((cell, index) => (index === selected ? { status: "filled", pokemon } : cell)),
       );
-      setMessage(`${pokemon.displayName} fits!`);
+      // PokeDoku's own pick percentages sit behind a login, so uniqueness
+      // is approximated locally: the cell's answer-pool size, and how
+      // many other cells of this board the pick could have filled
+      // (membership is just the two predicates — no member lists needed;
+      // only cells still open count, since the no-repeat rule bars the rest)
+      const elsewhere = Array.from({ length: 9 }, (_, index) => index).filter((index) => {
+        if (index === selected || cells[index].status !== "empty") return false;
+        const [row, col] = cellCats(index);
+        return getCategory(row).predicate(pokemon) && getCategory(col).predicate(pokemon);
+      }).length;
+      const uniqueness =
+        elsewhere === 0
+          ? "no other open cell on this board — maximally unique"
+          : `it also fits ${elsewhere} other open cell${elsewhere === 1 ? "" : "s"} here`;
+      setMessage(`${pokemon.displayName} fits! One of ${answers.length} for this cell; ${uniqueness}.`);
       setSelected(null);
+      setWrongGuess(null);
     } else {
       setMessage(`${pokemon.displayName} doesn't fit — it ${whyNot(pokemon, [rowId, colId])}.`);
+      setWrongGuess(pokemon);
     }
   }
 
@@ -156,6 +208,7 @@ function PracticeGrid() {
       current.map((cell, index) => (index === selected ? { status: "revealed", pokemon: null } : cell)),
     );
     setMessage("");
+    setWrongGuess(null);
   }
 
   function newGame() {
@@ -164,12 +217,13 @@ function PracticeGrid() {
     setSelected(null);
     setGuesses(0);
     setMessage("");
+    setWrongGuess(null);
   }
 
   const selectedCell = selected !== null ? cells[selected] : null;
 
   return (
-    <div className="practice">
+    <div className="practice" ref={rootRef}>
       <p className="hint">
         Fill all nine cells — each Pokémon must fit its row and column, no
         repeats.
@@ -197,7 +251,8 @@ function PracticeGrid() {
                 key={colId}
                 className={className}
                 onClick={() => {
-                  setSelected(index);
+                  // tapping the selected filled cell again deselects it
+                  setSelected((current) => (current === index ? null : index));
                   setMessage("");
                 }}
               >
@@ -222,7 +277,7 @@ function PracticeGrid() {
           <button
             className={`ghost${showGroups ? " on" : ""}`}
             aria-expanded={showGroups}
-            aria-controls="grid-groups"
+            aria-controls={showGroups ? "grid-groups" : undefined}
             onClick={() => setShowGroups((on) => !on)}
           >
             Categories
@@ -233,22 +288,20 @@ function PracticeGrid() {
         </div>
       </div>
       {showGroups ? (
-        <fieldset id="grid-groups" className="grid-groups">
-          <legend>Category groups for new grids</legend>
-          <div className="grid-groups-list">
-            {CATEGORY_GROUPS.map(([group, label]) => {
-              const on = !excludedGroups.includes(group);
-              const count = CATEGORIES.filter((category) => category.group === group).length;
-              return (
-                <label key={group} className={`group-toggle${on ? " on" : ""}`}>
-                  <input type="checkbox" checked={on} onChange={() => toggleGroup(group)} />
-                  {label} <span className="group-count">{count}</span>
-                </label>
-              );
-            })}
-          </div>
-          <p className="hint">Takes effect on the next New Grid.</p>
-        </fieldset>
+        <ToggleGroup
+          id="grid-groups"
+          title="Category groups for new grids"
+          toggles={QUIZ_CATEGORY_GROUPS.map(([group, label]) => ({
+            id: group,
+            label,
+            included: !excludedGroups.includes(group),
+            count: GROUP_COUNTS.get(group) ?? 0,
+          }))}
+          onToggle={(groupId) => {
+            if (isCategoryGroup(groupId)) toggleGroup(groupId);
+          }}
+          hint="Takes effect on the next New Grid."
+        />
       ) : null}
       <p key={message} className="grid-message">
         {message || " "}
@@ -257,6 +310,7 @@ function PracticeGrid() {
         <GuessModal
           categories={cellCats(selected)}
           message={message}
+          wrongGuess={wrongGuess}
           onGuess={guess}
           onReveal={revealCell}
           onClose={closeCell}

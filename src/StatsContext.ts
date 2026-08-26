@@ -23,7 +23,13 @@ export interface StatsContextValue {
   block: StatsBlock;
   // the cross-device merge, for display and weighting
   merged: MergedStats;
-  recordAttempt: (event: AttemptEvent) => void;
+  // records the attempt and returns a token for undoLastAttempt
+  recordAttempt: (event: AttemptEvent) => number;
+  // reverts the attempt `token` came from, if it is still the newest
+  // recorded one; true when it was undone
+  undoLastAttempt: (token: number) => boolean;
+  // the token of the attempt that can currently be undone, if any
+  undoableAttempt: number | null;
   syncState: SyncState;
   token: string;
   saveToken: (token: string) => void;

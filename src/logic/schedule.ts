@@ -53,9 +53,14 @@ export function dueFactor(entry: ScheduleEntry, now: number): number {
 
 export type ScheduleStatus = "new" | "due" | "learning" | "mastered";
 
+// When the entry's next review falls; 0 for never-seen entries.
+export function dueAt(entry: ScheduleEntry): number {
+  return entry?.t ? entry.t + intervalFor(entry.s) : 0;
+}
+
 export function scheduleStatus(entry: ScheduleEntry, now: number): ScheduleStatus {
   if (!entry || !entry.t) return "new";
-  if (now - entry.t >= intervalFor(entry.s)) return "due";
+  if (now >= dueAt(entry)) return "due";
   return (entry.s ?? 0) >= MASTERED_STREAK ? "mastered" : "learning";
 }
 

@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+import { typeClassOf } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
 import { ABILITIES } from "../data/traits.ts";
 import { TYPE_ICON_PATHS } from "../data/typeIcons.ts";
@@ -27,28 +28,37 @@ export type PillCategory = Pick<Category, "id" | "label" | "short" | "group">;
 interface CategoryPillProps {
   cat: PillCategory;
   useShort?: boolean;
+  // when given, the pill is a button (a clicked pill jumps to Browse)
+  onSelect?: () => void;
 }
 
 // Types carry their canonical colour and symbol, regions the colours of their games,
 // groups (Legendary, Fossil, …) a tint each, and every other family
 // (evolution method, stage, line, type count, moves) one tint per family
 // (see App.css).
-function CategoryPill({ cat, useShort = false }: CategoryPillProps) {
+function CategoryPill({ cat, useShort = false, onSelect }: CategoryPillProps) {
   let extra = "";
   let icon = null;
   if (cat.group === "type") {
-    const type = cat.id.slice(5);
-    extra = ` type-${type}`;
-    icon = <TypeIcon type={type} />;
+    extra = typeClassOf(cat);
+    icon = <TypeIcon type={cat.id.slice(5)} />;
   } else if (cat.group === "region") extra = ` region-${cat.id.slice(7)}`;
   else if (cat.group === "special") extra = ` group-${cat.id.slice(5)}`;
   else extra = ` cat-${cat.group}`;
-  return (
-    <span className={`pill${extra}`}>
+  const content = (
+    <>
       {icon}
       {useShort ? cat.short : cat.label}
-    </span>
+    </>
   );
+  if (onSelect) {
+    return (
+      <button type="button" className={`pill pill-link${extra}`} title={`Browse ${cat.label}`} onClick={onSelect}>
+        {content}
+      </button>
+    );
+  }
+  return <span className={`pill${extra}`}>{content}</span>;
 }
 
 const TRACKED = new Set(ABILITIES.map((ability) => ability.name));
