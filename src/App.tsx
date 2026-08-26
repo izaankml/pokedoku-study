@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 import { StatsContext } from "./StatsContext.ts";
-import type { DeviceInfo, StatsContextValue, SyncState } from "./StatsContext.ts";
+import type { ConnectResult, DeviceInfo, StatsContextValue, SyncState } from "./StatsContext.ts";
 import { readHash, writeHash } from "./logic/hashState.ts";
 import TabNav from "./components/TabNav.tsx";
 import { PokeballIcon } from "./components/Sprite.tsx";
@@ -21,14 +21,21 @@ import {
   withAttempt,
 } from "./logic/stats.ts";
 import type { AttemptEvent, MergedStats, StatsBlock } from "./logic/stats.ts";
-import {
-  consumeHandoffFromUrl,
-  getToken,
-  removeDeviceBlock,
-  resetRemoteBlocks,
-  setToken,
-  syncBlock,
-} from "./logic/sync.ts";
+import * as gistSync from "./logic/sync.ts";
+import * as cloudSync from "./logic/cloudSync.ts";
+import type { CloudAccount } from "./logic/cloudSync.ts";
+import { isFirebaseConfigured } from "./logic/firebaseConfig.ts";
+
+// The operations a sync provider must offer; the gist (legacy PAT) and
+// Google/Firestore modules both satisfy it structurally, so App's
+// debounce/re-pull/undo machinery stays provider-agnostic.
+interface SyncOps {
+  syncBlock: (ownBlock: StatsBlock) => Promise<StatsBlock[]>;
+  resetRemoteBlocks: (ownBlock: StatsBlock) => Promise<StatsBlock[]>;
+  removeDeviceBlock: (deviceId: string, ownBlock: StatsBlock) => Promise<StatsBlock[]>;
+}
+const gistOps: SyncOps = gistSync;
+const cloudOps: SyncOps = cloudSync;
 
 const TABS = ["Browse", "Grid", "Cards", "Drill", "Stats"] as const;
 type Tab = (typeof TABS)[number];
@@ -65,8 +72,29 @@ function App() {
   });
   const [remoteBlocks, setRemoteBlocks] = useState<StatsBlock[]>([]);
   // A QR handoff link (#connect=…) stores its token before anything else.
-  const [token, setTokenState] = useState(() => consumeHandoffFromUrl() || getToken());
+  const [token, setTokenState] = useState(() => gistSync.consumeHandoffFromUrl() || gistSync.getToken());
   const [syncState, setSyncState] = useState<SyncState>(IDLE_SYNC);
+
+  // The Google account, once signed in / restored. The ref mirrors the
+  // state so callbacks with empty deps (syncNow) see it immediately —
+  // including in the window between sign-in and the re-render.
+  const [account, setAccountState] = useState<CloudAccount | null>(null);
+  const accountRef = useRef<CloudAccount | null>(null);
+  const applyAccount = useCallback((next: CloudAccount | null) => {
+    accountRef.current = next;
+    setAccountState(next);
+  }, []);
+  // True while a stored Google session is being restored at startup —
+  // sync holds off (rather than falling back to a leftover gist token)
+  // until the account is known.
+  const restoringRef = useRef(cloudSync.hasCloudSession());
+
+  // Which sync backend to talk to right now (null: don't sync).
+  const chooseOps = useCallback((): SyncOps | null => {
+    if (accountRef.current) return cloudOps;
+    if (restoringRef.current) return null;
+    return gistSync.getToken() ? gistOps : null;
+  }, []);
 
   const blockRef = useRef(block);
   blockRef.current = block;
@@ -80,7 +108,8 @@ function App() {
   const rerunRef = useRef(false);
 
   const syncNow = useCallback(async (): Promise<void> => {
-    if (!getToken()) return;
+    const ops = chooseOps();
+    if (!ops) return;
     if (inFlightRef.current) {
       rerunRef.current = true; // pick up whatever changed once this one lands
       return;
@@ -88,7 +117,7 @@ function App() {
     inFlightRef.current = true;
     setSyncState((state) => ({ ...state, status: "syncing" }));
     try {
-      const blocks = await syncBlock(blockRef.current);
+      const blocks = await ops.syncBlock(blockRef.current);
       setRemoteBlocks(blocks.filter((other) => other.deviceId !== blockRef.current.deviceId));
       lastSyncRef.current = Date.now();
       setSyncState({ status: "ok", deviceCount: blocks.length, lastSyncedAt: lastSyncRef.current });
@@ -106,20 +135,35 @@ function App() {
         void syncNow();
       }
     }
-  }, []);
+  }, [chooseOps]);
 
   const scheduleSync = useCallback(() => {
-    if (!getToken()) return;
+    if (!chooseOps()) return;
     if (timerRef.current !== null) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => void syncNow(), SYNC_DEBOUNCE_MS);
-  }, [syncNow]);
+  }, [chooseOps, syncNow]);
 
   useEffect(() => {
+    if (restoringRef.current) {
+      // A previous session chose Google sync — restore it (loading the
+      // firebase chunk) before the first sync decides on a provider.
+      let cancelled = false;
+      void cloudSync.restoreAccount().then((restored) => {
+        restoringRef.current = false;
+        if (cancelled) return;
+        applyAccount(restored);
+        void syncNow(); // Google when restored, else a leftover gist token
+      });
+      return () => {
+        cancelled = true;
+        if (timerRef.current !== null) clearTimeout(timerRef.current);
+      };
+    }
     void syncNow();
     return () => {
       if (timerRef.current !== null) clearTimeout(timerRef.current);
     };
-  }, [syncNow]);
+  }, [applyAccount, syncNow]);
 
   useEffect(() => {
     const repull = () => {
@@ -185,8 +229,11 @@ function App() {
 
   const saveToken = useCallback(
     (value: string) => {
-      setToken(value);
+      gistSync.setToken(value);
       setTokenState(value);
+      // While Google drives the sync, the PAT is just legacy cleanup —
+      // storing/forgetting it must not disturb the live sync state.
+      if (accountRef.current) return;
       setRemoteBlocks([]);
       lastSyncRef.current = 0;
       setSyncState(IDLE_SYNC);
@@ -194,6 +241,41 @@ function App() {
     },
     [syncNow],
   );
+
+  // Google sign-in, called straight from the button's click handler so
+  // the popup keeps its user-gesture credit. With a PAT present this is
+  // also the migration moment: pull what the gist knows and copy blocks
+  // Firestore hasn't seen (never overwriting — Firestore is fresher once
+  // a device has migrated).
+  const connectGoogle = useCallback(async (): Promise<ConnectResult> => {
+    const signedIn = await cloudSync.signIn();
+    const hadLegacyToken = Boolean(gistSync.getToken());
+    let imported: number | null = null;
+    if (hadLegacyToken) {
+      try {
+        const gistBlocks = await gistSync.syncBlock(blockRef.current);
+        imported = await cloudSync.importLegacyBlocks(gistBlocks, blockRef.current.deviceId);
+      } catch {
+        imported = null; // gist unreachable — keep the token, offer nothing
+      }
+    }
+    applyAccount(signedIn);
+    setRemoteBlocks([]);
+    lastSyncRef.current = 0;
+    setSyncState(IDLE_SYNC);
+    void syncNow();
+    return { hadLegacyToken, imported };
+  }, [applyAccount, syncNow]);
+
+  const disconnectGoogle = useCallback(async (): Promise<void> => {
+    await cloudSync.signOutGoogle();
+    applyAccount(null);
+    setRemoteBlocks([]);
+    lastSyncRef.current = 0;
+    setSyncState(IDLE_SYNC);
+    // A kept legacy token resumes gist sync (rare, but coherent).
+    if (gistSync.getToken()) void syncNow();
+  }, [applyAccount, syncNow]);
 
   // Keeps this device's id and name so the reset doesn't leave a stale
   // block behind in the gist.
@@ -212,23 +294,26 @@ function App() {
     saveBlock(fresh);
     setBlock(fresh);
     blockRef.current = fresh;
-    if (!getToken()) return;
+    const ops = chooseOps();
+    if (!ops) return;
     setSyncState((state) => ({ ...state, status: "syncing" }));
     try {
-      const blocks = await resetRemoteBlocks(fresh);
+      const blocks = await ops.resetRemoteBlocks(fresh);
       setRemoteBlocks([]);
       lastSyncRef.current = Date.now();
       setSyncState({ status: "ok", deviceCount: blocks.length, lastSyncedAt: lastSyncRef.current });
     } catch (reason) {
       setSyncState((state) => ({ ...state, status: "error", lastError: errorMessage(reason) }));
     }
-  }, [clearUndo]);
+  }, [chooseOps, clearUndo]);
 
   // Fold another device's history into this one and drop its block from
   // the gist (for stale duplicates: reinstalled apps, cleared storage,
   // private windows).
   const absorbDevice = useCallback(
     async (deviceId: string): Promise<void> => {
+      const ops = chooseOps();
+      if (!ops) return;
       const other = remoteBlocks.find((remote) => remote.deviceId === deviceId);
       if (!other) return;
       const next = absorbBlock(blockRef.current, other);
@@ -238,7 +323,7 @@ function App() {
       blockRef.current = next;
       setSyncState((state) => ({ ...state, status: "syncing" }));
       try {
-        const blocks = await removeDeviceBlock(deviceId, next);
+        const blocks = await ops.removeDeviceBlock(deviceId, next);
         setRemoteBlocks(blocks.filter((remote) => remote.deviceId !== next.deviceId));
         lastSyncRef.current = Date.now();
         setSyncState({ status: "ok", deviceCount: blocks.length, lastSyncedAt: lastSyncRef.current });
@@ -246,7 +331,7 @@ function App() {
         setSyncState((state) => ({ ...state, status: "error", lastError: errorMessage(reason) }));
       }
     },
-    [clearUndo, remoteBlocks],
+    [chooseOps, clearUndo, remoteBlocks],
   );
 
   const devices = useMemo(
@@ -276,13 +361,17 @@ function App() {
       syncState,
       token,
       saveToken,
+      account,
+      googleAvailable: isFirebaseConfigured,
+      connectGoogle,
+      disconnectGoogle,
       syncNow,
       resetLocal,
       resetAll,
       devices,
       absorbDevice,
     }),
-    [block, merged, recordAttempt, undoLastAttempt, undoableAttempt, syncState, token, saveToken, syncNow, resetLocal, resetAll, devices, absorbDevice],
+    [block, merged, recordAttempt, undoLastAttempt, undoableAttempt, syncState, token, saveToken, account, connectGoogle, disconnectGoogle, syncNow, resetLocal, resetAll, devices, absorbDevice],
   );
 
   const selectTab = useCallback((next: Tab) => {

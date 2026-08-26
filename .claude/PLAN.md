@@ -3,7 +3,8 @@
 Review of the feature notes against the codebase, with the implementation
 plan and the assumptions made. Batches 1–5 are implemented (each with a
 multi-agent review pass and headless-Chrome verification); their sections
-below are trimmed to what still matters. Batch 6 remains.
+below are trimmed to what still matters. Batch 6's code is implemented;
+only its console setup and live verification remain.
 
 ## Answers to the questions in the notes
 
@@ -95,21 +96,222 @@ never asked; type-changing Megas are.)
 - Drill/Grid could reuse the Cards Undo hook (`undoLastAttempt` is
   already generic) if misclicks show up there too.
 
-## Batch 6 — Google sign-in (large; NOT started, per instruction)
+## Batch 6 — Google sign-in (code implemented 2026-08-25; console setup pending)
 
-- Recommended: **Firebase Auth (Google provider) + Firestore**, free
-  Spark tier. Why not Drive `appDataFolder`: GIS browser tokens last
-  ~1h and silent refresh degrades into consent popups — bad for a PWA
-  syncing in the background.
-- Shape: one Firestore doc per uid per device block
-  (`users/{uid}/blocks/{deviceId}`), mirroring today's block-per-device
-  model so `mergeBlocks`/`absorbBlock` carry over; security rules
-  restrict to `request.auth.uid`. A new `logic/firebaseSync.ts`
-  implements the same interface as `logic/sync.ts`; the QR handoff
-  disappears (sign in on each device instead).
-- Migration: on first sign-in, if a gist token exists, import the merged
-  gist blocks then offer to disconnect the PAT. Keep the gist path for a
-  release or two behind "legacy".
-- Costs/assumptions: a Firebase project + public config keys in the
-  repo, the app's first backend dependency, origin whitelisting — and
-  the user must create the Firebase project (console access).
+**Status**: steps 1–4 below are done and verified (typecheck, lint,
+110-test suite incl. 8 new cloudSync tests, production build, and
+headless-Chrome screenshots of all three SyncPanel states with a dummy
+config). `src/logic/firebaseConfig.ts` ships blank, so the deployed
+site keeps today's token-only UI until the console setup below is done
+and the config pasted in; then step 5's live verification (sign in on
+two devices, absorb, reset-all, quota check) closes the batch. One
+deliberate deviation from the plan: a "Forget Old GitHub Token" button
+in the Google-connected state covers both a declined migration offer
+and a failed gist read, instead of silently stranding the PAT.
+
+Replace the PAT-in-localStorage gist sync with "Sign in with Google":
+**Firebase Auth (Google provider) + Cloud Firestore**, free Spark tier.
+
+### Why this stack (decision + rejected alternatives)
+
+- **Firebase Auth** keeps a long-lived refresh token in IndexedDB
+  (`browserLocalPersistence`, the default) and silently mints ID tokens
+  forever — sign in once per device, never again. That is exactly what
+  the PAT provided, minus the manual token ceremony.
+- **Rejected — Drive `appDataFolder` + Google Identity Services**: GIS
+  browser access tokens last ~1h and silent refresh degrades into
+  consent popups; background re-pulls (every 5 min while visible) would
+  strand on an expired token. No server-side refresh is possible for a
+  static site.
+- **Rejected — Supabase**: also viable (Google OAuth + Postgres + RLS),
+  but heavier concepts for this shape of data and no offline story we'd
+  use; Firebase's per-uid subcollection + two-line rules is a closer
+  fit. Revisit only if Firebase pricing/terms change.
+- **SDK flavor**: `firebase/firestore/lite` (REST, no realtime, no
+  offline cache — much smaller than full Firestore). Our sync is
+  poll-based (10s debounce push, 5-min visible re-pull), localStorage
+  stays the source of truth, and failures already surface as
+  `syncState.status === "error"`; realtime listeners and the offline
+  cache buy nothing. Lite still has `getDocs`/`setDoc`/`deleteDoc`/
+  `writeBatch`, which is all we need.
+- **Sign-in flow**: `signInWithPopup` on all platforms. Do NOT use
+  `signInWithRedirect`: it is broken-by-default on Safari 16.1+/iOS
+  (third-party storage partitioning) unless the auth handler is proxied
+  onto our origin, which GitHub Pages can't do. Popup works in iOS
+  Safari and in installed-PWA standalone mode (opens an in-app sheet).
+- **Bundle**: `firebase/app` + `firebase/auth` + `firebase/firestore/lite`
+  is still real weight (~100KB+ gz). Load it **only** via dynamic
+  `import()` from a small always-loaded shim, triggered by (a) a stored
+  "google" provider flag at startup or (b) the Sign In button. Users who
+  never sign in download none of it.
+
+### Data model
+
+One doc per device block: `users/{uid}/blocks/{deviceId}` (deviceIds
+are `[a-z0-9]{8}` from `stats.randomId`, safe as doc ids). Doc content:
+
+```
+{ json: JSON.stringify(statsBlock), updatedAt: serverTimestamp() }
+```
+
+Store the block as **one JSON string field**, not expanded maps:
+Firestore field paths choke on arbitrary map keys (pair keys contain
+`|` today and nothing guarantees future category ids avoid `.`/`/`),
+and we never query inside a block — we always read it whole. The 1 MiB
+doc limit is far above a block's realistic size (tens of KB; the
+per-device block is the same payload the gist file held for ALL
+devices). `updatedAt` is metadata for debugging/inspection only — merge
+semantics stay purely `mergeBlocks`' additive/last-writer-by-`t` logic.
+
+This is strictly better than the gist under concurrency: today every
+device PATCHes the whole shared file (real lost-update window between
+read and write); per-device docs make each device's write touch only
+its own doc, so the race disappears rather than carries over.
+
+Operation mapping (replaces `findGistId` + file read/write):
+
+- `syncBlock`: `getDocs(users/{uid}/blocks)` → parse each `json` →
+  `setDoc` own doc only if remote copy differs (keeps the no-churn
+  property) → return all blocks.
+- `resetRemoteBlocks`: one `writeBatch` — delete every other device's
+  doc, set own fresh doc.
+- `removeDeviceBlock`: `writeBatch` — delete the absorbed device's doc,
+  set own (post-absorb) doc.
+- A block whose `json` fails to parse is skipped (mirror of today's
+  corrupt-file `catch` → rebuilt from local on next write).
+
+### Security rules
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/blocks/{deviceId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == uid
+        && (request.method == 'delete'
+            || (request.resource.data.json is string
+                && request.resource.data.json.size() < 900000));
+    }
+  }
+}
+```
+
+Everything else is denied by default. The size guard keeps a bug from
+writing unbounded docs.
+
+### New/changed modules
+
+- **`src/logic/firebaseConfig.ts`** (new): the public web-app config
+  object, committed to the repo (these keys are not secrets; access
+  control lives in the rules). One TODO-filled placeholder until the
+  console setup below happens.
+- **`src/logic/cloudSync.ts`** (new): everything Firebase. Exposes the
+  same operation surface as `sync.ts` (`syncBlock`,
+  `resetRemoteBlocks`, `removeDeviceBlock`) plus `signIn()`,
+  `signOutGoogle()`, `onAccountChanged(cb)` (wraps
+  `onAuthStateChanged`; reports `{uid, email, displayName} | null`).
+  Internally dynamic-imports the firebase modules on first use and
+  caches the app/auth/db handles. Firestore calls go through a thin
+  injectable backend object so tests can stub it (the module-level
+  seam mirrors how `sync.test.ts` stubs global `fetch`).
+- **`src/logic/sync.ts`** (kept, legacy): untouched behavior, reached
+  only when a PAT is present.
+- **`src/StatsContext.ts`**: `token: string` / `saveToken` generalize to
+  an account model:
+  `account: { provider: "gist" } | { provider: "google"; email: string } | null`,
+  plus `connectGoogle()`, `disconnect()`, and legacy `saveToken` kept
+  while the gist path lives. `SyncState` unchanged.
+- **`src/App.tsx`**: provider selection — a `provider` value derived
+  from stored state (`"google"` if a stored flag
+  `pokedoku-study:sync-provider` says so and auth restores a user,
+  `"gist"` if `getToken()`), and every call site (`syncNow`, `resetAll`,
+  `absorbDevice`) dispatches to `cloudSync` or legacy `sync` through one
+  small `providerOps` object rather than scattered conditionals. The
+  debounce/re-pull/in-flight/undo machinery is provider-agnostic and
+  does not change.
+- **`src/components/StatsView.tsx`** SyncPanel states:
+  1. **Signed out, no PAT**: primary "Sign in with Google" button +
+     one-line pitch; the PAT input moves into a collapsed
+     `<details>` "Legacy: connect with a GitHub token".
+  2. **Google connected**: status line (dot + synced/tracking, as
+     today) + the account email; actions: Sync Now, Devices, Sign Out.
+     **No QR handoff** — linking another device = sign in there. The
+     QR code path (`handoffUrl`/`LinkDeviceQR`) stays gist-only.
+  3. **Gist connected (legacy)**: today's UI unchanged, plus a hint
+     "Google sign-in is the new way — sign in to migrate" with a
+     button that runs sign-in + migration.
+  Error copy: replace "Check the token's Gists permission." with a
+  provider-appropriate message for the Google path.
+
+### Migration (PAT → Google), per device
+
+On a successful sign-in **while a gist token exists** on this device:
+
+1. Pull all gist blocks (legacy `syncBlock` with the current local
+   block).
+2. For each gist block, write it to Firestore **only if no doc for that
+   deviceId exists yet** — Firestore is always fresher than the gist
+   copy once a device has migrated, so never overwrite. (Own block is
+   exempt: it syncs normally right after.)
+3. Offer to disconnect the PAT on this device (`setToken("")`); keep
+   the gist itself — other un-migrated devices may still be writing to
+   it, and it's the user's data to delete.
+
+A device that migrated later than its siblings just imports whatever
+the gist still uniquely holds (its own history included) — additive
+merge semantics make the order safe. Remove the whole legacy path
+(sync.ts, QR handoff, PAT UI, migration) after a release or two of
+overlap.
+
+### One-time console setup (user task — needs the Firebase console)
+
+1. Create a Firebase project (Analytics off).
+2. Authentication → Sign-in method → enable **Google** (pick the
+   support email; Firebase provisions the OAuth client itself).
+3. Firestore → create database, production mode, region close to home
+   (e.g. `europe-west` or wherever's nearest).
+4. Paste the security rules above (Rules tab).
+5. Authentication → Settings → Authorized domains → add
+   `izaankml.github.io` (`localhost` is pre-authorized for dev).
+6. Project settings → add a Web app → copy the config object into
+   `firebaseConfig.ts`.
+
+### Implementation order (each step leaves the app shippable)
+
+1. **Refactor seam**: introduce the `providerOps` dispatch +
+   account-shaped context with gist as the only provider. Pure
+   refactor; all existing tests stay green.
+2. **`cloudSync.ts` + unit tests**: stubbed-backend tests covering the
+   op mapping (differ-check before write, batch delete+set shapes,
+   corrupt-`json` skip, import-only-missing migration rule) — mirror
+   `sync.test.ts`'s style.
+3. **UI**: SyncPanel three states, App wiring, dynamic-import gating.
+   Verify signed-out + legacy states with the run-app skill
+   (headless Chrome can't drive a real Google popup).
+4. **Migration** flow + legacy gating/copy.
+5. **Console setup, deploy, live verification**: sign in on desktop +
+   phone, confirm both devices appear in Devices, absorb a stale one,
+   reset-all, and confirm the Spark quotas dashboard shows the
+   expected trickle (re-pull = N doc reads / 5 min visible; well
+   inside 50K reads/20K writes per day).
+
+### Risks / open questions (flag, don't block)
+
+- **Popup blockers**: `signInWithPopup` must be called directly in the
+  click handler (no awaits before it) or Safari blocks it.
+- **firestore/lite has no offline queue**: a sync while offline fails
+  fast → `status: "error"`, retried by the existing debounce/re-pull.
+  Same behavior the gist path has today; acceptable.
+- **Third-party storage**: popup auth uses an iframe helper on
+  `<project>.firebaseapp.com`; current SDK handles Safari partitioning
+  for popup (it's redirect that's broken). If sign-in proves flaky on
+  iOS in practice, the fallback is serving `authDomain` off a custom
+  domain — a bigger change, note only.
+- **Multiple Google accounts**: signing into a different account mid-
+  life creates a fresh empty uid namespace — the UI shows the signed-in
+  email precisely so this is visible. No account-linking work planned.
+- Delete-the-gist after all devices migrate: leave manual (user's
+  call), maybe a hint in the legacy panel.
+- Apple/other providers: out of scope; the account model in the
+  context is shaped so a second provider slots in if ever wanted.

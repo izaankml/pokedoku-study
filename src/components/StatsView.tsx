@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { useStats } from "../StatsContext.ts";
 import type { DeviceInfo } from "../StatsContext.ts";
 import { handoffUrl } from "../logic/sync.ts";
+import { preloadCloud } from "../logic/cloudSync.ts";
 import { QUIZ_CATEGORIES, QUIZ_CATEGORY_GROUPS } from "../data/categories.ts";
 import { smoothedAccuracy } from "../logic/stats.ts";
 import type { MergedStats, StatEntry } from "../logic/stats.ts";
@@ -304,28 +305,177 @@ function DeviceList({ devices, absorbDevice, now }: DeviceListProps) {
 }
 
 function SyncPanel() {
-  const { syncState, token, saveToken, syncNow, devices: deviceList, absorbDevice } = useStats();
+  const {
+    syncState,
+    token,
+    saveToken,
+    account,
+    googleAvailable,
+    connectGoogle,
+    disconnectGoogle,
+    syncNow,
+    devices: deviceList,
+    absorbDevice,
+  } = useStats();
   const [draft, setDraft] = useState("");
   const [showQR, setShowQR] = useState(false);
   const [showDevices, setShowDevices] = useState(false);
+  // a sign-in or sign-out in flight
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const now = useNow(15_000);
   const devices = `${syncState.deviceCount} device${syncState.deviceCount === 1 ? "" : "s"}`;
   const synced = syncState.lastSyncedAt ? timeAgo(syncState.lastSyncedAt, now) : null;
 
+  // Start fetching the firebase chunk before the button is pressed, so
+  // the sign-in popup isn't stuck behind a download (popup blockers
+  // only tolerate a short gap after the click).
+  useEffect(() => {
+    if (googleAvailable && !account) preloadCloud();
+  }, [googleAvailable, account]);
+
+  // Straight from the click handler — no awaits before the popup opens.
+  const handleSignIn = () => {
+    setAuthError(null);
+    setAuthBusy(true);
+    connectGoogle()
+      .then((result) => {
+        // Migration ran (or the gist was unreadable: keep the token so
+        // nothing is lost — the Forget button stays available).
+        if (!result.hadLegacyToken || result.imported === null) return;
+        const importedNote =
+          result.imported > 0
+            ? `Imported ${result.imported} other device histor${result.imported === 1 ? "y" : "ies"} from your gist. `
+            : "";
+        if (
+          window.confirm(
+            `${importedNote}Sync now runs through your Google account. Forget the GitHub token on this device?`,
+          )
+        ) {
+          saveToken("");
+        }
+      })
+      .catch((reason: unknown) => setAuthError(reason instanceof Error ? reason.message : String(reason)))
+      .finally(() => setAuthBusy(false));
+  };
+
+  const handleSignOut = () => {
+    setAuthBusy(true);
+    disconnectGoogle()
+      .catch((reason: unknown) => setAuthError(reason instanceof Error ? reason.message : String(reason)))
+      .finally(() => setAuthBusy(false));
+  };
+
+  const statusHint = (gistMode: boolean) => (
+    <p className="hint">
+      <span className={`status-dot ${syncState.status}`} />
+      {syncState.status === "ok" && `Synced ${synced} — tracking ${devices}.`}
+      {syncState.status === "syncing" && "Syncing…"}
+      {syncState.status === "error" &&
+        `Sync failed: ${syncState.lastError}.` +
+          (gistMode ? " Check the token's Gists permission." : "") +
+          (synced ? ` Last good sync ${synced}.` : "")}
+      {syncState.status === "idle" && (gistMode ? "Token saved." : "Signed in.")}
+    </p>
+  );
+
+  const devicesToggle =
+    deviceList.length > 1 ? (
+      <button className="ghost" aria-expanded={showDevices} onClick={() => setShowDevices((visible) => !visible)}>
+        {showDevices ? "Hide Devices" : "Devices"}
+      </button>
+    ) : null;
+
+  const devicesSection = showDevices ? (
+    <>
+      <p className="hint">
+        Each browser or home-screen app that has synced keeps its own
+        history here. A duplicate you no longer use (cleared storage,
+        reinstalled app) can be merged into this device.
+      </p>
+      <DeviceList devices={deviceList} absorbDevice={absorbDevice} now={now} />
+    </>
+  ) : null;
+
+  const tokenSteps = (
+    <ol className="sync-steps">
+      <li>
+        On GitHub: Settings → Developer settings → Personal access
+        tokens → Fine-grained tokens → Generate new token
+      </li>
+      <li>
+        Under Account permissions, set <strong>Gists</strong> to Read
+        and write (nothing else), then generate
+      </li>
+      <li>
+        Paste the token here — then use <strong>Link another
+        device</strong> to move it to your other devices by QR code
+      </li>
+    </ol>
+  );
+
+  const tokenForm = (
+    <div className="sync-actions">
+      <input
+        type="password"
+        placeholder="github_pat_…"
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+      />
+      <button
+        className="primary"
+        disabled={!draft.trim()}
+        onClick={() => {
+          saveToken(draft.trim());
+          setDraft("");
+        }}
+      >
+        Connect
+      </button>
+    </div>
+  );
+
   return (
     <section className="sync-panel">
       <h3>Cross-Device Sync</h3>
-      {token ? (
+      {account ? (
         <>
+          {statusHint(false)}
+          <div className="sync-actions">
+            <button className="ghost" onClick={() => void syncNow()}>
+              Sync Now
+            </button>
+            {devicesToggle}
+            <button className="ghost" disabled={authBusy} onClick={handleSignOut}>
+              {authBusy ? "Signing Out…" : "Sign Out"}
+            </button>
+          </div>
           <p className="hint">
-            <span className={`status-dot ${syncState.status}`} />
-            {syncState.status === "ok" && `Synced ${synced} — tracking ${devices}.`}
-            {syncState.status === "syncing" && "Syncing…"}
-            {syncState.status === "error" &&
-              `Sync failed: ${syncState.lastError}. Check the token's Gists permission.` +
-                (synced ? ` Last good sync ${synced}.` : "")}
-            {syncState.status === "idle" && "Token saved."}
+            Signed in as {account.email || account.displayName}. Progress is
+            kept in your Google account — to add a device, just sign in there.
           </p>
+          {token ? (
+            <div className="sync-actions">
+              <button
+                className="ghost small"
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Forget the old GitHub token stored on this device? The gist itself is untouched.",
+                    )
+                  )
+                    saveToken("");
+                }}
+              >
+                Forget Old GitHub Token
+              </button>
+            </div>
+          ) : null}
+          {devicesSection}
+        </>
+      ) : token ? (
+        <>
+          {statusHint(true)}
           <div className="sync-actions">
             <button className="ghost" onClick={() => void syncNow()}>
               Sync Now
@@ -337,30 +487,49 @@ function SyncPanel() {
             >
               {showQR ? "Hide QR" : "Link Another Device"}
             </button>
-            {deviceList.length > 1 ? (
-              <button
-                className="ghost"
-                aria-expanded={showDevices}
-                onClick={() => setShowDevices((visible) => !visible)}
-              >
-                {showDevices ? "Hide Devices" : "Devices"}
-              </button>
-            ) : null}
+            {devicesToggle}
             <button className="ghost" onClick={() => saveToken("")}>
               Disconnect
             </button>
           </div>
           {showQR ? <LinkDeviceQR /> : null}
-          {showDevices ? (
+          {devicesSection}
+          {googleAvailable ? (
             <>
               <p className="hint">
-                Each browser or home-screen app that has synced keeps its own
-                history here. A duplicate you no longer use (cleared storage,
-                reinstalled app) can be merged into this device.
+                Google sign-in is replacing the token sync: your gist history
+                comes along, and other devices just sign in instead of
+                scanning a QR code.
               </p>
-              <DeviceList devices={deviceList} absorbDevice={absorbDevice} now={now} />
+              {authError ? <p className="hint">Sign-in failed: {authError}</p> : null}
+              <div className="sync-actions">
+                <button className="primary" disabled={authBusy} onClick={handleSignIn}>
+                  {authBusy ? "Signing In…" : "Sign In with Google & Migrate"}
+                </button>
+              </div>
             </>
           ) : null}
+        </>
+      ) : googleAvailable ? (
+        <>
+          <p className="hint">
+            Progress is stored on this device. Sign in with Google to keep
+            phone and desktop in sync — your stats live in your own Google
+            account.
+          </p>
+          {authError ? <p className="hint">Sign-in failed: {authError}</p> : null}
+          <div className="sync-actions">
+            <button className="primary" disabled={authBusy} onClick={handleSignIn}>
+              {authBusy ? "Signing In…" : "Sign In with Google"}
+            </button>
+          </div>
+          <details className="sync-help">
+            <summary>
+              <Chevron /> Legacy: Connect With a GitHub Token
+            </summary>
+            {tokenSteps}
+            {tokenForm}
+          </details>
         </>
       ) : (
         <>
@@ -373,39 +542,9 @@ function SyncPanel() {
             <summary>
               <Chevron /> How to Create a Token
             </summary>
-            <ol className="sync-steps">
-              <li>
-                On GitHub: Settings → Developer settings → Personal access
-                tokens → Fine-grained tokens → Generate new token
-              </li>
-              <li>
-                Under Account permissions, set <strong>Gists</strong> to Read
-                and write (nothing else), then generate
-              </li>
-              <li>
-                Paste the token here — then use <strong>Link another
-                device</strong> to move it to your other devices by QR code
-              </li>
-            </ol>
+            {tokenSteps}
           </details>
-          <div className="sync-actions">
-            <input
-              type="password"
-              placeholder="github_pat_…"
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-            />
-            <button
-              className="primary"
-              disabled={!draft.trim()}
-              onClick={() => {
-                saveToken(draft.trim());
-                setDraft("");
-              }}
-            >
-              Connect
-            </button>
-          </div>
+          {tokenForm}
         </>
       )}
     </section>
@@ -415,8 +554,8 @@ function SyncPanel() {
 // Reset lives up top, next to the review numbers it clears. With sync on,
 // there's a choice between this device's history and everything.
 function ResetPanel() {
-  const { resetLocal, resetAll, token, devices } = useStats();
-  const synced = Boolean(token) && devices.length > 1;
+  const { resetLocal, resetAll, token, account, devices } = useStats();
+  const synced = Boolean(token || account) && devices.length > 1;
   return (
     <div className="reset-actions">
       <button
