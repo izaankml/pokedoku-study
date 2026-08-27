@@ -30,13 +30,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- src/data/pick-stats.json; then
+          git add src/data/pick-stats.json public/archive
+          if git diff --cached --quiet; then
             echo "pick-stats unchanged; nothing to deploy"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/pick-stats.json
           git commit -m "Daily pick-stats harvest"
           git push
           gh workflow run deploy.yml --ref main

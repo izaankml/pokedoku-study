@@ -1,32 +1,43 @@
-// Harvests PokeDoku's global pick statistics into src/data/pick-stats.json.
+// Harvests PokeDoku's global pick statistics.
 //
 // A guest session (see pokedoku-session.ts) can read, for any puzzle id,
 // how many players picked each Pokémon in each cell — no puzzle play
 // required, and the endpoint is read-only (never touch /solution: GETting
 // it CREATES a play record for the session's temp user).
 //
+// Two outputs:
+//   - src/data/pick-stats.json — the bounded per-Pokémon prior the app
+//     bundles (one small entry per Pokémon, never grows past the dex)
+//   - public/archive/<id>.json — the permanent archive: one file per
+//     puzzle with its category spec (readable only while current) and
+//     full per-cell pick counts, indexed by public/archive/index.json.
+//     Deployed with the site but fetched lazily, so the app bundle
+//     stays fixed while the archive grows.
+//
 //   node scripts/harvest-pick-stats.ts                  # daily: finished
-//     puzzles since the last run are folded into the prior, and today's
-//     spec + live counts land in `recent`
+//     puzzles since the last run are folded into the prior and archived
+//     with their final counts; today's spec + live counts are archived
 //   node scripts/harvest-pick-stats.ts --backfill 1 1563  # one-off: fold
-//     a range of past puzzles into the prior (stats only — past specs
-//     aren't readable, so these add no `recent` entries)
+//     a range of past puzzles into the prior and archive
 //
 // The current (still-running) puzzle is never counted into the prior;
 // its numbers keep moving all day. It is re-fetched as finished on the
 // next daily run.
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { PickStatsCell, PickStatsData, PickStatsPuzzle } from "../src/data/types.ts";
+import type { PickArchiveIndex, PickStatsCell, PickStatsData, PickStatsPuzzle } from "../src/data/types.ts";
 import { DATA_DIR } from "./pokedoku-api.ts";
 import { PokedokuSession } from "./pokedoku-session.ts";
 
 const STATS_PATH = join(DATA_DIR, "pick-stats.json");
+const ARCHIVE_DIR = join(DATA_DIR, "..", "..", "public", "archive");
 // polite gap between backfill requests; the daily run makes only a handful
 const THROTTLE_MS = 150;
 // how many finished puzzles a daily run looks back over (covers missed days)
 const DAILY_LOOKBACK = 7;
-const RECENT_KEPT = 3;
+// recent finished puzzles get their archive refreshed to final counts even
+// when already counted (a puzzle archived live keeps growing for a day)
+const ARCHIVE_REFRESH = 5;
 
 interface AnswerAggregate {
   aggCount: number;
@@ -45,13 +56,14 @@ interface CurrentPuzzle extends Record<string, unknown> {
 
 function loadStats(): PickStatsData {
   try {
-    return JSON.parse(readFileSync(STATS_PATH, "utf8")) as PickStatsData;
+    const parsed = JSON.parse(readFileSync(STATS_PATH, "utf8")) as PickStatsData & { recent?: unknown };
+    delete parsed.recent; // pre-archive files carried the last boards inline
+    return parsed;
   } catch {
     return {
       meta: { generatedAt: "", puzzlesCounted: 0, cellsCounted: 0 },
       counted: [],
       prior: {},
-      recent: [],
     };
   }
 }
@@ -85,13 +97,17 @@ function cellAggregates(stats: PuzzleStats): PickStatsCell[] {
 
 // Stats age out: after ~5 days each cell collapses to a single aggregate
 // (one Pokémon at 100% share), which would poison the prior's mean
-// shares. A real finished daily has dozens-to-hundreds of distinct picks
-// per cell, so a sparse cell is aged data — never fold it in.
+// shares and is worthless as an archive. A real finished daily has
+// dozens-to-hundreds of distinct picks per cell, so a sparse cell is
+// aged data — never fold it in, never archive it.
 const MIN_DISTINCT_PICKS = 5;
 
-function ingest(data: PickStatsData, stats: PuzzleStats): void {
+const hasFullCell = (cells: PickStatsCell[]): boolean =>
+  cells.some((cell) => cell.picks.length >= MIN_DISTINCT_PICKS);
+
+function ingest(data: PickStatsData, cells: PickStatsCell[]): void {
   let cellsIngested = 0;
-  for (const cell of cellAggregates(stats)) {
+  for (const cell of cells) {
     if (cell.total === 0 || cell.picks.length < MIN_DISTINCT_PICKS) continue;
     for (const [pokemonId, count] of cell.picks) {
       const entry = data.prior[pokemonId] ?? [0, 0];
@@ -105,10 +121,45 @@ function ingest(data: PickStatsData, stats: PuzzleStats): void {
   if (cellsIngested > 0) data.meta.puzzlesCounted += 1;
 }
 
+// Merge into the puzzle's archive file: counts refresh, but the spec and
+// date (readable only while the puzzle was current) are never dropped
+function writeArchive(puzzle: PickStatsPuzzle): void {
+  mkdirSync(ARCHIVE_DIR, { recursive: true });
+  const path = join(ARCHIVE_DIR, `${puzzle.id}.json`);
+  let existing: Partial<PickStatsPuzzle> = {};
+  try {
+    existing = JSON.parse(readFileSync(path, "utf8")) as PickStatsPuzzle;
+  } catch {
+    // first archive of this puzzle
+  }
+  const merged: PickStatsPuzzle = {
+    id: puzzle.id,
+    cells: hasFullCell(puzzle.cells) ? puzzle.cells : (existing.cells ?? puzzle.cells),
+  };
+  const date = puzzle.date ?? existing.date;
+  const spec = puzzle.spec ?? existing.spec;
+  if (date) merged.date = date;
+  if (spec) merged.spec = spec;
+  writeFileSync(path, JSON.stringify(merged));
+}
+
+function rebuildIndex(): void {
+  mkdirSync(ARCHIVE_DIR, { recursive: true });
+  const entries: PickArchiveIndex = readdirSync(ARCHIVE_DIR)
+    .filter((name) => /^\d+\.json$/.test(name))
+    .map((name) => {
+      const puzzle = JSON.parse(readFileSync(join(ARCHIVE_DIR, name), "utf8")) as PickStatsPuzzle;
+      return { id: puzzle.id, ...(puzzle.date ? { date: puzzle.date } : {}) };
+    })
+    .sort((a, b) => b.id - a.id);
+  writeFileSync(join(ARCHIVE_DIR, "index.json"), JSON.stringify(entries));
+}
+
 function save(data: PickStatsData): void {
   data.meta.generatedAt = new Date().toISOString();
   for (const entry of Object.values(data.prior)) entry[1] = Number(entry[1].toFixed(5));
   writeFileSync(STATS_PATH, JSON.stringify(data));
+  rebuildIndex();
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -139,7 +190,11 @@ if (backfillFlag !== -1) {
   for (let id = from; id <= Math.min(to, current.id - 1); id++) {
     if (isCounted(data, id)) continue;
     const stats = await fetchStats(session, id);
-    if (stats) ingest(data, stats);
+    if (stats) {
+      const cells = cellAggregates(stats);
+      ingest(data, cells);
+      if (hasFullCell(cells)) writeArchive({ id, cells });
+    }
     markCounted(data, id); // even a failed id: don't hammer it again daily
     done += 1;
     if (done % 100 === 0) {
@@ -154,30 +209,23 @@ if (backfillFlag !== -1) {
   const current = await session.apiGet<CurrentPuzzle>("/api/puzzle/current");
 
   for (let id = Math.max(1, current.id - DAILY_LOOKBACK); id < current.id; id++) {
-    if (isCounted(data, id)) continue;
+    const needsIngest = !isCounted(data, id);
+    const needsRefresh = id >= current.id - ARCHIVE_REFRESH;
+    if (!needsIngest && !needsRefresh) continue;
     const stats = await fetchStats(session, id);
     if (stats) {
-      ingest(data, stats);
-      // a recent entry harvested while this puzzle ran gets its final counts
-      const recent = data.recent.find((puzzle) => puzzle.id === id);
-      if (recent) recent.cells = cellAggregates(stats);
+      const cells = cellAggregates(stats);
+      if (needsIngest) ingest(data, cells);
+      if (hasFullCell(cells)) writeArchive({ id, cells });
     }
-    markCounted(data, id);
+    if (needsIngest) markCounted(data, id);
     await sleep(THROTTLE_MS);
   }
 
   // today's board: spec (only readable while current) + live counts
   const todayStats = await fetchStats(session, current.id);
   const { id, date, ...spec } = current;
-  const today: PickStatsPuzzle = {
-    id,
-    date,
-    spec,
-    cells: todayStats ? cellAggregates(todayStats) : [],
-  };
-  data.recent = [...data.recent.filter((puzzle) => puzzle.id !== id), today]
-    .sort((a, b) => b.id - a.id)
-    .slice(0, RECENT_KEPT);
+  writeArchive({ id, date, spec, cells: todayStats ? cellAggregates(todayStats) : [] });
 
   save(data);
   console.log(

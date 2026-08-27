@@ -109,9 +109,11 @@ export type SpritesData = Record<string, SpriteEntry>;
 // picks / all picks in that cell), so shareSum / cells is "when this
 // Pokémon is a live answer, what share of players reach for it".
 // `counted` is harvester state: inclusive puzzle-id ranges already folded
-// into the prior. `recent` keeps the last few puzzles in full — the
-// day's category spec (PokeDoku's own JSON, kept verbatim) and each
-// cell's pick counts — for features that want a real board's numbers.
+// into the prior. The full per-puzzle data — the day's category spec
+// (PokeDoku's own JSON, kept verbatim) and each cell's pick counts —
+// lives outside the bundle, as one PickStatsPuzzle per file in
+// public/archive/<id>.json (public/archive/index.json lists them), so
+// the archive can grow forever without growing the app.
 export type PickPriorEntry = [cells: number, shareSum: number];
 
 export interface PickStatsCell {
@@ -122,10 +124,15 @@ export interface PickStatsCell {
 
 export interface PickStatsPuzzle {
   id: number;
-  date: string;
-  spec: Record<string, unknown> | null;
+  // date and spec are only readable while a puzzle is current; a puzzle
+  // first archived after its day lacks them
+  date?: string;
+  spec?: Record<string, unknown>;
   cells: PickStatsCell[];
 }
+
+// public/archive/index.json: every archived puzzle, newest first
+export type PickArchiveIndex = { id: number; date?: string }[];
 
 export interface PickStatsData {
   meta: {
@@ -135,7 +142,6 @@ export interface PickStatsData {
   };
   counted: [from: number, to: number][];
   prior: Record<string, PickPriorEntry>;
-  recent: PickStatsPuzzle[];
 }
 
 // pokedoku-names.json: PokeDoku's slug for each record that carries a form
