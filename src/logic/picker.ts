@@ -1,9 +1,9 @@
-import { QUIZ_CATEGORIES } from "../data/categories.ts";
+import { QUIZ_CATEGORIES, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
-import { DECKS, DECK_BY_ID, cardKey, deckPool, filterFor, filteredDeckPool } from "./flashcards.ts";
-import type { Deck, DeckFilters } from "./flashcards.ts";
-import { allValidPairs, pairKey } from "./matching.ts";
+import { DECKS, cardKey, deckBias, deckPool, focusedDeckPool } from "./flashcards.ts";
+import type { CardFilter } from "./flashcards.ts";
+import { allValidPairs, pairIsValid, pairKey } from "./matching.ts";
 import type { CategoryPair } from "./matching.ts";
 import { dueFactor } from "./schedule.ts";
 import { smoothedAccuracy } from "./stats.ts";
@@ -83,65 +83,82 @@ export function pickDrillPair(
 }
 
 export interface PickFlashcardOptions {
-  // a deck id, or "all" for any deck
+  // a deck id ("region", "combo:type+region"), or "all" for any single deck
   deckId?: string;
   // Pokémon ids not to pick (the last few cards)
   exclude?: Set<number>;
-  // the user's per-deck filters (flashcards.ts DeckFilters)
-  filters?: DeckFilters;
+  // the user's focus filter (flashcards.ts CardFilter)
+  filter?: CardFilter;
   random?: RandomSource;
   now?: number;
 }
 
 export interface FlashcardPick {
-  deck: Deck;
+  deckId: string;
   pokemon: Pokemon;
-  // what the deck asks about on this card (a move id), when it asks about one thing
-  param: string | null;
 }
 
-// Picks a flashcard: a deck (all decks, or the one asked for) and a Pokémon
-// from that deck's pool, weighted by weakness, how due it is, and the deck's
-// own bias; decks that ask about one specific thing per card (Moves) also
-// pick that.
+// Picks a flashcard: a deck (the one asked for, or any single deck for
+// "all") and a Pokémon from that deck's pool, weighted by weakness, how
+// due it is, and the deck's own bias.
 export function pickFlashcard(
   merged: MergedStats,
-  { deckId = "all", exclude = new Set<number>(), filters = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
+  { deckId = "all", exclude = new Set<number>(), filter = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
 ): FlashcardPick {
-  const decks = deckId === "all" ? DECKS : [deckById(deckId)];
-  const chosenFor = new Map(decks.map((deck) => [deck.id, filterFor(filters, deck.id)]));
-  // Per deck: prefer the filtered pool without the recent cards; a filter
+  const deckIds = deckId === "all" ? DECKS.map((deck) => deck.id) : [deckId];
+  // Per deck: prefer the focused pool without the recent cards; a filter
   // narrow enough to exhaust it drops the recent-exclusion first and the
   // filter only as a last resort — and each deck falls back on its own,
   // so a tight filter never silently removes a deck from the All mix.
-  const cards = decks.flatMap((deck) => {
-    const pool = deckPool(deck);
-    const filteredPool = filteredDeckPool(deck, chosenFor.get(deck.id) ?? null);
-    let members = filteredPool.filter((pokemon) => !exclude.has(pokemon.id));
-    if (!members.length) members = filteredPool;
+  const cards = deckIds.flatMap((id) => {
+    const pool = deckPool(id);
+    const focused = focusedDeckPool(id, filter);
+    let members = focused.filter((pokemon) => !exclude.has(pokemon.id));
+    if (!members.length) members = focused;
     if (!members.length) members = pool.filter((pokemon) => !exclude.has(pokemon.id));
     if (!members.length) members = pool;
-    return members.map((pokemon) => ({ deck, pokemon }));
+    return members.map((pokemon) => ({ deckId: id, pokemon }));
   });
-  const pick = pickWeighted(
+  return pickWeighted(
     cards,
-    ({ deck, pokemon }) => {
-      const entry = merged.flashcards[cardKey(deck, pokemon)];
-      return deck.bias(pokemon) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
+    ({ deckId: id, pokemon }) => {
+      const entry = merged.flashcards[cardKey(id, pokemon)];
+      return deckBias(id, pokemon) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
     },
     random,
   );
-  const param = pick.deck.pickParam ? pick.deck.pickParam(pick.pokemon, random, chosenFor.get(pick.deck.id)) : null;
-  return { ...pick, param };
-}
-
-function deckById(deckId: string): Deck {
-  const deck = DECK_BY_ID.get(deckId);
-  if (!deck) throw new Error(`unknown deck: ${deckId}`);
-  return deck;
 }
 
 // Region deck only — kept for tests and callers that predate decks.
 export function pickFlashcardPokemon(merged: MergedStats, options: Omit<PickFlashcardOptions, "deckId"> = {}): Pokemon {
   return pickFlashcard(merged, { ...options, deckId: "region" }).pokemon;
+}
+
+export interface DrillPairForOptions {
+  random?: RandomSource;
+  now?: number;
+}
+
+// A drill pair containing `catId` (the Stats tab's Drill buttons): an
+// already-practised partner when one exists, otherwise any partner from
+// another group with a non-empty intersection — weighted by weakness and
+// how due the pair is either way.
+export function drillPairFor(
+  catId: string,
+  merged: MergedStats,
+  { random = Math.random, now = Date.now() }: DrillPairForOptions = {},
+): CategoryPair {
+  const category = getCategory(catId);
+  const partners = QUIZ_CATEGORIES.filter(
+    (partner) => partner.group !== category.group && pairIsValid(catId, partner.id),
+  );
+  if (!partners.length) return pickDrillPair(merged, { random, now });
+  const practised = partners.filter((partner) => merged.pairs[pairKey(catId, partner.id)]);
+  const pool = practised.length ? practised : partners;
+  const partner = pickWeighted(
+    pool,
+    (candidate) => categoryWeight(candidate, merged) * dueFactor(merged.pairs[pairKey(catId, candidate.id)], now),
+    random,
+  );
+  return [category, partner];
 }

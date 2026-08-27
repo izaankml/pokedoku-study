@@ -14,7 +14,7 @@ const ROOT_SELECTOR = {
   Drill: ".drill",
   Cards: ".flashcards",
   Grid: ".board",
-  Stats: ".stats-table",
+  Stats: ".stats",
 };
 
 const browser = await chromium.launch({ executablePath, headless: true });

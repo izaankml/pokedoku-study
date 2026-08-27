@@ -327,3 +327,13 @@ export function getCategory(id: string): Category {
 export function typeClassOf(cat: Pick<Category, "id" | "group"> | undefined): string {
   return cat?.group === "type" ? ` type-${cat.id.slice(5)}` : "";
 }
+
+// The colour-family class for any category (" type-fire", " region-galar",
+// " group-legendary", " cat-evo"), leading space included — shared by
+// CategoryPill and controls styled like pills (the Focus filter chips).
+export function pillClassOf(cat: Pick<Category, "id" | "group">): string {
+  if (cat.group === "type") return typeClassOf(cat);
+  if (cat.group === "region") return ` region-${cat.id.slice(7)}`;
+  if (cat.group === "special") return ` group-${cat.id.slice(5)}`;
+  return ` cat-${cat.group}`;
+}

@@ -1,5 +1,5 @@
 import type { SVGProps } from "react";
-import { typeClassOf } from "../data/categories.ts";
+import { pillClassOf } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
 import { ABILITIES } from "../data/traits.ts";
 import { TYPE_ICON_PATHS } from "../data/typeIcons.ts";
@@ -37,14 +37,8 @@ interface CategoryPillProps {
 // (evolution method, stage, line, type count, moves) one tint per family
 // (see App.css).
 function CategoryPill({ cat, useShort = false, onSelect }: CategoryPillProps) {
-  let extra = "";
-  let icon = null;
-  if (cat.group === "type") {
-    extra = typeClassOf(cat);
-    icon = <TypeIcon type={cat.id.slice(5)} />;
-  } else if (cat.group === "region") extra = ` region-${cat.id.slice(7)}`;
-  else if (cat.group === "special") extra = ` group-${cat.id.slice(5)}`;
-  else extra = ` cat-${cat.group}`;
+  const extra = pillClassOf(cat);
+  const icon = cat.group === "type" ? <TypeIcon type={cat.id.slice(5)} /> : null;
   const content = (
     <>
       {icon}

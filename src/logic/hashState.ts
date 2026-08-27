@@ -61,15 +61,20 @@ export function hashStateFor(tab: string): string[] | null {
   return current === tab.toLowerCase() ? rest : null;
 }
 
-// Jump to the Browse tab filtered to these categories (a clicked pill on
-// a card or detail sheet). history.pushState fires no events, so the
-// synthetic hashchange is what tells App to switch tab — and Browser, if
-// already mounted, to re-read its filters. With a detail sheet open, its
-// pushed history entry is REPLACED rather than pushed onto: otherwise
-// Back would land on the sheet the user just left and reopen it.
-export function jumpToBrowse(catIds: string[]): void {
-  writeHash("browse", catIds.filter(Boolean), { push: historyDepth() === 0, detail: null });
+// Jump to another tab with the given state segments (a clicked pill into
+// Browse, the Stats tab's Cards/Drill entry points). history.pushState
+// fires no events, so the synthetic hashchange is what tells App to
+// switch tab — and the target, if already mounted, to re-read its state.
+// With a detail sheet open, its pushed history entry is REPLACED rather
+// than pushed onto: otherwise Back would land on the sheet the user just
+// left and reopen it.
+export function jumpToTab(tab: string, rest: string[] = []): void {
+  writeHash(tab, rest, { push: historyDepth() === 0, detail: null });
   window.dispatchEvent(new HashChangeEvent("hashchange"));
+}
+
+export function jumpToBrowse(catIds: string[]): void {
+  jumpToTab("browse", catIds.filter(Boolean));
 }
 
 // The depth recorded in the current history entry, if a sheet pushed it.

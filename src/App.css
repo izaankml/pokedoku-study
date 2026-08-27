@@ -1192,7 +1192,7 @@ button.pill {
 .question,
 .pill,
 .tabs,
-.card-actions,
+.pad-actions,
 .action-row {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -1209,123 +1209,216 @@ button.pill {
   margin-top: var(--sp-3);
 }
 
-.flashcards .card-question {
-  font-size: 1.05rem;
-  margin: var(--sp-3) 0 var(--sp-4);
-}
-
-/* The card itself: sprite and name on a raised surface. Everything that
-   appears after answering (verdict, facts, schedule) lives in the answer
-   area below, so the card never changes height. */
-.flashcards .pokemon-card {
-  position: relative; /* anchors the "View Detail" cue in the corner */
+/* the Cards view is one column: header row, the card stage centred in
+   the free space, and the docked answer pad at the bottom */
+.flashcards {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto var(--sp-4);
-  padding: var(--sp-5) var(--sp-4) var(--sp-4);
-  gap: var(--sp-3);
-  font-size: 1.05rem;
+  max-width: 512px; /* 480px of content plus the pad's full-bleed 16px */
+  margin: 0 auto;
+}
+
+/* ---- cards: header row (deck chooser · filter · dashes · due) ---- */
+
+.cards-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 0 10px;
+}
+
+.deck-choose {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px 0 14px;
+  border-radius: var(--radius-full);
   background: var(--surface-1);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1), var(--edge-hi);
+  border: 1px solid var(--border);
+  color: var(--text-hi);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-/* Sprite.tsx centres and scales each Pokémon's visible box in this slot */
-.flashcards .pokemon-card .sprite,
-.flashcards .pokemon-card .sprite-fallback {
-  width: 144px;
-  height: 144px;
-  object-fit: contain;
+.deck-choose svg {
+  color: var(--text-low);
 }
 
-.flashcards .pokemon-card .sprite {
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+.filter-open {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text-low);
+  padding: 0;
 }
 
-/* answered: the card is a button into the detail sheet */
-.flashcards .pokemon-card.clickable {
-  transition: border-color var(--dur-fast), background-color var(--dur-fast), scale var(--dur-fast) var(--ease-out);
-}
-
+/* pointer devices only (see .tab:hover) */
 @media (hover: hover) {
-  .flashcards .pokemon-card.clickable:hover {
-    border-color: var(--border-strong);
+  .deck-choose:hover,
+  .filter-open:hover {
     background: var(--surface-2);
+    border-color: var(--border-strong);
   }
 }
 
-.flashcards .pokemon-card.clickable:active {
-  scale: 0.985;
+/* with at least one filter set, the funnel takes the accent */
+.filter-open.on {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
-/* "View Detail" in the top-right corner once the card is a button — up
-   there it's clear of the name, which can run the card's full width
-   ("Tauros Paldea Combat Breed") */
-.flashcards .pokemon-card .card-hint {
+.filter-badge {
   position: absolute;
-  right: var(--sp-3);
-  top: var(--sp-2);
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.64rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* the last few answers, one 11×4 dash each; a wide deck label (a combo)
+   clips the row's edges rather than pushing the due label out */
+.dash-row {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dash {
+  flex: none;
+  width: 11px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-3);
+}
+
+.dash.correct {
+  background: var(--correct);
+}
+
+.dash.wrong {
+  background: var(--wrong);
+}
+
+.due-count {
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--text-mid);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---- cards: the stage (prompt · sprite · name · fact pills) ---- */
+
+.card-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 4px;
+  min-height: 290px;
+}
+
+/* the question while asking; the verdict replaces it once answered */
+.card-prompt {
+  margin: 0;
+  min-height: 23px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 800;
   letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-low);
+  white-space: pre-wrap; /* a combo verdict's double spaces stay */
+}
+
+.card-prompt.correct {
+  color: var(--correct-strong);
+  animation: pop-in var(--dur-slow) var(--ease-bounce) both;
+}
+
+.card-prompt.wrong {
+  color: var(--wrong);
+  animation: shake var(--dur-slow) var(--ease-out) both;
+}
+
+.card-prompt.revealed {
   color: var(--text-mid);
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
-.flashcards .pokemon-card .card-hint::after {
-  content: " ›";
+/* Sprite.tsx centres and scales each Pokémon's visible box in this slot */
+.stage-sprite,
+.stage-sprite .sprite,
+.stage-sprite .sprite-fallback {
+  width: 176px;
+  height: 176px;
+  object-fit: contain;
 }
 
-.flashcards .pokemon-card figcaption {
-  font-size: 1.15rem;
-  font-weight: 700;
-  line-height: 1.25;
+.stage-sprite .sprite {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+}
+
+/* the name; once answered it becomes a button into the detail sheet */
+.stage-name {
+  background: none;
+  border: none;
+  padding: 0;
   color: var(--text-hi);
-  white-space: normal;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
 }
 
-/* verdict, options, facts and the action row, as one centred column */
-.answer-area {
+.stage-name:disabled {
+  cursor: default;
+}
+
+.stage-chevron {
+  color: var(--text-low);
+  font-size: 1.1rem;
+  margin-left: 4px;
+}
+
+.fact-pills {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  gap: var(--sp-3);
+  gap: 6px;
+  min-height: 28px;
 }
 
-/* verdict, options and schedule note travel together */
-.answer-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-3);
-  width: 100%;
-}
-
-/* the Name deck's text box (align-items: center would shrink-wrap it) */
-.answer-body .autocomplete {
-  width: 100%;
-}
-
-/* a Combo card: one labelled option grid per asked group */
-.combo-sections {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-2);
-  width: 100%;
-}
-
-.combo-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-1);
-}
-
-.combo-section .region-buttons {
-  min-height: 0; /* sections size to their own rows */
+.fact-pills .pill {
+  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 /* the mystery card's stand-in for the hidden name */
@@ -1334,104 +1427,100 @@ button.pill {
   letter-spacing: 0.2em;
 }
 
-.answer-area .verdict {
-  margin: 0;
-}
-
 .verdict.revealed {
   color: var(--text-mid);
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
+/* ---- cards: the docked answer pad ---- */
+
+/* full-bleed panel with a rounded top edge, docked under the stage */
+.answer-pad {
+  margin: 10px 0 0;
+  padding: 12px 12px 0;
+  background: var(--bg-1);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
 /* A wrapping row rather than a grid, so a short last row centres; every
-   option is one --cols-th of the width, per deck. The same column counts
+   option is one cols-th of the width, per deck. The same column counts
    on every screen size, so a deck's options sit in the same spots on the
    phone and the desktop (muscle memory) */
-.region-buttons {
-  --cols: 3;
-  --gap: 10px;
-  --btn-h: 48px; /* generous targets: fast taps were landing on neighbours */
+.pad-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-content: start; /* options hug the card; spare rows sit above the actions */
-  gap: var(--gap);
-  width: 100%; /* auto side margins would shrink it inside the flex column */
-  max-width: 480px;
-  /* four rows (the Type deck) so the action row sits still across decks */
-  min-height: calc(4 * var(--btn-h) + 3 * var(--gap));
+  gap: 8px;
 }
 
-.region-btn {
-  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
-  height: var(--btn-h);
-  padding: 0 6px;
+.pad-btn {
+  height: 54px;
+  padding: 0 2px;
   white-space: nowrap;
-  font-size: 0.92rem;
-  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--surface-1);
+  background: var(--surface-2);
+  color: var(--text-hi);
+}
+
+.pad-grid.cols-2 .pad-btn {
+  flex: 0 0 calc((100% - 8px) / 2);
+}
+
+.pad-grid.cols-3 .pad-btn {
+  flex: 0 0 calc((100% - 16px) / 3);
+}
+
+.pad-grid.cols-5 .pad-btn {
+  flex: 0 0 calc((100% - 32px) / 5);
+  font-size: 0.76rem;
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .pad-btn:enabled:hover {
+    background: var(--surface-3);
+    border-color: var(--border-strong);
+  }
+}
+
+.pad-btn:enabled:active {
+  scale: 0.96;
+}
+
+/* Type options: a wash of each type's colour, like the pills */
+.pad-btn[class*="type-"] {
+  background: color-mix(in srgb, var(--type-c) 14%, var(--surface-1));
+  border-color: color-mix(in srgb, var(--type-c) 40%, var(--border));
   font-weight: 600;
 }
 
 /* pointer devices only (see .tab:hover) */
 @media (hover: hover) {
-  .region-btn:hover {
-    background: var(--surface-2);
-    border-color: var(--border-strong);
-  }
-}
-
-.region-btn:active {
-  scale: 0.96;
-}
-
-/* Type deck: a wash of each type's colour, like the pills */
-.region-btn[class*="type-"] {
-  background: color-mix(in srgb, var(--type-c) 14%, var(--surface-1));
-  border-color: color-mix(in srgb, var(--type-c) 40%, var(--border));
-}
-
-/* pointer devices only (see .tab:hover) */
-@media (hover: hover) {
-  .region-btn[class*="type-"]:hover {
+  .pad-btn[class*="type-"]:enabled:hover {
     background: color-mix(in srgb, var(--type-c) 26%, var(--surface-1));
     border-color: color-mix(in srgb, var(--type-c) 70%, var(--border));
   }
 }
 
-/* multi-select decks: toggled options before Check */
-.region-btn.selected {
+/* multi-select parts: toggled options before Submit */
+.pad-btn.selected {
   background: var(--surface-3);
   border-color: var(--accent);
-  box-shadow: inset 0 0 0 1px var(--accent);
   color: var(--text-hi);
+  font-weight: 800;
 }
 
-.region-btn[class*="type-"].selected {
+.pad-btn[class*="type-"].selected {
   background: color-mix(in srgb, var(--type-c) 45%, var(--surface-1));
   border-color: var(--type-c);
-  box-shadow: inset 0 0 0 1px var(--type-c);
-}
-
-/* once answered only the right options (and a wrong pick) remain */
-.region-buttons.answered {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
-  min-height: 0;
-}
-
-.region-buttons.answered .region-btn {
-  flex: 0 0 auto;
-  min-width: 140px;
-  padding: 0 18px;
-  pointer-events: none; /* the result, not buttons any more */
 }
 
 /* picked and right */
-.region-btn.correct {
+.pad-btn.correct {
   background: linear-gradient(180deg, var(--correct-strong), var(--correct));
   border-color: var(--correct);
   color: #0d1a0d;
@@ -1439,103 +1528,332 @@ button.pill {
   animation: pop-in var(--dur-slow) var(--ease-bounce) both;
 }
 
-/* right, but not picked: a miss in a multi deck, or the reveal */
-.region-btn.correct.missed {
+/* right, but not picked: a miss on a multi part, or the reveal */
+.pad-btn.correct.missed {
   background: transparent;
   color: var(--correct-strong);
   border: 2px dashed var(--correct);
-  box-shadow: none;
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 /* picked and wrong */
-.region-btn.wrong {
+.pad-btn.wrong {
   background: var(--wrong);
   border-color: var(--wrong);
   color: #fff;
   animation: shake var(--dur-slow) var(--ease-out) both;
 }
 
-/* the ‹ row and the Skip/Submit row, kept together as one block so
-   .answer-area's space distribution can't drift them apart */
-.card-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-top: var(--sp-1);
+/* everything else fades once answered */
+.pad-btn.dim {
+  background: var(--surface-1);
+  border-color: var(--border-subtle);
+  color: var(--border-strong);
 }
 
-.card-actions {
-  min-height: 44px;
+/* the row under the options: Don't know · Submit · Skip while asking,
+   Undo · schedule note once answered */
+.pad-actions {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 4px 10px;
+  min-height: 48px;
+}
+
+.pad-ghost {
+  min-height: 36px;
+  padding: 0 4px;
+  background: none;
+  border: none;
+  color: var(--text-low);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .pad-ghost:hover {
+    color: var(--text-mid);
+  }
+}
+
+.pad-submit {
+  min-height: 40px;
+  padding: 0 22px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  border: 1px solid var(--accent-press);
+  color: var(--on-accent);
+  font-size: 0.9rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-1);
+}
+
+.pad-submit:disabled {
+  background: var(--surface-1);
+  border-color: var(--border);
+  color: var(--text-low);
+  box-shadow: none;
+}
+
+.pad-note {
+  font-size: 0.82rem;
+  color: var(--text-low);
+}
+
+/* ---- cards: the Next card bar, fixed above the tab nav ---- */
+
+/* keeps the pad's action row clear of the fixed bar */
+.next-spacer {
+  height: 72px;
+}
+
+.next-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  z-index: 55;
+  display: flex;
   justify-content: center;
-  gap: var(--sp-2);
+  padding: 0 12px;
 }
 
-.card-actions .ghost,
-.card-actions .primary {
-  min-width: 130px; /* Skip / Submit / Don't Know the same size */
-}
-
-/* ‹ back to the previous card: a square on its own row above the
-   Skip/Submit row, out of misclick range (.card-controls centres it) */
-.card-controls .card-back {
-  width: 44px;
-  min-width: 44px;
+.next-btn {
+  position: relative;
+  width: 100%;
+  max-width: 456px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  border: 1px solid var(--accent-press);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
   padding: 0;
-  font-size: 1.5rem;
-  line-height: 1;
 }
 
-.card-controls .card-back:disabled {
-  opacity: 0.35;
-  cursor: default;
+/* on a correct answer this sweeps left→right, then the card auto-advances */
+.next-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.16);
+  transition: width 1.6s linear;
 }
 
-/* what else PokeDoku can ask about this Pokémon, shown once answered */
-.card-facts {
+.next-label {
+  position: relative;
+  color: var(--on-accent);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+/* ---- cards: bottom sheets (deck chooser, Focus filters) ---- */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--sp-4);
+}
+
+.sheet {
+  width: 100%;
+  max-width: 456px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  box-shadow: var(--shadow-2);
+  text-align: left;
+  animation: sheet-up var(--dur-med) var(--ease-out) both;
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+.sheet-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+/* small caps section caption inside a sheet */
+.sheet-kicker {
+  margin: 14px 0 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
+.deck-rows {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 6px;
-  width: 100%; /* as wide as the card, so the spread row aligns with its edges */
-  max-width: 480px;
-  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
-.card-tags {
+.deck-row {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-hi);
+  text-align: left;
+}
+
+.deck-row-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.deck-row-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.deck-row-desc {
+  font-size: 0.76rem;
+  color: var(--text-low);
+}
+
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 6px;
+}
+
+.combo-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-hi);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .deck-row:hover,
+  .combo-cell:hover {
+    border-color: var(--border-strong);
+  }
+}
+
+.deck-row.active,
+.combo-cell.active {
+  background: rgba(238, 90, 79, 0.1);
+  border-color: var(--accent);
+}
+
+.deck-check {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+/* Focus filters: scrollable chip sections between a fixed head and foot */
+.filter-sheet {
+  max-height: min(78dvh, 620px);
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
   margin-bottom: 4px;
 }
 
-.card-tags .pill {
-  padding: 4px 10px;
-  font-size: 0.78rem;
+.sheet-head .sheet-title {
+  margin: 0;
 }
 
-/* types · region · group — one centred row, an even gap between the
-   clusters (wider than the gap within one) */
-.card-tags-spread {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 6px 18px;
-  width: 100%;
-  max-width: 480px;
+.filter-pool {
+  font-size: 0.8rem;
+  color: var(--text-low);
+  font-variant-numeric: tabular-nums;
 }
 
-.tag-group {
+.filter-help {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  color: var(--text-low);
+}
+
+.filter-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-facet .sheet-kicker {
+  margin: 0 0 6px;
+}
+
+.filter-chips {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 6px;
-  min-width: 0;
+}
+
+/* an unselected chip is neutral; a selected one takes the category's
+   full pill styling (the pill + colour-family classes join it) */
+.focus-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .focus-chip:not(.on):hover {
+    background: var(--surface-3);
+    border-color: var(--border-strong);
+  }
+}
+
+.sheet-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 /* ---- evolution line: square stage tiles joined by arrows ---- */
@@ -1726,226 +2044,66 @@ button.evo-tile:active {
   color: var(--text-low);
 }
 
-/* small caps caption on a pill row ("Abilities"), styled like the
-   detail sheet's group headings */
-.tags-label {
-  align-self: center;
-  margin-right: 2px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-low);
-}
-
-.card-extra {
-  font-size: 0.82rem;
-  color: var(--text-low);
-  line-height: 1.4;
-}
-
-.answer-area .due-note {
-  margin: 0;
-}
-
-/* deck chips above the card; the width wraps them into two even rows */
-.deck-picker {
+/* the Cards tab fills the screen, so the stage centres itself in the
+   free space and the pad docks at the bottom (all screen sizes) */
+.app {
+  min-height: 100dvh;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  max-width: 480px;
-  margin: 0 auto var(--sp-3);
+  flex-direction: column;
 }
 
-/* Cards: the per-deck filter row under the deck chips */
-.deck-filter {
-  text-align: center;
-  margin: 0 auto var(--sp-2);
-  max-width: 480px;
-}
-
-.deck-filter .grid-groups {
-  margin-top: var(--sp-2);
-  text-align: left;
-}
-
-.chip {
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface-1);
-  color: var(--text-mid);
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-/* pointer devices only (see .tab:hover) */
-@media (hover: hover) {
-  .chip:hover {
-    background: var(--surface-2);
-    border-color: var(--border-strong);
-  }
-}
-
-.chip.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-/* per-deck column counts */
-.region-buttons.deck-type,
-.region-buttons.deck-matchup {
-  --cols: 5;
-}
-
-.region-buttons.deck-branched,
-.region-buttons.deck-move {
-  --cols: 2;
-  max-width: 320px;
+.app > main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 480px) {
-  /* Everything (chips, card, options, Skip/Don't Know) has to fit above
-     the nav without scrolling, inside Safari's ~680px of visible height. */
-  .region-buttons {
-    --gap: 8px;
-    --btn-h: 46px;
-    min-height: 0; /* the answer area centres itself in the free space */
-  }
-
-  /* short screens (an iPhone with Safari's bars out): the sprite and the
-     options give height back so the whole card still fits above the nav */
-  @media (max-height: 700px) {
-    .flashcards .pokemon-card .sprite,
-    .flashcards .pokemon-card .sprite-fallback {
-      width: 112px;
-      height: 112px;
-    }
-
-    .region-buttons {
-      --gap: 6px;
-      --btn-h: 44px;
-    }
-  }
-
-  .region-btn {
-    font-size: 0.86rem;
-    padding: 0 2px;
-  }
-
-  .region-buttons.deck-type .region-btn,
-  .region-buttons.deck-matchup .region-btn {
-    font-size: 0.8rem;
-  }
-
-  /* one scrollable row of deck chips, out to the screen's edges (no
-     fade over the edges: the chips there stay crisp) */
-  .deck-picker {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-    max-width: none;
-    margin: 0 -16px 4px;
-    padding: 0 16px;
-  }
-
-  .deck-picker::-webkit-scrollbar {
-    display: none;
-  }
-
-  .chip {
-    flex: none;
-  }
-
   header h1 {
     padding: 8px 0 6px;
   }
 
-  .flashcards .card-question {
-    font-size: 1.1rem;
-    margin: 10px 0;
+  /* the pad runs out to the screen's edges, like a system keyboard */
+  .answer-pad {
+    margin-left: -16px;
+    margin-right: -16px;
   }
 
-  .flashcards .pokemon-card {
-    margin-bottom: var(--sp-3);
-    padding: var(--sp-4) var(--sp-3) var(--sp-3);
-    gap: var(--sp-2);
+  /* short screens (an iPhone with Safari's bars out): the sprite and the
+     options give height back so everything still fits above the nav */
+  @media (max-height: 700px) {
+    .stage-sprite,
+    .stage-sprite .sprite,
+    .stage-sprite .sprite-fallback {
+      width: 140px;
+      height: 140px;
+    }
+
+    .card-stage {
+      min-height: 240px;
+    }
+
+    .pad-btn {
+      height: 48px;
+    }
   }
 
-  .flashcards .pokemon-card figcaption {
-    font-size: 1.1rem;
-    line-height: 1.2;
+  .pad-btn {
+    font-size: 0.86rem;
   }
 
-  .card-tags .pill {
-    padding: 4px 9px;
-    font-size: 0.76rem;
+  .pad-grid.cols-5 .pad-btn {
+    font-size: 0.72rem;
   }
 
-  .card-extra {
-    font-size: 0.78rem;
+  /* the fixed bar sits just above the floating tab pill */
+  .next-bar {
+    bottom: calc(var(--nav-lift) + var(--nav-inset) + var(--nav-gap) + var(--nav-h) + 8px);
   }
 
-  .card-controls,
-  .card-actions {
-    align-self: stretch;
-  }
-
-  .card-actions {
-    gap: 6px;
-  }
-
-  .card-actions .ghost,
-  .card-actions .primary {
-    min-width: 0;
-    flex: 1 1 0;
-    max-width: 150px;
-    padding: 0 8px;
-  }
-
-  /* the ‹ row pays rent in the tight height budget: slimmer, no gaps */
-  .card-controls {
-    gap: var(--sp-1);
-    margin-top: 0;
-  }
-
-  .card-controls .card-back {
-    width: 40px;
-    min-width: 40px;
-    height: 34px;
-    min-height: 34px;
-  }
-
-  /* the Cards tab fills the screen; the answer area centres itself in the
-     space left under the card */
-  .app {
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .app > main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .app > main > .flashcards {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* the free space under the card is shared out evenly between the
-     facts (once answered), the answer body and the action row */
-  .flashcards .answer-area {
-    flex: 1;
-    justify-content: space-evenly;
-    padding-bottom: var(--sp-2);
+  /* sheets rest on the tab pill rather than the screen edge */
+  .sheet {
+    margin-bottom: calc(var(--nav-lift) + var(--nav-inset) + var(--nav-gap) + var(--nav-h) - 8px);
   }
 }
 
@@ -2199,168 +2357,277 @@ button.evo-tile:active {
   margin-bottom: var(--sp-4);
 }
 
-.stats h3 {
+.stats-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin: 4px 0 14px;
+}
+
+.stats-head h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.stats-total {
+  font-size: 0.85rem;
+  color: var(--text-low);
+  font-variant-numeric: tabular-nums;
+}
+
+/* small caps caption at the top of a panel */
+.panel-label {
+  margin: 0 0 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
+.panel-label.accent {
+  color: var(--accent);
+}
+
+/* one weak category (or the tapped coverage square): pill, accuracy,
+   and both practice entry points */
+.study-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.study-row {
   display: flex;
   align-items: center;
-  font-size: 1.05rem;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+.study-row .pill {
+  flex: none;
+}
+
+.study-acc {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: var(--text-mid);
+  font-variant-numeric: tabular-nums;
+}
+
+.row-actions {
+  flex: none;
+  display: flex;
+  gap: 6px;
+}
+
+.mini-primary {
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  border: 1px solid var(--accent-press);
+  color: var(--on-accent);
+  font-size: 0.82rem;
   font-weight: 700;
-  margin-bottom: var(--sp-3);
+  box-shadow: var(--shadow-1);
 }
 
-.stats h3::before {
-  content: "";
-  width: 3px;
-  height: 14px;
-  border-radius: 2px;
-  background: var(--accent);
-  margin-right: var(--sp-2);
-}
-
-.stats-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 0.88rem;
-}
-
-.stats-table th:nth-child(2),
-.stats-table td:nth-child(2) {
-  width: 110px;
-}
-
-.stats-table th:nth-child(3),
-.stats-table td:nth-child(3) {
-  width: 150px;
-}
-
-.stats-table th,
-.stats-table td {
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 8px 6px;
-  text-align: left;
-}
-
-.stats-table tr:last-child td {
-  border-bottom: none;
+.mini-ghost {
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 /* pointer devices only (see .tab:hover) */
 @media (hover: hover) {
-  .stats-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.02);
+  .mini-primary:hover {
+    background: linear-gradient(180deg, var(--accent-hover), var(--accent-hover));
+  }
+
+  .mini-ghost:hover {
+    border-color: var(--border-strong);
+    color: var(--text-hi);
   }
 }
 
-.stats-table th {
-  color: var(--text-low);
-  font-weight: 600;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.review-due {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  border-radius: 12px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  color: var(--text-hi);
+  font-size: 0.95rem;
+  font-weight: 800;
 }
 
-/* numbers right-aligned, headers with them, so the two figure columns
-   read as one flush block instead of digits floating under wide labels */
-.stats-table th:nth-child(2),
-.stats-table td:nth-child(2),
-.stats-table th:nth-child(3),
-.stats-table td:nth-child(3) {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.stats-table th:nth-child(2),
-.stats-table td:nth-child(2) {
-  padding-right: var(--sp-3);
-}
-
-/* an unanswered row: dim zero, so the answered ones stand out */
-.stats-table td.zero {
-  color: var(--text-low);
-}
-
-/* phones: tighter columns and header type (after the base rules so it wins) */
-@media (max-width: 480px) {
-  .stats-table th,
-  .stats-table td {
-    padding: 8px 4px;
-  }
-
-  .stats-table th {
-    font-size: 0.68rem;
-    letter-spacing: 0.02em;
-  }
-
-  .stats-table th:nth-child(2),
-  .stats-table td:nth-child(2) {
-    width: 84px;
-    padding-right: var(--sp-2);
-  }
-
-  .stats-table th:nth-child(3),
-  .stats-table td:nth-child(3) {
-    width: 112px;
-  }
-
-  .stats-table .acc {
-    gap: 6px;
-  }
-
-  .stats-table .acc-track {
-    width: 36px;
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .review-due:hover {
+    border-color: var(--text-low);
   }
 }
 
-.weak-chip {
-  display: inline-block;
-  margin-left: var(--sp-2);
-  padding: 2px 8px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: var(--wrong-soft);
-  color: var(--wrong);
-  border-radius: var(--radius-full);
-}
+/* ---- stats: the coverage map ---- */
 
-.acc {
+.coverage-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--sp-2);
-  justify-content: flex-end;
+  margin-bottom: 12px;
 }
 
-.acc-track {
-  width: 56px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--bg-1);
-  overflow: hidden;
+.coverage-head .panel-label {
+  margin: 0;
 }
 
-.acc-fill {
-  display: block;
-  height: 100%;
-  min-width: 5px; /* percentages that round to a hairline still show a sliver */
-  border-radius: inherit;
-  background: var(--correct);
+.coverage-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  color: var(--text-low);
 }
 
-/* red fill: a weak row, or one never answered right (whose only visible
-   fill is the min-width sliver) */
-tr.weak .acc-fill,
-.acc-fill.all-miss {
+.legend-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.legend-swatch.low {
   background: var(--wrong);
 }
 
-.acc-num {
-  min-width: 38px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+.legend-swatch.mid {
+  background: var(--warn);
+}
+
+.legend-swatch.high {
+  background: var(--correct);
+}
+
+.coverage-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.coverage-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coverage-group {
+  flex: none;
+  width: 66px;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--text-mid);
 }
 
-.acc-num.dim {
+.coverage-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+}
+
+/* one square per category, coloured by accuracy (never asked: sunken) */
+.cov-cell {
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: var(--surface-3);
+  padding: 0;
+}
+
+.cov-cell.low {
+  background: var(--wrong);
+}
+
+.cov-cell.mid {
+  background: var(--warn);
+}
+
+.cov-cell.high {
+  background: var(--correct);
+}
+
+.cov-cell.selected {
+  border: 2px solid var(--text-hi);
+}
+
+.cov-sel {
+  margin-top: 12px;
+}
+
+.cov-hint {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
   color: var(--text-low);
+}
+
+/* ---- stats: the accordion rows under the panels ---- */
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--border-subtle); /* shows through the 1px gaps */
+  margin-bottom: var(--sp-4);
+}
+
+.accordion-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  min-height: 48px;
+  padding: 0 16px;
+  background: var(--surface-1);
+  border: none;
+  color: var(--text-hi);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .accordion-row:hover {
+    background: var(--surface-2);
+  }
+}
+
+.accordion-meta {
+  color: var(--text-low);
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.accordion-body {
+  padding: 12px 16px;
+  background: var(--bg-1);
 }
 
 /* ---- sync panel ---- */

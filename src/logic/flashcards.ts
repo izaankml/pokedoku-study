@@ -1,22 +1,21 @@
-// Flashcard decks — one per group of categories in Stats, except Type
-// Count (answering the Type deck with both types already says mono or
-// dual). Each shows a Pokémon and asks one question with a fixed set of
-// answer buttons. A card
-// can have several correct answers (a dual type, a form counting for two
-// regions, Koraidon being Paradox and Legendary); any of them is accepted.
-// Some decks ask about a specific thing per card (`param`): the Moves deck
-// picks one move and asks yes/no.
+// Flashcard decks — the four deckable category groups (Region, Type,
+// Group, Stage), plus pairwise Combo decks ("combo:type+region") that ask
+// two of them about the same Pokémon in sequence. Each deck shows a
+// Pokémon and asks one question over a fixed set of answer buttons; a
+// card can have several correct answers (a dual type, a form counting
+// for two regions, Koraidon being Paradox and Legendary). Single-pick
+// decks accept any of them; the multi Type deck wants the exact set.
 
-import { CATEGORIES, getCategory } from "../data/categories.ts";
+import { CATEGORIES, CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
+import type { Category } from "../data/categories.ts";
 import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.ts";
-import { MOVES } from "../data/traits.ts";
-import { weaknessesOf } from "../data/typechart.ts";
 import { FLAGS } from "../data/types.ts";
 import type { Flag, Pokemon } from "../data/types.ts";
 import { loadJson, saveJson } from "./hashState.ts";
-import type { RandomSource } from "./picker.ts";
+import { scheduleStatus } from "./schedule.ts";
+import type { MergedStats } from "./stats.ts";
 
-// An answer button: a category, or a stand-in ("yes", "no", "none").
+// An answer button: always a category of the deck's group.
 export interface DeckOption {
   id: string;
   label: string;
@@ -26,36 +25,20 @@ export interface DeckOption {
 export interface Deck {
   id: string;
   label: string;
-  // several options must be picked, not any one
+  // the card's prompt — also the deck sheet's subtitle
+  question: string;
+  // every answer must be picked (Type); single-pick decks accept any one
   multi?: boolean;
-  // the answer is typed, not picked from options ("name": the Pokémon's
-  // own name via the autocomplete)
-  input?: "name";
-  // option id -> ids that come with it (a stone is an item)
-  implies?: Record<string, string[]>;
-  // the question for a card (`param` is what the card asks about, if anything)
-  question: (param?: string | null) => string;
+  // answer-pad grid columns
+  cols: number;
   options: DeckOption[];
   // the option ids that are right for this Pokémon
-  answers: (pokemon: Pokemon, param?: string | null) => string[];
+  answers: (pokemon: Pokemon) => string[];
   // whether the deck can ask about this Pokémon at all
   eligible: (pokemon: Pokemon) => boolean;
   // how much more often than normal to ask about this Pokémon
   bias: (pokemon: Pokemon) => number;
-  // picks what the card asks about (the Moves deck: a move id); `allowed`
-  // is the deck's active filter, when one is set
-  pickParam?: (pokemon: Pokemon, random: RandomSource, allowed?: Set<string> | null) => string;
-  // the category ids the attempt is recorded against (the answers, unless
-  // the answer is yes/no)
-  categories: (pokemon: Pokemon, param?: string | null) => string[];
 }
-
-// What a deck definition spells out; the rest takes defaults.
-type DeckDefinition = Omit<Deck, "question" | "categories" | "bias"> &
-  Partial<Pick<Deck, "question" | "categories" | "bias">> & {
-    // the question, when it is the same on every card
-    questionText?: string;
-  };
 
 const isMegaOrGmax = (pokemon: Pokemon): boolean =>
   pokemon.flags.includes("mega") || pokemon.flags.includes("gmax");
@@ -66,387 +49,290 @@ const isRegionalForm = (pokemon: Pokemon): boolean => pokemon.form !== null && R
 const baseOf = (pokemon: Pokemon): Pokemon => POKEMON_BY_ID.get(pokemon.species) ?? pokemon;
 const sameList = (a: readonly string[], b: readonly string[]): boolean =>
   a.length === b.length && a.every((item, index) => item === b[index]);
-const YES_NO: DeckOption[] = [
-  { id: "yes", label: "Yes", short: "Yes" },
-  { id: "no", label: "No", short: "No" },
-];
 
 // every flag except the two form kinds, straight from the canonical list
-const SPECIAL_FLAGS: Flag[] = FLAGS.filter((flag) => flag !== "mega" && flag !== "gmax");
-// the 18 type categories, shared by the Type and Matchup decks
-const TYPE_OPTIONS = CATEGORIES.filter((category) => category.group === "type");
+export const SPECIAL_FLAGS: Flag[] = FLAGS.filter((flag) => flag !== "mega" && flag !== "gmax");
 
-const pickOne = <T,>(items: T[], random: RandomSource): T => items[Math.floor(random() * items.length)];
-
-const withDefaults = ({ questionText, ...deck }: DeckDefinition): Deck => ({
-  question: () => questionText ?? "",
-  categories: (pokemon, param) => deck.answers(pokemon, param).filter((id) => id !== "none"),
-  bias: () => 1,
-  ...deck,
-});
-
-// ---- the Combo deck: one card asking two or three groups at once ----
-
-// Each combo is a param ("type+region"); its answers are the union of the
-// sub-decks' and all of them must be picked. Method (its implies) and the
-// yes/no decks stay out.
-export const COMBOS = ["type+region", "type+special", "region+special", "type+special+ability"] as const;
-
-// The sub-decks a combo param names ("type+region"); distinctFromBase
-// calls answers() with no param, so default to the broadest combo. The
-// lists are shared and built once (lazily — DECK_BY_ID doesn't exist
-// while the deck definitions are still being constructed).
-let comboDecksCache: Map<string, Deck[]> | null = null;
-export function comboDecks(param?: string | null): Deck[] {
-  if (!comboDecksCache) {
-    comboDecksCache = new Map(
-      COMBOS.map((combo) => [
-        combo,
-        combo.split("+").map((id) => {
-          const deck = DECK_BY_ID.get(id);
-          if (!deck) throw new Error(`unknown combo sub-deck: ${id}`);
-          return deck;
-        }),
-      ]),
-    );
-  }
-  // an unknown param (a stored card from before COMBOS changed) falls
-  // back to the default combo rather than throwing mid-render; answers
-  // and the rendered sections go through here alike, so they stay
-  // consistent with each other
-  return comboDecksCache.get(param && comboDecksCache.has(param) ? param : COMBOS[0]) as Deck[];
-}
-
-const moveName = (moveId?: string | null): string => MOVES.find((move) => move.id === moveId)?.name ?? "";
-
-export const DECKS: Deck[] = (
-  [
-    {
-      id: "region",
-      label: "Region",
-      multi: true, // pick every region it counts for, then Submit
-      questionText: "Which region is this Pokémon from?",
-      options: CATEGORIES.filter((category) => category.group === "region"),
-      answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
-      // not the regional forms, whose names give the answer away; dual-region
-      // forms (White-Striped Basculin, Bloodmoon Ursaluna) stay — theirs don't
-      eligible: (pokemon) => pokemon.regions.length > 0 && !isMegaOrGmax(pokemon) && !isRegionalForm(pokemon),
-      // Gen 5+ regions are the user's known weak spot
-      bias: (pokemon) => (pokemon.gen >= 5 ? 2 : 1),
-    },
-    {
-      id: "type",
-      label: "Type",
-      multi: true, // both types of a dual type, then Submit
-      questionText: "What type is this Pokémon?",
-      options: TYPE_OPTIONS,
-      answers: (pokemon) => pokemon.types.map((type) => `type-${type}`),
-      // Megas can change type (Charizard Mega X); Gmax never does
-      eligible: (pokemon) => !pokemon.flags.includes("gmax"),
-    },
-    {
-      id: "method",
-      label: "Evolution Method",
-      multi: true, // every method it counts for, then Submit
-      // Always-true pairs are ticked for you: a stone is an item, and
-      // friendship evolutions also count as level-up
-      implies: { "evo-stone": ["evo-item"], "evo-friendship": ["evo-level"] },
-      questionText: "How did this Pokémon evolve?",
-      // The buttons carry their own terse labels, in this order; the
-      // categories' shorts are the full "Evolved by X" (they label grid
-      // headers and pills)
-      options: (
-        [
-          ["evo-level", "Level-Up"],
-          ["evo-item", "Item"],
-          ["evo-stone", "Stone"],
-          ["evo-trade", "Trade"],
-          ["evo-friendship", "Friendship"],
-        ] as const
-      ).map(([id, short]) => ({ ...getCategory(id), short })),
-      answers: (pokemon) => pokemon.evoMethods.map((method) => `evo-${method}`),
-      eligible: (pokemon) =>
-        (pokemon.stage === "middle" || pokemon.stage === "final") &&
-        pokemon.evoMethods.length > 0 &&
-        !isMegaOrGmax(pokemon),
-      bias: (pokemon) => (pokemon.evoMethods.includes("level") && pokemon.evoMethods.length === 1 ? 1 : 2),
-    },
-    {
-      id: "stage",
-      label: "Evolution Stage",
-      questionText: "Where is it in its evolution line?",
-      options: ["stage-first", "stage-middle", "stage-final", "stage-single"].map(getCategory),
-      answers: (pokemon) => [`stage-${pokemon.stage}`],
-      eligible: (pokemon) => pokemon.stage !== null && !isMegaOrGmax(pokemon),
-    },
-    {
-      id: "branched",
-      label: "Evolution Line",
-      questionText: "Does it have a branched evolution?",
-      options: YES_NO,
-      answers: (pokemon) => [pokemon.branched ? "yes" : "no"],
-      categories: () => ["branched"],
-      // Only Pokémon that evolve at all make a fair question; lean to the
-      // branched ones since there are so few
-      eligible: (pokemon) => (pokemon.stage === "first" || pokemon.stage === "middle") && !isMegaOrGmax(pokemon),
-      bias: (pokemon) => (pokemon.branched ? 8 : 1),
-    },
-    {
-      id: "special",
-      label: "Group",
-      questionText: "Which group is this Pokémon in?",
-      options: SPECIAL_FLAGS.map((flag) => getCategory(`flag-${flag}`)),
-      answers: (pokemon) => SPECIAL_FLAGS.filter((flag) => pokemon.flags.includes(flag)).map((flag) => `flag-${flag}`),
-      // Only Pokémon that are in a group: the ~900 regular ones would swamp
-      // the deck and teach nothing
-      eligible: (pokemon) => !isMegaOrGmax(pokemon) && pokemon.flags.some((flag) => SPECIAL_FLAGS.includes(flag)),
-    },
-    {
-      id: "move",
-      label: "Move",
-      question: (moveId) => `Can this Pokémon learn ${moveName(moveId)}?`,
-      options: YES_NO,
-      // Half the time ask about a move it does learn, half about one it
-      // doesn't — drawn from the filtered moves, when a filter is set
-      pickParam: (pokemon, random, allowed) => {
-        const asked = MOVES.filter((move) => !allowed || allowed.has(`move-${move.id}`));
-        const learns = asked.filter((move) => pokemon.moves.includes(move.id)).map((move) => move.id);
-        const lacks = asked.filter((move) => !pokemon.moves.includes(move.id)).map((move) => move.id);
-        const pool = learns.length && (random() < 0.5 || !lacks.length) ? learns : lacks;
-        return pickOne(pool, random);
-      },
-      answers: (pokemon, moveId) => [moveId != null && pokemon.moves.includes(moveId) ? "yes" : "no"],
-      categories: (_pokemon, moveId) => [`move-${moveId}`],
-      eligible: (pokemon) => !pokemon.flags.includes("gmax"),
-    },
-    {
-      id: "matchup",
-      label: "Matchup",
-      multi: true, // every type that hits it super-effectively, then Submit
-      questionText: "Which types are super effective against it?",
-      options: TYPE_OPTIONS,
-      answers: (pokemon) => weaknessesOf(pokemon.types).map((type) => `type-${type}`),
-      // pure type-chart knowledge — never bump the type categories'
-      // identification accuracy with matchup answers
-      categories: () => [],
-      // every typing in Gen 6+ has a weakness, but guard anyway
-      eligible: (pokemon) => weaknessesOf(pokemon.types).length > 0,
-    },
-    {
-      id: "name",
-      label: "Name",
-      input: "name",
-      questionText: "Name this Pokémon",
-      options: [],
-      // the record itself: form names must be exact, as on PokeDoku
-      answers: (pokemon) => [String(pokemon.id)],
-      categories: () => [],
-      eligible: () => true,
-    },
-    {
-      id: "ability",
-      label: "Ability",
-      questionText: "Which of these abilities can it have?",
-      options: [
-        ...CATEGORIES.filter((category) => category.group === "ability"),
-        { id: "none", label: "None of These", short: "None of These" },
-      ],
-      answers: (pokemon) =>
-        pokemon.abilities.length ? pokemon.abilities.map((ability) => `ability-${ability}`) : ["none"],
-      eligible: (pokemon) => !pokemon.flags.includes("gmax"),
-      bias: (pokemon) => (pokemon.abilities.length ? 3 : 1),
-    },
-    {
-      id: "combo",
-      label: "Combo",
-      multi: true, // every answer of every asked group
-      question: (param) => `Pick every answer: ${comboDecks(param).map((sub) => sub.label).join(" + ")}`,
-      // filled in below from the sub-decks themselves, once DECK_BY_ID
-      // exists — the answered view uses this union; the unanswered card
-      // renders per-group sections
-      options: [],
-      answers: (pokemon, param) => comboDecks(param).flatMap((sub) => sub.answers(pokemon)),
-      categories: (pokemon, param) => comboDecks(param).flatMap((sub) => sub.categories(pokemon)),
-      // askable when some combo's every sub-deck would ask about it
-      eligible: (pokemon) => COMBOS.some((combo) => comboDecks(combo).every((sub) => sub.eligible(pokemon))),
-      pickParam: (pokemon, random) => {
-        const valid = COMBOS.filter((combo) => comboDecks(combo).every((sub) => sub.eligible(pokemon)));
-        return pickOne(valid, random);
-      },
-    },
-  ] satisfies DeckDefinition[]
-).map(withDefaults);
+export const DECKS: Deck[] = [
+  {
+    id: "region",
+    label: "Region",
+    question: "Which region?",
+    cols: 3,
+    options: CATEGORIES.filter((category) => category.group === "region"),
+    answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
+    // not the regional forms, whose names give the answer away; dual-region
+    // forms (White-Striped Basculin, Bloodmoon Ursaluna) stay — theirs don't
+    eligible: (pokemon) => pokemon.regions.length > 0 && !isMegaOrGmax(pokemon) && !isRegionalForm(pokemon),
+    // Gen 5+ regions are the user's known weak spot
+    bias: (pokemon) => (pokemon.gen >= 5 ? 2 : 1),
+  },
+  {
+    id: "type",
+    label: "Type",
+    question: "What type? (pick all)",
+    multi: true, // both types of a dual type, then Submit
+    cols: 5,
+    options: CATEGORIES.filter((category) => category.group === "type"),
+    answers: (pokemon) => pokemon.types.map((type) => `type-${type}`),
+    // Megas can change type (Charizard Mega X); Gmax never does
+    eligible: (pokemon) => !pokemon.flags.includes("gmax"),
+    bias: () => 1,
+  },
+  {
+    id: "special",
+    label: "Group",
+    question: "Which group?",
+    cols: 3,
+    options: SPECIAL_FLAGS.map((flag) => getCategory(`flag-${flag}`)),
+    answers: (pokemon) => SPECIAL_FLAGS.filter((flag) => pokemon.flags.includes(flag)).map((flag) => `flag-${flag}`),
+    // Only Pokémon that are in a group: the ~900 regular ones would swamp
+    // the deck and teach nothing
+    eligible: (pokemon) => !isMegaOrGmax(pokemon) && pokemon.flags.some((flag) => SPECIAL_FLAGS.includes(flag)),
+    bias: () => 1,
+  },
+  {
+    id: "stage",
+    label: "Stage",
+    question: "Evolution stage?",
+    cols: 2,
+    options: [
+      getCategory("stage-first"),
+      getCategory("stage-middle"),
+      getCategory("stage-final"),
+      // the pad's terse label; the category pill keeps "No Evolution Line"
+      { ...getCategory("stage-single"), short: "Doesn't Evolve" },
+    ],
+    answers: (pokemon) => [`stage-${pokemon.stage}`],
+    eligible: (pokemon) => pokemon.stage !== null && !isMegaOrGmax(pokemon),
+    bias: () => 1,
+  },
+];
 
 export const DECK_BY_ID = new Map<string, Deck>(DECKS.map((deck) => [deck.id, deck]));
 
-// Combo offers exactly what its sub-decks offer, deduped — derived here
-// because the deck literal above cannot reference DECK_BY_ID yet. A new
-// combo in COMBOS automatically brings its options along.
-{
-  const comboDeck = DECK_BY_ID.get("combo");
-  if (comboDeck) {
-    const seen = new Set<string>();
-    comboDeck.options = COMBOS.flatMap((combo) => comboDecks(combo))
-      .flatMap((sub) => sub.options)
-      .filter((option) => {
-        if (seen.has(option.id)) return false;
-        seen.add(option.id);
-        return true;
-      });
-  }
+function deckById(deckId: string): Deck {
+  const deck = DECK_BY_ID.get(deckId);
+  if (!deck) throw new Error(`unknown deck: ${deckId}`);
+  return deck;
+}
+
+// ---- combo decks: one card asking two groups in sequence ----
+
+// The pairwise combos, in the deck sheet's order.
+const COMBO_PAIRS = [
+  ["type", "region"],
+  ["type", "stage"],
+  ["type", "special"],
+  ["region", "stage"],
+  ["region", "special"],
+  ["stage", "special"],
+] as const;
+
+export const COMBO_IDS: string[] = COMBO_PAIRS.map(([a, b]) => `combo:${a}+${b}`);
+
+// The two sub-decks of a combo id, or null for anything else.
+export function comboParts(deckId: string): [Deck, Deck] | null {
+  if (!COMBO_IDS.includes(deckId)) return null;
+  const [a, b] = deckId.slice("combo:".length).split("+");
+  return [deckById(a), deckById(b)];
+}
+
+export const isDeckId = (id: string): boolean => id === "all" || DECK_BY_ID.has(id) || COMBO_IDS.includes(id);
+
+// "Region", "Type × Region", "All decks" — the chooser and the Stats lists.
+export function deckLabel(deckId: string): string {
+  if (deckId === "all") return "All decks";
+  const parts = comboParts(deckId);
+  if (parts) return `${parts[0].label} × ${parts[1].label}`;
+  return deckById(deckId).label;
+}
+
+// Every option id the card can answer with — a combo's union. Attempts
+// are recorded against all of them.
+export function deckAnswers(deckId: string, pokemon: Pokemon): string[] {
+  const parts = comboParts(deckId);
+  return parts ? parts.flatMap((part) => part.answers(pokemon)) : deckById(deckId).answers(pokemon);
+}
+
+// A combo only asks Pokémon both its sub-decks would ask.
+export function deckEligible(deckId: string, pokemon: Pokemon): boolean {
+  const parts = comboParts(deckId);
+  return parts ? parts.every((part) => part.eligible(pokemon)) : deckById(deckId).eligible(pokemon);
+}
+
+export function deckBias(deckId: string, pokemon: Pokemon): number {
+  const parts = comboParts(deckId);
+  return parts ? parts[0].bias(pokemon) * parts[1].bias(pokemon) : deckById(deckId).bias(pokemon);
+}
+
+// Single-pick decks accept any of the Pokémon's answers (Koraidon is
+// Legendary and Paradox); multi decks (Type) need the exact set.
+export function isRightPick(deck: Deck, picks: string[], answers: string[]): boolean {
+  if (!picks.length) return false;
+  if (!deck.multi) return answers.includes(picks[0]);
+  return picks.length === answers.length && picks.every((id) => answers.includes(id));
 }
 
 // A form is only worth its own card when the deck's answer differs from
-// the base species' (Growlithe Hisui: yes; Charizard Mega Y: no). The
-// Moves deck compares the whole move list.
-const distinctFromBase = (pokemon: Pokemon, deck: Deck): boolean => {
-  if (pokemon.form === null) return true;
-  const base = baseOf(pokemon);
-  if (deck.id === "move") return !sameList(pokemon.moves, base.moves);
-  // a combo card is worth asking if ANY of its combos would differ
-  if (deck.id === "combo") {
-    return COMBOS.some((combo) => !sameList(deck.answers(pokemon, combo), deck.answers(base, combo)));
-  }
-  return !sameList(deck.answers(pokemon), deck.answers(base));
-};
+// the base species' (Growlithe Hisui: yes; Charizard Mega Y: no).
+const distinctFromBase = (deckId: string, pokemon: Pokemon): boolean =>
+  pokemon.form === null || !sameList(deckAnswers(deckId, pokemon), deckAnswers(deckId, baseOf(pokemon)));
 
-// A deck's pool narrowed to a filter, cached per (deck, chosen set) —
-// re-filtering ~1000 answers() calls on every card advance is the app's
-// hottest path, and a user only ever has a handful of filter states.
-const filteredPoolCache = new Map<string, Pokemon[]>();
-export function filteredDeckPool(deck: Deck, chosen: Set<string> | null): Pokemon[] {
-  if (!chosen) return deckPool(deck);
-  const key = `${deck.id}|${[...chosen].sort().join(",")}`;
-  let pool = filteredPoolCache.get(key);
-  if (!pool) {
-    pool = deckPool(deck).filter((pokemon) => passesFilter(deck, pokemon, chosen));
-    filteredPoolCache.set(key, pool);
-  }
-  return pool;
-}
-
-// The Pokémon a deck can ask about, computed once.
+// The Pokémon a deck can ask about, computed once per deck id.
 const poolCache = new Map<string, Pokemon[]>();
-export function deckPool(deck: Deck): Pokemon[] {
-  let pool = poolCache.get(deck.id);
+export function deckPool(deckId: string): Pokemon[] {
+  let pool = poolCache.get(deckId);
   if (!pool) {
-    pool = POKEMON.filter((pokemon) => deck.eligible(pokemon) && distinctFromBase(pokemon, deck));
-    poolCache.set(deck.id, pool);
+    pool = POKEMON.filter((pokemon) => deckEligible(deckId, pokemon) && distinctFromBase(deckId, pokemon));
+    poolCache.set(deckId, pool);
   }
   return pool;
 }
 
-// ---- per-deck filters: restrict what a deck may ask about ----
+// ---- focus filters: constrain the pool every deck draws from ----
 
-// deck id -> the option ids the user still wants asked ("region-unova",
-// "evo-stone", …; the Move deck's are its "move-<id>" categories). A
-// missing or empty list means no filter. Stats pools stay unfiltered —
-// filtering changes what gets asked, not what counts.
-export type DeckFilters = Record<string, string[]>;
+export type FocusFacet = "region" | "type" | "stage" | "evo" | "special";
 
-export const FILTERABLE_DECKS = new Set(["region", "type", "method", "special", "move", "ability"]);
+export const FOCUS_FACETS: ReadonlyArray<readonly [FocusFacet, string]> = [
+  ["region", "Regions"],
+  ["type", "Types"],
+  ["stage", "Evolution Stage"],
+  ["evo", "Evolution Method"],
+  ["special", "Groups"],
+];
 
-const FILTERS_KEY = "pokedoku-study:cards:filters:v1";
+// facet -> the category ids selected in it; missing or empty = everything
+export type CardFilter = Partial<Record<FocusFacet, string[]>>;
 
-export function loadFilters(): DeckFilters {
-  const saved = loadJson(FILTERS_KEY);
+// The chips a facet offers — its quizzable categories (stage without the
+// derived Not Fully Evolved, groups without the Mega/Gmax form kinds).
+const facetCache = new Map<FocusFacet, Category[]>();
+export function facetCategories(facet: FocusFacet): Category[] {
+  let cats = facetCache.get(facet);
+  if (!cats) {
+    cats =
+      facet === "special"
+        ? SPECIAL_FLAGS.map((flag) => getCategory(`flag-${flag}`))
+        : facet === "stage"
+          ? ["stage-first", "stage-middle", "stage-final", "stage-single"].map(getCategory)
+          : CATEGORIES.filter((category) => category.group === facet);
+    facetCache.set(facet, cats);
+  }
+  return cats;
+}
+
+export const filterCount = (filter: CardFilter): number =>
+  FOCUS_FACETS.reduce((count, [facet]) => count + (filter[facet]?.length ?? 0), 0);
+
+// OR within a facet, AND across facets; empty facets match everything.
+export function matchesFocus(pokemon: Pokemon, filter: CardFilter): boolean {
+  return FOCUS_FACETS.every(([facet]) => {
+    const chosen = filter[facet];
+    if (!chosen?.length) return true;
+    return chosen.some((id) => CATEGORY_BY_ID.get(id)?.predicate(pokemon));
+  });
+}
+
+// A deck's pool narrowed to the focus filter, cached per (deck, filter) —
+// re-filtering on every card advance is the app's hottest path, and a
+// user only ever has a handful of filter states.
+const focusPoolCache = new Map<string, Pokemon[]>();
+export function focusedDeckPool(deckId: string, filter: CardFilter): Pokemon[] {
+  const signature = FOCUS_FACETS.map(([facet]) => (filter[facet] ?? []).slice().sort().join(",")).join("|");
+  if (signature === "||||") return deckPool(deckId);
+  const key = `${deckId}#${signature}`;
+  let pool = focusPoolCache.get(key);
+  if (!pool) {
+    pool = deckPool(deckId).filter((pokemon) => matchesFocus(pokemon, filter));
+    focusPoolCache.set(key, pool);
+  }
+  return pool;
+}
+
+// The filter sheet's live count: everyone the current deck could ask
+// under the filter ("all": anyone matching the filter).
+export function focusPoolSize(deckId: string, filter: CardFilter): number {
+  if (deckId === "all") return POKEMON.filter((pokemon) => matchesFocus(pokemon, filter)).length;
+  return focusedDeckPool(deckId, filter).length;
+}
+
+const FILTER_KEY = "pokedoku-study:card-filter:v1";
+
+export function loadCardFilter(): CardFilter {
+  const saved = loadJson(FILTER_KEY);
   if (typeof saved !== "object" || saved === null || Array.isArray(saved)) return {};
-  const filters: DeckFilters = {};
-  for (const [deckId, ids] of Object.entries(saved)) {
-    if (FILTERABLE_DECKS.has(deckId) && Array.isArray(ids)) {
-      filters[deckId] = ids.filter((id): id is string => typeof id === "string");
-    }
+  const filter: CardFilter = {};
+  for (const [facet] of FOCUS_FACETS) {
+    const ids = (saved as Record<string, unknown>)[facet];
+    if (!Array.isArray(ids)) continue;
+    const valid = new Set(facetCategories(facet).map((category) => category.id));
+    const kept = ids.filter((id): id is string => typeof id === "string" && valid.has(id));
+    if (kept.length) filter[facet] = kept;
   }
-  return filters;
+  return filter;
 }
 
-export function saveFilters(filters: DeckFilters): void {
-  saveJson(FILTERS_KEY, filters);
+export function saveCardFilter(filter: CardFilter): void {
+  saveJson(FILTER_KEY, filter);
 }
 
-// The subjects a deck can be filtered by — its real options (no yes/no,
-// no "none"); the Move deck's are its move categories, whose ids are
-// what passesFilter matches the asked move against. Static per deck, so
-// computed once (filterFor calls this on hot paths).
-const filterableCache = new Map<string, DeckOption[]>();
-export function filterableOptions(deck: Deck): DeckOption[] {
-  let options = filterableCache.get(deck.id);
-  if (!options) {
-    options =
-      deck.id === "move"
-        ? CATEGORIES.filter((category) => category.group === "move")
-        : deck.options.filter((option) => option.id !== "none" && option.id !== "yes" && option.id !== "no");
-    filterableCache.set(deck.id, options);
-  }
-  return options;
-}
-
-// The active subset for a deck, or null for "everything" (also when the
-// stored list selects all or none of the options — both mean no filter).
-export function filterFor(filters: DeckFilters, deckId: string): Set<string> | null {
-  const deck = DECK_BY_ID.get(deckId);
-  const ids = filters[deckId];
-  if (!deck || !ids || !ids.length) return null;
-  const chosen = new Set(ids);
-  const options = filterableOptions(deck);
-  const kept = options.filter((option) => chosen.has(option.id));
-  return kept.length === 0 || kept.length === options.length ? null : new Set(kept.map((option) => option.id));
-}
-
-// Whether the deck may ask this card under `chosen`: some answer must be
-// a chosen subject ("ask me about Stone evolutions" keeps every stone
-// evolver, even though stone always implies item; "ask me about
-// Levitate" skips the many whose only answer is None of These). Every
-// option stays visible on the card, so the full answer is always
-// givable. The Move deck is judged by the move it asks about: with no
-// `param` yet (pool filtering) it always passes — the picker narrows
-// the asked move instead.
-export function passesFilter(deck: Deck, pokemon: Pokemon, chosen: Set<string> | null, param?: string | null): boolean {
-  if (!chosen) return true;
-  if (deck.id === "move") return param == null || chosen.has(`move-${param}`);
-  return deck.answers(pokemon).some((id) => chosen.has(id));
-}
+// ---- stats keys and the review universe ----
 
 // Stats key for a card. The region deck keeps the bare species id so
 // history recorded before decks existed still counts.
-export const cardKey = (deck: Deck, pokemon: Pokemon): string =>
-  deck.id === "region" ? String(pokemon.id) : `${deck.id}:${pokemon.id}`;
+export const cardKey = (deckId: string, pokemon: Pokemon): string =>
+  deckId === "region" ? String(pokemon.id) : `${deckId}:${pokemon.id}`;
 
 // Every card any deck can ask, with its stats key — the Stats tab lists
-// them per review status.
+// them per review status, and the due counter walks them.
 export interface CardRef {
-  deck: Deck;
+  deckId: string;
+  // "Region", "Type × Region" — for the Stats review lists
+  label: string;
   pokemon: Pokemon;
   key: string;
 }
 
+let cardRefsCache: CardRef[] | null = null;
 export function allCardRefs(): CardRef[] {
-  return DECKS.flatMap((deck) => deckPool(deck).map((pokemon) => ({ deck, pokemon, key: cardKey(deck, pokemon) })));
+  cardRefsCache ??= [...DECKS.map((deck) => deck.id), ...COMBO_IDS].flatMap((deckId) => {
+    const label = deckLabel(deckId);
+    return deckPool(deckId).map((pokemon) => ({ deckId, label, pokemon, key: cardKey(deckId, pokemon) }));
+  });
+  return cardRefsCache;
 }
 
 export function allCardKeys(): string[] {
   return allCardRefs().map((ref) => ref.key);
 }
 
-// A card on the table: which deck, which Pokémon, and what it asks about.
+// How many cards are due for review right now — the header's "48 due"
+// and the Stats tab's "Review 48 due cards".
+export function dueCardCount(merged: MergedStats, now: number = Date.now()): number {
+  let due = 0;
+  for (const ref of allCardRefs()) if (scheduleStatus(merged.flashcards[ref.key], now) === "due") due += 1;
+  return due;
+}
+
+// ---- the current card, mirrored to localStorage ----
+
+// A card on the table: which deck, which Pokémon.
 export interface Card {
   deckId: string;
   pokemonId: number;
-  param: string | null;
 }
 
-// What was submitted: the option ids, "gaveup", or null while unanswered.
+// What was submitted: the graded picks, "gaveup", or null while unanswered.
 export type Picked = string[] | "gaveup" | null;
 
-// A card as it was left: answered (or not), with whatever was picked.
-export interface CardState {
-  card: Card;
-  picked: Picked;
-  selection: string[];
+// Per-part results of an answered combo card.
+export interface ComboVerdict {
+  a: boolean;
+  b: boolean;
 }
 
-// How many cards Back can step through
-export const HISTORY_LIMIT = 30;
+export type DashResult = "correct" | "wrong";
 
 export interface CardSession {
   // the deck in play, or "all"
@@ -454,20 +340,20 @@ export interface CardSession {
   card: Card | null;
   // the card after this one, picked early so its sprite can preload
   next: Card | null;
-  picked: Picked;
-  // options toggled on so far, before Submit
+  // options toggled so far on the part being asked
   selection: string[];
-  // last few pokemon ids, to avoid immediate repeats
+  // which combo part the pad is on (plain decks stay 0)
+  part: 0 | 1;
+  // the first part's picks, once a combo advanced past it
+  partASel: string[];
+  picked: Picked;
+  comboOk: ComboVerdict | null;
+  // last few Pokémon ids, to avoid immediate repeats
   recent: number[];
-  // the cards before this one, oldest first (Back steps through them)
-  history: CardState[];
-  // the cards Back stepped away from, nearest last (Next returns to them)
-  forward: CardState[];
-  // the Submit that can still be taken back: its recordAttempt token and
-  // the card it graded (memory-only — an undo never survives a reload).
-  // Keying by card means navigation needs no bookkeeping: the Undo button
-  // simply hides while another card is shown, and comes back with the
-  // card as long as nothing newer was recorded anywhere.
+  // the last few results, oldest first, for the header dashes
+  dashes: DashResult[];
+  // the answer that can still be taken back: its recordAttempt token and
+  // the card it graded (memory-only — an undo never survives a reload)
   undo: { token: number; key: string } | null;
 }
 
@@ -475,20 +361,16 @@ export interface CardSession {
 // `undo` (an undo never survives a reload).
 type StoredSession = Omit<CardSession, "next" | "undo">;
 
-const isCardState = (value: unknown): value is CardState => {
-  if (typeof value !== "object" || value === null) return false;
-  const state = value as Partial<CardState>;
-  return typeof state.card === "object" && state.card !== null && DECK_BY_ID.has(state.card.deckId) && Array.isArray(state.selection);
-};
-
 function isStoredSession(value: unknown): value is StoredSession {
   if (typeof value !== "object" || value === null) return false;
   const stored = value as Partial<StoredSession>;
+  const cardOk =
+    stored.card === null ||
+    (typeof stored.card === "object" && stored.card !== null && isDeckId((stored.card as Card).deckId));
   return (
     typeof stored.deckId === "string" &&
-    typeof stored.card === "object" &&
-    stored.card !== null &&
-    DECK_BY_ID.has(stored.card.deckId) &&
+    isDeckId(stored.deckId) &&
+    cardOk &&
     Array.isArray(stored.selection) &&
     Array.isArray(stored.recent)
   );
@@ -497,25 +379,55 @@ function isStoredSession(value: unknown): value is StoredSession {
 // The current card survives tab switches and reloads: the Cards tab reads
 // its initial state from here, writes every change back, and saveSession
 // mirrors it to localStorage.
-const SESSION_KEY = "pokedoku-study:cards:v1";
+const SESSION_KEY = "pokedoku-study:cards:v2";
 const stored = loadJson(SESSION_KEY);
 export const session: CardSession = {
   deckId: "all",
   card: null,
   next: null,
-  picked: null,
   selection: [],
+  part: 0,
+  partASel: [],
+  picked: null,
+  comboOk: null,
   recent: [],
-  history: [],
-  forward: [],
+  dashes: [],
   undo: null,
   ...(isStoredSession(stored) ? stored : {}),
 };
-// sessions stored before Back existed have no history; a damaged one is dropped
-session.history = Array.isArray(session.history) ? session.history.filter(isCardState) : [];
-session.forward = Array.isArray(session.forward) ? session.forward.filter(isCardState) : [];
+// fields newer than a stored session get sane shapes back
+session.part = session.part === 1 ? 1 : 0;
+session.partASel = Array.isArray(session.partASel) ? session.partASel : [];
+session.dashes = Array.isArray(session.dashes)
+  ? session.dashes.filter((dash) => dash === "correct" || dash === "wrong")
+  : [];
 
 export function saveSession(): void {
-  const { deckId, card, picked, selection, recent, history, forward } = session;
-  saveJson(SESSION_KEY, { deckId, card, picked, selection, recent, history, forward } satisfies StoredSession);
+  const { deckId, card, selection, part, partASel, picked, comboOk, recent, dashes } = session;
+  saveJson(SESSION_KEY, {
+    deckId,
+    card,
+    selection,
+    part,
+    partASel,
+    picked,
+    comboOk,
+    recent,
+    dashes,
+  } satisfies StoredSession);
+}
+
+// The Stats tab's Cards buttons land here: the next mount of the Cards
+// tab deals a fresh card from `deckId`.
+export function resetSessionForDeck(deckId: string): void {
+  session.deckId = deckId;
+  session.card = null;
+  session.next = null;
+  session.selection = [];
+  session.part = 0;
+  session.partASel = [];
+  session.picked = null;
+  session.comboOk = null;
+  session.undo = null;
+  saveSession();
 }

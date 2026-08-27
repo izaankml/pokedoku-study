@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { CATEGORIES, getCategory } from "../data/categories.ts";
 import { POKEMON } from "../data/pokedex.ts";
 import { pairIsValid, pairKey } from "./matching.ts";
-import { pickDrillPair, pickFlashcardPokemon } from "./picker.ts";
+import { drillPairFor, pickDrillPair, pickFlashcardPokemon } from "./picker.ts";
 import { mergeBlocks } from "./stats.ts";
 
 const T0 = 1_700_000_000_000;
@@ -33,6 +33,27 @@ describe("pickFlashcardPokemon", () => {
     merged.flashcards[String(p2.id)] = { a: 5, c: 5, s: 2, t: T0 }; // just seen
     const pick = pickFlashcardPokemon(merged, { exclude: excludeAllBut, random: () => 0.9, now: T0 });
     expect(pick).toBe(p1);
+  });
+});
+
+describe("drillPairFor", () => {
+  it("pairs the category with a valid partner from another group", () => {
+    const merged = mergeBlocks([]);
+    for (let i = 0; i < 10; i++) {
+      const [a, b] = drillPairFor("type-fire", merged, { random: () => i / 10, now: T0 });
+      expect(a.id).toBe("type-fire");
+      expect(b.group).not.toBe("type");
+      expect(pairIsValid(a.id, b.id)).toBe(true);
+    }
+  });
+
+  it("prefers a partner the pair has already been practised with", () => {
+    const merged = mergeBlocks([]);
+    merged.pairs[pairKey("type-fire", "flag-legendary")] = { a: 2, c: 1, s: 0, t: T0 - 30 * DAY };
+    for (let i = 0; i < 10; i++) {
+      const [, partner] = drillPairFor("type-fire", merged, { random: () => i / 10, now: T0 });
+      expect(partner.id).toBe("flag-legendary");
+    }
   });
 });
 

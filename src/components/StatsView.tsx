@@ -4,27 +4,24 @@ import { useStats } from "../StatsContext.ts";
 import type { DeviceInfo } from "../StatsContext.ts";
 import { handoffUrl } from "../logic/sync.ts";
 import { preloadCloud } from "../logic/cloudSync.ts";
-import { QUIZ_CATEGORIES, QUIZ_CATEGORY_GROUPS } from "../data/categories.ts";
-import { smoothedAccuracy } from "../logic/stats.ts";
+import { QUIZ_CATEGORIES, getCategory } from "../data/categories.ts";
+import type { Category, CategoryGroup } from "../data/categories.ts";
 import type { MergedStats, StatEntry } from "../logic/stats.ts";
 import { allValidPairs, pairKey } from "../logic/matching.ts";
 import { scheduleSummary } from "../logic/schedule.ts";
 import type { ScheduleStatus, ScheduleSummary } from "../logic/schedule.ts";
-import { allCardRefs } from "../logic/flashcards.ts";
+import { DECKS, allCardRefs, dueCardCount, resetSessionForDeck } from "../logic/flashcards.ts";
 import type { CardRef } from "../logic/flashcards.ts";
+import { drillPairFor } from "../logic/picker.ts";
 import { pokemonBySlug } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
 import { dueAt, formatInterval, scheduleStatus } from "../logic/schedule.ts";
-import { useDetailHash } from "../logic/hashState.ts";
+import { jumpToTab, useDetailHash } from "../logic/hashState.ts";
+import CategoryPill from "./CategoryPill.tsx";
 import Sprite from "./Sprite.tsx";
 import PokemonName from "./PokemonName.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import { usePagedList } from "./usePagedList.ts";
-
-// Built on first use, not at app start: enumerating every deck's pool is
-// real work and only the Stats tab needs the full list.
-let cardRefsCache: CardRef[] | null = null;
-const cardRefs = (): CardRef[] => (cardRefsCache ??= allCardRefs());
 
 const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
   ["due", "Due"],
@@ -32,6 +29,32 @@ const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
   ["mastered", "Mastered"],
   ["new", "New"],
 ];
+
+// The categories a deck exists for — the Study next pool, and which
+// coverage squares get a Cards button.
+const DECK_FOR_GROUP: Partial<Record<CategoryGroup, string>> = {
+  region: "region",
+  type: "type",
+  special: "special",
+  stage: "stage",
+};
+const DECKABLE_CATEGORIES: Category[] = DECKS.flatMap((deck) => deck.options.map((option) => getCategory(option.id)));
+
+// The coverage map's rows, in display order, with their terse labels.
+const COVERAGE_GROUPS: ReadonlyArray<readonly [CategoryGroup, string]> = [
+  ["region", "Region"],
+  ["type", "Type"],
+  ["typeCount", "Count"],
+  ["stage", "Stage"],
+  ["evo", "Evolution"],
+  ["special", "Group"],
+];
+
+// Cards → the deck for the category's group, dealt fresh.
+function goCards(deckId: string): void {
+  resetSessionForDeck(deckId);
+  jumpToTab("cards", deckId === "all" ? [] : [deckId]);
+}
 
 interface ReviewRowProps {
   label: string;
@@ -78,7 +101,7 @@ interface CardStatusListProps {
 // load as the end scrolls near, like every other long list here).
 function CardStatusList({ status, merged, now, onOpen }: CardStatusListProps) {
   const refs = useMemo(() => {
-    const matching = cardRefs().filter((ref) => scheduleStatus(merged.flashcards[ref.key], now) === status);
+    const matching = allCardRefs().filter((ref) => scheduleStatus(merged.flashcards[ref.key], now) === status);
     // due: most overdue first; learning/mastered: next up first; new: dex order
     if (status !== "new") {
       matching.sort((a, b) => dueAt(merged.flashcards[a.key]) - dueAt(merged.flashcards[b.key]));
@@ -105,7 +128,7 @@ function CardStatusList({ status, merged, now, onOpen }: CardStatusListProps) {
             <PokemonName name={ref.pokemon.displayName} />
           </span>
           <span className="card-status-meta">
-            {ref.deck.label} · {timing(ref)}
+            {ref.label} · {timing(ref)}
           </span>
         </button>
       ))}
@@ -115,12 +138,13 @@ function CardStatusList({ status, merged, now, onOpen }: CardStatusListProps) {
   );
 }
 
-function ReviewPanel({ merged }: { merged: MergedStats }) {
-  // a slow clock: fresh enough that cards falling due while the tab sits
-  // open show up, coarse enough that the memos below still do their job
-  // (a per-render Date.now() would defeat all of them)
-  const now = useNow(60_000);
-  const flashcardKeys = useMemo(() => cardRefs().map((ref) => ref.key), []);
+interface ReviewPanelProps {
+  merged: MergedStats;
+  now: number;
+}
+
+function ReviewPanel({ merged, now }: ReviewPanelProps) {
+  const flashcardKeys = useMemo(() => allCardRefs().map((ref) => ref.key), []);
   const cards = useMemo(() => scheduleSummary(merged.flashcards, flashcardKeys, now), [merged, flashcardKeys, now]);
   const pairKeys = useMemo(() => allValidPairs(QUIZ_CATEGORIES).map(([a, b]) => pairKey(a.id, b.id)), []);
   const pairs = useMemo(() => scheduleSummary(merged.pairs, pairKeys, now), [merged, pairKeys, now]);
@@ -128,8 +152,7 @@ function ReviewPanel({ merged }: { merged: MergedStats }) {
   const [openStatus, setOpenStatus] = useState<ScheduleStatus | null>(null);
   const [detail, openDetail, closeDetail] = useDetailHash(pokemonBySlug);
   return (
-    <section className="srs-panel">
-      <h3>Spaced Review</h3>
+    <div className="srs-panel">
       <p className="hint">
         Answered items come back on a growing schedule (10 min → 1 → 3 → 7 → 16
         → 35 → 80 → 180 days) and reset on a miss. Due items are favoured;
@@ -144,46 +167,7 @@ function ReviewPanel({ merged }: { merged: MergedStats }) {
       <ReviewRow label="Drill Pairs" summary={pairs} />
       {openStatus ? <CardStatusList status={openStatus} merged={merged} now={now} onOpen={openDetail} /> : null}
       {detail ? <PokemonDetail pokemon={detail} onClose={closeDetail} onOpen={openDetail} /> : null}
-    </section>
-  );
-}
-
-function AccuracyBar({ entry }: { entry: StatEntry | undefined }) {
-  if (!entry || !entry.a) {
-    return (
-      <div className="acc">
-        <span className="acc-num dim">—</span>
-      </div>
-    );
-  }
-  const pct = Math.round((entry.c / entry.a) * 100);
-  // A row with no correct answers shows a sliver of red (CSS min-width
-  // keeps the bar visible), not an empty track
-  return (
-    <div className="acc">
-      <span className="acc-track">
-        <span className={entry.c === 0 ? "acc-fill all-miss" : "acc-fill"} style={{ width: `${pct}%` }} />
-      </span>
-      <span className="acc-num">{pct}%</span>
     </div>
-  );
-}
-
-function Chevron() {
-  return (
-    <svg
-      className="chevron"
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      aria-hidden="true"
-    >
-      <path d="m9 5 7 7-7 7" />
-    </svg>
   );
 }
 
@@ -206,6 +190,24 @@ function timeAgo(timestamp: number, now: number): string {
   const hours = Math.round(minutes / 60);
   if (hours < 24) return `${hours} h ago`;
   return `${Math.round(hours / 24)} d ago`;
+}
+
+function Chevron() {
+  return (
+    <svg
+      className="chevron"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="m9 5 7 7-7 7" />
+    </svg>
+  );
 }
 
 function LinkDeviceQR() {
@@ -436,8 +438,7 @@ function SyncPanel() {
   );
 
   return (
-    <section className="sync-panel">
-      <h3>Cross-Device Sync</h3>
+    <div className="sync-panel">
       {account ? (
         <>
           {statusHint(false)}
@@ -547,12 +548,11 @@ function SyncPanel() {
           {tokenForm}
         </>
       )}
-    </section>
+    </div>
   );
 }
 
-// Reset lives up top, next to the review numbers it clears. With sync on,
-// there's a choice between this device's history and everything.
+// With sync on, there's a choice between this device's history and everything.
 function ResetPanel() {
   const { resetLocal, resetAll, token, account, devices } = useStats();
   const synced = Boolean(token || account) && devices.length > 1;
@@ -590,59 +590,167 @@ function formatBuildTime(iso: string): string {
   }) + " PT";
 }
 
+// One row shared by Study next and the coverage selection: pill, accuracy,
+// and both practice entry points.
+interface CategoryRowProps {
+  category: Category;
+  entry: StatEntry | undefined;
+  onDrill: (catId: string) => void;
+}
+
+function CategoryRow({ category, entry, onDrill }: CategoryRowProps) {
+  const deckId = DECK_FOR_GROUP[category.group];
+  return (
+    <div className="study-row">
+      <CategoryPill cat={category} useShort />
+      <span className="study-acc">
+        {entry?.a ? `${Math.round((entry.c / entry.a) * 100)}% · ${entry.c}/${entry.a}` : "not asked yet"}
+      </span>
+      <div className="row-actions">
+        {deckId ? (
+          <button className="mini-primary" onClick={() => goCards(deckId)}>
+            Cards
+          </button>
+        ) : null}
+        <button className="mini-ghost" onClick={() => onDrill(category.id)}>
+          Drill
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function StatsView() {
-  const { merged } = useStats();
+  const { merged, account, token } = useStats();
+  // a slow clock: fresh enough that cards falling due while the tab sits
+  // open show up, coarse enough that the memos below still do their job
+  const now = useNow(60_000);
+  const due = useMemo(() => dueCardCount(merged, now), [merged, now]);
+  // the tapped coverage square (tap again to close)
+  const [covSel, setCovSel] = useState<string | null>(null);
+  const [srsOpen, setSrsOpen] = useState(false);
+  const [syncOpen, setSyncOpen] = useState(false);
+
+  const overallPct = useMemo(() => {
+    let correct = 0;
+    for (const entry of Object.values(merged.categories)) correct += entry.c;
+    return merged.attempts ? Math.round((correct / merged.attempts) * 100) : 0;
+  }, [merged]);
+
+  // The three weakest deckable categories with enough attempts to judge.
+  const weakest = useMemo(
+    () =>
+      DECKABLE_CATEGORIES.map((category) => ({ category, entry: merged.categories[category.id] }))
+        .filter((row): row is { category: Category; entry: StatEntry } => Boolean(row.entry && row.entry.a >= 3))
+        .sort((a, b) => a.entry.c / a.entry.a - b.entry.c / b.entry.a)
+        .slice(0, 3),
+    [merged],
+  );
+
+  // Drill → a pair containing the category (an already-practised partner
+  // when one exists), straight into the Drill tab.
+  const openDrill = (catId: string): void => {
+    const [a, b] = drillPairFor(catId, merged);
+    jumpToTab("drill", [a.id, b.id]);
+  };
+
+  const coverageColor = (entry: StatEntry | undefined): string => {
+    if (!entry?.a) return "";
+    const accuracy = entry.c / entry.a;
+    return accuracy < 0.55 ? " low" : accuracy < 0.75 ? " mid" : " high";
+  };
+  const coverageTotal = COVERAGE_GROUPS.reduce(
+    (count, [group]) => count + QUIZ_CATEGORIES.filter((category) => category.group === group).length,
+    0,
+  );
+  const covCategory = covSel ? getCategory(covSel) : null;
 
   return (
     <div className="stats">
-      <ReviewPanel merged={merged} />
-      <ResetPanel />
-      <SyncPanel />
+      <div className="stats-head">
+        <h2>Progress</h2>
+        <span className="stats-total">
+          {merged.attempts} answered · {overallPct}% overall
+        </span>
+      </div>
 
-      {/* Type count has no deck and the type table says it all (the two
-          categories still count for Drill/Grid weighting); the Browse-only
-          groups are never quizzed, so QUIZ_CATEGORY_GROUPS already skips
-          them */}
-      {QUIZ_CATEGORY_GROUPS.filter(([group]) => group !== "typeCount").map(([group, label]) => {
-        const cats = QUIZ_CATEGORIES.filter((category) => category.group === group);
-        return (
-          <section key={group}>
-            <h3>{label}</h3>
-            <table className="stats-table">
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Answered</th>
-                  <th>Accuracy</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cats.map((category) => {
-                  const entry = merged.categories[category.id];
-                  const weak = Boolean(entry && entry.a >= 3 && smoothedAccuracy(entry) < 0.55);
-                  return (
-                    <tr key={category.id} className={weak ? "weak" : ""}>
-                      <td>
-                        {/* the section heading already says Region / Type */}
-                        {group === "region" || group === "type" ? category.short : category.label}
-                        {weak ? <span className="weak-chip">Weak</span> : null}
-                      </td>
-                      <td className={entry?.a ? undefined : "zero"}>{entry ? entry.a : 0}</td>
-                      <td>
-                        <AccuracyBar entry={entry} />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
-        );
-      })}
-
-      <section>
-        <p className="hint meta">Site built {formatBuildTime(__BUILD_TIME__)}</p>
+      <section className="study-next">
+        <p className="panel-label accent">Study next</p>
+        {weakest.length ? (
+          <div className="study-rows">
+            {weakest.map(({ category, entry }) => (
+              <CategoryRow key={category.id} category={category} entry={entry} onDrill={openDrill} />
+            ))}
+          </div>
+        ) : (
+          <p className="hint">Answer a few cards or drills and your weakest categories will show up here.</p>
+        )}
+        <button className="review-due" onClick={() => goCards("all")}>
+          Review {due} due card{due === 1 ? "" : "s"}
+        </button>
       </section>
+
+      <section className="coverage">
+        <div className="coverage-head">
+          <p className="panel-label">Coverage · {coverageTotal} categories</p>
+          <span className="coverage-legend" aria-hidden="true">
+            weak
+            <i className="legend-swatch low" />
+            <i className="legend-swatch mid" />
+            <i className="legend-swatch high" />
+            strong
+          </span>
+        </div>
+        <div className="coverage-rows">
+          {COVERAGE_GROUPS.map(([group, label]) => (
+            <div key={group} className="coverage-row">
+              <span className="coverage-group">{label}</span>
+              <div className="coverage-grid">
+                {QUIZ_CATEGORIES.filter((category) => category.group === group).map((category) => (
+                  <button
+                    key={category.id}
+                    className={`cov-cell${coverageColor(merged.categories[category.id])}${covSel === category.id ? " selected" : ""}`}
+                    title={category.label}
+                    aria-label={category.label}
+                    aria-pressed={covSel === category.id}
+                    onClick={() => setCovSel((current) => (current === category.id ? null : category.id))}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        {covCategory ? (
+          <div className="cov-sel">
+            <CategoryRow category={covCategory} entry={merged.categories[covCategory.id]} onDrill={openDrill} />
+          </div>
+        ) : null}
+        <p className="cov-hint">Tap any square for its category — accuracy and a way into practice.</p>
+      </section>
+
+      <div className="accordion">
+        <button className="accordion-row" aria-expanded={srsOpen} onClick={() => setSrsOpen((open) => !open)}>
+          Spaced review schedule
+          <span className="accordion-meta">{due} due ›</span>
+        </button>
+        {srsOpen ? (
+          <div className="accordion-body">
+            <ReviewPanel merged={merged} now={now} />
+          </div>
+        ) : null}
+        <button className="accordion-row" aria-expanded={syncOpen} onClick={() => setSyncOpen((open) => !open)}>
+          Cross-device sync
+          <span className="accordion-meta">{account || token ? "on" : "off"} ›</span>
+        </button>
+        {syncOpen ? (
+          <div className="accordion-body">
+            <SyncPanel />
+            <ResetPanel />
+          </div>
+        ) : null}
+      </div>
+
+      <p className="hint meta">Site built {formatBuildTime(__BUILD_TIME__)}</p>
     </div>
   );
 }
