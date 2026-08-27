@@ -8,6 +8,7 @@ import type { CategoryGroup } from "../data/categories.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
 import { loadJson, saveJson } from "../logic/hashState.ts";
+import { cellUniqueness, estimatePickPercent, formatPickPercent } from "../logic/uniqueness.ts";
 import CategoryPill from "./CategoryPill.tsx";
 import Sprite from "./Sprite.tsx";
 import GuessModal from "./GuessModal.tsx";
@@ -122,6 +123,22 @@ function PracticeGrid() {
   const filled = cells.filter((cell) => cell.status === "filled").length;
 
   const cellCats = (index: number): [string, string] => [grid.rows[Math.floor(index / 3)], grid.cols[index % 3]];
+
+  // The finished board's global uniqueness, PokeDoku-style (0–900): each
+  // filled cell adds 100 minus its pick's estimated global pick share;
+  // revealed cells add nothing
+  const uniquenessScore = useMemo(() => {
+    if (!done) return null;
+    let score = 0;
+    for (const [index, cell] of cells.entries()) {
+      if (cell.status !== "filled" || !cell.pokemon) continue;
+      const pool = intersection(grid.rows[Math.floor(index / 3)], grid.cols[index % 3]);
+      const value = cellUniqueness(cell.pokemon, pool);
+      if (value === null) return null;
+      score += value;
+    }
+    return Math.round(score);
+  }, [done, cells, grid]);
   // Closing the guess popup (×, backdrop, Escape) drops the selection —
   // and the tapped cell's focus, whose ring reads as "still selected" on
   // iOS; stable so the popup's Escape listener isn't re-bound each render
@@ -173,21 +190,23 @@ function PracticeGrid() {
       setCells((current) =>
         current.map((cell, index) => (index === selected ? { status: "filled", pokemon } : cell)),
       );
-      // PokeDoku's own pick percentages sit behind a login, so uniqueness
-      // is approximated locally: the cell's answer-pool size, and how
-      // many other cells of this board the pick could have filled
-      // (membership is just the two predicates — no member lists needed;
-      // only cells still open count, since the no-repeat rule bars the rest)
+      // Global rarity comes from the harvested PokeDoku pick prior
+      // (logic/uniqueness.ts); the board-local note stays: how many other
+      // cells of this board the pick could have filled (membership is
+      // just the two predicates — no member lists needed; only cells
+      // still open count, since the no-repeat rule bars the rest)
       const elsewhere = Array.from({ length: 9 }, (_, index) => index).filter((index) => {
         if (index === selected || cells[index].status !== "empty") return false;
         const [row, col] = cellCats(index);
         return getCategory(row).predicate(pokemon) && getCategory(col).predicate(pokemon);
       }).length;
-      const uniqueness =
+      const estimate = estimatePickPercent(pokemon, answers);
+      const globally = estimate === null ? "" : `, picked by ~${formatPickPercent(estimate)} of players globally`;
+      const board =
         elsewhere === 0
-          ? "no other open cell on this board — maximally unique"
-          : `it also fits ${elsewhere} other open cell${elsewhere === 1 ? "" : "s"} here`;
-      setMessage(`${pokemon.displayName} fits! One of ${answers.length} for this cell; ${uniqueness}.`);
+          ? "fits no other open cell here"
+          : `also fits ${elsewhere} other open cell${elsewhere === 1 ? "" : "s"} here`;
+      setMessage(`${pokemon.displayName} fits! One of ${answers.length} for this cell${globally}; ${board}.`);
       setSelected(null);
       setWrongGuess(null);
     } else {
@@ -271,7 +290,7 @@ function PracticeGrid() {
       <div className="board-toolbar">
         <p className="score">
           {filled}/9 filled · {guesses} guesses
-          {done ? " — done!" : ""}
+          {done ? (uniquenessScore === null ? " — done!" : ` — done! · uniqueness ≈${uniquenessScore}/900`) : ""}
         </p>
         <div className="board-actions">
           <button

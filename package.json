@@ -12,7 +12,8 @@
     "test": "vitest run",
     "build-data": "node scripts/build-dataset.ts",
     "build-sprites": "node scripts/build-sprites.ts",
-    "build-names": "node scripts/build-pokedoku-names.ts"
+    "build-names": "node scripts/build-pokedoku-names.ts",
+    "harvest": "node scripts/harvest-pick-stats.ts"
   },
   "dependencies": {
     "@fontsource-variable/nunito": "^5.3.0",

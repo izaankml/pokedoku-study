@@ -102,6 +102,42 @@ export type SpriteEntry = [
 ];
 export type SpritesData = Record<string, SpriteEntry>;
 
+// pick-stats.json: global pick data harvested from PokeDoku's daily
+// puzzles (scripts/harvest-pick-stats.ts). `prior` is the running
+// aggregate the app uses: per PokeDoku pokemon id, how many daily cells
+// it was picked in and the sum of its pick shares there (share = its
+// picks / all picks in that cell), so shareSum / cells is "when this
+// Pokémon is a live answer, what share of players reach for it".
+// `counted` is harvester state: inclusive puzzle-id ranges already folded
+// into the prior. `recent` keeps the last few puzzles in full — the
+// day's category spec (PokeDoku's own JSON, kept verbatim) and each
+// cell's pick counts — for features that want a real board's numbers.
+export type PickPriorEntry = [cells: number, shareSum: number];
+
+export interface PickStatsCell {
+  total: number;
+  // [pokemonId, count], most-picked first
+  picks: [number, number][];
+}
+
+export interface PickStatsPuzzle {
+  id: number;
+  date: string;
+  spec: Record<string, unknown> | null;
+  cells: PickStatsCell[];
+}
+
+export interface PickStatsData {
+  meta: {
+    generatedAt: string;
+    puzzlesCounted: number;
+    cellsCounted: number;
+  };
+  counted: [from: number, to: number][];
+  prior: Record<string, PickPriorEntry>;
+  recent: PickStatsPuzzle[];
+}
+
 // pokedoku-names.json: PokeDoku's slug for each record that carries a form
 export interface PokedokuName {
   name: string;

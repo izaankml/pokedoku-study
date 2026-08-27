@@ -44,7 +44,13 @@ Rotom appliances, Lycanroc's three, the female Pyroar, …).
   answer away. Tapping the deck in play again goes back to All. Keyboard:
   arrows move over the options, Space picks, Enter submits / moves on.
 - **Grid** — a full 3×3 practice board, generated so every cell is
-  solvable with distinct Pokémon; wrong guesses say why.
+  solvable with distinct Pokémon; wrong guesses say why. Correct picks
+  show an estimated global pick percentage — how many PokeDoku players
+  would reach for that Pokémon in that cell — and a finished board gets
+  a PokeDoku-style uniqueness score out of 900. The estimates come from
+  PokeDoku's real daily pick counts, harvested nightly into
+  `src/data/pick-stats.json` (`npm run harvest`, run by a scheduled
+  GitHub Action) and averaged into a per-Pokémon pick tendency.
 - **Stats** — per-category accuracy, weak spots highlighted (Mono-/Dual-
   Type have no table there — the type rows say it all — but still count
   for Drill and Grid); spaced-review counts; cross-device sync.
