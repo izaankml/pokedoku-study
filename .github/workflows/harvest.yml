@@ -25,7 +25,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      # FIREBASE_SERVICE_ACCOUNT (a service account's JSON key) enables
+      # the Firestore mirror; until the secret exists the mirror is a no-op
       - run: node scripts/harvest-pick-stats.ts
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Commit and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}

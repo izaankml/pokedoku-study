@@ -276,6 +276,15 @@ overlap.
    `izaankml.github.io` (`localhost` is pre-authorized for dev).
 6. Project settings → add a Web app → copy the config object into
    `firebaseConfig.ts`.
+7. For the pick-archive mirror (harvest workflow → Firestore
+   `pickArchive/{puzzleId}`): Project settings → Service accounts →
+   Generate new private key, paste the JSON as the GitHub Actions
+   secret `FIREBASE_SERVICE_ACCOUNT` (repo → Settings → Secrets →
+   Actions). Add to the security rules:
+   `match /pickArchive/{puzzleId} { allow read: if true; allow write: if false; }`
+   (the service account bypasses rules; clients get read-only). Then
+   seed the existing files once:
+   `FIREBASE_SERVICE_ACCOUNT="$(cat key.json)" npm run harvest -- --mirror-all`.
 
 ### Implementation order (each step leaves the app shippable)
 

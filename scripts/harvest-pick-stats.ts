@@ -19,6 +19,13 @@
 //     with their final counts; today's spec + live counts are archived
 //   node scripts/harvest-pick-stats.ts --backfill 1 1563  # one-off: fold
 //     a range of past puzzles into the prior and archive
+//   node scripts/harvest-pick-stats.ts --mirror-all     # push every
+//     archive file to Firestore (first-time seed, or repair after
+//     mirror failures); needs FIREBASE_SERVICE_ACCOUNT
+//
+// Archives touched by a run are also mirrored to Firestore
+// (firestore-archive.ts) when FIREBASE_SERVICE_ACCOUNT is set; mirror
+// failures only warn — the files are canonical and --mirror-all repairs.
 //
 // The current (still-running) puzzle is never counted into the prior;
 // its numbers keep moving all day. It is re-fetched as finished on the
@@ -26,6 +33,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { PickArchiveIndex, PickStatsCell, PickStatsData, PickStatsPuzzle } from "../src/data/types.ts";
+import { FirestoreArchive } from "./firestore-archive.ts";
 import { DATA_DIR } from "./pokedoku-api.ts";
 import { PokedokuSession } from "./pokedoku-session.ts";
 
@@ -121,6 +129,9 @@ function ingest(data: PickStatsData, cells: PickStatsCell[]): void {
   if (cellsIngested > 0) data.meta.puzzlesCounted += 1;
 }
 
+// archives written or refreshed by this run, mirrored to Firestore at the end
+const touchedArchives: PickStatsPuzzle[] = [];
+
 // Merge into the puzzle's archive file: counts refresh, but the spec and
 // date (readable only while the puzzle was current) are never dropped
 function writeArchive(puzzle: PickStatsPuzzle): void {
@@ -141,6 +152,33 @@ function writeArchive(puzzle: PickStatsPuzzle): void {
   if (date) merged.date = date;
   if (spec) merged.spec = spec;
   writeFileSync(path, JSON.stringify(merged));
+  touchedArchives.push(merged);
+}
+
+async function mirrorArchives(puzzles: PickStatsPuzzle[]): Promise<void> {
+  if (puzzles.length === 0) return;
+  let firestore: FirestoreArchive | null;
+  try {
+    firestore = await FirestoreArchive.fromEnv();
+  } catch (error) {
+    console.warn(`Firestore mirror unavailable: ${String(error)}`);
+    return;
+  }
+  if (!firestore) return; // no FIREBASE_SERVICE_ACCOUNT — mirroring stays dark
+  for (const puzzle of puzzles) {
+    try {
+      await firestore.mirror(puzzle);
+    } catch (error) {
+      console.warn(String(error)); // files are canonical; --mirror-all repairs
+    }
+  }
+  console.log(`mirrored ${puzzles.length} puzzle${puzzles.length === 1 ? "" : "s"} to Firestore`);
+}
+
+function readAllArchives(): PickStatsPuzzle[] {
+  return readdirSync(ARCHIVE_DIR)
+    .filter((name) => /^\d+\.json$/.test(name))
+    .map((name) => JSON.parse(readFileSync(join(ARCHIVE_DIR, name), "utf8")) as PickStatsPuzzle);
 }
 
 function rebuildIndex(): void {
@@ -171,6 +209,15 @@ async function fetchStats(session: PokedokuSession, id: number): Promise<PuzzleS
     console.warn(`puzzle ${id}: ${String(error)} — skipped`);
     return null;
   }
+}
+
+if (process.argv.includes("--mirror-all")) {
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+    console.error("--mirror-all needs FIREBASE_SERVICE_ACCOUNT set");
+    process.exit(1);
+  }
+  await mirrorArchives(readAllArchives());
+  process.exit(0);
 }
 
 const data = loadStats();
@@ -204,6 +251,7 @@ if (backfillFlag !== -1) {
     await sleep(THROTTLE_MS);
   }
   save(data);
+  await mirrorArchives(touchedArchives);
   console.log(`backfill done: ${data.meta.puzzlesCounted} puzzles, ${data.meta.cellsCounted} cells in the prior`);
 } else {
   const current = await session.apiGet<CurrentPuzzle>("/api/puzzle/current");
@@ -228,6 +276,7 @@ if (backfillFlag !== -1) {
   writeArchive({ id, date, spec, cells: todayStats ? cellAggregates(todayStats) : [] });
 
   save(data);
+  await mirrorArchives(touchedArchives);
   console.log(
     `harvested through puzzle ${current.id} (${date}): ` +
       `${data.meta.puzzlesCounted} puzzles, ${data.meta.cellsCounted} cells in the prior`,
