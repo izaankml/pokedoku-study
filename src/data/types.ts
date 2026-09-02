@@ -108,13 +108,13 @@ export type SpritesData = Record<string, SpriteEntry>;
 // it was picked in and the sum of its pick shares there (share = its
 // picks / all picks in that cell), so shareSum / cells is "when this
 // Pokémon is a live answer, what share of players reach for it".
-// `counted` and `pending` are harvester state: inclusive puzzle-id ranges
-// already folded into the prior, and the board(s) seen while current that
-// will be archived once finished. The full per-puzzle data — the day's
+// `pending` is harvester state: the board(s) seen while current that will
+// be archived once finished. The full per-puzzle data — the day's
 // category spec (PokeDoku's own JSON, kept verbatim) and each cell's pick
 // counts — lives outside the bundle, as one PickStatsPuzzle per file in
 // public/archive/<id>.json (public/archive/index.json lists them), so
-// the archive can grow forever without growing the app.
+// the archive can grow forever without growing the app. The prior is
+// rebuilt from those files on every harvest, so it never drifts from them.
 export type PickPriorEntry = [cells: number, shareSum: number];
 
 export interface PickStatsCell {
@@ -150,7 +150,6 @@ export interface PickStatsData {
     puzzlesCounted: number;
     cellsCounted: number;
   };
-  counted: [from: number, to: number][];
   pending: PendingPuzzle[];
   prior: Record<string, PickPriorEntry>;
 }
