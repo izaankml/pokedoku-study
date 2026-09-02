@@ -33,7 +33,12 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      # The runner image ships a JDK, which the Firestore emulator needs.
+      # The Firestore emulator needs a JDK, and firebase-tools 15 insists
+      # on 21+; the runner's default Java is older.
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
       - run: npm run test:rules
       - name: Write the service-account key
         env:
