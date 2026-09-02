@@ -2342,6 +2342,68 @@ button.evo-tile:active {
   animation: fade-up var(--dur-med) var(--ease-out);
 }
 
+/* ---- grid: the board chooser and replayed PokeDokus ---- */
+
+/* the chooser sits centred above the board, like the Cards deck button */
+.grid-topbar {
+  display: flex;
+  justify-content: center;
+  padding: 2px 0 10px;
+}
+
+/* the board sheet: a fixed head, then the rows scroll — the list of past
+   PokeDokus grows by one a day */
+.archive-sheet {
+  max-height: min(78dvh, 620px);
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 2px;
+}
+
+.archive-rows .sheet-kicker {
+  margin-top: 10px;
+}
+
+.archive-rows .hint {
+  margin: 4px 0;
+}
+
+.deck-row:disabled {
+  opacity: 0.6;
+}
+
+.archive-problem {
+  color: var(--wrong);
+  margin: 10px 0 0;
+}
+
+/* a replayed cell's real pick share, in the answer card's corner */
+.answer-grid .pokemon-card {
+  position: relative;
+}
+
+.card-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
 /* ---- stats ---- */
 
 .stats {

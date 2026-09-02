@@ -41,6 +41,7 @@ import { CATEGORY_BY_ID, getCategory, pillClassOf, typeClassOf } from "../data/c
 import type { Pokemon } from "../data/types.ts";
 import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
+import Chevron from "./Chevron.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
@@ -63,14 +64,6 @@ const pokemonOf = (card: Card): Pokemon => {
 function initialDeck(): string {
   const fromHash = hashStateFor("cards")?.[0];
   return fromHash !== undefined && isDeckId(fromHash) ? fromHash : session.deckId;
-}
-
-function Chevron() {
-  return (
-    <svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <path d="M1.5 1.5 6 6l4.5-4.5" />
-    </svg>
-  );
 }
 
 interface DeckSheetProps {

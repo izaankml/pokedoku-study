@@ -55,7 +55,13 @@ Rotom appliances, Lycanroc's three, the female Pyroar, …).
   counts, indexed by `public/archive/index.json`, deployed but fetched
   lazily so the app bundle never grows), and averaged into the bounded
   per-Pokémon pick tendency the app bundles (`src/data/pick-stats.json`).
-  A board is never archived while it is still being played.
+  A board is never archived while it is still being played. The chooser
+  above the board replays any archived PokeDoku: its real categories,
+  and instead of estimates the pick rates its players actually produced
+  — each correct pick reports its true share, a filled cell's list shows
+  what everyone picked, and the uniqueness score is the real one. Only
+  boards the harvest saw while they were current carry their categories,
+  so the list starts on 26 Aug 2026 and grows by one a day.
 - **Stats** — per-category accuracy, weak spots highlighted (Mono-/Dual-
   Type have no table there — the type rows say it all — but still count
   for Drill and Grid); spaced-review counts; cross-device sync.

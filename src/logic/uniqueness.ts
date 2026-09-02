@@ -16,11 +16,13 @@ const pickStats = pickStatsJson as unknown as PickStatsData;
 
 // PokeDoku lists Zygarde 50% under its own form id; the app uses the species
 const ID_ALIASES = new Map<number, number>([[10119, 718]]);
+// the app's id for a Pokémon id in PokeDoku's data
+export const appIdFor = (pokedokuId: number): number => ID_ALIASES.get(pokedokuId) ?? pokedokuId;
 
 export function buildWeights(prior: PickStatsData["prior"]): Map<number, number> {
   const merged = new Map<number, [cells: number, shareSum: number]>();
   for (const [key, [cells, shareSum]] of Object.entries(prior)) {
-    const id = ID_ALIASES.get(Number(key)) ?? Number(key);
+    const id = appIdFor(Number(key));
     const entry = merged.get(id) ?? [0, 0];
     entry[0] += cells;
     entry[1] += shareSum;

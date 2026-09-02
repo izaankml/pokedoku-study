@@ -14,11 +14,13 @@ interface PokemonCardProps {
   // keep the name off the card entirely — caption, tooltip and alt text
   // (the Name deck asks who this is)
   hideName?: boolean;
+  // a small figure in the corner: a replayed PokeDoku cell's real pick share
+  badge?: string;
 }
 
 const MYSTERY = "Mystery Pokémon";
 
-function PokemonCard({ pokemon, onClick, eager = false, hint, hideName = false }: PokemonCardProps) {
+function PokemonCard({ pokemon, onClick, eager = false, hint, hideName = false, badge }: PokemonCardProps) {
   const clickable = typeof onClick === "function";
   return (
     <figure
@@ -49,6 +51,7 @@ function PokemonCard({ pokemon, onClick, eager = false, hint, hideName = false }
           {hint}
         </span>
       ) : null}
+      {badge ? <span className="card-badge">{badge}</span> : null}
     </figure>
   );
 }

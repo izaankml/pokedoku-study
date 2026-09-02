@@ -6,10 +6,14 @@ import { intersection, pairKey } from "../logic/matching.ts";
 import { CATEGORY_BY_ID, QUIZ_CATEGORIES, QUIZ_CATEGORY_GROUPS, getCategory, whyNot } from "../data/categories.ts";
 import type { CategoryGroup } from "../data/categories.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
-import type { Pokemon } from "../data/types.ts";
+import type { PickStatsPuzzle, Pokemon } from "../data/types.ts";
+import { archivedAnswers, archivedShare, boardFromArchive, formatArchiveDate } from "../logic/archive.ts";
+import type { ArchivedBoard } from "../logic/archive.ts";
 import { loadJson, saveJson } from "../logic/hashState.ts";
 import { cellUniqueness, estimatePickPercent, formatPickPercent } from "../logic/uniqueness.ts";
+import ArchiveSheet from "./ArchiveSheet.tsx";
 import CategoryPill from "./CategoryPill.tsx";
+import Chevron from "./Chevron.tsx";
 import Sprite from "./Sprite.tsx";
 import GuessModal from "./GuessModal.tsx";
 import AnswerList from "./AnswerList.tsx";
@@ -43,7 +47,8 @@ function loadExcludedGroups(): CategoryGroup[] {
   return saved.filter(isCategoryGroup);
 }
 
-// What saveBoard writes: the grid, the cells by Pokémon id, the guess count.
+// What saveBoard writes: the grid, the cells by Pokémon id, the guess
+// count, and the archived PokeDoku the board replays, if any.
 interface StoredCell {
   status: CellStatus;
   pokemon: number | null;
@@ -53,12 +58,14 @@ interface StoredBoard {
   cols: string[];
   cells: StoredCell[];
   guesses: number;
+  archive: PickStatsPuzzle | null;
 }
 
 interface SavedBoard {
   grid: Grid;
   cells: Cell[];
   guesses: number;
+  archive: ArchivedBoard | null;
 }
 
 const isCategoryIdList = (value: unknown): value is string[] =>
@@ -68,22 +75,42 @@ function loadBoard(): SavedBoard | null {
   const saved = loadJson(BOARD_KEY) as Partial<StoredBoard> | null;
   if (!saved || !isCategoryIdList(saved.rows) || !isCategoryIdList(saved.cols)) return null;
   if (!Array.isArray(saved.cells) || saved.cells.length !== 9) return null;
+  // a replayed PokeDoku is rebuilt from the stored puzzle; one that can't
+  // be (it shouldn't happen) starts the tab over on a random grid
+  let archive: ArchivedBoard | null = null;
+  if (saved.archive && typeof saved.archive === "object") {
+    const load = boardFromArchive(saved.archive);
+    if (!("board" in load)) return null;
+    archive = load.board;
+  }
   return {
-    grid: { rows: saved.rows, cols: saved.cols },
+    grid: archive ? archive.grid : { rows: saved.rows, cols: saved.cols },
     cells: saved.cells.map((cell: Partial<StoredCell>) => ({
       status: cell.status === "filled" || cell.status === "revealed" ? cell.status : "empty",
       pokemon: cell.status === "filled" && cell.pokemon != null ? (POKEMON_BY_ID.get(cell.pokemon) ?? null) : null,
     })),
     guesses: Number(saved.guesses) || 0,
+    archive,
   };
 }
-function saveBoard(grid: Grid, cells: Cell[], guesses: number): void {
+function saveBoard(grid: Grid, cells: Cell[], guesses: number, archive: ArchivedBoard | null): void {
   saveJson(BOARD_KEY, {
     rows: grid.rows,
     cols: grid.cols,
     cells: cells.map((cell) => ({ status: cell.status, pokemon: cell.pokemon ? cell.pokemon.id : null })),
     guesses,
+    archive: archive ? archive.puzzle : null,
   } satisfies StoredBoard);
+}
+
+// the real shares of a replayed cell's picks, for the answer list's badges
+function shareBadges(board: ArchivedBoard, index: number, answers: Pokemon[]): Map<number, string> {
+  const badges = new Map<number, string>();
+  for (const pokemon of answers) {
+    const share = archivedShare(board.cells[index], pokemon);
+    if (share > 0) badges.set(pokemon.id, formatPickPercent(share));
+  }
+  return badges;
 }
 
 function PracticeGrid() {
@@ -91,6 +118,10 @@ function PracticeGrid() {
   const [saved] = useState(loadBoard);
   const [grid, setGrid] = useState<Grid>(() => saved?.grid || generateGrid(merged));
   const [cells, setCells] = useState<Cell[]>(() => saved?.cells || emptyCells());
+  // the past PokeDoku this board replays — its categories are the grid,
+  // its pick counts are the real pick rates — or null on a random grid
+  const [archive, setArchive] = useState<ArchivedBoard | null>(saved?.archive ?? null);
+  const [showBoards, setShowBoards] = useState(false);
   // the index of the tapped cell
   const [selected, setSelected] = useState<number | null>(null);
   const [excludedGroups, setExcludedGroups] = useState<CategoryGroup[]>(loadExcludedGroups);
@@ -113,7 +144,7 @@ function PracticeGrid() {
   // the Pokémon behind the current wrong-guess message (its tile in the
   // popup opens the detail sheet)
   const [wrongGuess, setWrongGuess] = useState<Pokemon | null>(null);
-  useEffect(() => saveBoard(grid, cells, guesses), [grid, cells, guesses]);
+  useEffect(() => saveBoard(grid, cells, guesses, archive), [grid, cells, guesses, archive]);
 
   const usedIds = useMemo(
     () => new Set(cells.flatMap((cell) => (cell.pokemon ? [cell.pokemon.id] : []))),
@@ -123,22 +154,33 @@ function PracticeGrid() {
   const filled = cells.filter((cell) => cell.status === "filled").length;
 
   const cellCats = (index: number): [string, string] => [grid.rows[Math.floor(index / 3)], grid.cols[index % 3]];
+  // what a cell accepts: the app's answers, or on a replayed PokeDoku
+  // those less its exclusions plus whatever its players validly picked
+  const cellAnswers = (index: number): Pokemon[] => {
+    const answers = intersection(...cellCats(index));
+    return archive ? archivedAnswers(archive, index, answers) : answers;
+  };
 
   // The finished board's global uniqueness, PokeDoku-style (0–900): each
-  // filled cell adds 100 minus its pick's estimated global pick share;
-  // revealed cells add nothing
+  // filled cell adds 100 minus its pick's global pick share — the real
+  // one on a replayed PokeDoku, an estimate otherwise; revealed cells
+  // add nothing
   const uniquenessScore = useMemo(() => {
     if (!done) return null;
     let score = 0;
     for (const [index, cell] of cells.entries()) {
       if (cell.status !== "filled" || !cell.pokemon) continue;
+      if (archive) {
+        score += 100 - archivedShare(archive.cells[index], cell.pokemon);
+        continue;
+      }
       const pool = intersection(grid.rows[Math.floor(index / 3)], grid.cols[index % 3]);
       const value = cellUniqueness(cell.pokemon, pool);
       if (value === null) return null;
       score += value;
     }
     return Math.round(score);
-  }, [done, cells, grid]);
+  }, [done, cells, grid, archive]);
   // Closing the guess popup (×, backdrop, Escape) drops the selection —
   // and the tapped cell's focus, whose ring reads as "still selected" on
   // iOS; stable so the popup's Escape listener isn't re-bound each render
@@ -178,7 +220,7 @@ function PracticeGrid() {
       setWrongGuess(null); // the previous miss's tile must not outlive its message
       return;
     }
-    const answers = intersection(rowId, colId);
+    const answers = cellAnswers(selected);
     const correct = answers.some((answer) => answer.id === pokemon.id);
     recordAttempt({
       categories: [rowId, colId],
@@ -186,7 +228,14 @@ function PracticeGrid() {
       correct,
     });
     setGuesses((count) => count + 1);
-    if (correct) {
+    // a Pokémon PokeDoku leaves out of a category (Pikachu, Eevee from
+    // First Partner) fits the app's rules, so "why not" would have no clause
+    const excludedHere =
+      !correct && archive && (archive.excluded[selected].has(pokemon.species) || archive.excluded[selected].has(pokemon.id));
+    if (excludedHere) {
+      setMessage(`${pokemon.displayName} doesn't count here — PokeDoku leaves it out of this cell.`);
+      setWrongGuess(pokemon);
+    } else if (correct) {
       setCells((current) =>
         current.map((cell, index) => (index === selected ? { status: "filled", pokemon } : cell)),
       );
@@ -200,8 +249,17 @@ function PracticeGrid() {
         const [row, col] = cellCats(index);
         return getCategory(row).predicate(pokemon) && getCategory(col).predicate(pokemon);
       }).length;
-      const estimate = estimatePickPercent(pokemon, answers);
-      const globally = estimate === null ? "" : `, picked by ~${formatPickPercent(estimate)} of players globally`;
+      let globally = "";
+      if (archive) {
+        const share = archivedShare(archive.cells[selected], pokemon);
+        globally =
+          share === 0
+            ? ", picked by no one on PokeDoku that day"
+            : `, picked by ${formatPickPercent(share)} of PokeDoku players that day`;
+      } else {
+        const estimate = estimatePickPercent(pokemon, answers);
+        if (estimate !== null) globally = `, picked by ~${formatPickPercent(estimate)} of players globally`;
+      }
       const board =
         elsewhere === 0
           ? "fits no other open cell here"
@@ -230,22 +288,44 @@ function PracticeGrid() {
     setWrongGuess(null);
   }
 
-  function newGame() {
-    setGrid(generateGrid(merged, { pool: gridPool(excludedGroups) }));
+  function startBoard(nextGrid: Grid, nextArchive: ArchivedBoard | null) {
+    setArchive(nextArchive);
+    setGrid(nextGrid);
     setCells(emptyCells());
     setSelected(null);
     setGuesses(0);
     setMessage("");
     setWrongGuess(null);
+    setShowBoards(false);
+  }
+
+  function newGame() {
+    startBoard(generateGrid(merged, { pool: gridPool(excludedGroups) }), null);
+  }
+
+  // a past PokeDoku from the chooser: why it can't be played, or null
+  function playArchive(puzzle: PickStatsPuzzle): string | null {
+    const load = boardFromArchive(puzzle);
+    if ("unplayable" in load) return load.unplayable;
+    startBoard(load.board.grid, load.board);
+    return null;
   }
 
   const selectedCell = selected !== null ? cells[selected] : null;
+  const selectedAnswers = selected !== null && selectedCell && selectedCell.status !== "empty" ? cellAnswers(selected) : [];
 
   return (
     <div className="practice" ref={rootRef}>
+      <div className="grid-topbar">
+        <button className="deck-choose" aria-haspopup="dialog" onClick={() => setShowBoards(true)}>
+          {archive ? `PokeDoku · ${formatArchiveDate(archive.date, "short")}` : "Random grid"}
+          <Chevron />
+        </button>
+      </div>
       <p className="hint">
-        Fill all nine cells — each Pokémon must fit its row and column, no
-        repeats.
+        {archive
+          ? `PokeDoku's board from ${formatArchiveDate(archive.date)} — same rules; pick rates are what its players chose that day.`
+          : "Fill all nine cells — each Pokémon must fit its row and column, no repeats."}
       </p>
       <div className="board">
         <div className="corner" />
@@ -290,7 +370,11 @@ function PracticeGrid() {
       <div className="board-toolbar">
         <p className="score">
           {filled}/9 filled · {guesses} guesses
-          {done ? (uniquenessScore === null ? " — done!" : ` — done! · uniqueness ≈${uniquenessScore}/900`) : ""}
+          {done
+            ? uniquenessScore === null
+              ? " — done!"
+              : ` — done! · uniqueness ${archive ? "" : "≈"}${uniquenessScore}/900`
+            : ""}
         </p>
         <div className="board-actions">
           <button
@@ -337,9 +421,18 @@ function PracticeGrid() {
       ) : null}
       {selected !== null && selectedCell && selectedCell.status !== "empty" ? (
         <AnswerList
-          pokemon={intersection(...cellCats(selected))}
-          title="This Cell's Answers"
+          pokemon={selectedAnswers}
+          title={archive ? "What PokeDoku Players Picked" : "This Cell's Answers"}
           highlightId={selectedCell.pokemon?.id}
+          badges={archive ? shareBadges(archive, selected, selectedAnswers) : undefined}
+        />
+      ) : null}
+      {showBoards ? (
+        <ArchiveSheet
+          activeId={archive ? archive.id : null}
+          onPick={playArchive}
+          onRandom={newGame}
+          onClose={() => setShowBoards(false)}
         />
       ) : null}
     </div>

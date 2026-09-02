@@ -17,9 +17,12 @@ interface AnswerListProps {
   // a wrong guess, shown above the list as its own tile — tapping it
   // opens the detail sheet, where "why doesn't it fit" lives
   guess?: Pokemon | null;
+  // a figure per Pokémon id, worn in the card's corner (a replayed
+  // PokeDoku cell's real pick shares)
+  badges?: Map<number, string>;
 }
 
-function AnswerList({ pokemon, title, highlightId, guess = null }: AnswerListProps) {
+function AnswerList({ pokemon, title, highlightId, guess = null, badges }: AnswerListProps) {
   // the open sheet lives in the URL (…/pokemon-eevee); any Pokémon, since
   // a sheet's evolution tiles lead to sheets of Pokémon outside this list
   const [selected, open, close] = useDetailHash(pokemonBySlug);
@@ -44,7 +47,7 @@ function AnswerList({ pokemon, title, highlightId, guess = null }: AnswerListPro
       <div className="answer-grid">
         {shown.map((entry) => (
           <div key={entry.id} className={entry.id === highlightId ? "highlight" : ""}>
-            <PokemonCard pokemon={entry} onClick={() => open(entry)} />
+            <PokemonCard pokemon={entry} onClick={() => open(entry)} badge={badges?.get(entry.id)} />
           </div>
         ))}
       </div>
