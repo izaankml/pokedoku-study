@@ -1,5 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { findByName, guessFilterFor, normalizeName, pairIsValid, searchNames } from "./matching.ts";
+import { QUIZ_CATEGORIES } from "../data/categories.ts";
+import type { Category } from "../data/categories.ts";
+import { POKEMON } from "../data/pokedex.ts";
+import {
+  findByName,
+  guessFilterFor,
+  intersectAll,
+  maxValidInEveryCell,
+  normalizeName,
+  pairIsValid,
+  searchNames,
+} from "./matching.ts";
 
 describe("normalizeName", () => {
   it("strips diacritics and punctuation", () => {
@@ -90,6 +101,32 @@ describe("pairIsValid", () => {
     expect(pairIsValid("flag-ultraBeast", "flag-legendary")).toBe(false);
     // no baby is a fossil
     expect(pairIsValid("flag-baby", "flag-fossil")).toBe(false);
+  });
+});
+
+describe("maxValidInEveryCell", () => {
+  const combinations = (items: Category[], size: number, from = 0): Category[][] =>
+    size === 0
+      ? [[]]
+      : items.slice(from).flatMap((item, offset) =>
+          combinations(items, size - 1, from + offset + 1).map((rest) => [item, ...rest]),
+        );
+
+  it("is the largest six-category intersection of the pool", () => {
+    const poolIds = ["type-water", "type-flying", "type-normal", "region-kanto", "evo-level", "stage-final", "dual", "flag-legendary"];
+    const pool = QUIZ_CATEGORIES.filter((category) => poolIds.includes(category.id));
+    expect(pool).toHaveLength(poolIds.length);
+    const expected = Math.max(
+      ...combinations(pool, 6).map((combo) => intersectAll(combo.map((category) => category.id)).length),
+    );
+    expect(expected).toBeGreaterThan(0);
+    expect(maxValidInEveryCell(pool)).toBe(expected);
+  });
+
+  it("is a small fraction of the answers over the full quiz pool", () => {
+    const bound = maxValidInEveryCell();
+    expect(bound).toBeGreaterThan(0);
+    expect(bound).toBeLessThan(POKEMON.length / 4);
   });
 });
 

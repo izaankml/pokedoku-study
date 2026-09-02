@@ -35,7 +35,8 @@ import type {
 } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
-import { POKEMON_BY_ID, pokemonBySlug, preloadSprite } from "../data/pokedex.ts";
+import { preloadSprite } from "../logic/sprites.ts";
+import { POKEMON_BY_ID, pokemonBySlug } from "../data/pokedex.ts";
 import { CATEGORY_BY_ID, getCategory, pillClassOf, typeClassOf } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
 import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";

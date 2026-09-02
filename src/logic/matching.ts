@@ -1,5 +1,5 @@
 import { POKEMON } from "../data/pokedex.ts";
-import { EXCLUSIVE_GROUPS, considersEvolutionLine, getCategory } from "../data/categories.ts";
+import { EXCLUSIVE_GROUPS, QUIZ_CATEGORIES, considersEvolutionLine, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
 
@@ -53,6 +53,56 @@ export function intersectAll(catIds: string[]): Pokemon[] {
     intersectAllCache.set(key, members);
   }
   return members;
+}
+
+// A PokeDoku board names six distinct categories, so a Pokémon valid in
+// all nine of its cells matches all six. This is the most any board can
+// have: the largest intersection of six categories from the pool. It
+// comes from the dataset, so it moves with it when new games add
+// Pokémon or PokeDoku adds categories. The pick-stats harvest uses it to
+// tell a category board from an everything-goes pool.
+const BOARD_CATEGORY_COUNT = 6;
+
+export function maxValidInEveryCell(pool: Category[] = QUIZ_CATEGORIES): number {
+  const words = Math.ceil(POKEMON.length / 32);
+  // one bit per answer; biggest categories first so a strong bound is
+  // found early and most of the search prunes away
+  const bitsets = pool
+    .map((category) => {
+      const bits = new Uint32Array(words);
+      POKEMON.forEach((pokemon, at) => {
+        if (category.predicate(pokemon)) bits[at >> 5] |= 1 << (at & 31);
+      });
+      return bits;
+    })
+    .sort((a, b) => popcount(b) - popcount(a));
+  let best = 0;
+  const search = (from: number, depth: number, current: Uint32Array): void => {
+    if (depth === BOARD_CATEGORY_COUNT) {
+      best = Math.max(best, popcount(current));
+      return;
+    }
+    for (let index = from; index <= bitsets.length - (BOARD_CATEGORY_COUNT - depth); index++) {
+      const next = current.map((word, at) => word & bitsets[index][at]);
+      // intersections only shrink: nothing at or below the best so far can win
+      if (popcount(next) <= best) continue;
+      search(index + 1, depth + 1, next);
+    }
+  };
+  for (let first = 0; first <= bitsets.length - BOARD_CATEGORY_COUNT; first++) {
+    search(first + 1, 1, bitsets[first]);
+  }
+  return best;
+}
+
+function popcount(bits: Uint32Array): number {
+  let count = 0;
+  for (let word of bits) {
+    word -= (word >>> 1) & 0x55555555;
+    word = (word & 0x33333333) + ((word >>> 2) & 0x33333333);
+    count += Math.imul((word + (word >>> 4)) & 0x0f0f0f0f, 0x01010101) >>> 24;
+  }
+  return count;
 }
 
 // Whether `candidate` can be added to the picked categories: not a

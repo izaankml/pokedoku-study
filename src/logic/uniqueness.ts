@@ -8,7 +8,7 @@
 // many would reach for this one". A cell's uniqueness is 100 minus that,
 // mirroring PokeDoku's own 0–900 board score (each of 9 cells adds
 // 100 − pick%; their untouched board reads 900).
-import pickStatsJson from "../data/pick-stats.json";
+import pickStatsJson from "../data/pick-stats.json" with { type: "json" };
 import type { PickStatsData, Pokemon } from "../data/types.ts";
 
 // JSON imports widen tuples to number[], hence the double assertion

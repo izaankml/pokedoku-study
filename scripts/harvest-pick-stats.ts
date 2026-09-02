@@ -49,6 +49,7 @@ import type {
   PickStatsData,
   PickStatsPuzzle,
 } from "../src/data/types.ts";
+import { maxValidInEveryCell } from "../src/logic/matching.ts";
 import { FirestoreArchive } from "./firestore-archive.ts";
 import { DATA_DIR } from "./pokedoku-api.ts";
 import { PokedokuSession } from "./pokedoku-session.ts";
@@ -103,11 +104,17 @@ function cellAggregates(stats: PuzzleStats): PickStatsCell[] {
 }
 
 // A category board's nine cells have different answer pools: a Pokémon
-// picked validly in all nine fits all six categories, which a handful
-// might. Puzzle 1575 has 575 Pokémon picked in every cell at a flat
-// share — an everything-goes pool (PokeDoku's unlimited mode, most
+// picked validly in all nine fits all six categories. The dataset says
+// how many can (maxValidInEveryCell — 75 as of 2026-09: dual-typed Water
+// types that learn Protect, Surf, Ice Beam and Hydro Pump), and the limit
+// is twice that: headroom for Pokémon PokeDoku has before the dataset is
+// rebuilt for a new generation, and for category definitions that differ
+// at the margins. Puzzle 1575 has 575 Pokémon picked in every cell at a
+// flat share — an everything-goes pool (PokeDoku's unlimited mode, most
 // likely), not a daily — and would swamp the prior with near-zero shares.
-const MAX_SHARED_BY_ALL_CELLS = 50;
+// A rejected board stays pending and is retried daily, so a lagging
+// dataset delays it rather than losing it.
+const MAX_SHARED_BY_ALL_CELLS = 2 * maxValidInEveryCell();
 
 // Finished daily: a day's worth of picks, on a category board
 const isFinishedDaily = (cells: PickStatsCell[]): boolean => {

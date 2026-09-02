@@ -1,6 +1,8 @@
-import pokedexJson from "./pokedex.json";
-import spritesJson from "./sprites.json";
-import pokedokuNamesJson from "./pokedoku-names.json";
+// `with { type: "json" }` lets Node load this module too (the pick-stats
+// harvest reuses the category predicates); Vite ignores the attribute
+import pokedexJson from "./pokedex.json" with { type: "json" };
+import spritesJson from "./sprites.json" with { type: "json" };
+import pokedokuNamesJson from "./pokedoku-names.json" with { type: "json" };
 import type { PokedexData, PokedokuNamesData, Pokemon, SpritesData } from "./types.ts";
 
 export type { Pokemon } from "./types.ts";
@@ -125,14 +127,4 @@ export function spriteCandidates(pokemon: Pokemon): SpriteCandidate[] {
   }
   candidateCache.set(pokemon.id, out);
   return out;
-}
-
-// Warms the browser cache so a sprite is on screen the moment it's needed.
-// Fetched the way <Sprite> fetches it, so the cached copy is reusable.
-export function preloadSprite(pokemon: Pokemon): void {
-  for (const { url, cors } of spriteCandidates(pokemon)) {
-    const img = new Image();
-    if (cors) img.crossOrigin = "anonymous";
-    img.src = url;
-  }
 }
