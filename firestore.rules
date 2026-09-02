@@ -1,0 +1,40 @@
+// Cloud Firestore security rules for the pokedoku-study project. This
+// file is the source of truth: the "Deploy Firestore rules" workflow
+// publishes it whenever it changes on main (a deploy replaces the whole
+// ruleset, so everything the console should hold must be in here).
+//
+// Local check: `npm run test:rules` runs the cases in
+// scripts/firestore-rules.test.ts against the Firestore emulator.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Google-account sync (src/logic/cloudSync.ts): one doc per device
+    // block under the signed-in user's uid. Any of the account's devices
+    // may list every block and delete another device's (re-pull, absorb,
+    // reset-all); a written block must be one JSON string field, capped
+    // so a bug can't push unbounded docs.
+    //
+    // Reads and deletes carry no request.resource, so they get their own
+    // rule: a combined `read, write` rule that mentions
+    // request.resource.data errors on reads and denies them all.
+    match /users/{uid}/blocks/{deviceId} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.json is string
+        && request.resource.data.json.size() < 900000;
+    }
+
+    // Public read-only mirror of public/archive/, written only by the
+    // harvest job's service account (scripts/firestore-archive.ts), which
+    // bypasses rules.
+    match /pickArchive/{puzzleId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

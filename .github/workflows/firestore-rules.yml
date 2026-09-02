@@ -1,0 +1,44 @@
+name: Deploy Firestore rules
+
+# firestore.rules is the source of truth for the project's Cloud
+# Firestore security rules. Whenever it changes on main (or on demand)
+# this checks it against the emulator (scripts/firestore-rules.test.ts)
+# and publishes it, replacing whatever the console holds. Auth is the
+# harvest job's service-account key; besides its Firestore access that
+# account needs the "Firebase Rules Admin" role (Google Cloud console →
+# IAM) or the deploy step fails with a permission error.
+on:
+  push:
+    branches: [main]
+    paths:
+      - firestore.rules
+      - firebase.json
+      - scripts/firestore-rules.test.ts
+      - .github/workflows/firestore-rules.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firestore-rules
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # The runner image ships a JDK, which the Firestore emulator needs.
+      - run: npm run test:rules
+      - name: Write the service-account key
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+      - run: npx --yes firebase-tools@15 deploy --only firestore:rules --project pokedoku-study --non-interactive --force
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json

@@ -182,23 +182,21 @@ Operation mapping (replaces `findGistId` + file read/write):
 
 ### Security rules
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{uid}/blocks/{deviceId} {
-      allow read, write: if request.auth != null
-        && request.auth.uid == uid
-        && (request.method == 'delete'
-            || (request.resource.data.json is string
-                && request.resource.data.json.size() < 900000));
-    }
-  }
-}
-```
+The rules live in `firestore.rules` at the repo root: deployed by
+`.github/workflows/firestore-rules.yml` whenever the file changes on
+main, checked by `npm run test:rules` against the emulator
+(`scripts/firestore-rules.test.ts`). Shape: `users/{uid}/blocks/{deviceId}`
+is readable and deletable by its owner, and writable by them only with
+a `json` string under 900000 chars (the size guard keeps a bug from
+writing unbounded docs); `pickArchive/{puzzleId}` is public read-only;
+everything else is denied by default.
 
-Everything else is denied by default. The size guard keeps a bug from
-writing unbounded docs.
+(The first version of this section folded read and write into one rule
+that mentioned `request.resource.data`. Reads carry no
+`request.resource`, so evaluating it errored and denied every read —
+the "Missing or insufficient permissions" that stopped the first live
+migration on 2026-09-02. Read/delete and create/update are separate
+rules now.)
 
 ### New/changed modules
 
@@ -271,7 +269,9 @@ overlap.
    support email; Firebase provisions the OAuth client itself).
 3. Firestore → create database, production mode, region close to home
    (e.g. `europe-west` or wherever's nearest).
-4. Paste the security rules above (Rules tab).
+4. Deploy `firestore.rules`: push it to main (the rules workflow, once
+   step 7's service account exists) or, after `firebase login`,
+   `npx firebase-tools deploy --only firestore:rules`.
 5. Authentication → Settings → Authorized domains → add
    `izaankml.github.io` (`localhost` is pre-authorized for dev).
 6. Project settings → add a Web app → copy the config object into
@@ -280,10 +280,10 @@ overlap.
    `pickArchive/{puzzleId}`): Project settings → Service accounts →
    Generate new private key, paste the JSON as the GitHub Actions
    secret `FIREBASE_SERVICE_ACCOUNT` (repo → Settings → Secrets →
-   Actions). Add to the security rules:
-   `match /pickArchive/{puzzleId} { allow read: if true; allow write: if false; }`
-   (the service account bypasses rules; clients get read-only). Then
-   seed the existing files once:
+   Actions). The `pickArchive` block is already in `firestore.rules`
+   (the service account bypasses rules; clients get read-only); give
+   the account the **Firebase Rules Admin** IAM role as well so the
+   rules workflow can deploy. Then seed the existing files once:
    `FIREBASE_SERVICE_ACCOUNT="$(cat key.json)" npm run harvest -- --mirror-all`.
 
 ### Implementation order (each step leaves the app shippable)

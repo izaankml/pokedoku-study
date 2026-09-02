@@ -85,7 +85,9 @@ schedules take the most recent answer. Linking another device is just
 signing in there. Open tabs re-pull other devices' progress when they
 regain focus and every few minutes. Every browser or home-screen app that
 syncs keeps its own block; the Stats tab lists them and can merge a stale
-duplicate into the current device.
+duplicate into the current device. The Firestore security rules behind
+"readable only by you" are versioned in `firestore.rules` and published
+by a workflow whenever they change.
 
 The earlier sync through a private GitHub Gist (a fine-grained personal
 access token with only the **Gists** permission, passed to other devices

@@ -3,3 +3,6 @@ dist
 .DS_Store
 *.local
 .cache
+# Firebase emulator (npm run test:rules)
+*-debug.log
+.firebase
