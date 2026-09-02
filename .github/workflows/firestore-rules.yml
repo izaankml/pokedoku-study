@@ -4,12 +4,12 @@ name: Deploy Firestore rules
 # Firestore security rules. Whenever it changes on main (or on demand)
 # this checks it against the emulator (scripts/firestore-rules.test.ts)
 # and publishes it, replacing whatever the console holds. Auth is the
-# harvest job's service-account key (the Firebase Admin SDK account,
-# whose default role already covers writing rules). That account also
-# needs the read-only "Service Usage Viewer" IAM role, because
-# firebase-tools checks that the Firestore API is enabled before
-# deploying; without it the deploy step fails with a 403 from
-# serviceusage.googleapis.com.
+# harvest job's service-account key (the Firebase Admin SDK account).
+# On top of its default role that account needs two more IAM roles, or
+# the deploy step fails with a 403: "Service Usage Viewer" (firebase-tools
+# first checks that the Firestore API is enabled) and "Firebase Rules
+# Admin" (the pre-deploy compile check calls the rules test endpoint,
+# which the Admin SDK role's rules permissions don't include).
 on:
   push:
     branches: [main]
