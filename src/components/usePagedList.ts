@@ -9,16 +9,21 @@ export function usePagedList<T>(
   items: readonly T[],
   page = 60,
 ): { shown: readonly T[]; done: boolean; sentinelRef: MutableRefObject<HTMLDivElement | null> } {
-  const [limit, setLimit] = useState(page);
+  // The limit is remembered with the list it belongs to, so a new list
+  // starts over on the same render instead of an effect later.
+  const [paged, setPaged] = useState({ items, page, limit: page });
+  const limit = paged.items === items && paged.page === page ? paged.limit : page;
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => setLimit(page), [items, page]);
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel || limit >= items.length) return undefined;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          setLimit((current) => Math.min(current + page, items.length));
+          setPaged((current) => {
+            const shownSoFar = current.items === items && current.page === page ? current.limit : page;
+            return { items, page, limit: Math.min(shownSoFar + page, items.length) };
+          });
         }
       },
       { rootMargin: "600px 0px" },

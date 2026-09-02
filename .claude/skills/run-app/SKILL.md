@@ -53,8 +53,9 @@ page rendered.
 ## 3. Gotchas
 
 - Fresh profile = empty stats: every row shows `0` / `—`. Expected.
-- The Cross-device sync panel on Stats shows a GitHub token box; leave
-  it — nothing needs auth to render.
+- The Cross-device sync panel on Stats shows a "Sign In with Google"
+  button (the GitHub-token form is folded under "Legacy"); leave it —
+  nothing needs auth to render.
 - Fonts are bundled (`@fontsource-variable/nunito`); no network needed
   beyond localhost.
 - If Chrome isn't at

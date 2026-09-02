@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStats } from "../StatsContext.ts";
 import { pickFlashcard } from "../logic/picker.ts";
 import {
@@ -38,7 +38,7 @@ import { formatInterval, intervalFor } from "../logic/schedule.ts";
 import { POKEMON_BY_ID, pokemonBySlug, preloadSprite } from "../data/pokedex.ts";
 import { CATEGORY_BY_ID, getCategory, pillClassOf, typeClassOf } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
-import CategoryPill from "./CategoryPill.tsx";
+import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import PokemonName from "./PokemonName.tsx";
@@ -155,6 +155,7 @@ function FilterSheet({ deckId, filter, onToggle, onClear, onDone }: FilterSheetP
                       aria-pressed={on}
                       onClick={() => onToggle(facet, category.id)}
                     >
+                      {on && category.group === "type" ? <TypeIcon type={category.id.slice(5)} /> : null}
                       {category.short.replace(/^Evolved by /, "")}
                     </button>
                   );
@@ -213,7 +214,8 @@ function Flashcards() {
   const [dashes, setDashes] = useState<DashResult[]>(session.dashes);
   // the auto-advance sweep on the Next card bar: false = width 0, true = 100%
   const [autoFill, setAutoFill] = useState(false);
-  const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoFrameRef = useRef<number | null>(null);
 
   const pokemon = pokemonOf(card);
   const parts = comboParts(card.deckId);
@@ -233,7 +235,8 @@ function Flashcards() {
     !gaveUp &&
     (parts ? Boolean(comboOk && comboOk.a && comboOk.b) : isRightPick(activeDeck, [...pickedIds], activeAnswers));
   const filterN = filterCount(filter);
-  const due = dueCardCount(merged);
+  // walks every deck's pool, so only when the stats change
+  const due = useMemo(() => dueCardCount(merged), [merged]);
 
   // The open sheet lives in the URL (#cards/region/pokemon-eevee) — only
   // once the card is answered, so nothing gives the answer away
@@ -275,8 +278,10 @@ function Flashcards() {
   }
 
   const cancelAuto = useCallback(() => {
-    if (autoTimer.current !== null) clearTimeout(autoTimer.current);
-    autoTimer.current = null;
+    if (autoTimerRef.current !== null) clearTimeout(autoTimerRef.current);
+    autoTimerRef.current = null;
+    if (autoFrameRef.current !== null) cancelAnimationFrame(autoFrameRef.current);
+    autoFrameRef.current = null;
     setAutoFill(false);
   }, []);
   // leaving the tab cancels the pending advance
@@ -285,8 +290,13 @@ function Flashcards() {
   function startAuto(): void {
     cancelAuto();
     // two frames so the bar mounts at width 0 before the sweep begins
-    requestAnimationFrame(() => requestAnimationFrame(() => setAutoFill(true)));
-    autoTimer.current = setTimeout(() => next(), AUTO_NEXT_MS);
+    autoFrameRef.current = requestAnimationFrame(() => {
+      autoFrameRef.current = requestAnimationFrame(() => {
+        autoFrameRef.current = null;
+        setAutoFill(true);
+      });
+    });
+    autoTimerRef.current = setTimeout(() => next(), AUTO_NEXT_MS);
   }
 
   // Line up the following card now and warm its sprite, so "Next" swaps
@@ -299,7 +309,7 @@ function Flashcards() {
       matchesFocus(pokemonOf(candidate), filter);
     if (!fits(session.next)) session.next = freshCard(deckId, [card.pokemonId]);
     preloadSprite(pokemonOf(session.next));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- freshCard reads the live stats; only a new card, deck or filter should line up again
   }, [card, deckId, filter]);
 
   // The deck lives in the URL (#cards/region) — replaced, not pushed, so
@@ -495,12 +505,12 @@ function Flashcards() {
   }
 
   // Pad narrowing: a filtered single-answer facet shows only the selected
-  // options — the pool is filtered by the same facet, so the correct
-  // answer is always among them.
+  // options. The pool is filtered by the same facet, so the right answer
+  // is normally among them — but a filter too tight for the deck makes
+  // the picker drop it, and then the whole pad comes back.
   const facetSel = activeDeck.multi ? [] : (filter[activeDeck.id as FocusFacet] ?? []);
-  const shownOptions = facetSel.length
-    ? activeDeck.options.filter((option) => facetSel.includes(option.id))
-    : activeDeck.options;
+  const narrowed = facetSel.length > 0 && activeAnswers.some((id) => facetSel.includes(id));
+  const shownOptions = narrowed ? activeDeck.options.filter((option) => facetSel.includes(option.id)) : activeDeck.options;
 
   const optionClass = (option: DeckOption): string => {
     // a type option is type-coloured wherever it appears — CategoryPill's rule
@@ -567,7 +577,18 @@ function Flashcards() {
         {/* once answered, the name opens the detail sheet (evolution line
             and all); before that it stays inert so nothing gives the
             answer away */}
-        <button className="stage-name" disabled={!answered} onClick={answered ? () => openDetail(pokemon) : undefined}>
+        <button
+          className="stage-name"
+          disabled={!answered}
+          onClick={
+            answered
+              ? () => {
+                  cancelAuto(); // the card must not advance underneath the sheet
+                  openDetail(pokemon);
+                }
+              : undefined
+          }
+        >
           <PokemonName name={pokemon.displayName} />
           {answered ? <span className="stage-chevron">›</span> : null}
         </button>

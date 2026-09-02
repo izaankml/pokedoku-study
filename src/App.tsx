@@ -72,17 +72,17 @@ function App() {
   });
   const [remoteBlocks, setRemoteBlocks] = useState<StatsBlock[]>([]);
   // A QR handoff link (#connect=…) stores its token before anything else.
-  const [token, setTokenState] = useState(() => gistSync.consumeHandoffFromUrl() || gistSync.getToken());
+  const [token, setToken] = useState(() => gistSync.consumeHandoffFromUrl() || gistSync.getToken());
   const [syncState, setSyncState] = useState<SyncState>(IDLE_SYNC);
 
   // The Google account, once signed in / restored. The ref mirrors the
   // state so callbacks with empty deps (syncNow) see it immediately —
   // including in the window between sign-in and the re-render.
-  const [account, setAccountState] = useState<CloudAccount | null>(null);
+  const [account, setAccount] = useState<CloudAccount | null>(null);
   const accountRef = useRef<CloudAccount | null>(null);
   const applyAccount = useCallback((next: CloudAccount | null) => {
     accountRef.current = next;
-    setAccountState(next);
+    setAccount(next);
   }, []);
   // True while a stored Google session is being restored at startup —
   // sync holds off (rather than falling back to a leftover gist token)
@@ -230,7 +230,7 @@ function App() {
   const saveToken = useCallback(
     (value: string) => {
       gistSync.setToken(value);
-      setTokenState(value);
+      setToken(value);
       // While Google drives the sync, the PAT is just legacy cleanup —
       // storing/forgetting it must not disturb the live sync state.
       if (accountRef.current) return;

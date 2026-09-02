@@ -1,13 +1,14 @@
 import { useLayoutEffect } from "react";
-import type { DependencyList, RefObject } from "react";
+import type { RefObject } from "react";
 
 // The section's tiles (tree and forms) made one size — every tile as tall
 // as the tallest — and its rows zoomed by one factor (tiles, sprites and
 // text together) so the widest exactly fits the sheet: down as far as it
 // takes (nothing scrolls sideways; the sheet may scroll down instead), up
-// to MAX_ZOOM when there's room to spare.
+// to MAX_ZOOM when there's room to spare. Fits again whenever `refitKey`
+// changes (the sheet's Pokémon).
 const MAX_ZOOM = 1.25;
-export function useFitRows(sectionRef: RefObject<HTMLElement | null>, deps: DependencyList): void {
+export function useFitRows(sectionRef: RefObject<HTMLElement | null>, refitKey: unknown): void {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     if (!section) return undefined;
@@ -46,6 +47,5 @@ export function useFitRows(sectionRef: RefObject<HTMLElement | null>, deps: Depe
     const observer = new ResizeObserver(fit);
     observer.observe(section);
     return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [sectionRef, refitKey]);
 }

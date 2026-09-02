@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { CATEGORIES, getCategory } from "../data/categories.ts";
 import { POKEMON } from "../data/pokedex.ts";
 import { pairIsValid, pairKey } from "./matching.ts";
-import { drillPairFor, pickDrillPair, pickFlashcardPokemon } from "./picker.ts";
+import { drillPairFor, pickDrillPair, pickFlashcard } from "./picker.ts";
 import { mergeBlocks } from "./stats.ts";
 
 const T0 = 1_700_000_000_000;
@@ -12,7 +12,7 @@ const DAY = 86400e3;
 const [p1, p2] = POKEMON.filter((p) => p.gen === 1).slice(0, 2);
 const excludeAllBut = new Set(POKEMON.filter((p) => p !== p1 && p !== p2).map((p) => p.id));
 
-describe("pickFlashcardPokemon", () => {
+describe("pickFlashcard (Region deck)", () => {
   it("strongly prefers a due card over one seen moments ago", () => {
     const merged = mergeBlocks([]);
     merged.flashcards[String(p1.id)] = { a: 1, c: 1, s: 1, t: T0 }; // just seen
@@ -20,7 +20,7 @@ describe("pickFlashcardPokemon", () => {
     const seen = new Set();
     for (let i = 0; i < 20; i++) {
       const roll = (i + 0.5) / 20;
-      seen.add(pickFlashcardPokemon(merged, { exclude: excludeAllBut, random: () => roll, now: T0 }));
+      seen.add(pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => roll, now: T0 }).pokemon);
     }
     // p1 only wins the bottom ~5% of rolls.
     expect(seen.has(p2)).toBe(true);
@@ -31,8 +31,8 @@ describe("pickFlashcardPokemon", () => {
     const merged = mergeBlocks([]);
     merged.flashcards[String(p1.id)] = { a: 5, c: 5, s: 2, t: T0 - 30 * DAY }; // 10x overdue
     merged.flashcards[String(p2.id)] = { a: 5, c: 5, s: 2, t: T0 }; // just seen
-    const pick = pickFlashcardPokemon(merged, { exclude: excludeAllBut, random: () => 0.9, now: T0 });
-    expect(pick).toBe(p1);
+    const pick = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => 0.9, now: T0 });
+    expect(pick.pokemon).toBe(p1);
   });
 });
 

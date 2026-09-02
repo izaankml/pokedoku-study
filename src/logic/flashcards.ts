@@ -251,9 +251,9 @@ export function focusedDeckPool(deckId: string, filter: CardFilter): Pokemon[] {
 }
 
 // The filter sheet's live count: everyone the current deck could ask
-// under the filter ("all": anyone matching the filter).
+// under the filter ("all": anyone some deck could ask).
 export function focusPoolSize(deckId: string, filter: CardFilter): number {
-  if (deckId === "all") return POKEMON.filter((pokemon) => matchesFocus(pokemon, filter)).length;
+  if (deckId === "all") return new Set(DECKS.flatMap((deck) => focusedDeckPool(deck.id, filter))).size;
   return focusedDeckPool(deckId, filter).length;
 }
 
@@ -381,6 +381,8 @@ function isStoredSession(value: unknown): value is StoredSession {
 // mirrors it to localStorage.
 const SESSION_KEY = "pokedoku-study:cards:v2";
 const stored = loadJson(SESSION_KEY);
+// the redesign's predecessors, left behind in every existing browser
+for (const staleKey of ["pokedoku-study:cards:v1", "pokedoku-study:cards:filters:v1"]) saveJson(staleKey, null);
 export const session: CardSession = {
   deckId: "all",
   card: null,

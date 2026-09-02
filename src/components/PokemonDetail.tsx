@@ -61,7 +61,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
   useModalShell(onClose);
 
   const evoRef = useRef<HTMLElement | null>(null);
-  useFitRows(evoRef, [pokemon]); // the tree and forms sized together to fit the sheet
+  useFitRows(evoRef, pokemon); // the tree and forms sized together to fit the sheet
 
   // A fade with a chevron pinned to the sheet's bottom edge while there's
   // more below to scroll to

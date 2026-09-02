@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getCategory } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
@@ -28,8 +28,12 @@ function GuessModal({ categories, message, wrongGuess = null, onGuess, onReveal,
   // the detail sheet stacked over this popup (from the wrong-guess tile);
   // while it is up, Escape and the backdrop belong to it, not the popup
   const [inspect, setInspect] = useState<Pokemon | null>(null);
+  // mirrored into a ref so `close` keeps its identity: a new callback
+  // would re-run the shell's effect and unfreeze/refreeze the page
   const inspectRef = useRef(inspect);
-  inspectRef.current = inspect;
+  useEffect(() => {
+    inspectRef.current = inspect;
+  }, [inspect]);
   const close = useCallback(() => {
     if (inspectRef.current) return;
     onClose();

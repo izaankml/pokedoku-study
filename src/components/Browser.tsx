@@ -41,11 +41,10 @@ function matches(pokemon: Pokemon, normalizedQuery: string): boolean {
 function Browser() {
   const [picks, setPicks] = useState<string[]>(picksFromHash);
   const [query, setQuery] = useState("");
-  const chosen = picks.filter(Boolean);
+  const chosen = useMemo(() => picks.filter(Boolean), [picks]);
   useEffect(() => {
     writeHash("browse", chosen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [picks]);
+  }, [chosen]);
 
   // A pill clicked elsewhere jumps here through the hash (jumpToBrowse
   // dispatches a synthetic hashchange); Back/forward land here too. An
@@ -73,10 +72,7 @@ function Browser() {
     });
   };
 
-  const pokemon = useMemo(
-    () => intersectAll(chosen),
-    [picks], // eslint-disable-line react-hooks/exhaustive-deps
-  );
+  const pokemon = useMemo(() => intersectAll(chosen), [chosen]);
   const normalizedQuery = normalizeName(query);
   const shown = normalizedQuery ? pokemon.filter((entry) => matches(entry, normalizedQuery)) : pokemon;
   const title = chosen.length ? chosen.map((id) => getCategory(id).label).join(" × ") : "All Pokémon";

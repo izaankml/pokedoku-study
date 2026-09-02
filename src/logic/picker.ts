@@ -129,11 +129,6 @@ export function pickFlashcard(
   );
 }
 
-// Region deck only — kept for tests and callers that predate decks.
-export function pickFlashcardPokemon(merged: MergedStats, options: Omit<PickFlashcardOptions, "deckId"> = {}): Pokemon {
-  return pickFlashcard(merged, { ...options, deckId: "region" }).pokemon;
-}
-
 export interface DrillPairForOptions {
   random?: RandomSource;
   now?: number;

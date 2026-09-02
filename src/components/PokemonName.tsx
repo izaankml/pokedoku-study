@@ -11,6 +11,7 @@ function PokemonName({ name }: PokemonNameProps) {
     <>
       {parts.map((part, index) =>
         part === "♀" || part === "♂" ? (
+          // eslint-disable-next-line @eslint-react/no-array-index-key -- fixed segments of one string, never reordered
           <span key={index} className="gender-mark">
             {part}
           </span>

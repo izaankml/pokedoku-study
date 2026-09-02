@@ -10,7 +10,7 @@ import type { MergedStats, StatEntry } from "../logic/stats.ts";
 import { allValidPairs, pairKey } from "../logic/matching.ts";
 import { scheduleSummary } from "../logic/schedule.ts";
 import type { ScheduleStatus, ScheduleSummary } from "../logic/schedule.ts";
-import { DECKS, allCardRefs, dueCardCount, resetSessionForDeck } from "../logic/flashcards.ts";
+import { DECKS, allCardKeys, allCardRefs, dueCardCount, resetSessionForDeck } from "../logic/flashcards.ts";
 import type { CardRef } from "../logic/flashcards.ts";
 import { drillPairFor } from "../logic/picker.ts";
 import { pokemonBySlug } from "../data/pokedex.ts";
@@ -30,15 +30,13 @@ const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
   ["new", "New"],
 ];
 
-// The categories a deck exists for — the Study next pool, and which
-// coverage squares get a Cards button.
-const DECK_FOR_GROUP: Partial<Record<CategoryGroup, string>> = {
-  region: "region",
-  type: "type",
-  special: "special",
-  stage: "stage",
-};
-const DECKABLE_CATEGORIES: Category[] = DECKS.flatMap((deck) => deck.options.map((option) => getCategory(option.id)));
+// The deck whose pad offers a category (Not Fully Evolved, Mega and Gmax
+// have none) — the Study next pool, and which coverage squares get a
+// Cards button.
+const DECK_FOR_CATEGORY = new Map<string, string>(
+  DECKS.flatMap((deck) => deck.options.map((option) => [option.id, deck.id] as const)),
+);
+const DECKABLE_CATEGORIES: Category[] = [...DECK_FOR_CATEGORY.keys()].map(getCategory);
 
 // The coverage map's rows, in display order, with their terse labels.
 const COVERAGE_GROUPS: ReadonlyArray<readonly [CategoryGroup, string]> = [
@@ -144,7 +142,7 @@ interface ReviewPanelProps {
 }
 
 function ReviewPanel({ merged, now }: ReviewPanelProps) {
-  const flashcardKeys = useMemo(() => allCardRefs().map((ref) => ref.key), []);
+  const flashcardKeys = useMemo(() => allCardKeys(), []);
   const cards = useMemo(() => scheduleSummary(merged.flashcards, flashcardKeys, now), [merged, flashcardKeys, now]);
   const pairKeys = useMemo(() => allValidPairs(QUIZ_CATEGORIES).map(([a, b]) => pairKey(a.id, b.id)), []);
   const pairs = useMemo(() => scheduleSummary(merged.pairs, pairKeys, now), [merged, pairKeys, now]);
@@ -173,7 +171,7 @@ function ReviewPanel({ merged, now }: ReviewPanelProps) {
 
 // Re-render every `ms` so relative times stay fresh.
 function useNow(ms: number): number {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), ms);
     return () => clearInterval(id);
@@ -599,7 +597,7 @@ interface CategoryRowProps {
 }
 
 function CategoryRow({ category, entry, onDrill }: CategoryRowProps) {
-  const deckId = DECK_FOR_GROUP[category.group];
+  const deckId = DECK_FOR_CATEGORY.get(category.id);
   return (
     <div className="study-row">
       <CategoryPill cat={category} useShort />
@@ -631,6 +629,15 @@ function StatsView() {
   const [srsOpen, setSrsOpen] = useState(false);
   const [syncOpen, setSyncOpen] = useState(false);
 
+  // Answers given: every attempt is a drill pair or a flashcard (the
+  // per-category counts in merged.attempts bump once per category asked,
+  // so a dual-type card or a drill counts twice there).
+  const answered = useMemo(() => {
+    let count = 0;
+    for (const entry of Object.values(merged.pairs)) count += entry.a;
+    for (const entry of Object.values(merged.flashcards)) count += entry.a;
+    return count;
+  }, [merged]);
   const overallPct = useMemo(() => {
     let correct = 0;
     for (const entry of Object.values(merged.categories)) correct += entry.c;
@@ -670,7 +677,7 @@ function StatsView() {
       <div className="stats-head">
         <h2>Progress</h2>
         <span className="stats-total">
-          {merged.attempts} answered · {overallPct}% overall
+          {answered} answered · {overallPct}% overall
         </span>
       </div>
 

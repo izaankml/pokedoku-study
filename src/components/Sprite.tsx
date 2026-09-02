@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { SVGProps, SyntheticEvent } from "react";
 import { spriteCandidates } from "../data/pokedex.ts";
 import type { SpriteBox } from "../data/pokedex.ts";
@@ -106,7 +106,10 @@ interface SpriteProps {
 
 // Falls back to the base species' sprite, then the silhouette.
 function Sprite({ pokemon, className = "sprite", eager = false, label }: SpriteProps) {
-  const [attempt, setAttempt] = useState(0);
+  // how many candidates have failed to load — for this Pokémon, so a new
+  // one starts over on the same render rather than an effect later
+  const [failed, setFailed] = useState({ id: pokemon.id, attempt: 0 });
+  const attempt = failed.id === pokemon.id ? failed.attempt : 0;
   const candidates = spriteCandidates(pokemon);
   const candidate = candidates[Math.min(attempt, candidates.length - 1)];
   const src = candidate.url;
@@ -117,7 +120,6 @@ function Sprite({ pokemon, className = "sprite", eager = false, label }: SpriteP
   // the transform; "" for as-drawn, null until placed
   const [fit, setFit] = useState<string | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
-  useEffect(() => setAttempt(0), [pokemon.id]);
   // Placed before paint, so a sprite never shows un-normalised for a frame
   useLayoutEffect(() => {
     if (box === undefined || !imgRef.current) setFit(null);
@@ -149,7 +151,9 @@ function Sprite({ pokemon, className = "sprite", eager = false, label }: SpriteP
       crossOrigin={candidate.cors ? "anonymous" : undefined}
       style={fit === null ? { visibility: "hidden" } : fit ? { transform: fit } : undefined}
       onLoad={onLoad}
-      onError={() => setAttempt((current) => current + 1)}
+      onError={() =>
+        setFailed((current) => ({ id: pokemon.id, attempt: (current.id === pokemon.id ? current.attempt : 0) + 1 }))
+      }
     />
   );
 }

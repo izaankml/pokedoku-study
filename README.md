@@ -74,16 +74,23 @@ Midday", "Toxtricity Amped", "Meowstic Male"); the conventional names
 
 ## Cross-device sync
 
-Progress lives in `localStorage`. To share it between devices, the Stats
-tab can store progress in a private GitHub Gist: create a fine-grained
-personal access token with only the **Gists** read/write permission,
-paste it once, then use **Link another device** to move it to your other
-devices by QR code (the code encodes the app URL with the token in the
-`#fragment`, which never reaches a server). Each device writes only its
-own stat block, so devices never overwrite each other; counts are summed
-across blocks and review schedules take the most recent answer. Open
-tabs re-pull other devices' progress when they regain focus and every
-few minutes. Every browser or home-screen app that syncs keeps its own block; the Stats tab lists them and can merge a stale duplicate into the current device.
+Progress lives in `localStorage`. To share it between devices, **Sign in
+with Google** on the Stats tab: the app keeps one stat block per device
+in your own Google account (Firebase Auth + Cloud Firestore, one document
+per device under your user id, readable only by you), so devices never
+overwrite each other; counts are summed across blocks and review
+schedules take the most recent answer. Linking another device is just
+signing in there. Open tabs re-pull other devices' progress when they
+regain focus and every few minutes. Every browser or home-screen app that
+syncs keeps its own block; the Stats tab lists them and can merge a stale
+duplicate into the current device.
+
+The earlier sync through a private GitHub Gist (a fine-grained personal
+access token with only the **Gists** permission, passed to other devices
+by QR code) still works for devices that already use it, folded under
+"Legacy" on the Stats tab. Signing in with Google on such a device
+imports the gist's history into the Google account and offers to forget
+the token; the gist itself is left for you to delete.
 
 Answered flashcards and drill pairs are spaced: correct answers push the
 next review out (10 min → 1 → 3 → 7 → 16 → 35 → 80 → 180 days) and a
