@@ -108,10 +108,11 @@ export type SpritesData = Record<string, SpriteEntry>;
 // it was picked in and the sum of its pick shares there (share = its
 // picks / all picks in that cell), so shareSum / cells is "when this
 // Pokémon is a live answer, what share of players reach for it".
-// `counted` is harvester state: inclusive puzzle-id ranges already folded
-// into the prior. The full per-puzzle data — the day's category spec
-// (PokeDoku's own JSON, kept verbatim) and each cell's pick counts —
-// lives outside the bundle, as one PickStatsPuzzle per file in
+// `counted` and `pending` are harvester state: inclusive puzzle-id ranges
+// already folded into the prior, and the board(s) seen while current that
+// will be archived once finished. The full per-puzzle data — the day's
+// category spec (PokeDoku's own JSON, kept verbatim) and each cell's pick
+// counts — lives outside the bundle, as one PickStatsPuzzle per file in
 // public/archive/<id>.json (public/archive/index.json lists them), so
 // the archive can grow forever without growing the app.
 export type PickPriorEntry = [cells: number, shareSum: number];
@@ -125,10 +126,19 @@ export interface PickStatsCell {
 export interface PickStatsPuzzle {
   id: number;
   // date and spec are only readable while a puzzle is current; a puzzle
-  // first archived after its day lacks them
+  // backfilled after its day lacks them
   date?: string;
   spec?: Record<string, unknown>;
   cells: PickStatsCell[];
+}
+
+// A board noted while it was current — puzzle ids are not in date order,
+// so this is the only way to know which puzzle just finished. Archived
+// with its final counts on the first harvest after it rotates out.
+export interface PendingPuzzle {
+  id: number;
+  date: string;
+  spec: Record<string, unknown>;
 }
 
 // public/archive/index.json: every archived puzzle, newest first
@@ -141,6 +151,7 @@ export interface PickStatsData {
     cellsCounted: number;
   };
   counted: [from: number, to: number][];
+  pending: PendingPuzzle[];
   prior: Record<string, PickPriorEntry>;
 }
 

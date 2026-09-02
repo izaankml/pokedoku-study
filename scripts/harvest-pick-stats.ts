@@ -7,18 +7,30 @@
 //
 // Two outputs:
 //   - src/data/pick-stats.json — the bounded per-Pokémon prior the app
-//     bundles (one small entry per Pokémon, never grows past the dex)
+//     bundles (one small entry per Pokémon, never grows past the dex),
+//     plus the harvest's own bookkeeping: which ids are counted, which
+//     boards are pending
 //   - public/archive/<id>.json — the permanent archive: one file per
-//     puzzle with its category spec (readable only while current) and
-//     full per-cell pick counts, indexed by public/archive/index.json.
-//     Deployed with the site but fetched lazily, so the app bundle
-//     stays fixed while the archive grows.
+//     finished puzzle with its category spec and full per-cell pick
+//     counts, indexed by public/archive/index.json. Deployed with the
+//     site but fetched lazily, so the app bundle stays fixed while the
+//     archive grows.
 //
-//   node scripts/harvest-pick-stats.ts                  # daily: finished
-//     puzzles since the last run are folded into the prior and archived
-//     with their final counts; today's spec + live counts are archived
+// PokeDoku schedules each day's puzzle from a pool of pre-generated ones,
+// so ids are not in date order (1528 ran on 2026-08-28, 1614 the next
+// day, 1507 three days after that) and nothing about an id says when, or
+// whether, it was played. The only way to know which puzzle just finished
+// is to have seen it while it was current. So the daily run notes the
+// current board — id, date and spec, readable only while current — as
+// pending, and on the first run after it has rotated out (new puzzles at
+// midnight US Eastern) archives it with its final counts and folds it
+// into the prior. A board is never archived while it is still being
+// played: its counts keep moving all day.
+//
+//   node scripts/harvest-pick-stats.ts                  # daily
 //   node scripts/harvest-pick-stats.ts --backfill 1 1563  # one-off: fold
-//     a range of past puzzles into the prior and archive
+//     a range of past ids into the prior and archive them (without spec
+//     or date, which were only readable while each was current)
 //   node scripts/harvest-pick-stats.ts --mirror-all     # push every
 //     archive file to Firestore (first-time seed, or repair after
 //     mirror failures); needs FIREBASE_SERVICE_ACCOUNT
@@ -26,26 +38,28 @@
 // Archives touched by a run are also mirrored to Firestore
 // (firestore-archive.ts) when FIREBASE_SERVICE_ACCOUNT is set; mirror
 // failures only warn — the files are canonical and --mirror-all repairs.
-//
-// The current (still-running) puzzle is never counted into the prior;
-// its numbers keep moving all day. It is re-fetched as finished on the
-// next daily run.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { PickArchiveIndex, PickStatsCell, PickStatsData, PickStatsPuzzle } from "../src/data/types.ts";
+import type {
+  PendingPuzzle,
+  PickArchiveIndex,
+  PickStatsCell,
+  PickStatsData,
+  PickStatsPuzzle,
+} from "../src/data/types.ts";
 import { FirestoreArchive } from "./firestore-archive.ts";
 import { DATA_DIR } from "./pokedoku-api.ts";
 import { PokedokuSession } from "./pokedoku-session.ts";
 
 const STATS_PATH = join(DATA_DIR, "pick-stats.json");
 const ARCHIVE_DIR = join(DATA_DIR, "..", "..", "public", "archive");
-// polite gap between backfill requests; the daily run makes only a handful
+// polite gap between requests; the daily run makes only a handful
 const THROTTLE_MS = 150;
-// how many finished puzzles a daily run looks back over (covers missed days)
-const DAILY_LOOKBACK = 7;
-// recent finished puzzles get their archive refreshed to final counts even
-// when already counted (a puzzle archived live keeps growing for a day)
-const ARCHIVE_REFRESH = 5;
+// A finished daily has tens of thousands of valid picks per cell; a stray
+// play of an id that was never scheduled has a handful. Cells under the
+// floor are neither counted nor archived. The floor is on picks, not on
+// distinct Pokémon: a cell with two valid answers legitimately shows two.
+const MIN_CELL_PICKS = 1000;
 
 interface AnswerAggregate {
   aggCount: number;
@@ -64,13 +78,17 @@ interface CurrentPuzzle extends Record<string, unknown> {
 
 function loadStats(): PickStatsData {
   try {
-    const parsed = JSON.parse(readFileSync(STATS_PATH, "utf8")) as PickStatsData & { recent?: unknown };
+    const parsed = JSON.parse(readFileSync(STATS_PATH, "utf8")) as Omit<PickStatsData, "pending"> & {
+      recent?: unknown;
+      pending?: PendingPuzzle[];
+    };
     delete parsed.recent; // pre-archive files carried the last boards inline
-    return parsed;
+    return { ...parsed, pending: parsed.pending ?? [] };
   } catch {
     return {
       meta: { generatedAt: "", puzzlesCounted: 0, cellsCounted: 0 },
       counted: [],
+      pending: [],
       prior: {},
     };
   }
@@ -103,20 +121,13 @@ function cellAggregates(stats: PuzzleStats): PickStatsCell[] {
   });
 }
 
-// Stats age out: after ~5 days each cell collapses to a single aggregate
-// (one Pokémon at 100% share), which would poison the prior's mean
-// shares and is worthless as an archive. A real finished daily has
-// dozens-to-hundreds of distinct picks per cell, so a sparse cell is
-// aged data — never fold it in, never archive it.
-const MIN_DISTINCT_PICKS = 5;
-
-const hasFullCell = (cells: PickStatsCell[]): boolean =>
-  cells.some((cell) => cell.picks.length >= MIN_DISTINCT_PICKS);
+const hasFinishedCell = (cells: PickStatsCell[]): boolean =>
+  cells.some((cell) => cell.total >= MIN_CELL_PICKS);
 
 function ingest(data: PickStatsData, cells: PickStatsCell[]): void {
   let cellsIngested = 0;
   for (const cell of cells) {
-    if (cell.total === 0 || cell.picks.length < MIN_DISTINCT_PICKS) continue;
+    if (cell.total < MIN_CELL_PICKS) continue;
     for (const [pokemonId, count] of cell.picks) {
       const entry = data.prior[pokemonId] ?? [0, 0];
       entry[0] += 1;
@@ -129,11 +140,11 @@ function ingest(data: PickStatsData, cells: PickStatsCell[]): void {
   if (cellsIngested > 0) data.meta.puzzlesCounted += 1;
 }
 
-// archives written or refreshed by this run, mirrored to Firestore at the end
+// archives written by this run, mirrored to Firestore at the end
 const touchedArchives: PickStatsPuzzle[] = [];
 
-// Merge into the puzzle's archive file: counts refresh, but the spec and
-// date (readable only while the puzzle was current) are never dropped
+// Write the puzzle's archive file. A backfilled board carries no spec or
+// date; if an earlier archive of it had them, they are kept.
 function writeArchive(puzzle: PickStatsPuzzle): void {
   mkdirSync(ARCHIVE_DIR, { recursive: true });
   const path = join(ARCHIVE_DIR, `${puzzle.id}.json`);
@@ -143,10 +154,7 @@ function writeArchive(puzzle: PickStatsPuzzle): void {
   } catch {
     // first archive of this puzzle
   }
-  const merged: PickStatsPuzzle = {
-    id: puzzle.id,
-    cells: hasFullCell(puzzle.cells) ? puzzle.cells : (existing.cells ?? puzzle.cells),
-  };
+  const merged: PickStatsPuzzle = { id: puzzle.id, cells: puzzle.cells };
   const date = puzzle.date ?? existing.date;
   const spec = puzzle.spec ?? existing.spec;
   if (date) merged.date = date;
@@ -183,12 +191,8 @@ function readAllArchives(): PickStatsPuzzle[] {
 
 function rebuildIndex(): void {
   mkdirSync(ARCHIVE_DIR, { recursive: true });
-  const entries: PickArchiveIndex = readdirSync(ARCHIVE_DIR)
-    .filter((name) => /^\d+\.json$/.test(name))
-    .map((name) => {
-      const puzzle = JSON.parse(readFileSync(join(ARCHIVE_DIR, name), "utf8")) as PickStatsPuzzle;
-      return { id: puzzle.id, ...(puzzle.date ? { date: puzzle.date } : {}) };
-    })
+  const entries: PickArchiveIndex = readAllArchives()
+    .map((puzzle) => ({ id: puzzle.id, ...(puzzle.date ? { date: puzzle.date } : {}) }))
     .sort((a, b) => b.id - a.id);
   writeFileSync(join(ARCHIVE_DIR, "index.json"), JSON.stringify(entries));
 }
@@ -223,6 +227,7 @@ if (process.argv.includes("--mirror-all")) {
 const data = loadStats();
 const session = new PokedokuSession();
 await session.signInAnon();
+const current = await session.apiGet<CurrentPuzzle>("/api/puzzle/current");
 
 const backfillFlag = process.argv.indexOf("--backfill");
 if (backfillFlag !== -1) {
@@ -232,21 +237,26 @@ if (backfillFlag !== -1) {
     console.error("usage: node scripts/harvest-pick-stats.ts --backfill <fromId> <toId>");
     process.exit(1);
   }
-  const current = await session.apiGet<CurrentPuzzle>("/api/puzzle/current");
-  let done = 0;
-  for (let id = from; id <= Math.min(to, current.id - 1); id++) {
-    if (isCounted(data, id)) continue;
+  // still being played, or awaiting its first run after rotating out
+  const unfinished = new Set([current.id, ...data.pending.map((pending) => pending.id)]);
+  let fetched = 0;
+  for (let id = from; id <= to; id++) {
+    if (isCounted(data, id) || unfinished.has(id)) continue;
     const stats = await fetchStats(session, id);
+    // an id with no finished stats stays uncounted: it may be scheduled
+    // as a daily later, and the daily run never probes ids by itself
     if (stats) {
       const cells = cellAggregates(stats);
-      ingest(data, cells);
-      if (hasFullCell(cells)) writeArchive({ id, cells });
+      if (hasFinishedCell(cells)) {
+        ingest(data, cells);
+        markCounted(data, id);
+        writeArchive({ id, cells });
+      }
     }
-    markCounted(data, id); // even a failed id: don't hammer it again daily
-    done += 1;
-    if (done % 100 === 0) {
+    fetched += 1;
+    if (fetched % 100 === 0) {
       save(data);
-      console.log(`…${id} (${done} fetched, ${data.meta.cellsCounted} cells counted)`);
+      console.log(`…${id} (${fetched} fetched, ${data.meta.cellsCounted} cells counted)`);
     }
     await sleep(THROTTLE_MS);
   }
@@ -254,31 +264,43 @@ if (backfillFlag !== -1) {
   await mirrorArchives(touchedArchives);
   console.log(`backfill done: ${data.meta.puzzlesCounted} puzzles, ${data.meta.cellsCounted} cells in the prior`);
 } else {
-  const current = await session.apiGet<CurrentPuzzle>("/api/puzzle/current");
+  const { id: currentId, date: currentDate, ...currentSpec } = current;
 
-  for (let id = Math.max(1, current.id - DAILY_LOOKBACK); id < current.id; id++) {
-    const needsIngest = !isCounted(data, id);
-    const needsRefresh = id >= current.id - ARCHIVE_REFRESH;
-    if (!needsIngest && !needsRefresh) continue;
-    const stats = await fetchStats(session, id);
-    if (stats) {
-      const cells = cellAggregates(stats);
-      if (needsIngest) ingest(data, cells);
-      if (hasFullCell(cells)) writeArchive({ id, cells });
+  // every pending board that has rotated out is finished: archive it with
+  // its final counts and fold it into the prior
+  const stillPending: PendingPuzzle[] = [];
+  for (const pending of data.pending) {
+    if (pending.id === currentId) {
+      stillPending.push(pending);
+      continue;
     }
-    if (needsIngest) markCounted(data, id);
+    const stats = await fetchStats(session, pending.id);
+    const cells = stats ? cellAggregates(stats) : [];
+    if (!hasFinishedCell(cells)) {
+      console.warn(`puzzle ${pending.id} (${pending.date}): no finished stats yet — still pending`);
+      stillPending.push(pending);
+      continue;
+    }
+    if (!isCounted(data, pending.id)) {
+      ingest(data, cells);
+      markCounted(data, pending.id);
+    }
+    writeArchive({ ...pending, cells });
+    console.log(`archived puzzle ${pending.id} (${pending.date})`);
     await sleep(THROTTLE_MS);
   }
+  data.pending = stillPending;
 
-  // today's board: spec (only readable while current) + live counts
-  const todayStats = await fetchStats(session, current.id);
-  const { id, date, ...spec } = current;
-  writeArchive({ id, date, spec, cells: todayStats ? cellAggregates(todayStats) : [] });
+  // today's board: note its id, date and spec (readable only while
+  // current) so the first run after it rotates out can archive it
+  if (!data.pending.some((pending) => pending.id === currentId)) {
+    data.pending.push({ id: currentId, date: currentDate, spec: currentSpec });
+  }
 
   save(data);
   await mirrorArchives(touchedArchives);
   console.log(
-    `harvested through puzzle ${current.id} (${date}): ` +
+    `puzzle ${currentId} (${currentDate}) is current and pending; ` +
       `${data.meta.puzzlesCounted} puzzles, ${data.meta.cellsCounted} cells in the prior`,
   );
 }

@@ -1,14 +1,24 @@
 name: Harvest pick stats
 
-# Daily: fold yesterday's finished PokeDoku puzzle into the pick prior and
-# snapshot today's board (scripts/harvest-pick-stats.ts). 06:30 UTC is
-# safely past the daily rotation in every PokeDoku timezone. A push made
-# with GITHUB_TOKEN doesn't fire the on-push Pages deploy, so the job
-# dispatches deploy.yml itself.
+# Daily, just after PokeDoku rotates (new puzzles at midnight US Eastern:
+# 04:00 UTC in summer, 05:00 in winter): archive the board that just
+# finished with its final counts, fold it into the pick prior, and note
+# the new board so it can be archived tomorrow (scripts/harvest-pick-stats.ts).
+# GitHub runs schedules hours late on this repo and occasionally skips
+# one, and a day whose board was never seen while current can't be
+# archived at all, so a second slot repeats the run — a no-op when the
+# first one got there. A push made with GITHUB_TOKEN doesn't fire the
+# on-push Pages deploy, so the job dispatches deploy.yml itself.
 on:
   schedule:
-    - cron: "30 6 * * *"
+    - cron: "20 5 * * *"
+    - cron: "20 13 * * *"
   workflow_dispatch:
+    inputs:
+      mirror_all:
+        description: "Repair: re-push every archive file to Firestore instead of harvesting"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -27,7 +37,7 @@ jobs:
           node-version: 24
       # FIREBASE_SERVICE_ACCOUNT (a service account's JSON key) enables
       # the Firestore mirror; until the secret exists the mirror is a no-op
-      - run: node scripts/harvest-pick-stats.ts
+      - run: node scripts/harvest-pick-stats.ts ${{ inputs.mirror_all && '--mirror-all' || '' }}
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Commit and deploy if changed

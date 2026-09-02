@@ -48,12 +48,14 @@ Rotom appliances, Lycanroc's three, the female Pyroar, …).
   show an estimated global pick percentage — how many PokeDoku players
   would reach for that Pokémon in that cell — and a finished board gets
   a PokeDoku-style uniqueness score out of 900. The estimates come from
-  PokeDoku's real daily pick counts, harvested nightly (`npm run
-  harvest`, run by a scheduled GitHub Action): each day's board is
-  archived permanently as `public/archive/<id>.json` (spec + full pick
+  PokeDoku's real daily pick counts, harvested by `npm run harvest` (a
+  scheduled GitHub Action, run just after PokeDoku's midnight-Eastern
+  rotation): the board that just finished is archived permanently with
+  its final counts as `public/archive/<id>.json` (spec + full pick
   counts, indexed by `public/archive/index.json`, deployed but fetched
   lazily so the app bundle never grows), and averaged into the bounded
   per-Pokémon pick tendency the app bundles (`src/data/pick-stats.json`).
+  A board is never archived while it is still being played.
 - **Stats** — per-category accuracy, weak spots highlighted (Mono-/Dual-
   Type have no table there — the type rows say it all — but still count
   for Drill and Grid); spaced-review counts; cross-device sync.
