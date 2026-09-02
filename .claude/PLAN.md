@@ -281,9 +281,12 @@ overlap.
    Generate new private key, paste the JSON as the GitHub Actions
    secret `FIREBASE_SERVICE_ACCOUNT` (repo → Settings → Secrets →
    Actions). The `pickArchive` block is already in `firestore.rules`
-   (the service account bypasses rules; clients get read-only); give
-   the account the **Firebase Rules Admin** IAM role as well so the
-   rules workflow can deploy. Then seed the existing files once:
+   (the service account bypasses rules; clients get read-only). The
+   rules workflow deploys with the same key, which needs two IAM roles
+   on top of its default Admin SDK role: **Service Usage Viewer**
+   (firebase-tools' API-enabled check) and **Firebase Rules Admin**
+   (its pre-deploy compile check calls the rules test endpoint). Then
+   seed the existing files once:
    `FIREBASE_SERVICE_ACCOUNT="$(cat key.json)" npm run harvest -- --mirror-all`.
 
 ### Implementation order (each step leaves the app shippable)
