@@ -79,17 +79,27 @@ interface CurrentPuzzle extends Record<string, unknown> {
   date: string;
 }
 
+function readStatsFile(): Partial<PickStatsData> {
+  try {
+    return JSON.parse(readFileSync(STATS_PATH, "utf8")) as Partial<PickStatsData>;
+  } catch {
+    return {}; // first run
+  }
+}
+
 // Only `pending` carries over between runs; the prior and its meta are
 // rebuilt from the archive on every save
 function loadStats(): PickStatsData {
-  let pending: PendingPuzzle[] = [];
-  try {
-    pending = (JSON.parse(readFileSync(STATS_PATH, "utf8")) as Partial<PickStatsData>).pending ?? [];
-  } catch {
-    // first run
-  }
-  return { meta: { generatedAt: "", puzzlesCounted: 0, cellsCounted: 0 }, pending, prior: {} };
+  return {
+    meta: { generatedAt: "", puzzlesCounted: 0, cellsCounted: 0 },
+    pending: readStatsFile().pending ?? [],
+    prior: {},
+  };
 }
+
+// everything but the timestamp
+const fingerprint = (stats: Partial<PickStatsData>): string =>
+  JSON.stringify({ ...stats, meta: { ...stats.meta, generatedAt: undefined } });
 
 // One puzzle's valid picks, per cell (cellNum is 1-based in the API)
 function cellAggregates(stats: PuzzleStats): PickStatsCell[] {
@@ -213,9 +223,12 @@ function rebuildIndex(archives: PickStatsPuzzle[]): void {
 function save(data: PickStatsData): void {
   const archives = readAllArchives();
   rebuildPrior(data, archives);
+  rebuildIndex(archives);
+  // a run that changed nothing leaves no diff, so the second daily slot
+  // (and a sweep that found nothing) doesn't commit a fresh timestamp
+  if (fingerprint(data) === fingerprint(readStatsFile())) return;
   data.meta.generatedAt = new Date().toISOString();
   writeFileSync(STATS_PATH, JSON.stringify(data));
-  rebuildIndex(archives);
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
