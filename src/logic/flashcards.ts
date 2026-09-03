@@ -27,6 +27,8 @@ export interface Deck {
   label: string;
   // the card's prompt — also the deck sheet's subtitle
   question: string;
+  // a dimmer aside after the prompt ("pick all")
+  questionNote?: string;
   // every answer must be picked (Type); single-pick decks accept any one
   multi?: boolean;
   // answer-pad grid columns
@@ -58,7 +60,7 @@ export const DECKS: Deck[] = [
     id: "region",
     label: "Region",
     question: "Which region?",
-    cols: 3,
+    cols: 5, // ten regions: two full rows
     options: CATEGORIES.filter((category) => category.group === "region"),
     answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
     // not the regional forms, whose names give the answer away; dual-region
@@ -70,9 +72,10 @@ export const DECKS: Deck[] = [
   {
     id: "type",
     label: "Type",
-    question: "What type? (pick all)",
+    question: "What type?",
+    questionNote: "pick all",
     multi: true, // both types of a dual type, then Submit
-    cols: 5,
+    cols: 6, // eighteen types: three full rows
     options: CATEGORIES.filter((category) => category.group === "type"),
     answers: (pokemon) => pokemon.types.map((type) => `type-${type}`),
     // Megas can change type (Charizard Mega X); Gmax never does

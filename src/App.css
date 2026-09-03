@@ -306,6 +306,9 @@ header h1 .home-link:focus-visible {
     --nav-inset: min(env(safe-area-inset-bottom), 8px);
     --nav-gap: 8px;
     --nav-lift: 0px;
+    /* the page's bottom padding, clearing the pill (the Cards pad runs
+       through it to the screen's edge, see .flashcards) */
+    --page-bottom: calc(var(--nav-h) + min(env(safe-area-inset-bottom), 8px) + 20px);
   }
 
   .tabs {
@@ -395,7 +398,7 @@ header h1 .home-link:focus-visible {
   }
 
   .app {
-    padding-bottom: calc(var(--nav-h) + min(env(safe-area-inset-bottom), 8px) + 20px);
+    padding-bottom: var(--page-bottom);
     /* header sits under the status bar in a browser too; keep it clear */
     padding-top: calc(10px + env(safe-area-inset-top));
   }
@@ -1340,7 +1343,7 @@ button.pill {
   justify-content: center;
   gap: 6px;
   padding: 0 4px;
-  min-height: 290px;
+  min-height: 274px;
 }
 
 /* the question while asking; the verdict replaces it once answered */
@@ -1356,6 +1359,11 @@ button.pill {
   text-transform: uppercase;
   color: var(--text-low);
   white-space: pre-wrap; /* a combo verdict's double spaces stay */
+}
+
+/* the question's aside ("· pick all"), dimmer than the question */
+.prompt-note {
+  color: var(--border-strong);
 }
 
 .card-prompt.correct {
@@ -1377,8 +1385,8 @@ button.pill {
 .stage-sprite,
 .stage-sprite .sprite,
 .stage-sprite .sprite-fallback {
-  width: 176px;
-  height: 176px;
+  width: 160px;
+  height: 160px;
   object-fit: contain;
 }
 
@@ -1436,47 +1444,55 @@ button.pill {
 
 /* full-bleed panel with a rounded top edge, docked under the stage */
 .answer-pad {
-  margin: 10px 0 0;
+  margin: 0;
   padding: 12px 12px 0;
   background: var(--bg-1);
   border-top: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
-/* A wrapping row rather than a grid, so a short last row centres; every
-   option is one cols-th of the width, per deck. The same column counts
-   on every screen size, so a deck's options sit in the same spots on the
-   phone and the desktop (muscle memory) */
+/* One column per deck (Type six, Region five, Group three, Stage two),
+   the same on every screen size, so a deck's options sit in the same
+   spots on the phone and the desktop (muscle memory) */
 .pad-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.pad-grid.cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.pad-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.pad-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pad-grid.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.pad-grid.cols-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.pad-grid.cols-6 {
+  grid-template-columns: repeat(6, 1fr);
 }
 
 .pad-btn {
-  height: 54px;
+  height: 44px;
   padding: 0 2px;
   white-space: nowrap;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border-radius: 12px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-hi);
-}
-
-.pad-grid.cols-2 .pad-btn {
-  flex: 0 0 calc((100% - 8px) / 2);
-}
-
-.pad-grid.cols-3 .pad-btn {
-  flex: 0 0 calc((100% - 16px) / 3);
-}
-
-.pad-grid.cols-5 .pad-btn {
-  flex: 0 0 calc((100% - 32px) / 5);
-  font-size: 0.76rem;
 }
 
 /* pointer devices only (see .tab:hover) */
@@ -1510,6 +1526,7 @@ button.pill {
 .pad-btn.selected {
   background: var(--surface-3);
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
   color: var(--text-hi);
   font-weight: 800;
 }
@@ -1517,6 +1534,8 @@ button.pill {
 .pad-btn[class*="type-"].selected {
   background: color-mix(in srgb, var(--type-c) 45%, var(--surface-1));
   border-color: var(--type-c);
+  box-shadow: 0 0 0 1px var(--type-c);
+  font-weight: 800;
 }
 
 /* picked and right */
@@ -1541,29 +1560,111 @@ button.pill {
   background: var(--wrong);
   border-color: var(--wrong);
   color: #fff;
+  font-weight: 800;
   animation: shake var(--dur-slow) var(--ease-out) both;
 }
 
-/* everything else fades once answered */
+/* everything else recedes once answered (the type wash included) */
 .pad-btn.dim {
   background: var(--surface-1);
   border-color: var(--border-subtle);
   color: var(--border-strong);
 }
 
-/* the row under the options: Don't know · Submit · Skip while asking,
-   Undo · schedule note once answered */
+/* what the answer came to, under the options: the missed and wrong
+   picks (or the verdict) and when the card comes back */
+.pad-summary {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  text-align: center;
+  animation: fade-up var(--dur-med) var(--ease-out) both;
+}
+
+.pad-summary .hit {
+  color: var(--correct-strong);
+}
+
+.pad-summary .miss {
+  color: var(--wrong);
+}
+
+/* The one CTA slot under the options: Submit on a multi part, Next card
+   once answered. A single-pick part grades on tap, so the slot is left
+   empty at the same height and the row below stays put */
+.pad-cta,
+.pad-cta-gap {
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+}
+
+.pad-cta {
+  position: relative;
+  overflow: hidden;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  border: 1px solid var(--accent-press);
+  color: var(--on-accent);
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-1), var(--edge-hi);
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .pad-cta:enabled:hover {
+    filter: brightness(1.06);
+  }
+}
+
+.pad-cta:enabled:active {
+  background: var(--accent-press);
+  filter: none;
+}
+
+/* nothing picked yet: a quiet outline rather than a dimmed red */
+.pad-cta:disabled {
+  background: var(--surface-1);
+  border-color: var(--border);
+  color: var(--text-low);
+  box-shadow: none;
+  cursor: default;
+}
+
+/* on a correct answer this sweeps left→right, then the card auto-advances */
+.next-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.16);
+  transition: width 1.6s linear;
+}
+
+/* a long Submit label ("Submit · Fighting + Electric") trims rather than wraps */
+.pad-cta-label {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* the row under the CTA: Don't know · Skip while asking, Undo · a hint
+   once answered */
 .pad-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   padding: 6px 4px 10px;
-  min-height: 48px;
+  min-height: 40px;
 }
 
 .pad-ghost {
-  min-height: 36px;
+  min-height: 32px;
   padding: 0 4px;
   background: none;
   border: none;
@@ -1579,76 +1680,9 @@ button.pill {
   }
 }
 
-.pad-submit {
-  min-height: 40px;
-  padding: 0 22px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
-  border: 1px solid var(--accent-press);
-  color: var(--on-accent);
-  font-size: 0.9rem;
-  font-weight: 800;
-  box-shadow: var(--shadow-1);
-}
-
-.pad-submit:disabled {
-  background: var(--surface-1);
-  border-color: var(--border);
-  color: var(--text-low);
-  box-shadow: none;
-}
-
 .pad-note {
   font-size: 0.82rem;
   color: var(--text-low);
-}
-
-/* ---- cards: the Next card bar, fixed above the tab nav ---- */
-
-/* keeps the pad's action row clear of the fixed bar */
-.next-spacer {
-  height: 72px;
-}
-
-.next-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 16px;
-  z-index: 55;
-  display: flex;
-  justify-content: center;
-  padding: 0 12px;
-}
-
-.next-btn {
-  position: relative;
-  width: 100%;
-  max-width: 456px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
-  border: 1px solid var(--accent-press);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-  padding: 0;
-}
-
-/* on a correct answer this sweeps left→right, then the card auto-advances */
-.next-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.16);
-  transition: width 1.6s linear;
-}
-
-.next-label {
-  position: relative;
-  color: var(--on-accent);
-  font-size: 1.05rem;
-  font-weight: 800;
 }
 
 /* ---- cards: bottom sheets (deck chooser, Focus filters) ---- */
@@ -2063,14 +2097,21 @@ button.evo-tile:active {
     padding: 8px 0 6px;
   }
 
-  /* the pad runs out to the screen's edges, like a system keyboard */
+  /* the pad runs out to the screen's edges, like a system keyboard: it
+     takes over the page's bottom padding and runs on under the tab pill,
+     with room above the pill for the action row */
+  .flashcards {
+    margin-bottom: calc(-1 * var(--page-bottom));
+  }
+
   .answer-pad {
     margin-left: -16px;
     margin-right: -16px;
+    padding-bottom: calc(84px + var(--nav-lift));
   }
 
-  /* short screens (an iPhone with Safari's bars out): the sprite and the
-     options give height back so everything still fits above the nav */
+  /* short screens (an iPhone with Safari's bars out): the sprite gives
+     height back so everything still fits above the nav */
   @media (max-height: 700px) {
     .stage-sprite,
     .stage-sprite .sprite,
@@ -2082,23 +2123,13 @@ button.evo-tile:active {
     .card-stage {
       min-height: 240px;
     }
-
-    .pad-btn {
-      height: 48px;
-    }
   }
 
-  .pad-btn {
-    font-size: 0.86rem;
-  }
-
-  .pad-grid.cols-5 .pad-btn {
-    font-size: 0.72rem;
-  }
-
-  /* the fixed bar sits just above the floating tab pill */
-  .next-bar {
-    bottom: calc(var(--nav-lift) + var(--nav-inset) + var(--nav-gap) + var(--nav-h) + 8px);
+  /* six narrow columns: the longest labels ("✓ Fighting") need the room */
+  .pad-grid.cols-6 .pad-btn {
+    font-size: 0.7rem;
+    padding: 0 1px;
+    letter-spacing: -0.01em;
   }
 
   /* sheets rest on the tab pill rather than the screen edge */
@@ -2136,16 +2167,21 @@ button.evo-tile:active {
   text-align: center;
 }
 
+/* a cell is a little taller than wide: room for a filled cell's caption
+   (name and pick rate) under the sprite */
 .board .cell {
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 1.18;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--surface-1) var(--pokeball-mark) center / 38% no-repeat;
-  font-size: 1.2rem;
   color: var(--text-low);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 8px 6px 8px;
+  overflow: hidden;
 }
 
 /* pointer devices only (see .tab:hover) */
@@ -2160,12 +2196,48 @@ button.evo-tile:active {
   scale: 0.96;
 }
 
-.board .cell img,
-.board .cell .sprite-fallback {
-  width: 85%;
-  height: 85%;
+/* The sprite takes whatever height the caption leaves, in a square slot
+   two thirds of the cell wide at most (Sprite.tsx's fit transform
+   assumes a square, so the slot is the smaller of the two) */
+.cell-art {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+
+.cell-art .sprite,
+.cell-art .sprite-fallback {
+  width: min(66cqw, 100cqh);
+  height: min(66cqw, 100cqh);
   object-fit: contain;
   image-rendering: pixelated;
+}
+
+.cell-name {
+  max-width: 100%;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* the pick's share: green when few reach for it, amber when many do */
+.cell-rate {
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--correct-strong);
+}
+
+.cell-rate.common {
+  color: var(--warn);
 }
 
 .board .cell.selected {
@@ -2179,24 +2251,37 @@ button.evo-tile:active {
   background: var(--correct-soft);
 }
 
-.board .cell.filled img {
+.board .cell.filled .sprite {
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
   animation: pop-in var(--dur-slow) var(--ease-bounce) both;
 }
 
 .board .cell.revealed {
+  justify-content: center;
   border: 1px dashed var(--border-strong);
   background: var(--bg-1);
   color: var(--text-low);
 }
 
-.board-toolbar {
+.cell-mark {
+  font-size: 1.2rem;
+}
+
+.cell-revealed {
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+/* the chooser's row: progress and the two actions sit at its right end;
+   on a phone too narrow for all of it, the actions drop to a second line
+   under the progress */
+.grid-tools {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
-  gap: var(--sp-3);
-  max-width: 480px;
-  margin: var(--sp-3) auto 0;
+  gap: var(--sp-2);
+  margin-left: auto;
 }
 
 .board-actions {
@@ -2205,9 +2290,18 @@ button.evo-tile:active {
   flex: none;
 }
 
-.board-actions .ghost {
-  padding: 0 14px;
+.board-actions .ghost,
+.board-actions .primary {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
   white-space: nowrap;
+}
+
+.board-actions .primary {
+  padding: 0 14px;
+  font-weight: 800;
 }
 
 .ghost.on {
@@ -2314,25 +2408,18 @@ button.evo-tile:active {
   height: 72px;
 }
 
-/* Where there's room, the nine cells — not the board including its row
-   labels — sit on the page's centre line: the board is widened by a
-   phantom column on the right the size of the label column (84px + gap) */
-@media (min-width: 641px) {
-  .board,
-  .board-toolbar {
-    max-width: calc(480px + 92px);
-    padding-right: 92px;
-  }
-
-  .practice .grid-groups {
-    max-width: calc(480px + 92px); /* as wide as the board's box, centred with it */
-  }
-}
-
+/* the board's progress: filled cells bright, the rest quiet */
 .score {
   color: var(--text-mid);
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  margin-right: 6px;
+}
+
+.score b {
+  color: var(--text-hi);
+  font-weight: 800;
 }
 
 .grid-message {
@@ -2342,13 +2429,136 @@ button.evo-tile:active {
   animation: fade-up var(--dur-med) var(--ease-out);
 }
 
+/* under the board, the verdict line and a replayed board's note keep to
+   the board's width */
+.practice > .grid-message,
+.board-hint {
+  max-width: 480px;
+  margin: 14px auto 0;
+  color: var(--text-mid);
+}
+
+/* ---- grid: the result card under a finished board ---- */
+
+/* the wrapper keeps to the board's width (and its phantom label column,
+   see the desktop rules below); the card inside is the bordered box */
+.result {
+  max-width: 480px;
+  margin: 16px auto 0;
+  text-align: left;
+  animation: fade-up var(--dur-med) var(--ease-out) both;
+}
+
+.result-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  box-shadow: var(--edge-hi);
+}
+
+.result-score,
+.result-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-score {
+  flex: none;
+  gap: 2px;
+}
+
+.result-kicker {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
+.result-number {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-hi);
+}
+
+.result-max {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-low);
+}
+
+.result-detail {
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+}
+
+.result-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.result-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--correct), var(--correct-strong));
+}
+
+.result-line {
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+
+.result-note {
+  font-size: 0.8rem;
+  color: var(--text-low);
+}
+
 /* ---- grid: the board chooser and replayed PokeDokus ---- */
 
-/* the chooser sits centred above the board, like the Cards deck button */
+/* the chooser, progress and actions share one row above the board, as
+   wide as the board */
 .grid-topbar {
   display: flex;
-  justify-content: center;
-  padding: 2px 0 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-3);
+  max-width: 480px;
+  margin: 0 auto 14px;
+}
+
+/* the category-groups panel opens between the row and the board */
+.practice .grid-groups {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+/* Where there's room, the nine cells — not the board including its row
+   labels — sit on the page's centre line: the board is widened by a
+   phantom column on the right the size of the label column (84px + gap),
+   and everything that lines up with the board gets the same */
+@media (min-width: 641px) {
+  .board,
+  .grid-topbar,
+  .board-hint,
+  .practice > .grid-message,
+  .result {
+    max-width: calc(480px + 92px);
+    padding-right: 92px;
+  }
+
+  .practice .grid-groups {
+    max-width: calc(480px + 92px); /* as wide as the board's box, centred with it */
+  }
 }
 
 /* the board sheet: a fixed head, then the rows scroll — the list of past

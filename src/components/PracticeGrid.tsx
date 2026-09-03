@@ -20,12 +20,31 @@ import {
 import ArchiveSheet from "./ArchiveSheet.tsx";
 import CategoryPill from "./CategoryPill.tsx";
 import Chevron from "./Chevron.tsx";
+import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
 import GuessModal from "./GuessModal.tsx";
 import AnswerList from "./AnswerList.tsx";
 import ToggleGroup from "./ToggleGroup.tsx";
 
 type CellStatus = "empty" | "filled" | "revealed";
+
+// A pick this share of players (or more) reach for is a common one: its
+// rate turns amber, and the result card names it
+const COMMON_PICK = 25;
+// PokeDoku's board score: nine cells, 100 minus the pick share each
+const MAX_SCORE = 900;
+
+// A filled cell's pick rate: the share (real or estimated) and its label
+interface CellRate {
+  share: number;
+  text: string;
+}
+
+// "Gengar", "Gengar and Charizard", "Gengar, Charizard and Garchomp"
+function listNames(names: string[]): string {
+  if (names.length <= 1) return names.join("");
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
 
 interface Cell {
   status: CellStatus;
@@ -381,6 +400,39 @@ function PracticeGrid() {
   const selectedAnswers = selected !== null && selectedCell && selectedCell.status !== "empty" ? cellAnswers(selected) : [];
   const selectedReal = selected !== null && selectedCell && selectedCell.status !== "empty" ? realPicks(selected) : null;
 
+  // Every filled cell's pick rate, the same figure its answer card wears:
+  // the real share where the pair has run, an estimate otherwise (none
+  // before any data is harvested)
+  const cellRates: (CellRate | null)[] = cells.map((cell, index) => {
+    if (cell.status !== "filled" || !cell.pokemon) return null;
+    const real = realPicks(index);
+    if (real) {
+      const share = archivedShare(real.cell, cell.pokemon);
+      return { share, text: formatPickPercent(share) };
+    }
+    const estimate = estimatePickPercent(cell.pokemon, intersection(...cellCats(index)));
+    return estimate === null ? null : { share: estimate, text: formatPickEstimate(estimate) };
+  });
+
+  // The finished board's common picks, most common first, and what they
+  // cost the score between them
+  const commonPicks = cells
+    .flatMap((cell, index) => {
+      const rate = cellRates[index];
+      return cell.pokemon && rate && rate.share >= COMMON_PICK ? [{ pokemon: cell.pokemon, share: rate.share }] : [];
+    })
+    .sort((a, b) => b.share - a.share);
+  const commonCost = Math.round(commonPicks.reduce((sum, pick) => sum + pick.share, 0));
+  const revealed = cells.filter((cell) => cell.status === "revealed").length;
+  // where the finished board's rates came from
+  const rateSource = archive
+    ? `real PokeDoku pick rates from ${formatArchiveDate(archive.date, "short")}`
+    : uniquenessScore === null
+      ? null
+      : uniquenessScore.estimated
+        ? "estimated pick rates"
+        : "real pick rates where the pair has run";
+
   return (
     <div className="practice" ref={rootRef}>
       <div className="grid-topbar">
@@ -388,73 +440,24 @@ function PracticeGrid() {
           {archive ? `PokeDoku · ${formatArchiveDate(archive.date, "short")}` : "Random grid"}
           <Chevron />
         </button>
-      </div>
-      <p className="hint">
-        {archive
-          ? `PokeDoku's board from ${formatArchiveDate(archive.date)} — same rules; pick rates are what its players chose that day.`
-          : "Fill all nine cells — each Pokémon must fit its row and column, no repeats."}
-      </p>
-      <div className="board">
-        <div className="corner" />
-        {grid.cols.map((colId) => (
-          <div key={colId} className="header">
-            <CategoryPill cat={getCategory(colId)} useShort />
+        <div className="grid-tools">
+          <p className="score">
+            <b>{filled}</b>/9 · {guesses} guess{guesses === 1 ? "" : "es"}
+          </p>
+          <div className="board-actions">
+            <button
+              className={`ghost${showGroups ? " on" : ""}`}
+              aria-expanded={showGroups}
+              aria-controls={showGroups ? "grid-groups" : undefined}
+              onClick={() => setShowGroups((on) => !on)}
+            >
+              Categories
+            </button>
+            {/* once the board is done, a new one is the next thing to do */}
+            <button className={done ? "primary" : "ghost"} onClick={newGame}>
+              New Grid
+            </button>
           </div>
-        ))}
-        {grid.rows.map((rowId, rowIndex) => [
-          <div key={rowId} className="header">
-            <CategoryPill cat={getCategory(rowId)} useShort />
-          </div>,
-          ...grid.cols.map((colId, colIndex) => {
-            const index = rowIndex * 3 + colIndex;
-            const cell = cells[index];
-            let className = "cell";
-            if (index === selected) className += " selected";
-            if (cell.status === "filled") className += " filled";
-            if (cell.status === "revealed") className += " revealed";
-            return (
-              <button
-                key={colId}
-                className={className}
-                onClick={() => {
-                  // tapping the selected filled cell again deselects it
-                  setSelected((current) => (current === index ? null : index));
-                  setMessage("");
-                }}
-              >
-                {cell.pokemon ? (
-                  <Sprite pokemon={cell.pokemon} />
-                ) : cell.status === "revealed" ? (
-                  "✕"
-                ) : (
-                  ""
-                )}
-              </button>
-            );
-          }),
-        ])}
-      </div>
-      <div className="board-toolbar">
-        <p className="score">
-          {filled}/9 filled · {guesses} guesses
-          {done
-            ? uniquenessScore === null
-              ? " — done!"
-              : ` — done! · uniqueness ${uniquenessScore.estimated ? "≈" : ""}${uniquenessScore.score}/900`
-            : ""}
-        </p>
-        <div className="board-actions">
-          <button
-            className={`ghost${showGroups ? " on" : ""}`}
-            aria-expanded={showGroups}
-            aria-controls={showGroups ? "grid-groups" : undefined}
-            onClick={() => setShowGroups((on) => !on)}
-          >
-            Categories
-          </button>
-          <button className="ghost" onClick={newGame}>
-            New Grid
-          </button>
         </div>
       </div>
       {showGroups ? (
@@ -472,6 +475,100 @@ function PracticeGrid() {
           }}
           hint="Takes effect on the next New Grid."
         />
+      ) : null}
+      <div className="board">
+        <div className="corner" />
+        {grid.cols.map((colId) => (
+          <div key={colId} className="header">
+            <CategoryPill cat={getCategory(colId)} useShort />
+          </div>
+        ))}
+        {grid.rows.map((rowId, rowIndex) => [
+          <div key={rowId} className="header">
+            <CategoryPill cat={getCategory(rowId)} useShort />
+          </div>,
+          ...grid.cols.map((colId, colIndex) => {
+            const index = rowIndex * 3 + colIndex;
+            const cell = cells[index];
+            const rate = cellRates[index];
+            let className = "cell";
+            if (index === selected) className += " selected";
+            if (cell.status === "filled") className += " filled";
+            if (cell.status === "revealed") className += " revealed";
+            return (
+              <button
+                key={colId}
+                className={className}
+                onClick={() => {
+                  // tapping the selected filled cell again deselects it
+                  setSelected((current) => (current === index ? null : index));
+                  setMessage("");
+                }}
+              >
+                {cell.pokemon ? (
+                  <>
+                    <span className="cell-art">
+                      <Sprite pokemon={cell.pokemon} />
+                    </span>
+                    <span className="cell-name">
+                      <PokemonName name={cell.pokemon.displayName} />
+                    </span>
+                    {rate ? (
+                      <span className={`cell-rate${rate.share >= COMMON_PICK ? " common" : ""}`}>{rate.text}</span>
+                    ) : null}
+                  </>
+                ) : cell.status === "revealed" ? (
+                  <>
+                    <span className="cell-mark">✕</span>
+                    <span className="cell-revealed">Revealed</span>
+                  </>
+                ) : (
+                  ""
+                )}
+              </button>
+            );
+          }),
+        ])}
+      </div>
+      {archive && !done ? (
+        <p className="hint board-hint">
+          PokeDoku&apos;s board from {formatArchiveDate(archive.date)} — same rules; pick rates are what its players
+          chose that day.
+        </p>
+      ) : null}
+      {done ? (
+        <div className="result">
+          <div className="result-card">
+            <div className="result-score">
+              <span className="result-kicker">Uniqueness</span>
+              <span className="result-number">
+                {uniquenessScore === null ? "—" : `${uniquenessScore.estimated ? "≈" : ""}${uniquenessScore.score}`}
+                <span className="result-max"> /{MAX_SCORE}</span>
+              </span>
+            </div>
+            <div className="result-detail">
+              <div className="result-bar" aria-hidden="true">
+                <div
+                  className="result-fill"
+                  style={{ width: `${uniquenessScore === null ? 0 : (100 * uniquenessScore.score) / MAX_SCORE}%` }}
+                />
+              </div>
+              <span className="result-line">
+                Board complete · {filled} filled · {guesses} guess{guesses === 1 ? "" : "es"}
+                {revealed ? ` · ${revealed} revealed` : ""}
+                {rateSource ? ` · ${rateSource}` : ""}
+              </span>
+              {commonPicks.length ? (
+                <span className="result-note">
+                  Amber rates are your most common picks —{" "}
+                  {listNames(commonPicks.map((pick) => pick.pokemon.displayName))} cost {commonCost} point
+                  {commonCost === 1 ? "" : "s"}
+                  {commonPicks.length > 1 ? " between them" : ""}.
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
       ) : null}
       <p key={message} className="grid-message">
         {message || " "}

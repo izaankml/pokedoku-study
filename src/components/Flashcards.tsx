@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { useStats } from "../StatsContext.ts";
 import { pickFlashcard } from "../logic/picker.ts";
 import {
@@ -78,7 +79,11 @@ function DeckSheet({ activeId, onPick, onClose }: DeckSheetProps) {
   useModalShell(onClose);
   const rows = [
     { id: "all", label: "All", desc: "Every deck mixed together" },
-    ...DECKS.map((deck) => ({ id: deck.id, label: deck.label, desc: deck.question })),
+    ...DECKS.map((deck) => ({
+      id: deck.id,
+      label: deck.label,
+      desc: deck.questionNote ? `${deck.question} (${deck.questionNote})` : deck.question,
+    })),
   ];
   return (
     <div className="sheet-backdrop" onClick={onClose}>
@@ -463,7 +468,13 @@ function Flashcards() {
 
   // ---- derived view state ----
 
-  const prompt = parts ? `${part + 1} of 2 · ${activeDeck.question}` : activeDeck.question;
+  // the question, its aside ("pick all") dimmed after it
+  const prompt = (
+    <>
+      {parts ? `${part + 1} of 2 · ${activeDeck.question}` : activeDeck.question}
+      {activeDeck.questionNote ? <span className="prompt-note"> · {activeDeck.questionNote}</span> : null}
+    </>
+  );
   let verdictText: string | null = null;
   let verdictClass = "";
   if (answered) {
@@ -506,23 +517,106 @@ function Flashcards() {
   const narrowed = facetSel.length > 0 && activeAnswers.some((id) => facetSel.includes(id));
   const shownOptions = narrowed ? activeDeck.options.filter((option) => facetSel.includes(option.id)) : activeDeck.options;
 
-  const optionClass = (option: DeckOption): string => {
+  // A narrowed pad with fewer options than columns spreads them out
+  const padCols = Math.max(1, Math.min(activeDeck.cols, shownOptions.length));
+
+  // Once answered, every option says what it was: ✓ on the right answers
+  // (solid when picked, dashed when missed), ✕ on a wrong pick, and the
+  // rest recede.
+  const optionView = (option: DeckOption): { className: string; label: string } => {
     // a type option is type-coloured wherever it appears — CategoryPill's rule
-    let cls = "pad-btn" + typeClassOf(CATEGORY_BY_ID.get(option.id));
+    let className = "pad-btn" + typeClassOf(CATEGORY_BY_ID.get(option.id));
+    let label = option.short;
     if (!answered) {
-      if (selection.includes(option.id)) cls += " selected";
+      if (selection.includes(option.id)) className += " selected";
     } else {
       const right = activeAnswers.includes(option.id);
-      if (right && pickedIds.has(option.id)) cls += " correct";
-      else if (right) cls += " correct missed";
-      else if (pickedIds.has(option.id)) cls += " wrong";
-      else cls += " dim";
+      if (right && pickedIds.has(option.id)) {
+        className += " correct";
+        label = `✓ ${label}`;
+      } else if (right) {
+        className += " correct missed";
+        label = `✓ ${label}`;
+      } else if (pickedIds.has(option.id)) {
+        className += " wrong";
+        label = `✕ ${label}`;
+      } else {
+        className += " dim";
+      }
     }
-    return cls;
+    return { className, label };
   };
 
-  const showSubmit = Boolean(activeDeck.multi);
-  const submitLabel = parts && part === 0 ? "Next ›" : selection.length ? `Submit ${selection.length}` : "Submit";
+  const shortOf = (id: string): string =>
+    activeDeck.options.find((option) => option.id === id)?.short ?? getCategory(id).short;
+
+  // The one CTA slot under the options: Submit (naming the picks) on a
+  // multi part, Next › on a combo's first multi part, Next card once
+  // answered. A single-pick part grades on tap, so its slot stays empty.
+  let cta: { label: string; onClick: () => void; disabled: boolean } | null = null;
+  if (answered) {
+    cta = { label: "Next card", onClick: () => next(), disabled: false };
+  } else if (activeDeck.multi) {
+    cta = {
+      label: parts && part === 0 ? "Next ›" : selection.length ? `Submit · ${selection.map(shortOf).join(" + ")}` : "Submit",
+      onClick: submit,
+      disabled: !selection.length,
+    };
+  }
+
+  // The line under the options once answered: what was missed and what
+  // was wrong, or the verdict, and when the card comes back. A combo
+  // leads with its per-part verdicts and counts both parts' picks.
+  const listNames = (ids: string[]): string => ids.map(shortOf).join(", ");
+  let summary: ReactNode = null;
+  if (answered) {
+    const backIn = nextIn ? `back in ${nextIn}` : null;
+    const prefix = parts && comboOk ? `${parts[0].label} ${comboOk.a ? "✓" : "✕"} · ${parts[1].label} ${comboOk.b ? "✓" : "✕"} · ` : "";
+    if (gaveUp) {
+      summary = [prefix + "Revealed", backIn].filter(Boolean).join(" · ");
+    } else if (wasCorrect) {
+      summary = [prefix + "Correct", backIn, "auto-next"].filter(Boolean).join(" · ");
+    } else {
+      const graded: Array<{ picks: string[]; answers: string[] }> = parts
+        ? [
+            { picks: partASel, answers: parts[0].answers(pokemon) },
+            { picks: [...pickedIds], answers: activeAnswers },
+          ]
+        : [{ picks: [...pickedIds], answers: activeAnswers }];
+      const missed = graded.flatMap(({ picks, answers }) => answers.filter((id) => !picks.includes(id)));
+      const wrong = graded.flatMap(({ picks, answers }) => picks.filter((id) => !answers.includes(id)));
+      const clauses: ReactNode[] = [];
+      if (missed.length) {
+        clauses.push(
+          <>
+            You missed <b className="hit">{listNames(missed)}</b>
+          </>,
+        );
+      }
+      if (wrong.length) {
+        clauses.push(
+          <>
+            <b className="miss">{listNames(wrong)}</b> {wrong.length === 1 ? "was" : "were"} wrong
+          </>,
+        );
+      }
+      summary = (
+        <>
+          {prefix}
+          {clauses.map((clause, index) => (
+            // eslint-disable-next-line @eslint-react/no-array-index-key -- at most two fixed clauses, never reordered
+            <span key={index}>
+              {index > 0 ? "; " : ""}
+              {clause}
+            </span>
+          ))}
+          {clauses.length ? ". " : ""}
+          {backIn ? `${clauses.length ? "Back" : "back"} in ${nextIn}.` : ""}
+        </>
+      );
+    }
+  }
+
   const canUndo = !gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt;
 
   return (
@@ -594,13 +688,30 @@ function Flashcards() {
       </div>
 
       <div className="answer-pad">
-        <div className={`pad-grid cols-${activeDeck.cols}`}>
-          {shownOptions.map((option) => (
-            <button key={option.id} className={optionClass(option)} disabled={answered} onClick={() => choose(option)}>
-              {option.short}
-            </button>
-          ))}
+        <div className={`pad-grid cols-${padCols}`}>
+          {shownOptions.map((option) => {
+            const view = optionView(option);
+            return (
+              <button key={option.id} className={view.className} disabled={answered} onClick={() => choose(option)}>
+                {view.label}
+              </button>
+            );
+          })}
         </div>
+        {summary !== null ? (
+          <p className="pad-summary" aria-live="polite">
+            {summary}
+          </p>
+        ) : null}
+        {cta ? (
+          <button className="pad-cta" disabled={cta.disabled} onClick={cta.onClick}>
+            {/* on a correct answer this sweeps left→right, then the card auto-advances */}
+            {answered ? <span className="next-fill" style={{ width: autoFill ? "100%" : "0%" }} aria-hidden="true" /> : null}
+            <span className="pad-cta-label">{cta.label}</span>
+          </button>
+        ) : (
+          <div className="pad-cta-gap" aria-hidden="true" />
+        )}
         <div className="pad-actions">
           {answered ? (
             <>
@@ -611,23 +722,13 @@ function Flashcards() {
               ) : (
                 <span />
               )}
-              {nextIn ? (
-                <span className="pad-note">
-                  back in {nextIn}
-                  {wasCorrect ? " · auto-next" : ""}
-                </span>
-              ) : null}
+              <span className="pad-note">Tap the name for the detail sheet</span>
             </>
           ) : (
             <>
               <button className="pad-ghost" onClick={giveUp}>
                 Don&apos;t know
               </button>
-              {showSubmit ? (
-                <button className="pad-submit" disabled={!selection.length} onClick={submit}>
-                  {submitLabel}
-                </button>
-              ) : null}
               <button className="pad-ghost" onClick={() => next()}>
                 Skip ›
               </button>
@@ -635,18 +736,6 @@ function Flashcards() {
           )}
         </div>
       </div>
-
-      {answered ? (
-        <>
-          <div className="next-spacer" aria-hidden="true" />
-          <div className="next-bar">
-            <button className="next-btn" onClick={() => next()}>
-              <span className="next-fill" style={{ width: autoFill ? "100%" : "0%" }} aria-hidden="true" />
-              <span className="next-label">Next card</span>
-            </button>
-          </div>
-        </>
-      ) : null}
 
       {deckSheet ? <DeckSheet activeId={deckId} onPick={changeDeck} onClose={() => setDeckSheet(false)} /> : null}
       {filterSheet ? (
