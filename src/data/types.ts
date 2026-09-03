@@ -144,6 +144,15 @@ export interface PendingPuzzle {
 // public/archive/index.json: every archived puzzle, newest first
 export type PickArchiveIndex = { id: number; date?: string }[];
 
+// public/archive/pairs.json: every category pair PokeDoku has run, keyed
+// like pairKey (the two app category ids, sorted, "|"-joined), with its
+// players' picks summed over every archived board that had the pair
+export interface PairStatsEntry extends PickStatsCell {
+  // how many archived boards the counts come from
+  boards: number;
+}
+export type PairStatsData = Record<string, PairStatsEntry>;
+
 export interface PickStatsData {
   meta: {
     generatedAt: string;

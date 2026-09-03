@@ -38,13 +38,25 @@ const UNSEEN_WEIGHT = WEIGHTS.size ? Math.min(...WEIGHTS.values()) / 2 : 0;
 export const PICK_STATS_META = pickStats.meta;
 
 const pickWeight = (id: number): number => WEIGHTS.get(id) ?? UNSEEN_WEIGHT;
+const poolWeightOf = (pool: Pokemon[]): number => pool.reduce((sum, candidate) => sum + pickWeight(candidate.id), 0);
 
 // null when there is no harvested data to estimate from
 export function estimatePickPercent(pokemon: Pokemon, pool: Pokemon[]): number | null {
   if (WEIGHTS.size === 0) return null;
-  const poolWeight = pool.reduce((sum, candidate) => sum + pickWeight(candidate.id), 0);
+  const poolWeight = poolWeightOf(pool);
   if (poolWeight <= 0) return null;
   return (100 * pickWeight(pokemon.id)) / poolWeight;
+}
+
+// Every pool member's estimate at once, by id (a filled cell's answer
+// list) — empty when there is no harvested data to estimate from
+export function estimatePickPercents(pool: Pokemon[]): Map<number, number> {
+  const estimates = new Map<number, number>();
+  if (WEIGHTS.size === 0) return estimates;
+  const poolWeight = poolWeightOf(pool);
+  if (poolWeight <= 0) return estimates;
+  for (const pokemon of pool) estimates.set(pokemon.id, (100 * pickWeight(pokemon.id)) / poolWeight);
+  return estimates;
 }
 
 export function cellUniqueness(pokemon: Pokemon, pool: Pokemon[]): number | null {
@@ -55,3 +67,10 @@ export function cellUniqueness(pokemon: Pokemon, pool: Pokemon[]): number | null
 // "<1%" below one, whole percent otherwise
 export const formatPickPercent = (value: number): string =>
   value < 1 ? "<1%" : `${Math.round(value)}%`;
+
+// an estimate, marked as one: "~12%" — but "<1%" as is, since "<" already
+// says the figure is approximate
+export function formatPickEstimate(value: number): string {
+  const label = formatPickPercent(value);
+  return label.startsWith("<") ? label : `~${label}`;
+}

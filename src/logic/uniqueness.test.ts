@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { Pokemon } from "../data/types.ts";
-import { buildWeights, estimatePickPercent, formatPickPercent, PICK_STATS_META } from "./uniqueness.ts";
+import {
+  buildWeights,
+  estimatePickPercent,
+  estimatePickPercents,
+  formatPickEstimate,
+  formatPickPercent,
+  PICK_STATS_META,
+} from "./uniqueness.ts";
 
 const mon = (id: number): Pokemon => ({ id }) as Pokemon;
 
@@ -38,6 +45,21 @@ describe("estimatePickPercent", () => {
   });
 });
 
+describe("estimatePickPercents", () => {
+  it("estimates every pool member at once, agreeing with the one-at-a-time estimate", () => {
+    const pool = [mon(25), mon(6), mon(150), mon(999_999)];
+    const estimates = estimatePickPercents(pool);
+    expect(estimates.size).toBe(pool.length);
+    let total = 0;
+    for (const pick of pool) {
+      const estimate = estimates.get(pick.id);
+      expect(estimate).toBeCloseTo(estimatePickPercent(pick, pool) ?? -1);
+      total += estimate ?? 0;
+    }
+    expect(total).toBeCloseTo(100);
+  });
+});
+
 describe("harvested data", () => {
   it("ships a populated prior", () => {
     expect(PICK_STATS_META.puzzlesCounted).toBeGreaterThan(0);
@@ -49,5 +71,12 @@ describe("formatPickPercent", () => {
   it("rounds whole percents and floors tiny ones to <1%", () => {
     expect(formatPickPercent(23.4)).toBe("23%");
     expect(formatPickPercent(0.4)).toBe("<1%");
+  });
+});
+
+describe("formatPickEstimate", () => {
+  it("marks an estimate with a tilde, except a floored one", () => {
+    expect(formatPickEstimate(23.4)).toBe("~23%");
+    expect(formatPickEstimate(0.4)).toBe("<1%");
   });
 });

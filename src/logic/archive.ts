@@ -1,22 +1,21 @@
 // Past PokeDoku boards, replayed in the Grid tab. The harvest
 // (scripts/harvest-pick-stats.ts) archives each finished daily as
 // public/archive/<id>.json — PokeDoku's own category spec plus every
-// cell's real pick counts — indexed by public/archive/index.json. Both
-// are fetched lazily here. A board seen while it was current carries its
-// spec and date; one backfilled later has only counts and can't be played.
+// cell's real pick counts — indexed by public/archive/index.json, and
+// sums the picks of every board that ran each category pair into
+// public/archive/pairs.json (logic/pairStats.ts). All are fetched lazily
+// here. A board seen while it was current carries its spec and date; one
+// backfilled later has only counts and can't be played.
 //
-// PokeDoku's spec names three x categories (the columns) and three y
-// categories (the rows); cell n of its stats (1-based, row-major) is
-// y[⌊(n−1)/3⌋] × x[(n−1) mod 3], matching the Grid's rowIndex*3+colIndex.
-// Each spec category maps onto one of the app's categories; a kind the
-// app lacks (LEGENDARY_TRIO, an unknown move) makes the board unplayable
-// rather than wrong. Verified against every archived board's picks.
-import { CATEGORY_BY_ID } from "../data/categories.ts";
+// The spec maps onto the app's categories in logic/pokedokuSpec.ts; a
+// kind the app lacks makes the board unplayable rather than wrong.
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
-import type { PickArchiveIndex, PickStatsCell, PickStatsPuzzle, Pokemon } from "../data/types.ts";
+import type { PairStatsData, PickArchiveIndex, PickStatsCell, PickStatsPuzzle, Pokemon } from "../data/types.ts";
 import type { Grid } from "./grid.ts";
-import { normalizeName } from "./matching.ts";
+import { SPEC_AXES, categoryIdFor, specAxis } from "./pokedokuSpec.ts";
 import { appIdFor } from "./uniqueness.ts";
+
+export { categoryIdFor } from "./pokedokuSpec.ts";
 
 const ARCHIVE_URL = `${import.meta.env.BASE_URL}archive/`;
 
@@ -33,82 +32,14 @@ export async function fetchArchivedPuzzle(id: number): Promise<PickStatsPuzzle> 
   return (await response.json()) as PickStatsPuzzle;
 }
 
-// One axis of PokeDoku's spec: the category kind, its value for kinds
-// that take one, and the species PokeDoku leaves out of it (Pikachu and
-// Eevee from First Partner)
-interface SpecCategory {
-  type: string;
-  obj: string | boolean;
-  excludedPokemonIds?: number[];
-}
-
-// rows, then columns
-const SPEC_AXES = ["y1", "y2", "y3", "x1", "x2", "x3"] as const;
-
-const GENERATION_REGIONS: Record<string, string> = {
-  "generation-i": "kanto",
-  "generation-ii": "johto",
-  "generation-iii": "hoenn",
-  "generation-iv": "sinnoh",
-  "generation-v": "unova",
-  "generation-vi": "kalos",
-  "generation-vii": "alola",
-  "generation-viii": "galar",
-  "generation-ix": "paldea",
-};
-
-const EVOLUTION_POSITIONS: Record<string, string> = {
-  start: "stage-first",
-  middle: "stage-middle",
-  final: "stage-final",
-  none: "stage-single",
-  premature: "stage-notFully",
-};
-
-// kinds without a value
-const BOOLEAN_KINDS: Record<string, string> = {
-  HISUI: "region-hisui",
-  DUAL_TYPE: "dual",
-  MONOTYPE: "mono",
-  LEGENDARY: "flag-legendary",
-  MYTHICAL: "flag-mythical",
-  ULTRA_BEAST: "flag-ultraBeast",
-  PARADOX: "flag-paradox",
-  FOSSIL: "flag-fossil",
-  FIRST_PARTNER: "flag-starter",
-  BABY: "flag-baby",
-  MEGA: "flag-mega",
-  GMAX: "flag-gmax",
-  EVOLUTION_BRANCHED: "branched",
-};
-
-// The app category a spec category means, or null for one the app lacks
-export function categoryIdFor(spec: SpecCategory): string | null {
-  const value = String(spec.obj);
-  let id: string | undefined;
-  switch (spec.type) {
-    case "POKEMON_TYPE":
-      id = `type-${value}`;
-      break;
-    case "GENERATION":
-      id = GENERATION_REGIONS[value] && `region-${GENERATION_REGIONS[value]}`;
-      break;
-    case "EVOLVED_BY":
-      id = `evo-${value === "level-up" ? "level" : value}`;
-      break;
-    case "EVOLUTION_POSITION":
-      id = EVOLUTION_POSITIONS[value];
-      break;
-    case "POKEMON_MOVE":
-      id = `move-${normalizeName(value)}`;
-      break;
-    case "POKEMON_ABILITY":
-      id = `ability-${normalizeName(value)}`;
-      break;
-    default:
-      id = BOOLEAN_KINDS[spec.type];
-  }
-  return id && CATEGORY_BY_ID.has(id) ? id : null;
+// The per-pair table: every category pair PokeDoku has run, with its
+// players' picks summed over the archived boards that had it — what a
+// random grid's cell shows in place of an estimate when its pair is one
+// PokeDoku has actually asked. Revalidated each time, like the index.
+export async function fetchPairStats(): Promise<PairStatsData> {
+  const response = await fetch(`${ARCHIVE_URL}pairs.json`, { cache: "no-cache" });
+  if (!response.ok) throw new Error(`pair stats: HTTP ${response.status}`);
+  return (await response.json()) as PairStatsData;
 }
 
 export interface ArchivedBoard {
@@ -131,7 +62,7 @@ export function boardFromArchive(puzzle: PickStatsPuzzle): ArchiveLoad {
   const ids: string[] = [];
   const excludedByAxis: Set<number>[] = [];
   for (const axis of SPEC_AXES) {
-    const category = spec[axis] as SpecCategory | undefined;
+    const category = specAxis(spec, axis);
     const id = category ? categoryIdFor(category) : null;
     if (!category || !id) {
       const kind = category ? `${category.type}${typeof category.obj === "string" ? ` ${category.obj}` : ""}` : axis;

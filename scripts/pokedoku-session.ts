@@ -54,6 +54,27 @@ export class PokedokuSession {
     }
   }
 
+  // A registered user's session instead of a guest's: the value of the
+  // browser's __Secure-next-auth.session-token cookie, for what PokeDoku
+  // refuses a guest (past puzzles and their categories). Passed in by the
+  // caller from the environment, never stored.
+  signInWithToken(token: string): void {
+    this.cookies.set("__Secure-next-auth.session-token", token);
+  }
+
+  // A page of pokedoku.com itself, as the session — null when the site
+  // redirects instead (dated puzzle pages send anyone not signed in home)
+  // or fails
+  async sitePage(path: string): Promise<string | null> {
+    const response = await fetch(`${SITE}${path}`, {
+      headers: { Cookie: this.cookieHeader(), "User-Agent": "Mozilla/5.0" },
+      redirect: "manual",
+    });
+    if (!response.ok) return null;
+    this.storeCookies(response);
+    return response.text();
+  }
+
   async apiGet<T>(path: string): Promise<T> {
     const response = await fetch(`${API}${path}`, {
       headers: { "Accept-Language": "en", Cookie: this.cookieHeader() },

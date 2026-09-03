@@ -46,22 +46,34 @@ Rotom appliances, Lycanroc's three, the female Pyroar, …).
 - **Grid** — a full 3×3 practice board, generated so every cell is
   solvable with distinct Pokémon; wrong guesses say why. Correct picks
   show an estimated global pick percentage — how many PokeDoku players
-  would reach for that Pokémon in that cell — and a finished board gets
-  a PokeDoku-style uniqueness score out of 900. The estimates come from
+  would reach for that Pokémon in that cell — a filled cell's answer
+  list wears the estimate for every answer as a badge ("~12%"),
+  likeliest pick first, and a finished board gets a PokeDoku-style
+  uniqueness score out of 900. A cell whose category pair PokeDoku has
+  actually run drops the estimate for the real thing: the share its
+  players gave each Pokémon, summed over every day the pair ran (no
+  tilde on those badges, and a board whose every cell has real data
+  gets an exact score). The estimates come from
   PokeDoku's real daily pick counts, harvested by `npm run harvest` (a
   scheduled GitHub Action, run just after PokeDoku's midnight-Eastern
   rotation): the board that just finished is archived permanently with
   its final counts as `public/archive/<id>.json` (spec + full pick
   counts, indexed by `public/archive/index.json`, deployed but fetched
-  lazily so the app bundle never grows), and averaged into the bounded
-  per-Pokémon pick tendency the app bundles (`src/data/pick-stats.json`).
+  lazily so the app bundle never grows), averaged into the bounded
+  per-Pokémon pick tendency the app bundles (`src/data/pick-stats.json`),
+  and summed by category pair into `public/archive/pairs.json` (fetched
+  lazily too; `node scripts/harvest-pick-stats.ts --rebuild` rederives
+  all three from the archive on disk without touching the network).
   A board is never archived while it is still being played. The chooser
   above the board replays any archived PokeDoku: its real categories,
   and instead of estimates the pick rates its players actually produced
   — each correct pick reports its true share, a filled cell's list shows
-  what everyone picked, and the uniqueness score is the real one. Only
-  boards the harvest saw while they were current carry their categories,
-  so the list starts on 26 Aug 2026 and grows by one a day.
+  what everyone picked, and the uniqueness score is the real one. A
+  board's categories are readable while it is current, and afterwards
+  only from PokeDoku's archive as a signed-in user, which the harvest's
+  `--specs` mode reads with a browser session token (never stored);
+  every archived board carries them, so the list reaches back to 27 Jul
+  2026 and grows by one a day.
 - **Stats** — per-category accuracy, weak spots highlighted (Mono-/Dual-
   Type have no table there — the type rows say it all — but still count
   for Drill and Grid); spaced-review counts; cross-device sync.

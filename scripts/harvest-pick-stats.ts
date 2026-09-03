@@ -8,11 +8,14 @@
 // The archive is the record: public/archive/<id>.json holds one finished
 // puzzle — its category spec and full per-cell pick counts — indexed by
 // public/archive/index.json. It is deployed with the site but fetched
-// lazily, so the app bundle stays fixed while the archive grows. The
-// prior the app bundles, src/data/pick-stats.json, is derived from the
-// archive on every save: one small entry per Pokémon (never grows past
-// the dex) plus the harvest's bookkeeping. Nothing outside the archive
-// is in the prior.
+// lazily, so the app bundle stays fixed while the archive grows. Two
+// things are derived from the archive on every save: the prior the app
+// bundles, src/data/pick-stats.json — one small entry per Pokémon (never
+// grows past the dex) plus the harvest's bookkeeping — and the per-pair
+// table, public/archive/pairs.json (src/logic/pairStats.ts): every
+// category pair PokeDoku has run, with its players' picks summed over
+// the boards that had it, fetched lazily by the Grid tab for random
+// grids. Nothing outside the archive is in either.
 //
 // PokeDoku schedules each day's puzzle from a pool of pre-generated ones,
 // so ids are not in date order (1528 ran on 2026-08-28, 1614 the next
@@ -36,6 +39,16 @@
 //   node scripts/harvest-pick-stats.ts --mirror-all     # push every
 //     archive file to Firestore (first-time seed, or repair after
 //     mirror failures); needs FIREBASE_SERVICE_ACCOUNT
+//   node scripts/harvest-pick-stats.ts --rebuild        # rederive the
+//     prior, index and pair table from the archive on disk, no network
+//     (after changing how any of them is derived)
+//   POKEDOKU_SESSION_TOKEN=… node scripts/harvest-pick-stats.ts \
+//       --specs 2026-07-25 2026-09-01                  # give backfilled
+//     boards their categories: PokeDoku shows a signed-in user any past
+//     day's puzzle at pokedoku.com/puzzle/<date> (pokedoku-page.ts reads
+//     it out of the page), which a guest session is refused. The token
+//     is the browser's __Secure-next-auth.session-token cookie, read from
+//     the environment for the run and never written anywhere.
 //
 // Archives written by a run are also mirrored to Firestore
 // (firestore-archive.ts) when FIREBASE_SERVICE_ACCOUNT is set; mirror
@@ -50,8 +63,10 @@ import type {
   PickStatsPuzzle,
 } from "../src/data/types.ts";
 import { maxValidInEveryCell } from "../src/logic/matching.ts";
+import { buildPairStats } from "../src/logic/pairStats.ts";
 import { FirestoreArchive } from "./firestore-archive.ts";
 import { DATA_DIR } from "./pokedoku-api.ts";
+import { extractEmbeddedPuzzle } from "./pokedoku-page.ts";
 import { PokedokuSession } from "./pokedoku-session.ts";
 
 const STATS_PATH = join(DATA_DIR, "pick-stats.json");
@@ -220,10 +235,17 @@ function rebuildIndex(archives: PickStatsPuzzle[]): void {
   writeFileSync(join(ARCHIVE_DIR, "index.json"), JSON.stringify(entries));
 }
 
+// The per-pair table (src/logic/pairStats.ts), under the same pick floor
+// as the prior; its order is fixed, so an unchanged table is no diff
+function rebuildPairs(archives: PickStatsPuzzle[]): void {
+  writeFileSync(join(ARCHIVE_DIR, "pairs.json"), JSON.stringify(buildPairStats(archives, MIN_CELL_PICKS)));
+}
+
 function save(data: PickStatsData): void {
   const archives = readAllArchives();
   rebuildPrior(data, archives);
   rebuildIndex(archives);
+  rebuildPairs(archives);
   // a run that changed nothing leaves no diff, so the second daily slot
   // (and a sweep that found nothing) doesn't commit a fresh timestamp
   if (fingerprint(data) === fingerprint(readStatsFile())) return;
@@ -250,6 +272,66 @@ if (process.argv.includes("--mirror-all")) {
     process.exit(1);
   }
   await mirrorArchives(readAllArchives());
+  process.exit(0);
+}
+
+if (process.argv.includes("--rebuild")) {
+  const rebuilt = loadStats();
+  save(rebuilt);
+  console.log(`rebuilt: ${rebuilt.meta.puzzlesCounted} puzzles, ${rebuilt.meta.cellsCounted} cells in the prior`);
+  process.exit(0);
+}
+
+// every calendar day from `from` to `to`, inclusive
+function datesBetween(from: string, to: string): string[] {
+  const dates: string[] = [];
+  const last = Date.parse(`${to}T00:00:00Z`);
+  for (let day = Date.parse(`${from}T00:00:00Z`); day <= last; day += 86_400_000) {
+    dates.push(new Date(day).toISOString().slice(0, 10));
+  }
+  return dates;
+}
+
+const specsFlag = process.argv.indexOf("--specs");
+if (specsFlag !== -1) {
+  const from = process.argv[specsFlag + 1] ?? "";
+  const to = process.argv[specsFlag + 2] ?? "";
+  const isDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
+  if (!isDate(from) || !isDate(to) || from > to) {
+    console.error("usage: POKEDOKU_SESSION_TOKEN=… node scripts/harvest-pick-stats.ts --specs <from> <to>  (YYYY-MM-DD)");
+    process.exit(1);
+  }
+  const token = process.env.POKEDOKU_SESSION_TOKEN;
+  if (!token) {
+    console.error("--specs needs POKEDOKU_SESSION_TOKEN: a signed-in browser's __Secure-next-auth.session-token cookie");
+    process.exit(1);
+  }
+  const signedIn = new PokedokuSession();
+  signedIn.signInWithToken(token);
+  const archived = new Map(readAllArchives().map((puzzle) => [puzzle.id, puzzle]));
+  let filled = 0;
+  for (const date of datesBetween(from, to)) {
+    const html = await signedIn.sitePage(`/puzzle/${date}`);
+    const puzzle = html ? extractEmbeddedPuzzle(html) : null;
+    if (!puzzle) {
+      console.warn(`${date}: no puzzle page${html ? "" : " (not signed in, or no puzzle that day)"}`);
+      await sleep(THROTTLE_MS);
+      continue;
+    }
+    const existing = archived.get(puzzle.id);
+    if (!existing) {
+      console.log(`${date}: puzzle ${puzzle.id} isn't archived (its stats were never served) — skipped`);
+    } else if (!existing.spec || !existing.date) {
+      const { id, date: puzzleDate, ...spec } = puzzle;
+      writeArchive({ id, date: puzzleDate, spec, cells: existing.cells });
+      console.log(`${date}: puzzle ${id} now has its categories`);
+      filled += 1;
+    }
+    await sleep(THROTTLE_MS);
+  }
+  save(loadStats());
+  await mirrorArchives(touchedArchives);
+  console.log(`specs done: ${filled} board${filled === 1 ? "" : "s"} given their categories`);
   process.exit(0);
 }
 
