@@ -33,8 +33,12 @@ const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
 // The deck whose pad offers a category (Not Fully Evolved, Mega and Gmax
 // have none) — the Study next pool, and which coverage squares get a
 // Cards button.
+// Only decks that credit their options count: Matchups offers the types
+// but teaches the type chart.
 const DECK_FOR_CATEGORY = new Map<string, string>(
-  DECKS.flatMap((deck) => deck.options.map((option) => [option.id, deck.id] as const)),
+  DECKS.filter((deck) => !deck.categories).flatMap((deck) =>
+    deck.options.map((option) => [option.id, deck.id] as const),
+  ),
 );
 const DECKABLE_CATEGORIES: Category[] = [...DECK_FOR_CATEGORY.keys()].map(getCategory);
 

@@ -44,7 +44,7 @@ describe("type chart", () => {
     expect(weaknessesOf(["water", "flying"])).toEqual(["electric", "rock"]);
     // Snorlax (Normal): only Fighting
     expect(weaknessesOf(["normal"])).toEqual(["fighting"]);
-    // Eelektross-style would need ability handling; pure Electric is Ground only
+    // pure Electric is Ground only
     expect(weaknessesOf(["electric"])).toEqual(["ground"]);
     // Shedinja's typing (Bug/Ghost)
     expect(weaknessesOf(["bug", "ghost"])).toEqual(["fire", "flying", "rock", "ghost", "dark"]);

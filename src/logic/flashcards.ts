@@ -9,6 +9,7 @@
 import { CATEGORIES, CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
 import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.ts";
+import { weaknessesOf } from "../data/typechart.ts";
 import { FLAGS } from "../data/types.ts";
 import type { Flag, Pokemon } from "../data/types.ts";
 import { loadJson, saveJson } from "./hashState.ts";
@@ -31,11 +32,17 @@ export interface Deck {
   questionNote?: string;
   // every answer must be picked (Type); single-pick decks accept any one
   multi?: boolean;
+  // the answer is typed, not picked: the Pokémon's own name via the
+  // autocomplete (options stay empty)
+  input?: "name";
   // answer-pad grid columns
   cols: number;
   options: DeckOption[];
   // the option ids that are right for this Pokémon
   answers: (pokemon: Pokemon) => string[];
+  // the categories an attempt is credited to, when not the answers
+  // themselves (a Matchups card is type-chart knowledge, not typing)
+  categories?: (pokemon: Pokemon) => string[];
   // whether the deck can ask about this Pokémon at all
   eligible: (pokemon: Pokemon) => boolean;
   // how much more often than normal to ask about this Pokémon
@@ -60,6 +67,8 @@ export const DECKS: Deck[] = [
     id: "region",
     label: "Region",
     question: "Which region?",
+    questionNote: "pick all",
+    multi: true, // every region it counts for (a dual-region form has two), then Submit
     cols: 5, // ten regions: two full rows
     options: CATEGORIES.filter((category) => category.group === "region"),
     answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
@@ -110,6 +119,34 @@ export const DECKS: Deck[] = [
     eligible: (pokemon) => pokemon.stage !== null && !isMegaOrGmax(pokemon),
     bias: () => 1,
   },
+  {
+    id: "matchup",
+    label: "Matchups",
+    question: "Weak to?",
+    questionNote: "pick all",
+    multi: true, // every type that hits it super-effectively, then Submit
+    cols: 6,
+    options: CATEGORIES.filter((category) => category.group === "type"),
+    answers: (pokemon) => weaknessesOf(pokemon.types).map((type) => `type-${type}`),
+    // pure type-chart knowledge — never credits the type categories
+    categories: () => [],
+    // Gmax never changes type; every Gen 6+ typing has a weakness, but guard anyway
+    eligible: (pokemon) => !pokemon.flags.includes("gmax") && weaknessesOf(pokemon.types).length > 0,
+    bias: () => 1,
+  },
+  {
+    id: "name",
+    label: "Who's That?",
+    question: "Who's that Pokémon?",
+    input: "name",
+    cols: 1,
+    options: [],
+    // the record itself: form names must be exact, as on PokeDoku
+    answers: (pokemon) => [String(pokemon.id)],
+    categories: () => [],
+    eligible: () => true,
+    bias: () => 1,
+  },
 ];
 
 export const DECK_BY_ID = new Map<string, Deck>(DECKS.map((deck) => [deck.id, deck]));
@@ -156,6 +193,14 @@ export function deckLabel(deckId: string): string {
 export function deckAnswers(deckId: string, pokemon: Pokemon): string[] {
   const parts = comboParts(deckId);
   return parts ? parts.flatMap((part) => part.answers(pokemon)) : deckById(deckId).answers(pokemon);
+}
+
+// What an attempt is credited to: the answers, unless the deck says
+// otherwise (a combo's parts each their own way).
+export function deckCategories(deckId: string, pokemon: Pokemon): string[] {
+  const credited = (deck: Deck): string[] => (deck.categories ?? deck.answers)(pokemon);
+  const parts = comboParts(deckId);
+  return parts ? parts.flatMap(credited) : credited(deckById(deckId));
 }
 
 // A combo only asks Pokémon both its sub-decks would ask.
@@ -344,6 +389,17 @@ export interface ComboVerdict {
 
 export type DashResult = "correct" | "wrong";
 
+// An answered card kept behind the live one, for Back: shown again as
+// it was graded.
+export interface PastCard {
+  card: Card;
+  picked: string[] | "gaveup";
+  comboOk: ComboVerdict | null;
+}
+
+// how many answered cards Back can step through
+export const HISTORY_MAX = 20;
+
 export interface CardSession {
   // the deck in play, or "all"
   deckId: string;
@@ -359,6 +415,11 @@ export interface CardSession {
   recent: number[];
   // the last few results, oldest first, for the header dashes
   dashes: DashResult[];
+  // the last few answered cards, oldest first, for Back
+  history: PastCard[];
+  // which of them is on the table instead of the live card (null: the
+  // live card)
+  viewing: number | null;
   // the answer that can still be taken back: its recordAttempt token and
   // the card it graded (memory-only — an undo never survives a reload)
   undo: { token: number; key: string } | null;
@@ -399,6 +460,8 @@ export const session: CardSession = {
   comboOk: null,
   recent: [],
   dashes: [],
+  history: [],
+  viewing: null,
   undo: null,
   ...(isStoredSession(stored) ? stored : {}),
 };
@@ -406,9 +469,24 @@ export const session: CardSession = {
 session.dashes = Array.isArray(session.dashes)
   ? session.dashes.filter((dash) => dash === "correct" || dash === "wrong")
   : [];
+const isPastCard = (value: unknown): value is PastCard => {
+  if (typeof value !== "object" || value === null) return false;
+  const past = value as Partial<PastCard>;
+  return (
+    typeof past.card === "object" &&
+    past.card !== null &&
+    isDeckId(past.card.deckId) &&
+    (past.picked === "gaveup" || Array.isArray(past.picked))
+  );
+};
+session.history = Array.isArray(session.history) ? session.history.filter(isPastCard).slice(-HISTORY_MAX) : [];
+session.viewing =
+  typeof session.viewing === "number" && session.viewing >= 0 && session.viewing < session.history.length
+    ? session.viewing
+    : null;
 
 export function saveSession(): void {
-  const { deckId, card, selection, picked, comboOk, recent, dashes } = session;
+  const { deckId, card, selection, picked, comboOk, recent, dashes, history, viewing } = session;
   saveJson(SESSION_KEY, {
     deckId,
     card,
@@ -417,6 +495,8 @@ export function saveSession(): void {
     comboOk,
     recent,
     dashes,
+    history,
+    viewing,
   } satisfies StoredSession);
 }
 
@@ -429,6 +509,7 @@ export function resetSessionForDeck(deckId: string): void {
   session.selection = [];
   session.picked = null;
   session.comboOk = null;
+  session.viewing = null;
   session.undo = null;
   saveSession();
 }

@@ -1,6 +1,6 @@
 // The Gen 6+ type chart, attacker → defender → multiplier (only the
 // non-neutral entries; anything unlisted is ×1). Pure type maths — the
-// Matchup deck ignores ability effects like Levitate on purpose.
+// Matchups deck ignores ability effects like Levitate on purpose.
 
 import { TYPE_NAMES } from "./types.ts";
 import type { PokemonType } from "./types.ts";

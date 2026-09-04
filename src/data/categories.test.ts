@@ -12,11 +12,11 @@ const p = (id: number): Pokemon => {
 const inCat = (catId: string, pokemonId: number): boolean => getCategory(catId).predicate(p(pokemonId));
 
 describe("categories", () => {
-  it("defines 80 categories with unique ids", () => {
+  it("defines 81 categories with unique ids", () => {
     // 18 types + 2 type counts + 10 regions + 5 evo methods + 5 stages
-    // + branched + 9 special + 22 moves + 5 abilities + 3 fun
-    expect(CATEGORIES.length).toBe(80);
-    expect(new Set(CATEGORIES.map((category) => category.id)).size).toBe(80);
+    // + branched + 9 special + 22 moves + 5 abilities + 4 fun
+    expect(CATEGORIES.length).toBe(81);
+    expect(new Set(CATEGORIES.map((category) => category.id)).size).toBe(81);
     // the fun filters are Browse-only: never quizzed
     expect(QUIZ_CATEGORIES.length).toBe(77);
     expect(QUIZ_CATEGORIES.some((category) => category.group === "fun")).toBe(false);
@@ -34,6 +34,9 @@ describe("categories", () => {
     expect(inCat("fun-evoTypeChange", 2)).toBe(false); // Ivysaur keeps Grass/Poison
     expect(inCat("fun-formTypeChange", 10034)).toBe(true); // Mega Charizard X
     expect(inCat("fun-formTypeChange", 10196)).toBe(false); // Gmax keeps its typing
+    expect(inCat("fun-uniqueTyping", 292)).toBe(true); // Shedinja: the only Bug/Ghost
+    expect(inCat("fun-uniqueTyping", 25)).toBe(false); // Pikachu: pure Electric is common
+    expect(inCat("fun-uniqueTyping", 6)).toBe(false); // Charizard shares Fire/Flying with Ho-Oh
   });
 
   it("classifies known Pokémon correctly", () => {

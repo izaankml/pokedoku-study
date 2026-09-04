@@ -897,7 +897,7 @@ button.pill {
 
 .answer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
   gap: var(--sp-2);
 }
 
@@ -911,12 +911,15 @@ button.pill {
   min-width: 0;
 }
 
+/* a square tile: the sprite takes whatever height the name leaves */
 .answer-grid .pokemon-card {
   width: 100%;
+  aspect-ratio: 1;
+  gap: 4px;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 10px 6px 8px;
+  padding: 8px 6px 6px;
   box-shadow: var(--edge-hi);
   transition: translate var(--dur-fast) var(--ease-out), background-color var(--dur-fast),
     box-shadow var(--dur-fast);
@@ -941,6 +944,31 @@ button.pill {
 /* Form names ("Gigantamax Urshifu (Rapid Strike)") need up to three
    lines; every card reserves them so rows stay uniform, and the name is
    centred inside that box */
+/* a card's sprite slot: the fit transform scales the sprite up inside
+   it, and a hair of spill at an edge tile must not widen the page (the
+   one thing that let a phone pan sideways) */
+.card-art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* in a tile the slot is square (Sprite.tsx's fit transform assumes one):
+   the smaller of the tile's width and what the name leaves */
+.answer-grid .card-art {
+  flex: 1;
+  min-height: 0;
+  container-type: size;
+}
+
+.answer-grid .card-art .sprite,
+.answer-grid .card-art .sprite-fallback {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+}
+
+/* the name takes the lines it needs, three at most */
 .answer-grid .pokemon-card figcaption {
   display: flex;
   align-items: center;
@@ -948,7 +976,8 @@ button.pill {
   white-space: normal;
   font-size: 0.76rem;
   line-height: 1.2;
-  height: 3.6em;
+  min-height: 1.2em;
+  max-height: 3.6em;
 }
 
 .answer-grid .pokemon-card .card-name {
@@ -1212,6 +1241,86 @@ button.pill {
   margin-top: var(--sp-3);
 }
 
+/* ---- drill: Name one / Name all ---- */
+
+.mode-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 0 auto var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+}
+
+.mode-btn {
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: none;
+  color: var(--text-low);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.mode-btn[aria-pressed="true"] {
+  background: var(--surface-3);
+  color: var(--text-hi);
+  box-shadow: var(--edge-hi);
+}
+
+/* a Name-all question's pills, each with its × before it */
+.question-part {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+/* how the round is going: the count, and a bar under it */
+.name-all-progress {
+  margin: 0 0 var(--sp-3);
+  color: var(--text-mid);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.name-all-bar {
+  display: block;
+  max-width: 420px;
+  height: 6px;
+  margin: 6px auto 0;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.name-all-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--correct);
+  transition: width var(--dur-med) var(--ease-out);
+}
+
+/* which shapes of question the next round draws from */
+.drill-kinds {
+  max-width: 420px;
+  margin: var(--sp-5) auto 0;
+  text-align: left;
+}
+
+.drill-kinds summary {
+  padding: 6px 0;
+  cursor: pointer;
+  color: var(--text-low);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.drill-kinds .grid-groups {
+  margin-top: var(--sp-2);
+}
+
 /* the Cards view is one column: header row, the card stage centred in
    the free space, and the docked answer pad at the bottom */
 .flashcards {
@@ -1343,7 +1452,7 @@ button.pill {
   justify-content: center;
   gap: 6px;
   padding: 0 4px;
-  min-height: 274px;
+  min-height: 250px;
 }
 
 /* the question while asking; the verdict replaces it once answered */
@@ -1381,23 +1490,61 @@ button.pill {
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
-/* the sprite sits on a raised tile, like an answer-grid card */
+/* a combo's verdict names each part; the marks carry the colour */
+.card-prompt.combo {
+  color: var(--text-mid);
+  animation: fade-up var(--dur-med) var(--ease-out) both;
+}
+
+/* a part's ✓ or ✕ in a verdict line, green or red on its own */
+.mark.correct {
+  color: var(--correct-strong);
+}
+
+.mark.wrong {
+  color: var(--wrong);
+}
+
+/* the sprite sits on a raised tile, like an answer-grid card; once the
+   card is answered the tile is a button into the detail sheet */
 .stage-sprite {
   display: grid;
   place-items: center;
-  width: 184px;
-  height: 184px;
+  width: 144px;
+  height: 144px;
+  padding: 0;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-1), var(--edge-hi);
 }
 
+.stage-sprite:disabled {
+  cursor: default;
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .stage-sprite:enabled:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
+  }
+}
+
+.stage-sprite:enabled:active {
+  scale: 0.97;
+}
+
+/* Who's That: a silhouette until the card is answered */
+.stage-sprite.mystery .sprite {
+  filter: brightness(0) invert(0.82);
+}
+
 /* Sprite.tsx centres and scales each Pokémon's visible box in this slot */
 .stage-sprite .sprite,
 .stage-sprite .sprite-fallback {
-  width: 160px;
-  height: 160px;
+  width: 124px;
+  height: 124px;
   object-fit: contain;
 }
 
@@ -1408,14 +1555,14 @@ button.pill {
 /* a combo card stacks two pads under the stage: a smaller tile keeps the
    whole card on a phone screen */
 .flashcards.combo .stage-sprite {
-  width: 148px;
-  height: 148px;
+  width: 124px;
+  height: 124px;
 }
 
 .flashcards.combo .stage-sprite .sprite,
 .flashcards.combo .stage-sprite .sprite-fallback {
-  width: 128px;
-  height: 128px;
+  width: 104px;
+  height: 104px;
 }
 
 /* the name; once answered it becomes a button into the detail sheet */
@@ -1491,12 +1638,17 @@ button.pill {
   color: var(--text-low);
 }
 
-.pad-kicker .correct {
-  color: var(--correct-strong);
+/* Who's That types its answer in the pad: the box runs full width, and
+   the suggestions open upward — the pad sits at the bottom of the screen,
+   under a phone's keyboard */
+.answer-pad .autocomplete {
+  max-width: none;
 }
 
-.pad-kicker .wrong {
-  color: var(--wrong);
+.answer-pad .suggestions {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform-origin: bottom;
 }
 
 /* One column per deck (Type six, Region five, Group three, Stage two),
@@ -1532,10 +1684,10 @@ button.pill {
 }
 
 .pad-btn {
-  height: 44px;
+  height: 52px;
   padding: 0 2px;
   white-space: nowrap;
-  font-size: 0.76rem;
+  font-size: 0.84rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
@@ -1543,9 +1695,14 @@ button.pill {
   color: var(--text-hi);
 }
 
+/* six columns: the longest labels ("✓ Fighting") need the room */
+.pad-grid.cols-6 .pad-btn {
+  font-size: 0.78rem;
+}
+
 /* a combo's two pads run a little shorter so both fit on a phone */
 .flashcards.combo .pad-btn {
-  height: 40px;
+  height: 44px;
 }
 
 /* pointer devices only (see .tab:hover) */
@@ -1575,19 +1732,20 @@ button.pill {
   }
 }
 
-/* multi-select parts: toggled options before Submit */
+/* toggled options before Submit: a bright ring, so a pick reads at a
+   glance on every type's wash (the darker ones hid a thin accent ring) */
 .pad-btn.selected {
   background: var(--surface-3);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
+  border-color: var(--text-hi);
+  box-shadow: 0 0 0 2px var(--text-hi);
   color: var(--text-hi);
   font-weight: 800;
 }
 
 .pad-btn[class*="type-"].selected {
-  background: color-mix(in srgb, var(--type-c) 45%, var(--surface-1));
-  border-color: var(--type-c);
-  box-shadow: 0 0 0 1px var(--type-c);
+  background: color-mix(in srgb, var(--type-c) 55%, var(--surface-1));
+  border-color: var(--text-hi);
+  box-shadow: 0 0 0 2px var(--text-hi);
   font-weight: 800;
 }
 
@@ -1686,16 +1844,6 @@ button.pill {
   cursor: default;
 }
 
-/* on a correct answer this sweeps left→right, then the card auto-advances */
-.next-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.16);
-  transition: width 1.6s linear;
-}
-
 /* a long Submit label ("Submit · Fighting + Electric") trims rather than wraps */
 .pad-cta-label {
   position: relative;
@@ -1705,8 +1853,8 @@ button.pill {
   white-space: nowrap;
 }
 
-/* the row under the CTA: Don't know · Skip while asking, Undo · a hint
-   once answered */
+/* the row under the CTA: Back · Don't know | Skip while asking, Back ·
+   Undo | a hint once answered */
 .pad-actions {
   display: flex;
   align-items: center;
@@ -1714,6 +1862,12 @@ button.pill {
   gap: 8px;
   padding: 6px 4px 10px;
   min-height: 40px;
+}
+
+.pad-actions-side {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .pad-ghost {
@@ -2167,14 +2321,14 @@ button.evo-tile:active {
      height back so everything still fits above the nav */
   @media (max-height: 700px) {
     .stage-sprite {
-      width: 160px;
-      height: 160px;
+      width: 128px;
+      height: 128px;
     }
 
     .stage-sprite .sprite,
     .stage-sprite .sprite-fallback {
-      width: 136px;
-      height: 136px;
+      width: 108px;
+      height: 108px;
     }
 
     .card-stage {

@@ -4,7 +4,7 @@
 // history exists (3 = the user's known weak spots). `miss` is the clause
 // shown when a guess fails the category ("isn't Fire-type").
 
-import { POKEMON_BY_ID } from "./pokedex.ts";
+import { POKEMON, POKEMON_BY_ID } from "./pokedex.ts";
 import { ABILITIES, MOVES } from "./traits.ts";
 import { TYPE_NAMES } from "./types.ts";
 import type { EvoMethod, Flag, Pokemon, Region, Stage } from "./types.ts";
@@ -105,6 +105,25 @@ const typesDiffer = (one: Pokemon | undefined, other: Pokemon | undefined): bool
   !!other &&
   (one.types.length !== other.types.length || one.types.some((type, index) => type !== other.types[index]));
 
+// A typing (order aside) that no other species has: Rotom's forms all
+// count as Rotom, and a Mega's typing counts against whoever shares it.
+// Built on first use, once the dataset is loaded.
+const typingKey = (pokemon: Pokemon): string => [...pokemon.types].sort().join("/");
+let uniqueTypings: Set<string> | null = null;
+function hasUniqueTyping(pokemon: Pokemon): boolean {
+  if (!uniqueTypings) {
+    const speciesByTyping = new Map<string, Set<number>>();
+    for (const each of POKEMON) {
+      const key = typingKey(each);
+      const species = speciesByTyping.get(key) ?? new Set<number>();
+      species.add(each.species);
+      speciesByTyping.set(key, species);
+    }
+    uniqueTypings = new Set([...speciesByTyping].filter(([, species]) => species.size === 1).map(([key]) => key));
+  }
+  return uniqueTypings.has(typingKey(pokemon));
+}
+
 const FUN_CATEGORIES: Category[] = [
   {
     id: "fun-pikachuClone",
@@ -134,6 +153,16 @@ const FUN_CATEGORIES: Category[] = [
     priorWeight: 1,
     predicate: (pokemon) => pokemon.form !== null && typesDiffer(pokemon, POKEMON_BY_ID.get(pokemon.species)),
     miss: "keeps its base form's typing",
+    browseOnly: true,
+  },
+  {
+    id: "fun-uniqueTyping",
+    label: "Unique Typing",
+    short: "Unique Typing",
+    group: "fun",
+    priorWeight: 1,
+    predicate: hasUniqueTyping,
+    miss: "shares its typing with another Pokémon",
     browseOnly: true,
   },
 ];

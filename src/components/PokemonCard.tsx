@@ -39,7 +39,10 @@ function PokemonCard({ pokemon, onClick, eager = false, hint, hideName = false, 
           : undefined
       }
     >
-      <Sprite pokemon={pokemon} eager={eager} label={hideName ? MYSTERY : undefined} />
+      {/* a square slot the sprite fills (an answer-grid tile gives it whatever the caption leaves) */}
+      <span className="card-art">
+        <Sprite pokemon={pokemon} eager={eager} label={hideName ? MYSTERY : undefined} />
+      </span>
       <figcaption title={hideName ? MYSTERY : pokemon.displayName}>
         <span className={hideName ? "card-name card-name-hidden" : "card-name"}>
           {hideName ? "???" : <PokemonName name={pokemon.displayName} />}

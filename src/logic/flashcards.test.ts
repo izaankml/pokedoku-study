@@ -8,6 +8,7 @@ import {
   cardKey,
   comboParts,
   deckAnswers,
+  deckCategories,
   deckEligible,
   deckLabel,
   deckPicks,
@@ -35,8 +36,8 @@ const deck = (id: string): Deck => {
 };
 
 describe("flashcard decks", () => {
-  it("offers the four deckable groups plus the six pairwise combos", () => {
-    expect(DECKS.map((each) => each.id)).toEqual(["region", "type", "special", "stage"]);
+  it("offers the four deckable groups, Matchups and Who's That, plus the six pairwise combos", () => {
+    expect(DECKS.map((each) => each.id)).toEqual(["region", "type", "special", "stage", "matchup", "name"]);
     expect(COMBO_IDS).toEqual([
       "combo:type+region",
       "combo:type+stage",
@@ -60,13 +61,28 @@ describe("flashcard decks", () => {
     expect(deck("stage").answers(by("charizard"))).toEqual(["stage-final"]);
   });
 
+  it("asks weaknesses and names without crediting the type categories", () => {
+    const charizard = by("charizard");
+    expect(deck("matchup").answers(charizard)).toEqual(["type-water", "type-electric", "type-rock"]);
+    expect(deck("name").answers(charizard)).toEqual([String(charizard.id)]);
+    expect(deckCategories("matchup", charizard)).toEqual([]);
+    expect(deckCategories("name", charizard)).toEqual([]);
+    expect(deckCategories("type", charizard)).toEqual(["type-fire", "type-flying"]);
+    expect(deckCategories("combo:type+region", charizard)).toEqual(["type-fire", "type-flying", "region-kanto"]);
+  });
+
   it("grades single picks by membership and multi picks by exact set", () => {
+    const special = deck("special");
+    const koraidon = by("koraidon");
+    // a Pokémon in two groups accepts either group alone
+    expect(isRightPick(special, ["flag-paradox"], special.answers(koraidon))).toBe(true);
+    expect(isRightPick(special, ["flag-fossil"], special.answers(koraidon))).toBe(false);
+    expect(isRightPick(special, [], special.answers(koraidon))).toBe(false);
+    // a dual-region form needs both regions
     const region = deck("region");
     const basculin = by("basculinwhitestriped");
-    // a dual-region form accepts either region alone
-    expect(isRightPick(region, ["region-unova"], region.answers(basculin))).toBe(true);
-    expect(isRightPick(region, ["region-kanto"], region.answers(basculin))).toBe(false);
-    expect(isRightPick(region, [], region.answers(basculin))).toBe(false);
+    expect(isRightPick(region, ["region-unova"], region.answers(basculin))).toBe(false);
+    expect(isRightPick(region, ["region-hisui", "region-unova"], region.answers(basculin))).toBe(true);
     const type = deck("type");
     const charizard = by("charizard");
     expect(isRightPick(type, ["type-fire"], type.answers(charizard))).toBe(false); // missing Flying

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useStats } from "../StatsContext.ts";
 import { pickFlashcard } from "../logic/picker.ts";
@@ -7,10 +7,11 @@ import {
   DECKS,
   DECK_BY_ID,
   FOCUS_FACETS,
+  HISTORY_MAX,
   SPECIAL_FLAGS,
   cardKey,
   comboParts,
-  deckAnswers,
+  deckCategories,
   deckLabel,
   deckPicks,
   dueCardCount,
@@ -33,6 +34,7 @@ import type {
   Deck,
   DeckOption,
   FocusFacet,
+  PastCard,
   Picked,
 } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
@@ -44,14 +46,13 @@ import type { Pokemon } from "../data/types.ts";
 import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
 import Chevron from "./Chevron.tsx";
+import PokemonAutocomplete from "./PokemonAutocomplete.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
 import { useModalShell } from "./useModalShell.ts";
 
 const GAVE_UP = "gaveup";
-// the sweep on the Next card bar runs 1.6s; the card follows just after
-const AUTO_NEXT_MS = 1700;
 const DASH_SLOTS = 10;
 // Shown in the group slot when a Pokémon is in no group at all
 const REGULAR: PillCategory = { id: "flag-regular", label: "Regular", short: "Regular", group: "special" };
@@ -195,7 +196,8 @@ function Flashcards() {
     }
     return id;
   });
-  const [card, setCard] = useState<Card>(() => {
+  // The live card: the one being asked, or just answered
+  const [liveCard, setLiveCard] = useState<Card>(() => {
     if (!session.card) {
       session.card = freshCard(session.deckId);
       session.selection = [];
@@ -204,19 +206,30 @@ function Flashcards() {
     }
     return session.card;
   });
-  const [selection, setSelection] = useState<string[]>(session.selection);
-  const [picked, setPicked] = useState<Picked>(session.picked);
-  const [comboOk, setComboOk] = useState<ComboVerdict | null>(session.comboOk);
+  const [liveSelection, setLiveSelection] = useState<string[]>(session.selection);
+  const [livePicked, setLivePicked] = useState<Picked>(session.picked);
+  const [liveComboOk, setLiveComboOk] = useState<ComboVerdict | null>(session.comboOk);
   const [dashes, setDashes] = useState<DashResult[]>(session.dashes);
-  // the auto-advance sweep on the Next card bar: false = width 0, true = 100%
-  const [autoFill, setAutoFill] = useState(false);
-  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const autoFrameRef = useRef<number | null>(null);
+  const [history, setHistory] = useState<PastCard[]>(session.history);
+  const [viewing, setViewing] = useState<number | null>(session.viewing);
+
+  // What's on the table: the live card, or an earlier one Back stepped
+  // to — shown as it was graded; nothing on it can change
+  const past: PastCard | undefined = viewing !== null ? history[viewing] : undefined;
+  const live = past === undefined;
+  const card = past ? past.card : liveCard;
+  const picked: Picked = past ? past.picked : livePicked;
+  const comboOk = past ? past.comboOk : liveComboOk;
+  const selection = past ? (Array.isArray(past.picked) ? past.picked : []) : liveSelection;
 
   const pokemon = pokemonOf(card);
   const parts = comboParts(card.deckId);
   // the deck whose options fill the pad — a combo's two, each on its own pad
   const padDecks: [Deck] | [Deck, Deck] = parts ?? [DECK_BY_ID.get(card.deckId) as Deck];
+  // Who's That types its answer instead of picking options — and hides
+  // the name (and the sprite's colours) until it's answered
+  const nameDeck = !parts && padDecks[0].input === "name";
+  const mystery = nameDeck && picked === null;
 
   const answered = picked !== null;
   const gaveUp = picked === GAVE_UP;
@@ -264,36 +277,18 @@ function Flashcards() {
     picked?: Picked;
     comboOk?: ComboVerdict | null;
     dashes?: DashResult[];
+    history?: PastCard[];
+    viewing?: number | null;
   }): void {
     Object.assign(session, changes);
     saveSession();
-    if (changes.card !== undefined) setCard(changes.card);
-    if (changes.selection !== undefined) setSelection(changes.selection);
-    if (changes.picked !== undefined) setPicked(changes.picked);
-    if (changes.comboOk !== undefined) setComboOk(changes.comboOk);
+    if (changes.card !== undefined) setLiveCard(changes.card);
+    if (changes.selection !== undefined) setLiveSelection(changes.selection);
+    if (changes.picked !== undefined) setLivePicked(changes.picked);
+    if (changes.comboOk !== undefined) setLiveComboOk(changes.comboOk);
     if (changes.dashes !== undefined) setDashes(changes.dashes);
-  }
-
-  const cancelAuto = useCallback(() => {
-    if (autoTimerRef.current !== null) clearTimeout(autoTimerRef.current);
-    autoTimerRef.current = null;
-    if (autoFrameRef.current !== null) cancelAnimationFrame(autoFrameRef.current);
-    autoFrameRef.current = null;
-    setAutoFill(false);
-  }, []);
-  // leaving the tab cancels the pending advance
-  useEffect(() => cancelAuto, [cancelAuto]);
-
-  function startAuto(): void {
-    cancelAuto();
-    // two frames so the bar mounts at width 0 before the sweep begins
-    autoFrameRef.current = requestAnimationFrame(() => {
-      autoFrameRef.current = requestAnimationFrame(() => {
-        autoFrameRef.current = null;
-        setAutoFill(true);
-      });
-    });
-    autoTimerRef.current = setTimeout(() => next(), AUTO_NEXT_MS);
+    if (changes.history !== undefined) setHistory(changes.history);
+    if (changes.viewing !== undefined) setViewing(changes.viewing);
   }
 
   // Line up the following card now and warm its sprite, so "Next" swaps
@@ -302,12 +297,12 @@ function Flashcards() {
     const fits = (candidate: Card | null): candidate is Card =>
       candidate !== null &&
       (deckId === "all" ? comboParts(candidate.deckId) === null : candidate.deckId === deckId) &&
-      candidate.pokemonId !== card.pokemonId &&
+      candidate.pokemonId !== liveCard.pokemonId &&
       matchesFocus(pokemonOf(candidate), filter);
-    if (!fits(session.next)) session.next = freshCard(deckId, [card.pokemonId]);
+    if (!fits(session.next)) session.next = freshCard(deckId, [liveCard.pokemonId]);
     preloadSprite(pokemonOf(session.next));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- freshCard reads the live stats; only a new card, deck or filter should line up again
-  }, [card, deckId, filter]);
+  }, [liveCard, deckId, filter]);
 
   // The deck lives in the URL (#cards/region) — replaced, not pushed, so
   // Back still leaves the tab
@@ -338,7 +333,7 @@ function Flashcards() {
   // Grades the picks — a combo's two pads together, each part against its
   // own options — and records the attempt.
   function grade(picks: string[]): void {
-    if (answered) return;
+    if (!live || answered) return;
     let ok: ComboVerdict | null = null;
     let correct: boolean;
     if (parts) {
@@ -350,7 +345,7 @@ function Flashcards() {
     } else {
       correct = isRightPick(padDecks[0], picks, padDecks[0].answers(pokemon));
     }
-    const token = recordAttempt({ categories: deckAnswers(card.deckId, pokemon), speciesId: key, correct });
+    const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct });
     session.undo = { token, key };
     apply({
       selection: picks,
@@ -358,14 +353,18 @@ function Flashcards() {
       comboOk: ok,
       dashes: [...dashes, correct ? ("correct" as const) : ("wrong" as const)].slice(-DASH_SLOTS),
     });
-    if (correct) startAuto();
+  }
+
+  // Who's That: the typed guess is graded on the spot
+  function gradeName(guess: Pokemon): void {
+    grade([String(guess.id)]);
   }
 
   // Nothing is graded on a multi pad's tap: options toggle until Submit.
   // A single-pick tap grades right away — except on a combo, where it
   // stands as that pad's one pick until both pads are submitted together.
   function choose(deck: Deck, option: DeckOption): void {
-    if (answered) return;
+    if (!live || answered) return;
     if (deck.multi) {
       const nextSelection = selection.includes(option.id)
         ? selection.filter((id) => id !== option.id)
@@ -385,8 +384,8 @@ function Flashcards() {
 
   // Don't know reveals the whole card — a combo's two pads at once.
   function giveUp(): void {
-    if (answered) return;
-    const token = recordAttempt({ categories: deckAnswers(card.deckId, pokemon), speciesId: key, correct: false });
+    if (!live || answered) return;
+    const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct: false });
     session.undo = { token, key };
     apply({
       picked: GAVE_UP,
@@ -399,21 +398,31 @@ function Flashcards() {
   // the card returns unanswered with its picks back in place.
   function undoAnswer(): void {
     const undo = session.undo;
-    if (!undo || undo.key !== key) return;
-    cancelAuto();
+    if (!live || !undo || undo.key !== key) return;
     if (!undoLastAttempt(undo.token)) {
       // the attempt can no longer be reverted (superseded elsewhere) —
       // drop the stale undo and re-render so the button disappears
       session.undo = null;
-      setSelection((current) => [...current]);
+      setLiveSelection((current) => [...current]);
       return;
     }
     session.undo = null;
     apply({ picked: null, comboOk: null, selection: pickedList, dashes: dashes.slice(0, -1) });
   }
 
+  // The history with the live card added, once it's answered
+  function settled(): PastCard[] {
+    if (livePicked === null) return history;
+    return [...history, { card: liveCard, picked: livePicked, comboOk: liveComboOk }].slice(-HISTORY_MAX);
+  }
+
+  // On to the next card — or, from an earlier card, forward through the
+  // history and back to the live one
   function next(forDeck: string = deckId): void {
-    cancelAuto();
+    if (!live) {
+      apply({ viewing: viewing !== null && viewing + 1 < history.length ? viewing + 1 : null });
+      return;
+    }
     session.recent = [...session.recent, pokemon.id].slice(-10);
     const lined = session.next;
     const upcoming =
@@ -423,17 +432,33 @@ function Flashcards() {
         ? lined
         : freshCard(forDeck, [pokemon.id]);
     session.next = null;
-    apply({ card: upcoming, selection: [], picked: null, comboOk: null });
+    apply({ card: upcoming, selection: [], picked: null, comboOk: null, history: settled(), viewing: null });
   }
 
-  // Picking a deck deals afresh: an answered card is done, an unanswered
-  // one gives way (the sheet is a deliberate reset).
+  // Back to the card before this one, as it was graded
+  function back(): void {
+    if (live) {
+      if (history.length) apply({ viewing: history.length - 1 });
+    } else if (viewing !== null && viewing > 0) {
+      apply({ viewing: viewing - 1 });
+    }
+  }
+  const canBack = live ? history.length > 0 : viewing !== null && viewing > 0;
+
+  // Picking a deck deals afresh: an answered card is done (kept for
+  // Back), an unanswered one gives way (the sheet is a deliberate reset).
   function changeDeck(id: string): void {
-    cancelAuto();
     session.deckId = id;
     setDeckId(id);
     setDeckSheet(false);
-    apply({ card: freshCard(id, [pokemon.id]), selection: [], picked: null, comboOk: null });
+    apply({
+      card: freshCard(id, [liveCard.pokemonId]),
+      selection: [],
+      picked: null,
+      comboOk: null,
+      history: settled(),
+      viewing: null,
+    });
   }
 
   // Chip toggles apply to the pool immediately; the current card is only
@@ -457,8 +482,8 @@ function Flashcards() {
 
   function doneFilters(): void {
     setFilterSheet(false);
-    if (!answered && !matchesFocus(pokemon, filter)) {
-      apply({ card: freshCard(deckId, [pokemon.id]), selection: [], picked: null, comboOk: null });
+    if (livePicked === null && !matchesFocus(pokemonOf(liveCard), filter)) {
+      apply({ card: freshCard(deckId, [liveCard.pokemonId]), selection: [], picked: null, comboOk: null, viewing: null });
     }
   }
 
@@ -474,17 +499,23 @@ function Flashcards() {
   // the stage's prompt — a combo's pads carry their own questions, so its
   // stage just says what to do
   const prompt = parts ? "Answer both" : questionOf(padDecks[0]);
-  let verdictText: string | null = null;
+  // a part's ✓ or ✕, green or red on its own
+  const mark = (ok: boolean): ReactNode => <span className={ok ? "mark correct" : "mark wrong"}>{ok ? "✓" : "✕"}</span>;
+  let verdict: ReactNode = null;
   let verdictClass = "";
   if (answered) {
     if (gaveUp) {
-      verdictText = "Revealed";
+      verdict = "Revealed";
       verdictClass = "revealed";
     } else if (parts && comboOk) {
-      verdictText = `${parts[0].label} ${comboOk.a ? "✓" : "✕"}  ·  ${parts[1].label} ${comboOk.b ? "✓" : "✕"}`;
-      verdictClass = wasCorrect ? "correct" : "wrong";
+      verdict = (
+        <>
+          {parts[0].label} {mark(comboOk.a)}  ·  {parts[1].label} {mark(comboOk.b)}
+        </>
+      );
+      verdictClass = "combo";
     } else {
-      verdictText = wasCorrect ? "✓ Correct" : "✕ Not quite";
+      verdict = wasCorrect ? "✓ Correct" : "✕ Not quite";
       verdictClass = wasCorrect ? "correct" : "wrong";
     }
   }
@@ -572,11 +603,39 @@ function Flashcards() {
   let summary: ReactNode = null;
   if (answered) {
     const backIn = nextIn ? `back in ${nextIn}` : null;
-    const prefix = parts && comboOk ? `${parts[0].label} ${comboOk.a ? "✓" : "✕"} · ${parts[1].label} ${comboOk.b ? "✓" : "✕"} · ` : "";
+    const prefix: ReactNode =
+      parts && comboOk ? (
+        <>
+          {parts[0].label} {mark(comboOk.a)} · {parts[1].label} {mark(comboOk.b)} ·{" "}
+        </>
+      ) : null;
     if (gaveUp) {
-      summary = [prefix + "Revealed", backIn].filter(Boolean).join(" · ");
+      summary = (
+        <>
+          {prefix}
+          {["Revealed", backIn].filter(Boolean).join(" · ")}
+        </>
+      );
     } else if (wasCorrect) {
-      summary = [prefix + "Correct", backIn, "auto-next"].filter(Boolean).join(" · ");
+      summary = (
+        <>
+          {prefix}
+          {["Correct", backIn].filter(Boolean).join(" · ")}
+        </>
+      );
+    } else if (nameDeck) {
+      const guessed = pickedList.length ? POKEMON_BY_ID.get(Number(pickedList[0]))?.displayName : undefined;
+      summary = (
+        <>
+          It&apos;s <b className="hit">{pokemon.displayName}</b>
+          {guessed ? (
+            <>
+              ; you said <b className="miss">{guessed}</b>
+            </>
+          ) : null}
+          . {backIn ? `Back in ${nextIn}.` : ""}
+        </>
+      );
     } else {
       const graded = padDecks.map((deck) => ({ picks: deckPicks(deck, pickedList), answers: deck.answers(pokemon) }));
       const missed = graded.flatMap(({ picks, answers }) => answers.filter((id) => !picks.includes(id)));
@@ -613,20 +672,13 @@ function Flashcards() {
     }
   }
 
-  const canUndo = !gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt;
+  const canUndo = live && !gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt;
 
   return (
     // a combo card stacks two pads, so its stage and buttons give some height back
     <div className={`flashcards${parts ? " combo" : ""}`}>
       <div className="cards-topbar">
-        <button
-          className="deck-choose"
-          aria-haspopup="dialog"
-          onClick={() => {
-            cancelAuto();
-            setDeckSheet(true);
-          }}
-        >
+        <button className="deck-choose" aria-haspopup="dialog" onClick={() => setDeckSheet(true)}>
           {deckLabel(deckId)}
           <Chevron />
         </button>
@@ -634,10 +686,7 @@ function Flashcards() {
           className={`filter-open${filterN ? " on" : ""}`}
           aria-label="Focus filters"
           aria-haspopup="dialog"
-          onClick={() => {
-            cancelAuto();
-            setFilterSheet(true);
-          }}
+          onClick={() => setFilterSheet(true)}
         >
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M4 5h16l-6.3 7.2V19l-3.4-1.8v-5L4 5Z" />
@@ -654,27 +703,28 @@ function Flashcards() {
 
       <div className="card-stage">
         <p key={`${key}:${String(answered)}`} className={`card-prompt ${verdictClass}`} aria-live="polite">
-          {verdictText ?? prompt}
+          {verdict ?? prompt}
         </p>
-        <div className="stage-sprite">
-          <Sprite pokemon={pokemon} eager />
-        </div>
-        {/* once answered, the name opens the detail sheet (evolution line
-            and all); before that it stays inert so nothing gives the
-            answer away */}
+        {/* once answered, the tile and the name open the detail sheet
+            (evolution line and all); before that they stay inert so
+            nothing gives the answer away — Who's That even hides the
+            name and shows a silhouette */}
         <button
+          type="button"
+          className={`stage-sprite${mystery ? " mystery" : ""}`}
+          disabled={!answered}
+          aria-label={answered ? `${pokemon.displayName} details` : undefined}
+          onClick={answered ? () => openDetail(pokemon) : undefined}
+        >
+          <Sprite pokemon={pokemon} eager label={mystery ? "Mystery Pokémon" : undefined} />
+        </button>
+        <button
+          type="button"
           className="stage-name"
           disabled={!answered}
-          onClick={
-            answered
-              ? () => {
-                  cancelAuto(); // the card must not advance underneath the sheet
-                  openDetail(pokemon);
-                }
-              : undefined
-          }
+          onClick={answered ? () => openDetail(pokemon) : undefined}
         >
-          <PokemonName name={pokemon.displayName} />
+          {mystery ? <span className="card-name-hidden">???</span> : <PokemonName name={pokemon.displayName} />}
           {answered ? <span className="stage-chevron">›</span> : null}
         </button>
         <div className="fact-pills">
@@ -688,25 +738,37 @@ function Flashcards() {
         {padDecks.map((deck) => {
           const pad = padOf(deck);
           // a combo's pad is captioned with its question, and its verdict once graded
-          const verdict = parts && comboOk ? (deck === parts[0] ? comboOk.a : comboOk.b) : null;
+          const partVerdict = parts && comboOk ? (deck === parts[0] ? comboOk.a : comboOk.b) : null;
           return (
             <div key={deck.id} className="pad-part">
               {parts ? (
                 <p className="pad-kicker">
                   {questionOf(deck, !answered)}
-                  {verdict !== null ? <span className={verdict ? "correct" : "wrong"}> {verdict ? "✓" : "✕"}</span> : null}
+                  {partVerdict !== null ? <> {mark(partVerdict)}</> : null}
                 </p>
               ) : null}
-              <div className={`pad-grid cols-${pad.cols}`}>
-                {pad.options.map((option) => {
-                  const view = optionView(option, pad.answers);
-                  return (
-                    <button key={option.id} className={view.className} disabled={answered} onClick={() => choose(deck, option)}>
-                      {view.label}
-                    </button>
-                  );
-                })}
-              </div>
+              {deck.input === "name" ? (
+                // the typed answer; once graded, the summary below says how it went
+                answered ? null : (
+                  <PokemonAutocomplete onSubmit={gradeName} placeholder="Who's that Pokémon?" />
+                )
+              ) : (
+                <div className={`pad-grid cols-${pad.cols}`}>
+                  {pad.options.map((option) => {
+                    const view = optionView(option, pad.answers);
+                    return (
+                      <button
+                        key={option.id}
+                        className={view.className}
+                        disabled={answered}
+                        onClick={() => choose(deck, option)}
+                      >
+                        {view.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
@@ -717,34 +779,40 @@ function Flashcards() {
         ) : null}
         {cta ? (
           <button className="pad-cta" disabled={cta.disabled} onClick={cta.onClick}>
-            {/* on a correct answer this sweeps left→right, then the card auto-advances */}
-            {answered ? <span className="next-fill" style={{ width: autoFill ? "100%" : "0%" }} aria-hidden="true" /> : null}
             <span className="pad-cta-label">{cta.label}</span>
           </button>
         ) : (
           <div className="pad-cta-gap" aria-hidden="true" />
         )}
+        {/* Back and Don't know or Undo on the left; Skip, or a note, on the right */}
         <div className="pad-actions">
-          {answered ? (
-            <>
-              {canUndo ? (
-                <button className="pad-ghost" onClick={undoAnswer}>
-                  Undo
-                </button>
-              ) : (
-                <span />
-              )}
-              <span className="pad-note">Tap the name for the detail sheet</span>
-            </>
-          ) : (
-            <>
+          <span className="pad-actions-side">
+            {canBack ? (
+              <button className="pad-ghost" onClick={back}>
+                ‹ Back
+              </button>
+            ) : null}
+            {live && !answered ? (
               <button className="pad-ghost" onClick={giveUp}>
                 Don&apos;t know
               </button>
-              <button className="pad-ghost" onClick={() => next()}>
-                Skip ›
+            ) : null}
+            {canUndo ? (
+              <button className="pad-ghost" onClick={undoAnswer}>
+                Undo
               </button>
-            </>
+            ) : null}
+          </span>
+          {!live ? (
+            <span className="pad-note">
+              Earlier card {viewing !== null ? viewing + 1 : 0} of {history.length}
+            </span>
+          ) : answered ? (
+            <span className="pad-note">Tap the Pokémon for its detail sheet</span>
+          ) : (
+            <button className="pad-ghost" onClick={() => next()}>
+              Skip ›
+            </button>
           )}
         </div>
       </div>
