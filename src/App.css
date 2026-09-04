@@ -1533,24 +1533,30 @@ button.pill {
   padding: 2px 0 12px; /* the tile runs the pad's width */
 }
 
-/* Who's That types its answer, and a phone's keyboard takes the bottom
-   half of the screen. A centred card puts the input's bottom just under
-   the keyboard's top edge, and iOS then pans the page to centre the input
-   in what's left, which carries the tile off the top of the screen. So on
-   a touch screen the card sits at the top of the column instead: the
-   input is already clear of the keyboard when it opens, nothing pans, and
-   the tile stays in view while typing */
-@media (pointer: coarse) {
-  .flashcards.name-deck .card-stage {
-    margin-top: 0;
-  }
+/* Who's That types its answer, so its pad — the question and the text
+   box — leads and the tile sits under it (Flashcards.tsx orders them).
+   An iPhone scrolls the page on focusing a text box whether or not the
+   keyboard would cover it (WebKit forces the scroll whenever the keyboard
+   carries its accessory bar), to put the box about a third of the way
+   down what the keyboard leaves — 260px from the top on a 956px screen.
+   A tile over the box can't fit in what that leaves, and the page can't
+   scroll above its own top: a box that already sits higher than that
+   mark stays put, and the tile under it stays in view. The pair is
+   centred as before where there's no keyboard, and sits at the top on a
+   touch screen so the box is as high as it can be: 219px on a 956px
+   phone, with the tile ending 55px clear of the keyboard */
+.flashcards.name-deck .answer-pad {
+  margin: auto 0 0;
+}
 
-  /* and while it's asking, the pill row it would keep empty goes too:
-     the input clears the keyboard by 60px on a 956px phone, 30px on an
-     852px one. The pills' return on answering moves only the pad, and
-     the keyboard has gone by then */
-  .flashcards.name-deck .fact-pills:empty {
-    display: none;
+.flashcards.name-deck .card-stage {
+  margin: 0 0 auto;
+  padding: 12px 0 2px;
+}
+
+@media (pointer: coarse) {
+  .flashcards.name-deck .answer-pad {
+    margin-top: 0;
   }
 }
 

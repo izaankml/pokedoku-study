@@ -705,10 +705,118 @@ function Flashcards() {
 
   const canUndo = live && !gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt;
 
+  // ---- the stage and the pad ----
+
+  // The Pokémon on a big answer-grid tile, name and all, the fact pills
+  // under it; once answered the tile opens the detail sheet (evolution
+  // line and all), with a "Details" cue in its corner to say so — before
+  // that it stays inert so nothing gives the answer away: Who's That even
+  // hides the name, and shows a silhouette unless that's turned off
+  const stage = (
+    <div className="card-stage">
+      <div className={`stage-tile${silhouetted ? " mystery" : ""}`}>
+        <PokemonCard
+          pokemon={pokemon}
+          eager
+          hideName={mystery}
+          hint="Details"
+          onClick={answered ? () => openDetail(pokemon) : undefined}
+        />
+      </div>
+      <div className="fact-pills">
+        {factPills.map((category) => (
+          <CategoryPill key={category.id} cat={category} useShort />
+        ))}
+      </div>
+    </div>
+  );
+
+  // The answer card: each deck's question over its options (Who's That's
+  // text box), and the summary once answered
+  const pad = (
+    <div className="answer-pad">
+      {padDecks.map((deck) => {
+        const deckPad = padOf(deck);
+        // every pad is captioned with its question, right over its
+        // options; once graded a combo's keeps it and adds the part's
+        // mark, a single deck's gives way to the verdict
+        const partVerdict = parts && comboOk ? (deck === parts[0] ? comboOk.a : comboOk.b) : null;
+        return (
+          <div key={deck.id} className="pad-part">
+            {/* Who's That's row also carries the eye button: silhouette
+                on (the default) or the sprite in full */}
+            <div className={`pad-head${deck.input === "name" ? " with-eye" : ""}`}>
+              <p
+                key={`${key}:${String(answered)}`}
+                className={`pad-kicker${parts ? "" : ` ${verdictClass}`}`}
+                aria-live="polite"
+              >
+                {parts ? (
+                  <>
+                    {questionOf(deck, !answered)}
+                    {partVerdict !== null ? <> {mark(partVerdict)}</> : null}
+                  </>
+                ) : (
+                  (verdict ?? questionOf(deck))
+                )}
+              </p>
+              {deck.input === "name" ? (
+                <button
+                  type="button"
+                  className={`pad-eye${silhouette ? " on" : ""}`}
+                  aria-pressed={silhouette}
+                  aria-label="Silhouette"
+                  title={silhouette ? "Silhouette on: tap to show the sprite" : "Silhouette off: tap to hide the sprite"}
+                  onClick={toggleSilhouette}
+                >
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z" />
+                    <circle cx="12" cy="12" r="3" />
+                    {silhouette ? <path d="M4 4l16 16" /> : null}
+                  </svg>
+                </button>
+              ) : null}
+            </div>
+            {deck.input === "name" ? (
+              // the typed answer, with no suggestions (they'd give the name
+              // away); once graded, the summary below says how it went
+              answered ? null : (
+                <PokemonAutocomplete
+                  onSubmit={gradeName}
+                  onMiss={gradeTypedMiss}
+                  placeholder="Type its name…"
+                  suggest={false}
+                />
+              )
+            ) : (
+              <div className={`pad-grid cols-${deckPad.cols}`}>
+                {deckPad.options.filter((option) => graded(option, deckPad.answers)).map((option) => (
+                  <button
+                    key={option.id}
+                    className={optionClass(option, deckPad.answers)}
+                    disabled={answered}
+                    onClick={() => choose(deck, option)}
+                  >
+                    {option.short}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {summary !== null ? (
+        <p className="pad-summary" aria-live="polite">
+          {summary}
+        </p>
+      ) : null}
+    </div>
+  );
+
   return (
     // a combo card stacks two pads, so its stage and buttons give some
-    // height back; Who's That's card sits up top on a phone, clear of the
-    // keyboard (see .flashcards.name-deck)
+    // height back; Who's That's pad leads its tile, up top on a phone,
+    // clear of the keyboard (see .flashcards.name-deck)
     <div className={`flashcards${parts ? " combo" : ""}${nameDeck ? " name-deck" : ""}`}>
       <div className="cards-topbar">
         <button className="deck-choose" aria-haspopup="dialog" onClick={() => setDeckSheet(true)}>
@@ -734,106 +842,12 @@ function Flashcards() {
         <span className="due-count">{due} due</span>
       </div>
 
-      <div className="card-stage">
-        {/* the Pokémon on a big answer-grid tile, name and all; once
-            answered it opens the detail sheet (evolution line and all),
-            with a "Details" cue in its corner to say so — before that it
-            stays inert so nothing gives the answer away: Who's That even
-            hides the name, and shows a silhouette unless that's turned
-            off */}
-        <div className={`stage-tile${silhouetted ? " mystery" : ""}`}>
-          <PokemonCard
-            pokemon={pokemon}
-            eager
-            hideName={mystery}
-            hint="Details"
-            onClick={answered ? () => openDetail(pokemon) : undefined}
-          />
-        </div>
-        <div className="fact-pills">
-          {factPills.map((category) => (
-            <CategoryPill key={category.id} cat={category} useShort />
-          ))}
-        </div>
-      </div>
-
-      <div className="answer-pad">
-        {padDecks.map((deck) => {
-          const pad = padOf(deck);
-          // every pad is captioned with its question, right over its
-          // options; once graded a combo's keeps it and adds the part's
-          // mark, a single deck's gives way to the verdict
-          const partVerdict = parts && comboOk ? (deck === parts[0] ? comboOk.a : comboOk.b) : null;
-          return (
-            <div key={deck.id} className="pad-part">
-              {/* Who's That's row also carries the eye button: silhouette
-                  on (the default) or the sprite in full */}
-              <div className={`pad-head${deck.input === "name" ? " with-eye" : ""}`}>
-                <p
-                  key={`${key}:${String(answered)}`}
-                  className={`pad-kicker${parts ? "" : ` ${verdictClass}`}`}
-                  aria-live="polite"
-                >
-                  {parts ? (
-                    <>
-                      {questionOf(deck, !answered)}
-                      {partVerdict !== null ? <> {mark(partVerdict)}</> : null}
-                    </>
-                  ) : (
-                    (verdict ?? questionOf(deck))
-                  )}
-                </p>
-                {deck.input === "name" ? (
-                  <button
-                    type="button"
-                    className={`pad-eye${silhouette ? " on" : ""}`}
-                    aria-pressed={silhouette}
-                    aria-label="Silhouette"
-                    title={silhouette ? "Silhouette on: tap to show the sprite" : "Silhouette off: tap to hide the sprite"}
-                    onClick={toggleSilhouette}
-                  >
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z" />
-                      <circle cx="12" cy="12" r="3" />
-                      {silhouette ? <path d="M4 4l16 16" /> : null}
-                    </svg>
-                  </button>
-                ) : null}
-              </div>
-              {deck.input === "name" ? (
-                // the typed answer, with no suggestions (they'd give the name
-                // away); once graded, the summary below says how it went
-                answered ? null : (
-                  <PokemonAutocomplete
-                    onSubmit={gradeName}
-                    onMiss={gradeTypedMiss}
-                    placeholder="Type its name…"
-                    suggest={false}
-                  />
-                )
-              ) : (
-                <div className={`pad-grid cols-${pad.cols}`}>
-                  {pad.options.filter((option) => graded(option, pad.answers)).map((option) => (
-                    <button
-                      key={option.id}
-                      className={optionClass(option, pad.answers)}
-                      disabled={answered}
-                      onClick={() => choose(deck, option)}
-                    >
-                      {option.short}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-        {summary !== null ? (
-          <p className="pad-summary" aria-live="polite">
-            {summary}
-          </p>
-        ) : null}
-      </div>
+      {/* Who's That puts its pad first and the tile under it: an iPhone
+          scrolls a focused text box to about a third of the way down what
+          the keyboard leaves, and a box already higher than that stays
+          put — so the tile, below it, stays in view (see .name-deck) */}
+      {nameDeck ? pad : stage}
+      {nameDeck ? stage : pad}
 
       {/* the card's controls, docked at the bottom of the screen: the CTA
           slot and the action row */}
