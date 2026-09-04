@@ -568,20 +568,20 @@ function Flashcards() {
     return { answers, options, cols: Math.max(1, Math.min(deck.cols, options.length)) };
   };
 
-  // Once answered, every option's colour says what it was: green on the
-  // right answers (solid when picked, dashed when missed), red on a
-  // wrong pick, and the rest recede.
+  // Once answered, only the options the grade is about stay on the pad:
+  // the right answers (green — solid when picked, dashed when missed)
+  // and any wrong picks (red); the rest go.
+  const graded = (option: DeckOption, answers: string[]): boolean =>
+    !answered || answers.includes(option.id) || pickedIds.has(option.id);
   const optionClass = (option: DeckOption, answers: string[]): string => {
     // a type option is type-coloured wherever it appears — CategoryPill's rule
     let className = "pad-btn" + typeClassOf(CATEGORY_BY_ID.get(option.id));
     if (!answered) {
       if (selection.includes(option.id)) className += " selected";
+    } else if (answers.includes(option.id)) {
+      className += pickedIds.has(option.id) ? " correct" : " correct missed";
     } else {
-      const right = answers.includes(option.id);
-      if (right && pickedIds.has(option.id)) className += " correct";
-      else if (right) className += " correct missed";
-      else if (pickedIds.has(option.id)) className += " wrong";
-      else className += " dim";
+      className += " wrong";
     }
     return className;
   };
@@ -788,7 +788,7 @@ function Flashcards() {
                 )
               ) : (
                 <div className={`pad-grid cols-${pad.cols}`}>
-                  {pad.options.map((option) => (
+                  {pad.options.filter((option) => graded(option, pad.answers)).map((option) => (
                     <button
                       key={option.id}
                       className={optionClass(option, pad.answers)}

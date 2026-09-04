@@ -1332,28 +1332,34 @@ button.pill {
   width: 100%;
   max-width: 512px; /* 480px of content plus the pad's full-bleed 16px */
   margin: 0 auto;
-  /* How the pad fits a short screen. --fits-at is the viewport height at
-     which the class's tallest card — a Type card's four rows of options,
-     a Type × Region combo's seven — fits at full size with the smallest
-     tile and a one-line summary (measured, so a change to the pad's
-     spacing means measuring again; the phone's values are in the 480px
-     block). Below it the options and the CTA give up the shortfall, a
-     row's share each, down to their minimums, and the tile takes any
-     slack (see .stage-tile); shorter still, the page scrolls */
-  --pad-rows: 4;
-  --pad-btn-max: 60px;
-  --pad-btn-min: 40px;
-  --fits-at: 792px;
+  /* How a card fits a short screen. The tile is one size on every deck,
+     in both states, so cards look alike from deck to deck: the size the
+     tallest card leaves room for — a Type × Region combo asking its
+     question, seven rows of 46px options under a 200px tile — which fits
+     at full size at --tall-fits-at. Below that, everything on that card
+     gives up a share of the squeeze: the tile 104px of every 180, each of
+     the seven rows 10, the CTA 6, down to their minimums; shorter still,
+     the page scrolls. A single deck's pad is shorter, so its 60px options
+     only give way once its own tallest card (Type: four rows) no longer
+     fits with the smallest tile, at --fits-at; four rows and the CTA
+     share that shortfall. Both heights are measured, so a change to the
+     pad's spacing means measuring again (the phone's values, with the
+     pill's zone inside the pad and no tab bar above, are in the 480px
+     block) */
+  --tall-fits-at: 1004px;
+  --squeeze: max(0px, var(--tall-fits-at) - 100dvh);
+  --tile: max(96px, 200px - var(--squeeze) * 104 / 180);
+  --fits-at: 768px;
   --shortfall: max(0px, var(--fits-at) - 100dvh);
-  --pad-btn: max(var(--pad-btn-min), var(--pad-btn-max) - var(--shortfall) / var(--pad-rows));
+  --pad-btn: max(40px, 60px - var(--shortfall) / 4);
+  --pad-cta: max(44px, 50px - var(--shortfall) / 4);
 }
 
-/* a combo card's two pads: shorter rows to begin with, and more of them */
+/* the combo card is the tallest card: its rows and CTA take their share
+   of the squeeze alongside the tile */
 .flashcards.combo {
-  --pad-rows: 7;
-  --pad-btn-max: 46px;
-  --pad-btn-min: 36px;
-  --fits-at: 924px;
+  --pad-btn: max(36px, 46px - var(--squeeze) * 10 / 180);
+  --pad-cta: max(44px, 50px - var(--squeeze) * 6 / 180);
 }
 
 /* ---- cards: header row (deck chooser · filter · dashes · due) ---- */
@@ -1471,22 +1477,13 @@ button.pill {
 /* the stage sits at the top of the free space, so the tile stays high
    on the screen however tall the pad below runs */
 .card-stage {
-  /* a definite 0px basis, not `flex: 1`'s 0%: Chrome evaluates the
-     container units below against the basis when it's a percentage, and
-     the tile ends up at its minimum */
-  flex: 1 1 0px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   padding: 2px 4px 12px;
-  /* a size container: the flex free space is measured without the tile,
-     and the tile is then sized from it (see .stage-tile) */
-  container-type: size;
-  /* room for the smallest tile, its gap and the pills row (the pad's
-     action row comes first); a screen too short even for that scrolls */
-  min-height: calc(96px + 38px + 14px);
 }
 
 /* the question's aside ("· pick all"), dimmer than the question */
@@ -1504,17 +1501,16 @@ button.pill {
 }
 
 /* the Pokémon on a big answer-grid tile, its name inside; once the card
-   is answered the tile is a button into the detail sheet. As big as the
-   stage's free space allows (less the 10px gap and the 28px pills row
-   under it), up to 200px: a combo card's taller pad, or a short screen,
-   gets a smaller tile, so the pad's action row stays on the screen */
+   is answered the tile is a button into the detail sheet. One size on
+   every deck, from the screen's height (see .flashcards), so a short
+   screen gets a smaller tile and the pad's action row stays on it */
 .stage-tile {
-  width: clamp(96px, 100cqh - 38px, 200px);
+  width: var(--tile);
   max-width: 100%;
   /* the name's size follows the tile's (see figcaption) */
   container-type: inline-size;
-  /* the size settles smoothly when the pad grows (the summary once
-     answered) or the deck changes */
+  /* the size settles smoothly when the viewport changes (a browser's
+     bars collapsing) */
   transition: width var(--dur-med) var(--ease-out);
 }
 
@@ -1821,13 +1817,6 @@ button.pill {
   animation: shake var(--dur-slow) var(--ease-out) both;
 }
 
-/* everything else recedes once answered (the type wash included) */
-.pad-btn.dim {
-  background: var(--surface-1);
-  border-color: var(--border-subtle);
-  color: var(--border-strong);
-}
-
 /* what the answer came to, under the options: the missed and wrong
    picks (or the verdict) and when the card comes back */
 .pad-summary {
@@ -1852,9 +1841,8 @@ button.pill {
 .pad-cta,
 .pad-cta-gap {
   width: 100%;
-  /* 50px, giving up a row's share of a short screen's shortfall (see
-     .flashcards) down to 44px */
-  height: max(44px, 50px - var(--shortfall) / var(--pad-rows));
+  /* 50px, down to 44px on a short screen (see .flashcards) */
+  height: var(--pad-cta);
   margin-top: 10px;
 }
 
@@ -2382,12 +2370,9 @@ button.evo-tile:active {
   .flashcards {
     margin-bottom: calc(-1 * var(--page-bottom));
     /* the phone's chrome: the pill's zone inside the pad in place of the
-       page's bottom padding, and no tab bar at the top (see --fits-at) */
-    --fits-at: 753px;
-  }
-
-  .flashcards.combo {
-    --fits-at: 885px;
+       page's bottom padding, and no tab bar at the top (see .flashcards) */
+    --tall-fits-at: 965px;
+    --fits-at: 729px;
   }
 
   .answer-pad {
