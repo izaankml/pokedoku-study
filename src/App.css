@@ -1381,8 +1381,19 @@ button.pill {
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
+/* the sprite sits on a raised tile, like an answer-grid card */
+.stage-sprite {
+  display: grid;
+  place-items: center;
+  width: 184px;
+  height: 184px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1), var(--edge-hi);
+}
+
 /* Sprite.tsx centres and scales each Pokémon's visible box in this slot */
-.stage-sprite,
 .stage-sprite .sprite,
 .stage-sprite .sprite-fallback {
   width: 160px;
@@ -1392,6 +1403,19 @@ button.pill {
 
 .stage-sprite .sprite {
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+}
+
+/* a combo card stacks two pads under the stage: a smaller tile keeps the
+   whole card on a phone screen */
+.flashcards.combo .stage-sprite {
+  width: 148px;
+  height: 148px;
+}
+
+.flashcards.combo .stage-sprite .sprite,
+.flashcards.combo .stage-sprite .sprite-fallback {
+  width: 128px;
+  height: 128px;
 }
 
 /* the name; once answered it becomes a button into the detail sheet */
@@ -1451,6 +1475,30 @@ button.pill {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
+/* a combo's two pads, stacked, each captioned with its question (and its
+   verdict once graded) */
+.pad-part + .pad-part {
+  margin-top: 10px;
+}
+
+.pad-kicker {
+  margin: 0 0 6px;
+  padding: 0 2px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
+.pad-kicker .correct {
+  color: var(--correct-strong);
+}
+
+.pad-kicker .wrong {
+  color: var(--wrong);
+}
+
 /* One column per deck (Type six, Region five, Group three, Stage two),
    the same on every screen size, so a deck's options sit in the same
    spots on the phone and the desktop (muscle memory) */
@@ -1493,6 +1541,11 @@ button.pill {
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-hi);
+}
+
+/* a combo's two pads run a little shorter so both fit on a phone */
+.flashcards.combo .pad-btn {
+  height: 40px;
 }
 
 /* pointer devices only (see .tab:hover) */
@@ -2113,11 +2166,15 @@ button.evo-tile:active {
   /* short screens (an iPhone with Safari's bars out): the sprite gives
      height back so everything still fits above the nav */
   @media (max-height: 700px) {
-    .stage-sprite,
+    .stage-sprite {
+      width: 160px;
+      height: 160px;
+    }
+
     .stage-sprite .sprite,
     .stage-sprite .sprite-fallback {
-      width: 140px;
-      height: 140px;
+      width: 136px;
+      height: 136px;
     }
 
     .card-stage {

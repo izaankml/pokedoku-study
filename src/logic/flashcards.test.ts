@@ -10,6 +10,7 @@ import {
   deckAnswers,
   deckEligible,
   deckLabel,
+  deckPicks,
   deckPool,
   facetCategories,
   focusedDeckPool,
@@ -160,5 +161,14 @@ describe("flashcard decks", () => {
       });
       expect(pick.pokemon.regions).toContain("hisui");
     }
+  });
+});
+
+describe("deckPicks", () => {
+  it("splits a combo card's one pick list by each pad's options", () => {
+    const picks = ["region-kanto", "type-fire", "type-flying"];
+    expect(deckPicks(deck("type"), picks)).toEqual(["type-fire", "type-flying"]);
+    expect(deckPicks(deck("region"), picks)).toEqual(["region-kanto"]);
+    expect(deckPicks(deck("stage"), picks)).toEqual([]);
   });
 });

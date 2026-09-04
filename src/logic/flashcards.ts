@@ -1,6 +1,6 @@
 // Flashcard decks — the four deckable category groups (Region, Type,
 // Group, Stage), plus pairwise Combo decks ("combo:type+region") that ask
-// two of them about the same Pokémon in sequence. Each deck shows a
+// two of them about the same Pokémon on one card. Each deck shows a
 // Pokémon and asks one question over a fixed set of answer buttons; a
 // card can have several correct answers (a dual type, a form counting
 // for two regions, Koraidon being Paradox and Legendary). Single-pick
@@ -120,7 +120,7 @@ function deckById(deckId: string): Deck {
   return deck;
 }
 
-// ---- combo decks: one card asking two groups in sequence ----
+// ---- combo decks: one card asking two groups at once ----
 
 // The pairwise combos, in the deck sheet's order.
 const COMBO_PAIRS = [
@@ -175,6 +175,13 @@ export function isRightPick(deck: Deck, picks: string[], answers: string[]): boo
   if (!picks.length) return false;
   if (!deck.multi) return answers.includes(picks[0]);
   return picks.length === answers.length && picks.every((id) => answers.includes(id));
+}
+
+// One deck's share of a combo card's picks, which both pads keep in one
+// list — option ids carry their group (type-…, region-…), so the split
+// is exact.
+export function deckPicks(deck: Deck, picks: string[]): string[] {
+  return picks.filter((id) => deck.options.some((option) => option.id === id));
 }
 
 // A form is only worth its own card when the deck's answer differs from
@@ -343,12 +350,9 @@ export interface CardSession {
   card: Card | null;
   // the card after this one, picked early so its sprite can preload
   next: Card | null;
-  // options toggled so far on the part being asked
+  // options toggled so far — a combo's two pads together (deckPicks
+  // tells them apart)
   selection: string[];
-  // which combo part the pad is on (plain decks stay 0)
-  part: 0 | 1;
-  // the first part's picks, once a combo advanced past it
-  partASel: string[];
   picked: Picked;
   comboOk: ComboVerdict | null;
   // last few Pokémon ids, to avoid immediate repeats
@@ -391,8 +395,6 @@ export const session: CardSession = {
   card: null,
   next: null,
   selection: [],
-  part: 0,
-  partASel: [],
   picked: null,
   comboOk: null,
   recent: [],
@@ -401,20 +403,16 @@ export const session: CardSession = {
   ...(isStoredSession(stored) ? stored : {}),
 };
 // fields newer than a stored session get sane shapes back
-session.part = session.part === 1 ? 1 : 0;
-session.partASel = Array.isArray(session.partASel) ? session.partASel : [];
 session.dashes = Array.isArray(session.dashes)
   ? session.dashes.filter((dash) => dash === "correct" || dash === "wrong")
   : [];
 
 export function saveSession(): void {
-  const { deckId, card, selection, part, partASel, picked, comboOk, recent, dashes } = session;
+  const { deckId, card, selection, picked, comboOk, recent, dashes } = session;
   saveJson(SESSION_KEY, {
     deckId,
     card,
     selection,
-    part,
-    partASel,
     picked,
     comboOk,
     recent,
@@ -429,8 +427,6 @@ export function resetSessionForDeck(deckId: string): void {
   session.card = null;
   session.next = null;
   session.selection = [];
-  session.part = 0;
-  session.partASel = [];
   session.picked = null;
   session.comboOk = null;
   session.undo = null;

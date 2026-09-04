@@ -12,6 +12,7 @@ import {
   comboParts,
   deckAnswers,
   deckLabel,
+  deckPicks,
   dueCardCount,
   facetCategories,
   filterCount,
@@ -198,16 +199,12 @@ function Flashcards() {
     if (!session.card) {
       session.card = freshCard(session.deckId);
       session.selection = [];
-      session.part = 0;
-      session.partASel = [];
       session.picked = null;
       session.comboOk = null;
     }
     return session.card;
   });
   const [selection, setSelection] = useState<string[]>(session.selection);
-  const [part, setPart] = useState<0 | 1>(session.part);
-  const [partASel, setPartASel] = useState<string[]>(session.partASel);
   const [picked, setPicked] = useState<Picked>(session.picked);
   const [comboOk, setComboOk] = useState<ComboVerdict | null>(session.comboOk);
   const [dashes, setDashes] = useState<DashResult[]>(session.dashes);
@@ -218,8 +215,8 @@ function Flashcards() {
 
   const pokemon = pokemonOf(card);
   const parts = comboParts(card.deckId);
-  // the deck whose options fill the pad right now (a combo's current part)
-  const activeDeck: Deck = parts ? parts[part] : (DECK_BY_ID.get(card.deckId) as Deck);
+  // the deck whose options fill the pad — a combo's two, each on its own pad
+  const padDecks: [Deck] | [Deck, Deck] = parts ?? [DECK_BY_ID.get(card.deckId) as Deck];
 
   const answered = picked !== null;
   const gaveUp = picked === GAVE_UP;
@@ -227,12 +224,17 @@ function Flashcards() {
   // After answering, merged already reflects this attempt's new streak.
   const entry = merged.flashcards[key];
   const nextIn = answered && entry ? formatInterval(intervalFor(entry.s)) : null;
-  const activeAnswers = activeDeck.answers(pokemon);
-  const pickedIds = new Set(Array.isArray(picked) ? picked : []);
+  const pickedList = Array.isArray(picked) ? picked : [];
+  const pickedIds = new Set(pickedList);
   const wasCorrect =
     answered &&
     !gaveUp &&
-    (parts ? Boolean(comboOk && comboOk.a && comboOk.b) : isRightPick(activeDeck, [...pickedIds], activeAnswers));
+    (parts ? Boolean(comboOk && comboOk.a && comboOk.b) : isRightPick(padDecks[0], pickedList, padDecks[0].answers(pokemon)));
+  // Submit stands ready once a multi deck has a pick, or a combo has one
+  // on each pad (a plain single-pick deck grades on the tap instead)
+  const canSubmit =
+    !answered &&
+    (parts ? parts.every((deck) => deckPicks(deck, selection).length > 0) : Boolean(padDecks[0].multi) && selection.length > 0);
   const filterN = filterCount(filter);
   // walks every deck's pool, so only when the stats change
   const due = useMemo(() => dueCardCount(merged), [merged]);
@@ -259,8 +261,6 @@ function Flashcards() {
   function apply(changes: {
     card?: Card;
     selection?: string[];
-    part?: 0 | 1;
-    partASel?: string[];
     picked?: Picked;
     comboOk?: ComboVerdict | null;
     dashes?: DashResult[];
@@ -269,8 +269,6 @@ function Flashcards() {
     saveSession();
     if (changes.card !== undefined) setCard(changes.card);
     if (changes.selection !== undefined) setSelection(changes.selection);
-    if (changes.part !== undefined) setPart(changes.part);
-    if (changes.partASel !== undefined) setPartASel(changes.partASel);
     if (changes.picked !== undefined) setPicked(changes.picked);
     if (changes.comboOk !== undefined) setComboOk(changes.comboOk);
     if (changes.dashes !== undefined) setDashes(changes.dashes);
@@ -317,9 +315,9 @@ function Flashcards() {
     writeHash("cards", deckId === "all" ? [] : [deckId]);
   }, [deckId]);
 
-  // Enter moves the card along: Submit on a multi part with picks, Next
-  // once answered. Capture phase, so a focused option button doesn't also
-  // get "clicked".
+  // Enter moves the card along: Submit where it stands ready, Next once
+  // answered. Capture phase, so a focused option button doesn't also get
+  // "clicked".
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "Enter" || event.metaKey || event.ctrlKey || event.altKey) return;
@@ -328,7 +326,7 @@ function Flashcards() {
         event.preventDefault();
         event.stopPropagation();
         next();
-      } else if (activeDeck.multi && selection.length) {
+      } else if (canSubmit) {
         event.preventDefault();
         submit();
       }
@@ -337,18 +335,20 @@ function Flashcards() {
     return () => window.removeEventListener("keydown", onKey, true);
   });
 
+  // Grades the picks — a combo's two pads together, each part against its
+  // own options — and records the attempt.
   function grade(picks: string[]): void {
     if (answered) return;
     let ok: ComboVerdict | null = null;
     let correct: boolean;
     if (parts) {
       ok = {
-        a: isRightPick(parts[0], partASel, parts[0].answers(pokemon)),
-        b: isRightPick(parts[1], picks, parts[1].answers(pokemon)),
+        a: isRightPick(parts[0], deckPicks(parts[0], picks), parts[0].answers(pokemon)),
+        b: isRightPick(parts[1], deckPicks(parts[1], picks), parts[1].answers(pokemon)),
       };
       correct = ok.a && ok.b;
     } else {
-      correct = isRightPick(activeDeck, picks, activeAnswers);
+      correct = isRightPick(padDecks[0], picks, padDecks[0].answers(pokemon));
     }
     const token = recordAttempt({ categories: deckAnswers(card.deckId, pokemon), speciesId: key, correct });
     session.undo = { token, key };
@@ -361,31 +361,29 @@ function Flashcards() {
     if (correct) startAuto();
   }
 
-  // Nothing is graded on a multi part's tap: options toggle until Submit.
-  // A single-pick tap grades right away — or, on a combo's first part,
-  // just moves to the second.
-  function choose(option: DeckOption): void {
+  // Nothing is graded on a multi pad's tap: options toggle until Submit.
+  // A single-pick tap grades right away — except on a combo, where it
+  // stands as that pad's one pick until both pads are submitted together.
+  function choose(deck: Deck, option: DeckOption): void {
     if (answered) return;
-    if (activeDeck.multi) {
+    if (deck.multi) {
       const nextSelection = selection.includes(option.id)
         ? selection.filter((id) => id !== option.id)
         : [...selection, option.id];
       apply({ selection: nextSelection });
-    } else if (parts && part === 0) {
-      apply({ partASel: [option.id], part: 1, selection: [] });
+    } else if (parts) {
+      const replaced = deckPicks(deck, selection);
+      apply({ selection: [...selection.filter((id) => !replaced.includes(id)), option.id] });
     } else {
       grade([option.id]);
     }
   }
 
   function submit(): void {
-    if (answered || !activeDeck.multi || !selection.length) return;
-    if (parts && part === 0) apply({ partASel: selection, part: 1, selection: [] });
-    else grade(selection);
+    if (canSubmit) grade(selection);
   }
 
-  // Don't know reveals the whole card — a combo's pad jumps to part 2's
-  // reveal, with part 1's answers in the fact pills.
+  // Don't know reveals the whole card — a combo's two pads at once.
   function giveUp(): void {
     if (answered) return;
     const token = recordAttempt({ categories: deckAnswers(card.deckId, pokemon), speciesId: key, correct: false });
@@ -393,13 +391,12 @@ function Flashcards() {
     apply({
       picked: GAVE_UP,
       comboOk: null,
-      part: parts ? 1 : part,
       dashes: [...dashes, "wrong" as const].slice(-DASH_SLOTS),
     });
   }
 
   // An answered card can be taken back once — the grade is un-recorded and
-  // the card returns unanswered (a combo back on part 1, picks cleared).
+  // the card returns unanswered with its picks back in place.
   function undoAnswer(): void {
     const undo = session.undo;
     if (!undo || undo.key !== key) return;
@@ -412,8 +409,7 @@ function Flashcards() {
       return;
     }
     session.undo = null;
-    const restored = !parts && Array.isArray(picked) ? picked : [];
-    apply({ picked: null, comboOk: null, part: 0, partASel: [], selection: restored, dashes: dashes.slice(0, -1) });
+    apply({ picked: null, comboOk: null, selection: pickedList, dashes: dashes.slice(0, -1) });
   }
 
   function next(forDeck: string = deckId): void {
@@ -427,7 +423,7 @@ function Flashcards() {
         ? lined
         : freshCard(forDeck, [pokemon.id]);
     session.next = null;
-    apply({ card: upcoming, selection: [], part: 0, partASel: [], picked: null, comboOk: null });
+    apply({ card: upcoming, selection: [], picked: null, comboOk: null });
   }
 
   // Picking a deck deals afresh: an answered card is done, an unanswered
@@ -437,7 +433,7 @@ function Flashcards() {
     session.deckId = id;
     setDeckId(id);
     setDeckSheet(false);
-    apply({ card: freshCard(id, [pokemon.id]), selection: [], part: 0, partASel: [], picked: null, comboOk: null });
+    apply({ card: freshCard(id, [pokemon.id]), selection: [], picked: null, comboOk: null });
   }
 
   // Chip toggles apply to the pool immediately; the current card is only
@@ -462,19 +458,22 @@ function Flashcards() {
   function doneFilters(): void {
     setFilterSheet(false);
     if (!answered && !matchesFocus(pokemon, filter)) {
-      apply({ card: freshCard(deckId, [pokemon.id]), selection: [], part: 0, partASel: [], picked: null, comboOk: null });
+      apply({ card: freshCard(deckId, [pokemon.id]), selection: [], picked: null, comboOk: null });
     }
   }
 
   // ---- derived view state ----
 
-  // the question, its aside ("pick all") dimmed after it
-  const prompt = (
+  // a deck's question, its aside ("pick all") dimmed after it
+  const questionOf = (deck: Deck, withNote = true): ReactNode => (
     <>
-      {parts ? `${part + 1} of 2 · ${activeDeck.question}` : activeDeck.question}
-      {activeDeck.questionNote ? <span className="prompt-note"> · {activeDeck.questionNote}</span> : null}
+      {deck.question}
+      {withNote && deck.questionNote ? <span className="prompt-note"> · {deck.questionNote}</span> : null}
     </>
   );
+  // the stage's prompt — a combo's pads carry their own questions, so its
+  // stage just says what to do
+  const prompt = parts ? "Answer both" : questionOf(padDecks[0]);
   let verdictText: string | null = null;
   let verdictClass = "";
   if (answered) {
@@ -492,7 +491,7 @@ function Flashcards() {
 
   // The fact pills under the name: empty while asking; the Pokémon's
   // types, region, group (and stage, when the deck asked it) once
-  // answered; part 1's picks during a combo's second part.
+  // answered.
   const involvesStage = card.deckId === "stage" || Boolean(parts?.some((sub) => sub.id === "stage"));
   let factPills: PillCategory[] = [];
   if (answered) {
@@ -505,32 +504,33 @@ function Flashcards() {
       ...(groupPills.length ? groupPills : [REGULAR]),
     ];
     if (involvesStage && pokemon.stage) factPills.push(getCategory(`stage-${pokemon.stage}`));
-  } else if (parts && part === 1) {
-    factPills = partASel.map(getCategory);
   }
 
-  // Pad narrowing: a filtered single-answer facet shows only the selected
-  // options. The pool is filtered by the same facet, so the right answer
-  // is normally among them — but a filter too tight for the deck makes
-  // the picker drop it, and then the whole pad comes back.
-  const facetSel = activeDeck.multi ? [] : (filter[activeDeck.id as FocusFacet] ?? []);
-  const narrowed = facetSel.length > 0 && activeAnswers.some((id) => facetSel.includes(id));
-  const shownOptions = narrowed ? activeDeck.options.filter((option) => facetSel.includes(option.id)) : activeDeck.options;
-
-  // A narrowed pad with fewer options than columns spreads them out
-  const padCols = Math.max(1, Math.min(activeDeck.cols, shownOptions.length));
+  // A deck's pad: its answers and the options shown. Narrowing: a filtered
+  // single-answer facet shows only the selected options. The pool is
+  // filtered by the same facet, so the right answer is normally among
+  // them — but a filter too tight for the deck makes the picker drop it,
+  // and then the whole pad comes back. A narrowed pad with fewer options
+  // than columns spreads them out.
+  const padOf = (deck: Deck): { answers: string[]; options: DeckOption[]; cols: number } => {
+    const answers = deck.answers(pokemon);
+    const facetSel = deck.multi ? [] : (filter[deck.id as FocusFacet] ?? []);
+    const narrowed = facetSel.length > 0 && answers.some((id) => facetSel.includes(id));
+    const options = narrowed ? deck.options.filter((option) => facetSel.includes(option.id)) : deck.options;
+    return { answers, options, cols: Math.max(1, Math.min(deck.cols, options.length)) };
+  };
 
   // Once answered, every option says what it was: ✓ on the right answers
   // (solid when picked, dashed when missed), ✕ on a wrong pick, and the
   // rest recede.
-  const optionView = (option: DeckOption): { className: string; label: string } => {
+  const optionView = (option: DeckOption, answers: string[]): { className: string; label: string } => {
     // a type option is type-coloured wherever it appears — CategoryPill's rule
     let className = "pad-btn" + typeClassOf(CATEGORY_BY_ID.get(option.id));
     let label = option.short;
     if (!answered) {
       if (selection.includes(option.id)) className += " selected";
     } else {
-      const right = activeAnswers.includes(option.id);
+      const right = answers.includes(option.id);
       if (right && pickedIds.has(option.id)) {
         className += " correct";
         label = `✓ ${label}`;
@@ -548,19 +548,20 @@ function Flashcards() {
   };
 
   const shortOf = (id: string): string =>
-    activeDeck.options.find((option) => option.id === id)?.short ?? getCategory(id).short;
+    padDecks.flatMap((deck) => deck.options).find((option) => option.id === id)?.short ?? getCategory(id).short;
 
-  // The one CTA slot under the options: Submit (naming the picks) on a
-  // multi part, Next › on a combo's first multi part, Next card once
-  // answered. A single-pick part grades on tap, so its slot stays empty.
+  // The one CTA slot under the pads: Submit (naming the picks, pad by
+  // pad) on a multi deck or a combo, Next card once answered. A plain
+  // single-pick deck grades on tap, so its slot stays empty.
   let cta: { label: string; onClick: () => void; disabled: boolean } | null = null;
   if (answered) {
     cta = { label: "Next card", onClick: () => next(), disabled: false };
-  } else if (activeDeck.multi) {
+  } else if (parts || padDecks[0].multi) {
+    const picks = padDecks.flatMap((deck) => deckPicks(deck, selection));
     cta = {
-      label: parts && part === 0 ? "Next ›" : selection.length ? `Submit · ${selection.map(shortOf).join(" + ")}` : "Submit",
+      label: picks.length ? `Submit · ${picks.map(shortOf).join(" + ")}` : "Submit",
       onClick: submit,
-      disabled: !selection.length,
+      disabled: !canSubmit,
     };
   }
 
@@ -577,12 +578,7 @@ function Flashcards() {
     } else if (wasCorrect) {
       summary = [prefix + "Correct", backIn, "auto-next"].filter(Boolean).join(" · ");
     } else {
-      const graded: Array<{ picks: string[]; answers: string[] }> = parts
-        ? [
-            { picks: partASel, answers: parts[0].answers(pokemon) },
-            { picks: [...pickedIds], answers: activeAnswers },
-          ]
-        : [{ picks: [...pickedIds], answers: activeAnswers }];
+      const graded = padDecks.map((deck) => ({ picks: deckPicks(deck, pickedList), answers: deck.answers(pokemon) }));
       const missed = graded.flatMap(({ picks, answers }) => answers.filter((id) => !picks.includes(id)));
       const wrong = graded.flatMap(({ picks, answers }) => picks.filter((id) => !answers.includes(id)));
       const clauses: ReactNode[] = [];
@@ -620,7 +616,8 @@ function Flashcards() {
   const canUndo = !gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt;
 
   return (
-    <div className="flashcards">
+    // a combo card stacks two pads, so its stage and buttons give some height back
+    <div className={`flashcards${parts ? " combo" : ""}`}>
       <div className="cards-topbar">
         <button
           className="deck-choose"
@@ -656,7 +653,7 @@ function Flashcards() {
       </div>
 
       <div className="card-stage">
-        <p key={`${key}:${part}:${String(answered)}`} className={`card-prompt ${verdictClass}`} aria-live="polite">
+        <p key={`${key}:${String(answered)}`} className={`card-prompt ${verdictClass}`} aria-live="polite">
           {verdictText ?? prompt}
         </p>
         <div className="stage-sprite">
@@ -688,16 +685,31 @@ function Flashcards() {
       </div>
 
       <div className="answer-pad">
-        <div className={`pad-grid cols-${padCols}`}>
-          {shownOptions.map((option) => {
-            const view = optionView(option);
-            return (
-              <button key={option.id} className={view.className} disabled={answered} onClick={() => choose(option)}>
-                {view.label}
-              </button>
-            );
-          })}
-        </div>
+        {padDecks.map((deck) => {
+          const pad = padOf(deck);
+          // a combo's pad is captioned with its question, and its verdict once graded
+          const verdict = parts && comboOk ? (deck === parts[0] ? comboOk.a : comboOk.b) : null;
+          return (
+            <div key={deck.id} className="pad-part">
+              {parts ? (
+                <p className="pad-kicker">
+                  {questionOf(deck, !answered)}
+                  {verdict !== null ? <span className={verdict ? "correct" : "wrong"}> {verdict ? "✓" : "✕"}</span> : null}
+                </p>
+              ) : null}
+              <div className={`pad-grid cols-${pad.cols}`}>
+                {pad.options.map((option) => {
+                  const view = optionView(option, pad.answers);
+                  return (
+                    <button key={option.id} className={view.className} disabled={answered} onClick={() => choose(deck, option)}>
+                      {view.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
         {summary !== null ? (
           <p className="pad-summary" aria-live="polite">
             {summary}
