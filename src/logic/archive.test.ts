@@ -88,10 +88,10 @@ describe("archivedShare and archivedAnswers", () => {
     expect(archivedShare(board.cells[0], zygarde)).toBe(0);
   });
 
-  it("accepts the app's answers less exclusions plus PokeDoku's own picks, most picked first", () => {
+  it("accepts the app's answers less exclusions plus PokeDoku's own picks, least picked first", () => {
     if (!board) throw new Error("fixture");
     const answers = archivedAnswers(board, 0, intersection("type-ghost", "flag-starter"));
-    expect(answers.slice(0, 3).map((pokemon) => pokemon.id)).toEqual([724, 911, 10233]);
+    expect(answers.slice(-3).map((pokemon) => pokemon.id)).toEqual([10233, 911, 724]);
     expect(answers.some((pokemon) => pokemon.species === 25 || pokemon.species === 133)).toBe(false);
     // a Pokémon PokeDoku accepted but the app's data doesn't is still an answer
     const withStray = { ...board, cells: board.cells.map((cell, index) => (index === 0 ? { total: cell.total + 1, picks: [...cell.picks, [1, 1] as [number, number]] } : cell)) };

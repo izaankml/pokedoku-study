@@ -223,7 +223,7 @@ function PracticeGrid() {
       when: entry.boards === 1 ? "the day this pair ran" : `over the ${entry.boards} days this pair ran`,
     };
   };
-  // what a cell accepts, most picked first: on a replayed PokeDoku the
+  // what a cell accepts, least picked first: on a replayed PokeDoku the
   // app's answers less its exclusions plus whatever its players validly
   // picked, by real share; otherwise the app's answers by real share
   // where the pair has run, estimated share breaking ties (and standing
@@ -237,7 +237,7 @@ function PracticeGrid() {
     const shareOf = (pokemon: Pokemon) => shares.get(pokemon.id) ?? 0;
     const estimateOf = (pokemon: Pokemon) => estimates.get(pokemon.id) ?? 0;
     // sorted on a copy: intersection's array is cached and shared
-    return [...answers].sort((a, b) => shareOf(b) - shareOf(a) || estimateOf(b) - estimateOf(a));
+    return [...answers].sort((a, b) => shareOf(a) - shareOf(b) || estimateOf(a) - estimateOf(b));
   };
 
   // The finished board's global uniqueness, PokeDoku-style (0–900): each

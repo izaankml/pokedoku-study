@@ -102,7 +102,7 @@ export function archivedPicks(cell: PickStatsCell): Pokemon[] {
 
 // What a replayed cell accepts: the app's own answers less PokeDoku's
 // exclusions, plus whatever PokeDoku accepted from its players that day
-// (its data and this app's differ at the margins), most picked first
+// (its data and this app's differ at the margins), least picked first
 export function archivedAnswers(board: ArchivedBoard, index: number, appAnswers: Pokemon[]): Pokemon[] {
   const excluded = board.excluded[index];
   const cell = board.cells[index];
@@ -114,7 +114,7 @@ export function archivedAnswers(board: ArchivedBoard, index: number, appAnswers:
       seen.add(pokemon.id);
     }
   }
-  return accepted.sort((a, b) => archivedShare(cell, b) - archivedShare(cell, a));
+  return accepted.sort((a, b) => archivedShare(cell, a) - archivedShare(cell, b));
 }
 
 // "Mon 1 Sep 2026" for "2026-09-01", as a calendar date (no timezone shift)

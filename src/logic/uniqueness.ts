@@ -64,12 +64,13 @@ export function cellUniqueness(pokemon: Pokemon, pool: Pokemon[]): number | null
   return estimate === null ? null : 100 - estimate;
 }
 
-// "<1%" below one, whole percent otherwise
+// "<0.01%" below a hundredth; otherwise up to two decimals, trailing
+// zeros dropped: "23%", "23.4%", "23.45%"
 export const formatPickPercent = (value: number): string =>
-  value < 1 ? "<1%" : `${Math.round(value)}%`;
+  value < 0.005 ? "<0.01%" : `${Number(value.toFixed(2))}%`;
 
-// an estimate, marked as one: "~12%" — but "<1%" as is, since "<" already
-// says the figure is approximate
+// an estimate, marked as one: "~12.5%" — but "<0.01%" as is, since "<"
+// already says the figure is approximate
 export function formatPickEstimate(value: number): string {
   const label = formatPickPercent(value);
   return label.startsWith("<") ? label : `~${label}`;

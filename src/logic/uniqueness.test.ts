@@ -68,15 +68,21 @@ describe("harvested data", () => {
 });
 
 describe("formatPickPercent", () => {
-  it("rounds whole percents and floors tiny ones to <1%", () => {
-    expect(formatPickPercent(23.4)).toBe("23%");
-    expect(formatPickPercent(0.4)).toBe("<1%");
+  it("shows up to two decimals, dropping trailing zeros", () => {
+    expect(formatPickPercent(23)).toBe("23%");
+    expect(formatPickPercent(23.4)).toBe("23.4%");
+    expect(formatPickPercent(23.456)).toBe("23.46%");
+    expect(formatPickPercent(0.4)).toBe("0.4%");
+  });
+
+  it("floors anything under a hundredth to <0.01%", () => {
+    expect(formatPickPercent(0.004)).toBe("<0.01%");
   });
 });
 
 describe("formatPickEstimate", () => {
   it("marks an estimate with a tilde, except a floored one", () => {
-    expect(formatPickEstimate(23.4)).toBe("~23%");
-    expect(formatPickEstimate(0.4)).toBe("<1%");
+    expect(formatPickEstimate(23.4)).toBe("~23.4%");
+    expect(formatPickEstimate(0.004)).toBe("<0.01%");
   });
 });
