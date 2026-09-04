@@ -13,6 +13,7 @@ import {
   deckLabel,
   deckPicks,
   deckPool,
+  dueCardCount,
   facetCategories,
   focusedDeckPool,
   isDeckId,
@@ -22,7 +23,7 @@ import {
 import type { Deck } from "./flashcards.ts";
 import type { Pokemon } from "../data/types.ts";
 import { pickFlashcard } from "./picker.ts";
-import { mergeBlocks } from "./stats.ts";
+import { emptyBlock, mergeBlocks } from "./stats.ts";
 
 const by = (name: string): Pokemon => {
   const pokemon = [...POKEMON_BY_ID.values()].find((candidate) => candidate.name === name);
@@ -177,6 +178,26 @@ describe("flashcard decks", () => {
       });
       expect(pick.pokemon.regions).toContain("hisui");
     }
+  });
+});
+
+describe("dueCardCount", () => {
+  it("counts due cards over every deck, or only what a deck and filter can deal", () => {
+    const now = 1_700_000_000_000;
+    const anHourAgo = { a: 1, c: 1, s: 0, t: now - 3_600_000 }; // a 10-minute interval, long past
+    const growlithe = by("growlithe"); // Kanto, Fire, first stage
+    const block = emptyBlock("test");
+    block.flashcards[cardKey("region", growlithe)] = anHourAgo;
+    block.flashcards[cardKey("type", growlithe)] = anHourAgo;
+    block.flashcards[cardKey("combo:type+region", growlithe)] = anHourAgo;
+    const merged = mergeBlocks([block]);
+    expect(dueCardCount(merged, now)).toBe(3);
+    expect(dueCardCount(merged, now, { deckId: "all", filter: {} })).toBe(2); // All never deals combos
+    expect(dueCardCount(merged, now, { deckId: "region", filter: {} })).toBe(1);
+    expect(dueCardCount(merged, now, { deckId: "region", filter: { type: ["type-fire"] } })).toBe(1);
+    expect(dueCardCount(merged, now, { deckId: "region", filter: { type: ["type-water"] } })).toBe(0);
+    expect(dueCardCount(merged, now, { deckId: "combo:type+region", filter: {} })).toBe(1);
+    expect(dueCardCount(merged, now, { deckId: "stage", filter: {} })).toBe(0);
   });
 });
 

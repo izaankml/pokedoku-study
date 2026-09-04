@@ -21,9 +21,11 @@ import {
   isDeckId,
   isRightPick,
   loadCardFilter,
+  loadSilhouette,
   matchesFocus,
   saveCardFilter,
   saveSession,
+  saveSilhouette,
   session,
 } from "../logic/flashcards.ts";
 import type {
@@ -47,9 +49,8 @@ import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
 import Chevron from "./Chevron.tsx";
 import PokemonAutocomplete from "./PokemonAutocomplete.tsx";
+import PokemonCard from "./PokemonCard.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
-import PokemonName from "./PokemonName.tsx";
-import Sprite from "./Sprite.tsx";
 import { useModalShell } from "./useModalShell.ts";
 
 const GAVE_UP = "gaveup";
@@ -183,6 +184,8 @@ function Flashcards() {
   // the persisted focus filter — declared before the card state, whose
   // initializer picks under it
   const [filter, setFilter] = useState<CardFilter>(loadCardFilter);
+  // Who's That: silhouette (the default) or the sprite in full
+  const [silhouette, setSilhouette] = useState<boolean>(loadSilhouette);
   const [deckSheet, setDeckSheet] = useState(false);
   const [filterSheet, setFilterSheet] = useState(false);
   // The card lives in the module-level session (mirrored to localStorage)
@@ -227,9 +230,11 @@ function Flashcards() {
   // the deck whose options fill the pad — a combo's two, each on its own pad
   const padDecks: [Deck] | [Deck, Deck] = parts ?? [DECK_BY_ID.get(card.deckId) as Deck];
   // Who's That types its answer instead of picking options — and hides
-  // the name (and the sprite's colours) until it's answered
+  // the name until it's answered, and the sprite's colours too unless
+  // the silhouette is turned off
   const nameDeck = !parts && padDecks[0].input === "name";
   const mystery = nameDeck && picked === null;
+  const silhouetted = mystery && silhouette;
 
   const answered = picked !== null;
   const gaveUp = picked === GAVE_UP;
@@ -249,8 +254,9 @@ function Flashcards() {
     !answered &&
     (parts ? parts.every((deck) => deckPicks(deck, selection).length > 0) : Boolean(padDecks[0].multi) && selection.length > 0);
   const filterN = filterCount(filter);
-  // walks every deck's pool, so only when the stats change
-  const due = useMemo(() => dueCardCount(merged), [merged]);
+  // the cards this deck and filter can deal — walks their pools, so only
+  // when the stats, the deck or the filter change
+  const due = useMemo(() => dueCardCount(merged, Date.now(), { deckId, filter }), [merged, deckId, filter]);
 
   // The open sheet lives in the URL (#cards/region/pokemon-eevee) — only
   // once the card is answered, so nothing gives the answer away
@@ -487,6 +493,14 @@ function Flashcards() {
     }
   }
 
+  // The eye button on the Who's That pad: silhouette on or off, for this
+  // card and the ones after it
+  function toggleSilhouette(): void {
+    const next = !silhouette;
+    setSilhouette(next);
+    saveSilhouette(next);
+  }
+
   // ---- derived view state ----
 
   // a deck's question, its aside ("pick all") dimmed after it
@@ -496,11 +510,10 @@ function Flashcards() {
       {withNote && deck.questionNote ? <span className="prompt-note"> · {deck.questionNote}</span> : null}
     </>
   );
-  // the stage's prompt — a combo's pads carry their own questions, so its
-  // stage just says what to do
-  const prompt = parts ? "Answer both" : questionOf(padDecks[0]);
   // a part's ✓ or ✕, green or red on its own
   const mark = (ok: boolean): ReactNode => <span className={ok ? "mark correct" : "mark wrong"}>{ok ? "✓" : "✕"}</span>;
+  // The verdict that replaces a single deck's question over its options
+  // once answered (a combo's parts each wear a mark instead)
   let verdict: ReactNode = null;
   let verdictClass = "";
   if (answered) {
@@ -551,46 +564,45 @@ function Flashcards() {
     return { answers, options, cols: Math.max(1, Math.min(deck.cols, options.length)) };
   };
 
-  // Once answered, every option says what it was: ✓ on the right answers
-  // (solid when picked, dashed when missed), ✕ on a wrong pick, and the
-  // rest recede.
-  const optionView = (option: DeckOption, answers: string[]): { className: string; label: string } => {
+  // Once answered, every option's colour says what it was: green on the
+  // right answers (solid when picked, dashed when missed), red on a
+  // wrong pick, and the rest recede.
+  const optionClass = (option: DeckOption, answers: string[]): string => {
     // a type option is type-coloured wherever it appears — CategoryPill's rule
     let className = "pad-btn" + typeClassOf(CATEGORY_BY_ID.get(option.id));
-    let label = option.short;
     if (!answered) {
       if (selection.includes(option.id)) className += " selected";
     } else {
       const right = answers.includes(option.id);
-      if (right && pickedIds.has(option.id)) {
-        className += " correct";
-        label = `✓ ${label}`;
-      } else if (right) {
-        className += " correct missed";
-        label = `✓ ${label}`;
-      } else if (pickedIds.has(option.id)) {
-        className += " wrong";
-        label = `✕ ${label}`;
-      } else {
-        className += " dim";
-      }
+      if (right && pickedIds.has(option.id)) className += " correct";
+      else if (right) className += " correct missed";
+      else if (pickedIds.has(option.id)) className += " wrong";
+      else className += " dim";
     }
-    return { className, label };
+    return className;
   };
 
   const shortOf = (id: string): string =>
     padDecks.flatMap((deck) => deck.options).find((option) => option.id === id)?.short ?? getCategory(id).short;
 
-  // The one CTA slot under the pads: Submit (naming the picks, pad by
-  // pad) on a multi deck or a combo, Next card once answered. A plain
-  // single-pick deck grades on tap, so its slot stays empty.
-  let cta: { label: string; onClick: () => void; disabled: boolean } | null = null;
+  // The one CTA slot under the pads: Submit (led by the picks, pad by
+  // pad — they trim before "Submit" does) on a multi deck or a combo,
+  // Next card once answered. A plain single-pick deck grades on tap, so
+  // its slot stays empty.
+  let cta: { label: ReactNode; onClick: () => void; disabled: boolean } | null = null;
   if (answered) {
     cta = { label: "Next card", onClick: () => next(), disabled: false };
   } else if (parts || padDecks[0].multi) {
     const picks = padDecks.flatMap((deck) => deckPicks(deck, selection));
     cta = {
-      label: picks.length ? `Submit · ${picks.map(shortOf).join(" + ")}` : "Submit",
+      label: picks.length ? (
+        <>
+          <span className="pad-cta-picks">{picks.map(shortOf).join(" + ")}</span>
+          <span className="pad-cta-verb"> · Submit</span>
+        </>
+      ) : (
+        "Submit"
+      ),
       onClick: submit,
       disabled: !canSubmit,
     };
@@ -702,31 +714,19 @@ function Flashcards() {
       </div>
 
       <div className="card-stage">
-        <p key={`${key}:${String(answered)}`} className={`card-prompt ${verdictClass}`} aria-live="polite">
-          {verdict ?? prompt}
-        </p>
-        {/* once answered, the tile and the name open the detail sheet
-            (evolution line and all); before that they stay inert so
-            nothing gives the answer away — Who's That even hides the
-            name and shows a silhouette */}
-        <button
-          type="button"
-          className={`stage-sprite${mystery ? " mystery" : ""}`}
-          disabled={!answered}
-          aria-label={answered ? `${pokemon.displayName} details` : undefined}
-          onClick={answered ? () => openDetail(pokemon) : undefined}
-        >
-          <Sprite pokemon={pokemon} eager label={mystery ? "Mystery Pokémon" : undefined} />
-        </button>
-        <button
-          type="button"
-          className="stage-name"
-          disabled={!answered}
-          onClick={answered ? () => openDetail(pokemon) : undefined}
-        >
-          {mystery ? <span className="card-name-hidden">???</span> : <PokemonName name={pokemon.displayName} />}
-          {answered ? <span className="stage-chevron">›</span> : null}
-        </button>
+        {/* the Pokémon on a big answer-grid tile, name and all; once
+            answered it opens the detail sheet (evolution line and all),
+            before that it stays inert so nothing gives the answer away —
+            Who's That even hides the name, and shows a silhouette unless
+            that's turned off */}
+        <div className={`stage-tile${silhouetted ? " mystery" : ""}`}>
+          <PokemonCard
+            pokemon={pokemon}
+            eager
+            hideName={mystery}
+            onClick={answered ? () => openDetail(pokemon) : undefined}
+          />
+        </div>
         <div className="fact-pills">
           {factPills.map((category) => (
             <CategoryPill key={category.id} cat={category} useShort />
@@ -737,36 +737,63 @@ function Flashcards() {
       <div className="answer-pad">
         {padDecks.map((deck) => {
           const pad = padOf(deck);
-          // a combo's pad is captioned with its question, and its verdict once graded
+          // every pad is captioned with its question, right over its
+          // options; once graded a combo's keeps it and adds the part's
+          // mark, a single deck's gives way to the verdict
           const partVerdict = parts && comboOk ? (deck === parts[0] ? comboOk.a : comboOk.b) : null;
           return (
             <div key={deck.id} className="pad-part">
-              {parts ? (
-                <p className="pad-kicker">
-                  {questionOf(deck, !answered)}
-                  {partVerdict !== null ? <> {mark(partVerdict)}</> : null}
+              {/* Who's That's row also carries the eye button: silhouette
+                  on (the default) or the sprite in full */}
+              <div className={`pad-head${deck.input === "name" ? " with-eye" : ""}`}>
+                <p
+                  key={`${key}:${String(answered)}`}
+                  className={`pad-kicker${parts ? "" : ` ${verdictClass}`}`}
+                  aria-live="polite"
+                >
+                  {parts ? (
+                    <>
+                      {questionOf(deck, !answered)}
+                      {partVerdict !== null ? <> {mark(partVerdict)}</> : null}
+                    </>
+                  ) : (
+                    (verdict ?? questionOf(deck))
+                  )}
                 </p>
-              ) : null}
+                {deck.input === "name" ? (
+                  <button
+                    type="button"
+                    className={`pad-eye${silhouette ? " on" : ""}`}
+                    aria-pressed={silhouette}
+                    aria-label="Silhouette"
+                    title={silhouette ? "Silhouette on: tap to show the sprite" : "Silhouette off: tap to hide the sprite"}
+                    onClick={toggleSilhouette}
+                  >
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z" />
+                      <circle cx="12" cy="12" r="3" />
+                      {silhouette ? <path d="M4 4l16 16" /> : null}
+                    </svg>
+                  </button>
+                ) : null}
+              </div>
               {deck.input === "name" ? (
                 // the typed answer; once graded, the summary below says how it went
                 answered ? null : (
-                  <PokemonAutocomplete onSubmit={gradeName} placeholder="Who's that Pokémon?" />
+                  <PokemonAutocomplete onSubmit={gradeName} placeholder="Type its name…" />
                 )
               ) : (
                 <div className={`pad-grid cols-${pad.cols}`}>
-                  {pad.options.map((option) => {
-                    const view = optionView(option, pad.answers);
-                    return (
-                      <button
-                        key={option.id}
-                        className={view.className}
-                        disabled={answered}
-                        onClick={() => choose(deck, option)}
-                      >
-                        {view.label}
-                      </button>
-                    );
-                  })}
+                  {pad.options.map((option) => (
+                    <button
+                      key={option.id}
+                      className={optionClass(option, pad.answers)}
+                      disabled={answered}
+                      onClick={() => choose(deck, option)}
+                    >
+                      {option.short}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -784,7 +811,8 @@ function Flashcards() {
         ) : (
           <div className="pad-cta-gap" aria-hidden="true" />
         )}
-        {/* Back and Don't know or Undo on the left; Skip, or a note, on the right */}
+        {/* Back on the left; Don't Know (or Undo, once answered) centred
+            under the CTA; Skip, or a note, on the right */}
         <div className="pad-actions">
           <span className="pad-actions-side">
             {canBack ? (
@@ -792,9 +820,11 @@ function Flashcards() {
                 ‹ Back
               </button>
             ) : null}
+          </span>
+          <span className="pad-actions-mid">
             {live && !answered ? (
               <button className="pad-ghost" onClick={giveUp}>
-                Don&apos;t know
+                Don&apos;t Know
               </button>
             ) : null}
             {canUndo ? (
@@ -803,17 +833,19 @@ function Flashcards() {
               </button>
             ) : null}
           </span>
-          {!live ? (
-            <span className="pad-note">
-              Earlier card {viewing !== null ? viewing + 1 : 0} of {history.length}
-            </span>
-          ) : answered ? (
-            <span className="pad-note">Tap the Pokémon for its detail sheet</span>
-          ) : (
-            <button className="pad-ghost" onClick={() => next()}>
-              Skip ›
-            </button>
-          )}
+          <span className="pad-actions-side end">
+            {!live ? (
+              <span className="pad-note">
+                Earlier card {viewing !== null ? viewing + 1 : 0} of {history.length}
+              </span>
+            ) : answered ? (
+              <span className="pad-note">Tap the Pokémon for its detail sheet</span>
+            ) : (
+              <button className="pad-ghost" onClick={() => next()}>
+                Skip ›
+              </button>
+            )}
+          </span>
         </div>
       </div>
 

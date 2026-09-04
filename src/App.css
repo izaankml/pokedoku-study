@@ -895,9 +895,10 @@ button.pill {
   font-size: 0.85rem;
 }
 
+/* four tiles to a row on every screen (small ones on a phone) */
 .answer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--sp-2);
 }
 
@@ -911,32 +912,33 @@ button.pill {
   min-width: 0;
 }
 
-/* a square tile: the sprite takes whatever height the name leaves */
-.answer-grid .pokemon-card {
+/* a square tile: the sprite takes whatever height the name leaves — in
+   an answer grid, and as the Cards stage's big tile (.stage-tile) */
+:is(.answer-grid, .stage-tile) .pokemon-card {
   width: 100%;
   aspect-ratio: 1;
-  gap: 4px;
+  gap: 3px;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 8px 6px 6px;
+  padding: 6px 4px 5px;
   box-shadow: var(--edge-hi);
   transition: translate var(--dur-fast) var(--ease-out), background-color var(--dur-fast),
     box-shadow var(--dur-fast);
 }
 
 @media (hover: hover) {
-  .answer-grid .pokemon-card:hover {
+  :is(.answer-grid, .stage-tile) .pokemon-card.clickable:hover {
     translate: 0 -2px;
     background: var(--surface-2);
     box-shadow: var(--shadow-2), var(--edge-hi);
   }
 
-  .answer-grid .pokemon-card:hover .sprite {
+  :is(.answer-grid, .stage-tile) .pokemon-card.clickable:hover .sprite {
     scale: 1.07;
   }
 
-  .answer-grid .pokemon-card .sprite {
+  :is(.answer-grid, .stage-tile) .pokemon-card .sprite {
     transition: scale var(--dur-med) var(--ease-bounce);
   }
 }
@@ -956,31 +958,31 @@ button.pill {
 
 /* in a tile the slot is square (Sprite.tsx's fit transform assumes one):
    the smaller of the tile's width and what the name leaves */
-.answer-grid .card-art {
+:is(.answer-grid, .stage-tile) .card-art {
   flex: 1;
   min-height: 0;
   container-type: size;
 }
 
-.answer-grid .card-art .sprite,
-.answer-grid .card-art .sprite-fallback {
+:is(.answer-grid, .stage-tile) .card-art .sprite,
+:is(.answer-grid, .stage-tile) .card-art .sprite-fallback {
   width: min(100cqw, 100cqh);
   height: min(100cqw, 100cqh);
 }
 
 /* the name takes the lines it needs, three at most */
-.answer-grid .pokemon-card figcaption {
+:is(.answer-grid, .stage-tile) .pokemon-card figcaption {
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: normal;
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   line-height: 1.2;
   min-height: 1.2em;
   max-height: 3.6em;
 }
 
-.answer-grid .pokemon-card .card-name {
+:is(.answer-grid, .stage-tile) .pokemon-card .card-name {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -1442,58 +1444,23 @@ button.pill {
   white-space: nowrap;
 }
 
-/* ---- cards: the stage (prompt · sprite · name · fact pills) ---- */
+/* ---- cards: the stage (the Pokémon's tile · fact pills) ---- */
 
+/* the stage sits at the top of the free space, so the tile stays high
+   on the screen however tall the pad below runs */
 .card-stage {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 0 4px;
-  min-height: 250px;
-}
-
-/* the question while asking; the verdict replaces it once answered */
-.card-prompt {
-  margin: 0;
-  min-height: 23px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--text-low);
-  white-space: pre-wrap; /* a combo verdict's double spaces stay */
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 2px 4px 12px;
 }
 
 /* the question's aside ("· pick all"), dimmer than the question */
 .prompt-note {
   color: var(--border-strong);
-}
-
-.card-prompt.correct {
-  color: var(--correct-strong);
-  animation: pop-in var(--dur-slow) var(--ease-bounce) both;
-}
-
-.card-prompt.wrong {
-  color: var(--wrong);
-  animation: shake var(--dur-slow) var(--ease-out) both;
-}
-
-.card-prompt.revealed {
-  color: var(--text-mid);
-  animation: fade-up var(--dur-med) var(--ease-out) both;
-}
-
-/* a combo's verdict names each part; the marks carry the colour */
-.card-prompt.combo {
-  color: var(--text-mid);
-  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 /* a part's ✓ or ✕ in a verdict line, green or red on its own */
@@ -1505,86 +1472,45 @@ button.pill {
   color: var(--wrong);
 }
 
-/* the sprite sits on a raised tile, like an answer-grid card; once the
-   card is answered the tile is a button into the detail sheet */
-.stage-sprite {
-  display: grid;
-  place-items: center;
-  width: 144px;
-  height: 144px;
-  padding: 0;
-  background: var(--surface-1);
-  border: 1px solid var(--border-subtle);
+/* the Pokémon on a big answer-grid tile, its name inside; once the card
+   is answered the tile is a button into the detail sheet */
+.stage-tile {
+  width: 200px;
+  max-width: 100%;
+}
+
+.stage-tile .pokemon-card {
+  gap: 6px;
+  padding: 12px 10px 10px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-1), var(--edge-hi);
 }
 
-.stage-sprite:disabled {
-  cursor: default;
-}
-
-/* pointer devices only (see .tab:hover) */
-@media (hover: hover) {
-  .stage-sprite:enabled:hover {
-    border-color: var(--border-strong);
-    background: var(--surface-2);
-  }
-}
-
-.stage-sprite:enabled:active {
+.stage-tile .pokemon-card.clickable:active {
   scale: 0.97;
 }
 
+.stage-tile .pokemon-card figcaption {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-hi);
+  max-height: 3.45em;
+}
+
 /* Who's That: a silhouette until the card is answered */
-.stage-sprite.mystery .sprite {
+.stage-tile.mystery .sprite {
   filter: brightness(0) invert(0.82);
-}
-
-/* Sprite.tsx centres and scales each Pokémon's visible box in this slot */
-.stage-sprite .sprite,
-.stage-sprite .sprite-fallback {
-  width: 124px;
-  height: 124px;
-  object-fit: contain;
-}
-
-.stage-sprite .sprite {
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
 }
 
 /* a combo card stacks two pads under the stage: a smaller tile keeps the
    whole card on a phone screen */
-.flashcards.combo .stage-sprite {
-  width: 124px;
-  height: 124px;
+.flashcards.combo .stage-tile {
+  width: 168px;
 }
 
-.flashcards.combo .stage-sprite .sprite,
-.flashcards.combo .stage-sprite .sprite-fallback {
-  width: 104px;
-  height: 104px;
-}
-
-/* the name; once answered it becomes a button into the detail sheet */
-.stage-name {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--text-hi);
-  font-size: 1.6rem;
-  font-weight: 800;
-  line-height: 1.15;
-  text-align: center;
-}
-
-.stage-name:disabled {
-  cursor: default;
-}
-
-.stage-chevron {
-  color: var(--text-low);
-  font-size: 1.1rem;
-  margin-left: 4px;
+.flashcards.combo .stage-tile .pokemon-card figcaption {
+  font-size: 1rem;
 }
 
 .fact-pills {
@@ -1622,20 +1548,88 @@ button.pill {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
-/* a combo's two pads, stacked, each captioned with its question (and its
-   verdict once graded) */
+/* a combo's two pads, stacked */
 .pad-part + .pad-part {
   margin-top: 10px;
 }
 
+/* the row over a pad's options: its question, and on Who's That the eye
+   button at the row's right end (the row grows to fit it) */
+.pad-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 8px;
+}
+
+.pad-head.with-eye {
+  min-height: 32px;
+  padding: 0 36px;
+}
+
+.pad-eye {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text-low);
+}
+
+/* silhouette on: the eye is struck through and takes the accent */
+.pad-eye.on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* pointer devices only (see .tab:hover) */
+@media (hover: hover) {
+  .pad-eye:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+}
+
+.pad-eye:active {
+  scale: 0.94;
+}
+
+/* every pad's question, right over its options; once answered a single
+   deck's gives way to the verdict, a combo's keeps it and adds the
+   part's mark */
 .pad-kicker {
-  margin: 0 0 6px;
+  margin: 0;
   padding: 0 2px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-low);
+  white-space: pre-wrap;
+}
+
+.pad-kicker.correct {
+  color: var(--correct-strong);
+  animation: pop-in var(--dur-slow) var(--ease-bounce) both;
+}
+
+.pad-kicker.wrong {
+  color: var(--wrong);
+  animation: shake var(--dur-slow) var(--ease-out) both;
+}
+
+.pad-kicker.revealed {
+  color: var(--text-mid);
+  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 /* Who's That types its answer in the pad: the box runs full width, and
@@ -1651,43 +1645,41 @@ button.pill {
   transform-origin: bottom;
 }
 
-/* One column per deck (Type six, Region five, Group three, Stage two),
-   the same on every screen size, so a deck's options sit in the same
-   spots on the phone and the desktop (muscle memory) */
+/* One column count per deck (the type decks five, the rest four), the
+   same on every screen size, so a deck's options sit in the same spots
+   on the phone and the desktop (muscle memory); a narrowed pad with
+   fewer options than that spreads them out (cols-1 to cols-3) */
 .pad-grid {
   display: grid;
   gap: 6px;
 }
 
 .pad-grid.cols-1 {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .pad-grid.cols-2 {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .pad-grid.cols-3 {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .pad-grid.cols-4 {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .pad-grid.cols-5 {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.pad-grid.cols-6 {
-  grid-template-columns: repeat(6, 1fr);
-}
-
+/* tall buttons; a long label ("First Partner") wraps to a second line */
 .pad-btn {
-  height: 52px;
-  padding: 0 2px;
-  white-space: nowrap;
-  font-size: 0.84rem;
+  height: 60px;
+  padding: 0 4px;
+  line-height: 1.15;
+  font-size: 0.9rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
@@ -1695,14 +1687,15 @@ button.pill {
   color: var(--text-hi);
 }
 
-/* six columns: the longest labels ("✓ Fighting") need the room */
-.pad-grid.cols-6 .pad-btn {
-  font-size: 0.78rem;
+/* five columns: the longest type names ("Fighting") need the room */
+.pad-grid.cols-5 .pad-btn {
+  font-size: 0.84rem;
+  padding: 0 2px;
 }
 
-/* a combo's two pads run a little shorter so both fit on a phone */
+/* a combo's two pads run shorter so both fit on a phone */
 .flashcards.combo .pad-btn {
-  height: 44px;
+  height: 46px;
 }
 
 /* pointer devices only (see .tab:hover) */
@@ -1844,21 +1837,33 @@ button.pill {
   cursor: default;
 }
 
-/* a long Submit label ("Submit · Fighting + Electric") trims rather than wraps */
+/* the Submit label leads with the picks ("Fighting + Electric · Submit"):
+   a long list trims rather than wraps, and never trims "Submit" itself */
 .pad-cta-label {
   position: relative;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   white-space: nowrap;
 }
 
-/* the row under the CTA: Back · Don't know | Skip while asking, Back ·
-   Undo | a hint once answered */
+.pad-cta-picks {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pad-cta-verb {
+  flex: none;
+  white-space: pre;
+}
+
+/* the row under the CTA: Back on the left, Don't Know (or Undo, once
+   answered) centred under the CTA, Skip or a hint on the right */
 .pad-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   padding: 6px 4px 10px;
   min-height: 40px;
@@ -1868,6 +1873,18 @@ button.pill {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
+}
+
+.pad-actions-side.end {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.pad-actions-mid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pad-ghost {
@@ -2317,28 +2334,21 @@ button.evo-tile:active {
     padding-bottom: calc(84px + var(--nav-lift));
   }
 
-  /* short screens (an iPhone with Safari's bars out): the sprite gives
+  /* short screens (an iPhone with Safari's bars out): the tile gives
      height back so everything still fits above the nav */
   @media (max-height: 700px) {
-    .stage-sprite {
-      width: 128px;
-      height: 128px;
+    .stage-tile {
+      width: 168px;
     }
 
-    .stage-sprite .sprite,
-    .stage-sprite .sprite-fallback {
-      width: 108px;
-      height: 108px;
-    }
-
-    .card-stage {
-      min-height: 240px;
+    .stage-tile .pokemon-card figcaption {
+      font-size: 1rem;
     }
   }
 
-  /* six narrow columns: the longest labels ("✓ Fighting") need the room */
-  .pad-grid.cols-6 .pad-btn {
-    font-size: 0.7rem;
+  /* five narrow columns: the longest type names ("Fighting") need the room */
+  .pad-grid.cols-5 .pad-btn {
+    font-size: 0.76rem;
     padding: 0 1px;
     letter-spacing: -0.01em;
   }

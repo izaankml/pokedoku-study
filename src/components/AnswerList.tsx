@@ -20,12 +20,16 @@ interface AnswerListProps {
   // a figure per Pokémon id, worn in the card's corner (a replayed
   // PokeDoku cell's real pick shares)
   badges?: Map<number, string>;
+  // false keeps the tiles inert: no detail sheet (a Name all round in
+  // progress — a sheet's evolution line would name the ones still to find)
+  tappable?: boolean;
 }
 
-function AnswerList({ pokemon, title, highlightId, guess = null, badges }: AnswerListProps) {
+function AnswerList({ pokemon, title, highlightId, guess = null, badges, tappable = true }: AnswerListProps) {
   // the open sheet lives in the URL (…/pokemon-eevee); any Pokémon, since
   // a sheet's evolution tiles lead to sheets of Pokémon outside this list
   const [selected, open, close] = useDetailHash(pokemonBySlug);
+  const openerFor = (entry: Pokemon): (() => void) | undefined => (tappable ? () => open(entry) : undefined);
   const { shown, done, sentinelRef } = usePagedList(pokemon, PAGE);
   return (
     <section className="answer-list">
@@ -34,7 +38,7 @@ function AnswerList({ pokemon, title, highlightId, guess = null, badges }: Answe
           <h3>Your Guess</h3>
           <div className="answer-grid">
             <div className="wrong-guess">
-              <PokemonCard pokemon={guess} onClick={() => open(guess)} />
+              <PokemonCard pokemon={guess} onClick={openerFor(guess)} />
             </div>
           </div>
         </>
@@ -47,7 +51,7 @@ function AnswerList({ pokemon, title, highlightId, guess = null, badges }: Answe
       <div className="answer-grid">
         {shown.map((entry) => (
           <div key={entry.id} className={entry.id === highlightId ? "highlight" : ""}>
-            <PokemonCard pokemon={entry} onClick={() => open(entry)} badge={badges?.get(entry.id)} />
+            <PokemonCard pokemon={entry} onClick={openerFor(entry)} badge={badges?.get(entry.id)} />
           </div>
         ))}
       </div>

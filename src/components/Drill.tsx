@@ -274,7 +274,9 @@ function NameAll() {
           </>
         )}
       </div>
-      {foundPokemon.length ? <AnswerList pokemon={foundPokemon} title="Found" /> : null}
+      {/* the tiles open detail sheets only once the round is over: a
+          sheet's evolution line would name the ones still to find */}
+      {foundPokemon.length ? <AnswerList pokemon={foundPokemon} title="Found" tappable={done} /> : null}
       {done && missed.length ? <AnswerList pokemon={missed} title="Missed" /> : null}
       <details className="drill-kinds">
         <summary>

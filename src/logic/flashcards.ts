@@ -69,7 +69,7 @@ export const DECKS: Deck[] = [
     question: "Which region?",
     questionNote: "pick all",
     multi: true, // every region it counts for (a dual-region form has two), then Submit
-    cols: 5, // ten regions: two full rows
+    cols: 4, // ten regions: two full rows and a short one
     options: CATEGORIES.filter((category) => category.group === "region"),
     answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
     // not the regional forms, whose names give the answer away; dual-region
@@ -84,7 +84,7 @@ export const DECKS: Deck[] = [
     question: "What type?",
     questionNote: "pick all",
     multi: true, // both types of a dual type, then Submit
-    cols: 6, // eighteen types: three full rows
+    cols: 5, // eighteen types: three full rows and a short one
     options: CATEGORIES.filter((category) => category.group === "type"),
     answers: (pokemon) => pokemon.types.map((type) => `type-${type}`),
     // Megas can change type (Charizard Mega X); Gmax never does
@@ -95,7 +95,7 @@ export const DECKS: Deck[] = [
     id: "special",
     label: "Group",
     question: "Which group?",
-    cols: 3,
+    cols: 4,
     options: SPECIAL_FLAGS.map((flag) => getCategory(`flag-${flag}`)),
     answers: (pokemon) => SPECIAL_FLAGS.filter((flag) => pokemon.flags.includes(flag)).map((flag) => `flag-${flag}`),
     // Only Pokémon that are in a group: the ~900 regular ones would swamp
@@ -107,7 +107,7 @@ export const DECKS: Deck[] = [
     id: "stage",
     label: "Stage",
     question: "Evolution stage?",
-    cols: 2,
+    cols: 4, // the four stages on one row
     options: [
       getCategory("stage-first"),
       getCategory("stage-middle"),
@@ -125,7 +125,7 @@ export const DECKS: Deck[] = [
     question: "Weak to?",
     questionNote: "pick all",
     multi: true, // every type that hits it super-effectively, then Submit
-    cols: 6,
+    cols: 5,
     options: CATEGORIES.filter((category) => category.group === "type"),
     answers: (pokemon) => weaknessesOf(pokemon.types).map((type) => `type-${type}`),
     // pure type-chart knowledge — never credits the type categories
@@ -332,6 +332,17 @@ export function saveCardFilter(filter: CardFilter): void {
   saveJson(FILTER_KEY, filter);
 }
 
+// Who's That shows a silhouette until answered; the pad's eye button
+// turns that off (the sprite in full, the name still hidden), remembered
+// across cards and reloads.
+const SILHOUETTE_KEY = "pokedoku-study:cards:silhouette:v1";
+
+export const loadSilhouette = (): boolean => loadJson(SILHOUETTE_KEY) !== false;
+
+export function saveSilhouette(on: boolean): void {
+  saveJson(SILHOUETTE_KEY, on);
+}
+
 // ---- stats keys and the review universe ----
 
 // Stats key for a card. The region deck keeps the bare species id so
@@ -362,11 +373,27 @@ export function allCardKeys(): string[] {
   return allCardRefs().map((ref) => ref.key);
 }
 
-// How many cards are due for review right now — the header's "48 due"
-// and the Stats tab's "Review 48 due cards".
-export function dueCardCount(merged: MergedStats, now: number = Date.now()): number {
+// What the Cards tab can deal: the deck in play (All: every single
+// deck), narrowed to the focus filter.
+export interface DealScope {
+  deckId: string;
+  filter: CardFilter;
+}
+
+// How many cards are due for review right now — the Stats tab's "Review
+// 48 due cards" over every deck, or the Cards header's "12 due" over
+// just the cards its deck and filter can deal.
+export function dueCardCount(merged: MergedStats, now: number = Date.now(), scope?: DealScope): number {
   let due = 0;
-  for (const ref of allCardRefs()) if (scheduleStatus(merged.flashcards[ref.key], now) === "due") due += 1;
+  const isDue = (key: string): boolean => scheduleStatus(merged.flashcards[key], now) === "due";
+  if (!scope) {
+    for (const ref of allCardRefs()) if (isDue(ref.key)) due += 1;
+    return due;
+  }
+  const deckIds = scope.deckId === "all" ? DECKS.map((deck) => deck.id) : [scope.deckId];
+  for (const deckId of deckIds) {
+    for (const pokemon of focusedDeckPool(deckId, scope.filter)) if (isDue(cardKey(deckId, pokemon))) due += 1;
+  }
   return due;
 }
 
