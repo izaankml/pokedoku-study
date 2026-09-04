@@ -715,6 +715,7 @@ button.pill {
 }
 
 .autocomplete input,
+.name-box input,
 .sync-actions input,
 .browser-search,
 .category-search {
@@ -731,6 +732,7 @@ button.pill {
 }
 
 .autocomplete input::placeholder,
+.name-box input::placeholder,
 .sync-actions input::placeholder,
 .browser-search::placeholder,
 .category-search::placeholder {
@@ -738,6 +740,7 @@ button.pill {
 }
 
 .autocomplete input:focus-visible,
+.name-box input:focus-visible,
 .sync-actions input:focus-visible,
 .browser-search:focus-visible,
 .category-search:focus-visible {
@@ -1538,7 +1541,7 @@ button.pill {
    column, without the empty pill row it would keep while asking, so the
    text box rests clear of the keyboard (60px on a 956px phone, 30px on
    an 852px one) — and the box is focused without the scroll an iPhone
-   would otherwise make (PokemonAutocomplete's focusWithoutScroll), so
+   would otherwise make (see NameInput), so
    the page holds still and the tile stays in view while typing. The
    pills' return on answering moves only the pad, and the keyboard has
    gone by then */
@@ -1777,37 +1780,6 @@ button.pill {
 .pad-kicker.revealed {
   color: var(--text-mid);
   animation: fade-up var(--dur-med) var(--ease-out) both;
-}
-
-/* Who's That types its answer in the pad: the box runs full width, and
-   the suggestions open upward — the pad sits at the bottom of the screen,
-   under a phone's keyboard */
-.answer-pad .autocomplete {
-  max-width: none;
-}
-
-.answer-pad .suggestions {
-  top: auto;
-  bottom: calc(100% + 6px);
-  transform-origin: bottom;
-}
-
-/* Who's That's Submit sits beside the box (the foot's slot is behind a
-   phone's keyboard while typing), a compact primary button, quiet until
-   there's a name to submit */
-.autocomplete.with-submit {
-  display: flex;
-  gap: 8px;
-}
-
-.autocomplete.with-submit input {
-  flex: 1;
-  min-width: 0;
-}
-
-.autocomplete-submit {
-  flex: none;
-  padding: 0 16px;
 }
 
 /* One column count per deck (the type decks five, the rest four), the

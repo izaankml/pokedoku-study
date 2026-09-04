@@ -40,7 +40,7 @@ import type {
   Picked,
 } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
-import { wordBag } from "../logic/matching.ts";
+import { findByName, wordBag } from "../logic/matching.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
 import { preloadSprite } from "../logic/sprites.ts";
 import { POKEMON_BY_ID, pokemonBySlug } from "../data/pokedex.ts";
@@ -49,7 +49,7 @@ import type { Pokemon } from "../data/types.ts";
 import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
 import Chevron from "./Chevron.tsx";
-import PokemonAutocomplete from "./PokemonAutocomplete.tsx";
+import NameInput from "./NameInput.tsx";
 import PokemonCard from "./PokemonCard.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import { useModalShell } from "./useModalShell.ts";
@@ -222,6 +222,9 @@ function Flashcards() {
   const [dashes, setDashes] = useState<DashResult[]>(session.dashes);
   const [history, setHistory] = useState<PastCard[]>(session.history);
   const [viewing, setViewing] = useState<number | null>(session.viewing);
+  // Who's That's typed answer, kept with the card it's for: a new card
+  // starts blank, an undone one has its text back
+  const [typedFor, setTypedFor] = useState<{ key: string; text: string }>({ key: "", text: "" });
 
   // What's on the table: the live card, or an earlier one Back stepped
   // to — shown as it was graded; nothing on it can change
@@ -246,6 +249,7 @@ function Flashcards() {
   const answered = picked !== null;
   const gaveUp = picked === GAVE_UP;
   const key = cardKey(card.deckId, pokemon);
+  const typed = typedFor.key === key ? typedFor.text : "";
   // After answering, merged already reflects this attempt's new streak.
   const entry = merged.flashcards[key];
   const nextIn = answered && entry ? formatInterval(intervalFor(entry.s)) : null;
@@ -255,11 +259,16 @@ function Flashcards() {
     answered &&
     !gaveUp &&
     (parts ? Boolean(comboOk && comboOk.a && comboOk.b) : isRightPick(padDecks[0], pickedList, padDecks[0].answers(pokemon)));
-  // Submit stands ready once a multi deck has a pick, or a combo has one
-  // on each pad (a plain single-pick deck grades on the tap instead)
+  // Submit stands ready once a multi deck has a pick, a combo has one on
+  // each pad, or Who's That has a name typed (a plain single-pick deck
+  // grades on the tap instead)
   const canSubmit =
     !answered &&
-    (parts ? parts.every((deck) => deckPicks(deck, selection).length > 0) : Boolean(padDecks[0].multi) && selection.length > 0);
+    (parts
+      ? parts.every((deck) => deckPicks(deck, selection).length > 0)
+      : nameDeck
+        ? typed.trim().length > 0
+        : Boolean(padDecks[0].multi) && selection.length > 0);
   const filterN = filterCount(filter);
   // the cards this deck and filter can deal that are due — the review
   // queue the picker deals first. Walks their pools, so only when the
@@ -371,14 +380,13 @@ function Flashcards() {
     });
   }
 
-  // Who's That: the typed guess is graded on the spot — a Pokémon's name
-  // (spelt right, its words in any order) against the card's and its
-  // lookalikes, and a name that is nobody's as a miss
-  function gradeName(guess: Pokemon, typed: string): void {
-    grade([String(guess.id), `${TYPED}${typed.slice(0, TYPED_MAX)}`]);
-  }
-  function gradeTypedMiss(typed: string): void {
-    grade([`${TYPED}${typed.slice(0, TYPED_MAX)}`]);
+  // Who's That: the name typed is graded against the card's Pokémon and
+  // its lookalikes — spelt right, its words in any order — and a name
+  // that is nobody's as a miss; what was typed is kept for the summary
+  function submitName(): void {
+    const text = typed.trim().slice(0, TYPED_MAX);
+    const match = findByName(text);
+    grade(match ? [String(match.id), `${TYPED}${text}`] : [`${TYPED}${text}`]);
   }
 
   // Nothing is graded on a multi pad's tap: options toggle until Submit.
@@ -400,7 +408,9 @@ function Flashcards() {
   }
 
   function submit(): void {
-    if (canSubmit) grade(selection);
+    if (!canSubmit) return;
+    if (nameDeck) submitName();
+    else grade(selection);
   }
 
   // Don't know reveals the whole card — a combo's two pads at once.
@@ -601,12 +611,14 @@ function Flashcards() {
     padDecks.flatMap((deck) => deck.options).find((option) => option.id === id)?.short ?? getCategory(id).short;
 
   // The one CTA slot under the pads: Submit (led by the picks, pad by
-  // pad — they trim before "Submit" does) on a multi deck or a combo,
-  // Next card once answered. A plain single-pick deck grades on tap, so
-  // its slot stays empty.
+  // pad — they trim before "Submit" does) on a multi deck or a combo, or
+  // for the name typed on Who's That; Next card once answered. A plain
+  // single-pick deck grades on tap, so its slot stays empty.
   let cta: { label: ReactNode; onClick: () => void; disabled: boolean } | null = null;
   if (answered) {
     cta = { label: "Next card", onClick: () => next(), disabled: false };
+  } else if (nameDeck) {
+    cta = { label: "Submit", onClick: submit, disabled: !canSubmit };
   } else if (parts || padDecks[0].multi) {
     const picks = padDecks.flatMap((deck) => deckPicks(deck, selection));
     cta = {
@@ -793,17 +805,10 @@ function Flashcards() {
               ) : null}
             </div>
             {deck.input === "name" ? (
-              // the typed answer, with no suggestions (they'd give the name
-              // away); once graded, the summary below says how it went
+              // the typed answer (Enter or the foot's Submit grades it);
+              // once graded, the summary below says how it went
               answered ? null : (
-                <PokemonAutocomplete
-                  onSubmit={gradeName}
-                  onMiss={gradeTypedMiss}
-                  placeholder="Type its name…"
-                  suggest={false}
-                  submitLabel="Submit"
-                  focusWithoutScroll
-                />
+                <NameInput value={typed} onChange={(text) => setTypedFor({ key, text })} placeholder="Type its name…" />
               )
             ) : (
               <div className={`pad-grid cols-${deckPad.cols}`}>
