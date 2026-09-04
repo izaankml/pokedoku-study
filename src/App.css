@@ -1478,14 +1478,18 @@ button.pill {
 
 /* ---- cards: the stage (the Pokémon's tile · fact pills) ---- */
 
-/* the stage sits at the top of the free space, so the tile stays high
-   on the screen however tall the pad below runs */
+/* The tile sits right over the pad, and the two share out any spare
+   height: the stage and the pad both grow from their content, so half
+   the free space goes above the tile and half into the pad under its
+   action row, and the card reads as one centred group rather than a tile
+   at the top and answers at the bottom. A card taller than the screen
+   scrolls (neither shrinks below its content) */
 .card-stage {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   gap: 10px;
   padding: 2px 4px 12px;
 }
@@ -1588,8 +1592,11 @@ button.pill {
 
 /* ---- cards: the docked answer pad ---- */
 
-/* full-bleed panel with a rounded top edge, docked under the stage */
+/* full-bleed panel with a rounded top edge, docked under the stage; it
+   takes its half of the spare height below its action row (see
+   .card-stage), so the panel runs to the screen's bottom either way */
 .answer-pad {
+  flex: 1 1 auto;
   margin: 0;
   padding: 12px 12px 0;
   background: var(--bg-1);
