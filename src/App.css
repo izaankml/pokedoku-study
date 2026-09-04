@@ -1322,8 +1322,9 @@ button.pill {
   margin-top: var(--sp-2);
 }
 
-/* the Cards view is one column: header row, the card stage centred in
-   the free space, and the docked answer pad at the bottom */
+/* the Cards view is one column: header row, then the tile and the
+   answer card centred in the free space, and the docked foot (the CTA
+   and the action row) at the bottom */
 .flashcards {
   flex: 1;
   display: flex;
@@ -1350,10 +1351,10 @@ button.pill {
      and the tab pill's lift, where the layout viewport falls short of the
      screen — dvh alone counts the status bar and runs the fit 62px long */
   --screen: calc(100dvh - env(safe-area-inset-top, 0px) - var(--nav-lift, 0px));
-  --tall-fits-at: 1004px;
+  --tall-fits-at: 1032px;
   --squeeze: max(0px, var(--tall-fits-at) - var(--screen));
   --tile: max(96px, 200px - var(--squeeze) * 104 / 180);
-  --fits-at: 768px;
+  --fits-at: 796px;
   --shortfall: max(0px, var(--fits-at) - var(--screen));
   --pad-btn: max(40px, 60px - var(--shortfall) / 4);
   --pad-cta: max(44px, 50px - var(--shortfall) / 4);
@@ -1478,14 +1479,14 @@ button.pill {
 
 /* ---- cards: the stage (the Pokémon's tile · fact pills) ---- */
 
-/* The tile sits right over the pad, and the two share out any spare
-   height: the stage and the pad both grow from their content, so half
-   the free space goes above the tile and half into the pad under its
-   action row, and the card reads as one centred group rather than a tile
-   at the top and answers at the bottom. A card taller than the screen
-   scrolls (neither shrinks below its content) */
+/* The tile sits right over the answer card, and the two are centred
+   between the header row and the docked foot: the stage's top margin and
+   the card's bottom margin are auto, so they split any spare height. A
+   card taller than the screen scrolls (nothing shrinks below its content),
+   under the sticky foot */
 .card-stage {
-  flex: 1 1 auto;
+  flex: none;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1590,14 +1591,29 @@ button.pill {
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
-/* ---- cards: the docked answer pad ---- */
+/* ---- cards: the answer card and the docked foot ---- */
 
-/* full-bleed panel with a rounded top edge, docked under the stage; it
-   takes its half of the spare height below its action row (see
-   .card-stage), so the panel runs to the screen's bottom either way */
+/* the question and its options (and the summary once answered): a card
+   under the tile, centred with it (see .card-stage) */
 .answer-pad {
-  flex: 1 1 auto;
-  margin: 0;
+  flex: none;
+  margin: 0 0 auto;
+  padding: 12px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+/* the card's controls — the CTA slot and the action row — on a
+   full-bleed panel with a rounded top edge, docked at the bottom (it runs
+   on under the tab pill on a phone); sticky, so a card taller than the
+   screen scrolls under it and Submit stays in reach */
+.pad-foot {
+  flex: none;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: 12px;
   padding: 12px 12px 0;
   background: var(--bg-1);
   border-top: 1px solid var(--border-subtle);
@@ -1854,7 +1870,6 @@ button.pill {
   width: 100%;
   /* 50px, down to 44px on a short screen (see .flashcards) */
   height: var(--pad-cta);
-  margin-top: 10px;
 }
 
 .pad-cta {
@@ -2375,18 +2390,18 @@ button.evo-tile:active {
     padding: 8px 0 6px;
   }
 
-  /* the pad runs out to the screen's edges, like a system keyboard: it
+  /* the foot runs out to the screen's edges, like a system keyboard: it
      takes over the page's bottom padding and runs on under the tab pill,
      with room above the pill for the action row */
   .flashcards {
     margin-bottom: calc(-1 * var(--page-bottom));
-    /* the phone's chrome: the pill's zone inside the pad in place of the
+    /* the phone's chrome: the pill's zone inside the foot in place of the
        page's bottom padding, and no tab bar at the top (see .flashcards) */
-    --tall-fits-at: 965px;
-    --fits-at: 729px;
+    --tall-fits-at: 993px;
+    --fits-at: 757px;
   }
 
-  .answer-pad {
+  .pad-foot {
     margin-left: -16px;
     margin-right: -16px;
     padding-bottom: calc(76px + var(--nav-lift));

@@ -782,9 +782,10 @@ function Flashcards() {
                 ) : null}
               </div>
               {deck.input === "name" ? (
-                // the typed answer; once graded, the summary below says how it went
+                // the typed answer, with no suggestions (they'd give the name
+                // away); once graded, the summary below says how it went
                 answered ? null : (
-                  <PokemonAutocomplete onSubmit={gradeName} placeholder="Type its name…" />
+                  <PokemonAutocomplete onSubmit={gradeName} placeholder="Type its name…" suggest={false} />
                 )
               ) : (
                 <div className={`pad-grid cols-${pad.cols}`}>
@@ -808,6 +809,11 @@ function Flashcards() {
             {summary}
           </p>
         ) : null}
+      </div>
+
+      {/* the card's controls, docked at the bottom of the screen: the CTA
+          slot and the action row */}
+      <div className="pad-foot">
         {cta ? (
           <button className="pad-cta" disabled={cta.disabled} onClick={cta.onClick}>
             <span className="pad-cta-label">{cta.label}</span>

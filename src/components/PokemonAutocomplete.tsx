@@ -13,6 +13,9 @@ interface PokemonAutocompleteProps {
   // match both skip Pokémon it rejects
   eligible?: PokemonFilter;
   autoFocus?: boolean;
+  // no suggestion list as the user types (Who's That would give the
+  // name away): Enter submits the name typed, or nothing
+  suggest?: boolean;
 }
 
 function PokemonAutocomplete({
@@ -21,6 +24,7 @@ function PokemonAutocomplete({
   placeholder,
   eligible = null,
   autoFocus = false,
+  suggest = true,
 }: PokemonAutocompleteProps) {
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(0);
@@ -28,7 +32,7 @@ function PokemonAutocomplete({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const highlightedRef = useRef<HTMLButtonElement | null>(null);
 
-  const suggestions = open && query ? searchNames(query, 8, eligible) : [];
+  const suggestions = suggest && open && query ? searchNames(query, 8, eligible) : [];
 
   useEffect(() => {
     highlightedRef.current?.scrollIntoView({ block: "nearest" });
@@ -67,8 +71,8 @@ function PokemonAutocomplete({
         autoCapitalize="off"
         autoCorrect="off"
         role="combobox"
-        aria-expanded={open && suggestions.length > 0}
-        aria-autocomplete="list"
+        aria-expanded={suggestions.length > 0}
+        aria-autocomplete={suggest ? "list" : "none"}
         value={query}
         disabled={disabled}
         autoFocus={autoFocus}
