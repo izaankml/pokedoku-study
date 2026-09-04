@@ -167,9 +167,39 @@ for (const { norms, pokemon } of SEARCH_INDEX) {
   for (const { norm } of norms) NORM_TO_POKEMON.set(norm, pokemon);
 }
 
-// `eligible`, when given, keeps only the Pokémon it accepts.
+// The words of a name, each normalised, in sorted order: one key for
+// "Charizard Mega X", "Mega Charizard X" and "X Mega Charizard".
+export const wordBag = (text: string): string =>
+  text
+    .split(/[\s\-–—()/]+/)
+    .map(normalizeName)
+    .filter(Boolean)
+    .sort()
+    .join(" ");
+
+// Every naming a Pokémon goes by, as a bag of words: PokeDoku's ("Floette
+// Eternal"), the dataset's ("Floette (Eternal)", "Alolan Raichu") and the
+// species with the form's own words ("Tauros Paldea Combat"). No two
+// Pokémon share a bag (matching.test.ts checks), so a name typed with its
+// words in another order — "Eternal Floette", "Charizard Gigantamax" —
+// still lands on exactly one.
+const BAG_TO_POKEMON = new Map<string, Pokemon>();
+for (const pokemon of POKEMON) {
+  const names = [pokemon.displayName];
+  if (pokemon.altName) names.push(pokemon.altName);
+  if (pokemon.form) names.push(`${pokemon.speciesName} ${pokemon.form}`);
+  for (const name of names) {
+    const bag = wordBag(name);
+    if (!BAG_TO_POKEMON.has(bag)) BAG_TO_POKEMON.set(bag, pokemon);
+  }
+}
+
+// The Pokémon a name is: spelt exactly (any of its namings, punctuation
+// and case aside), or with the words in another order. Never a near miss:
+// "Charizrd" is nobody. `eligible`, when given, keeps only the Pokémon it
+// accepts.
 export function findByName(query: string, eligible: PokemonFilter = null): Pokemon | null {
-  const pokemon = NORM_TO_POKEMON.get(normalizeName(query)) || null;
+  const pokemon = NORM_TO_POKEMON.get(normalizeName(query)) ?? BAG_TO_POKEMON.get(wordBag(query)) ?? null;
   return pokemon && (!eligible || eligible(pokemon)) ? pokemon : null;
 }
 

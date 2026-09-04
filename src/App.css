@@ -833,6 +833,7 @@ button.pill {
 }
 
 .pokemon-card {
+  position: relative; /* the corner cue and badge sit inside it */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -840,6 +841,29 @@ button.pill {
   text-align: center;
   font-size: 0.8rem;
   min-width: 0;
+}
+
+/* a form's own name, on its line under the species */
+.card-form {
+  color: var(--text-low);
+}
+
+/* the cue in a clickable card's corner ("Details ›" once a flashcard is
+   answered): a small chip, top right */
+.card-hint {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 .pokemon-card.clickable {
@@ -911,11 +935,10 @@ button.pill {
   min-width: 0;
 }
 
-/* a square tile: the sprite takes whatever height the name leaves — in
-   an answer grid, and as the Cards stage's big tile (.stage-tile) */
+/* a tile: the sprite takes whatever height the name leaves — in an
+   answer grid, and as the Cards stage's big tile (.stage-tile) */
 :is(.answer-grid, .stage-tile) .pokemon-card {
   width: 100%;
-  aspect-ratio: 1;
   gap: 3px;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
@@ -924,6 +947,13 @@ button.pill {
   box-shadow: var(--edge-hi);
   transition: translate var(--dur-fast) var(--ease-out), background-color var(--dur-fast),
     box-shadow var(--dur-fast);
+}
+
+/* a grid tile is a touch taller than wide: room for the two lines every
+   tile keeps for its name (species over form, see figcaption) without
+   the sprite giving way */
+.answer-grid .pokemon-card {
+  aspect-ratio: 1 / 1.16;
 }
 
 @media (hover: hover) {
@@ -979,6 +1009,12 @@ button.pill {
   line-height: 1.2;
   min-height: 1.2em;
   max-height: 3.6em;
+}
+
+/* every grid tile keeps two lines for its name, so the sprites of a row
+   match whether the name has a form line or not */
+.answer-grid .pokemon-card figcaption {
+  min-height: 2.4em;
 }
 
 :is(.answer-grid, .stage-tile) .pokemon-card .card-name {
@@ -1332,39 +1368,41 @@ button.pill {
   width: 100%;
   max-width: 512px; /* 480px of content plus the pad's full-bleed 16px */
   margin: 0 auto;
-  /* How a card fits a short screen. The tile is one size on every deck,
-     in both states, so cards look alike from deck to deck: the size the
-     tallest card leaves room for — a Type × Region combo asking its
-     question, seven rows of 46px options under a 200px tile — which fits
-     at full size at --tall-fits-at. Below that, everything on that card
-     gives up a share of the squeeze: the tile 104px of every 180, each of
-     the seven rows 10, the CTA 6, down to their minimums; shorter still,
-     the page scrolls. A single deck's pad is shorter, so its 60px options
-     only give way once its own tallest card (Type: four rows) no longer
-     fits with the smallest tile, at --fits-at; four rows and the CTA
-     share that shortfall. Both heights are measured, so a change to the
-     pad's spacing means measuring again (the phone's values, with the
-     pill's zone inside the pad and no tab bar above, are in the 480px
-     block) */
+  /* How a card fits a short screen. The tile runs the column's width,
+     and its height is what the screen leaves it, 220px at most: a single
+     deck's tallest card (Type: four rows of 60px options under the full
+     tile) fits at --fits-at. Below that, everything on the card gives up
+     a share of the shortfall: the tile 124px of every 210, each of the
+     four rows 20, the CTA 6, down to their minimums (a 96px tile, 40px
+     rows, a 44px CTA) all at once; shorter still, the page scrolls. A
+     combo card stacks two pads (Type × Region: seven rows of 46px), so
+     its tile is full size only from --tall-fits-at, and it shares its
+     squeeze the same way (.flashcards.combo) — a combo's tile is shorter
+     than a single deck's on a phone. Both heights are measured with the
+     smallest tile and full-size rows, plus the tile's 124px of range, so
+     a change to the pad's spacing means measuring again (the phone's
+     values, with the pill's zone inside the pad and no tab bar above, are
+     in the 480px block) */
   /* the height the column has, as in those measurements: the viewport
      less the status bar a home-screen app pads out at the top (see .app)
      and the tab pill's lift, where the layout viewport falls short of the
      screen — dvh alone counts the status bar and runs the fit 62px long */
   --screen: calc(100dvh - env(safe-area-inset-top, 0px) - var(--nav-lift, 0px));
-  --tall-fits-at: 1032px;
-  --squeeze: max(0px, var(--tall-fits-at) - var(--screen));
-  --tile: max(96px, 200px - var(--squeeze) * 104 / 180);
-  --fits-at: 796px;
+  --fits-at: 920px; /* 796px with the smallest tile */
   --shortfall: max(0px, var(--fits-at) - var(--screen));
-  --pad-btn: max(40px, 60px - var(--shortfall) / 4);
-  --pad-cta: max(44px, 50px - var(--shortfall) / 4);
+  --tile: max(96px, 220px - var(--shortfall) * 124 / 210);
+  --pad-btn: max(40px, 60px - var(--shortfall) * 20 / 210);
+  --pad-cta: max(44px, 50px - var(--shortfall) * 6 / 210);
+  --tall-fits-at: 1052px; /* 928px with the smallest tile */
 }
 
-/* the combo card is the tallest card: its rows and CTA take their share
-   of the squeeze alongside the tile */
+/* the combo card is the tallest card: the tile 124px of every 200 of the
+   squeeze, each of the seven rows 10, the CTA 6 */
 .flashcards.combo {
-  --pad-btn: max(36px, 46px - var(--squeeze) * 10 / 180);
-  --pad-cta: max(44px, 50px - var(--squeeze) * 6 / 180);
+  --squeeze: max(0px, var(--tall-fits-at) - var(--screen));
+  --tile: max(96px, 220px - var(--squeeze) * 124 / 200);
+  --pad-btn: max(36px, 46px - var(--squeeze) * 10 / 200);
+  --pad-cta: max(44px, 50px - var(--squeeze) * 6 / 200);
 }
 
 /* ---- cards: header row (deck chooser · filter · dashes · due) ---- */
@@ -1492,7 +1530,7 @@ button.pill {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  padding: 2px 4px 12px;
+  padding: 2px 0 12px; /* the tile runs the pad's width */
 }
 
 /* the question's aside ("· pick all"), dimmer than the question */
@@ -1509,21 +1547,23 @@ button.pill {
   color: var(--wrong);
 }
 
-/* the Pokémon on a big answer-grid tile, its name inside; once the card
-   is answered the tile is a button into the detail sheet. One size on
-   every deck, from the screen's height (see .flashcards), so a short
-   screen gets a smaller tile and the pad's action row stays on it */
+/* the Pokémon on a big answer-grid tile the width of the column, the
+   sprite in the middle and its name under it; once the card is answered
+   the tile is a button into the detail sheet, with a cue in its corner.
+   Its height comes from the screen's (see .flashcards), so a short screen
+   gets a shorter tile and the pad's action row stays on it */
 .stage-tile {
-  width: var(--tile);
-  max-width: 100%;
-  /* the name's size follows the tile's (see figcaption) */
-  container-type: inline-size;
+  width: 100%;
+  height: var(--tile);
+  /* the name's size follows the tile's height (see figcaption) */
+  container-type: size;
   /* the size settles smoothly when the viewport changes (a browser's
      bars collapsing) */
-  transition: width var(--dur-med) var(--ease-out);
+  transition: height var(--dur-med) var(--ease-out);
 }
 
 .stage-tile .pokemon-card {
+  height: 100%;
   gap: 6px;
   padding: 12px 10px 10px;
   border-radius: var(--radius-lg);
@@ -1535,12 +1575,16 @@ button.pill {
 }
 
 .stage-tile .pokemon-card figcaption {
-  /* 1.15rem on the full 200px tile, down to 0.9rem on a small one */
-  font-size: clamp(0.9rem, 7.2cqw + 4px, 1.15rem);
+  /* 1.15rem on the full 220px tile, down to 0.9rem on a short one */
+  font-size: clamp(0.9rem, 9cqh, 1.15rem);
   font-weight: 800;
   line-height: 1.15;
   color: var(--text-hi);
   max-height: 3.45em;
+}
+
+.stage-tile .card-form {
+  color: var(--text-mid);
 }
 
 /* Who's That: a silhouette until the card is answered */
@@ -2397,8 +2441,8 @@ button.evo-tile:active {
     margin-bottom: calc(-1 * var(--page-bottom));
     /* the phone's chrome: the pill's zone inside the foot in place of the
        page's bottom padding, and no tab bar at the top (see .flashcards) */
-    --tall-fits-at: 993px;
-    --fits-at: 757px;
+    --fits-at: 881px; /* 757px with the smallest tile */
+    --tall-fits-at: 1013px; /* 889px with the smallest tile */
   }
 
   .pad-foot {
@@ -2692,6 +2736,12 @@ button.evo-tile:active {
   height: 72px;
 }
 
+/* its "Why Not?" cue sits under the name: a corner would cover the sprite
+   on so small a card */
+.modal.guess .wrong-guess .card-hint {
+  position: static;
+}
+
 /* the board's progress: filled cells bright, the rest quiet */
 .score {
   color: var(--text-mid);
@@ -2880,10 +2930,6 @@ button.evo-tile:active {
 }
 
 /* a replayed cell's real pick share, in the answer card's corner */
-.answer-grid .pokemon-card {
-  position: relative;
-}
-
 .card-badge {
   position: absolute;
   top: 6px;

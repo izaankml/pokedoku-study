@@ -55,6 +55,10 @@ import { useModalShell } from "./useModalShell.ts";
 import { useNow } from "./useNow.ts";
 
 const GAVE_UP = "gaveup";
+// Who's That: a typed name that is no Pokémon's is graded as a miss and
+// kept, as typed, behind this prefix — the summary says what was typed
+const TYPED_MISS = "typed:";
+const TYPED_MAX = 40;
 const DASH_SLOTS = 10;
 // Shown in the group slot when a Pokémon is in no group at all
 const REGULAR: PillCategory = { id: "flag-regular", label: "Regular", short: "Regular", group: "special" };
@@ -365,9 +369,14 @@ function Flashcards() {
     });
   }
 
-  // Who's That: the typed guess is graded on the spot
+  // Who's That: the typed guess is graded on the spot — a Pokémon's name
+  // (spelt right, its words in any order) against the card's, and a name
+  // that is nobody's as a miss
   function gradeName(guess: Pokemon): void {
     grade([String(guess.id)]);
+  }
+  function gradeTypedMiss(typed: string): void {
+    grade([`${TYPED_MISS}${typed.slice(0, TYPED_MAX)}`]);
   }
 
   // Nothing is graded on a multi pad's tap: options toggle until Submit.
@@ -640,11 +649,17 @@ function Flashcards() {
         </>
       );
     } else if (nameDeck) {
-      const guessed = pickedList.length ? POKEMON_BY_ID.get(Number(pickedList[0]))?.displayName : undefined;
+      const pick = pickedList[0];
+      const typed = pick?.startsWith(TYPED_MISS) ? pick.slice(TYPED_MISS.length) : null;
+      const guessed = typed === null && pick !== undefined ? POKEMON_BY_ID.get(Number(pick))?.displayName : undefined;
       summary = (
         <>
           It&apos;s <b className="hit">{pokemon.displayName}</b>
-          {guessed ? (
+          {typed !== null ? (
+            <>
+              ; no Pokémon is called <b className="miss">{typed}</b>
+            </>
+          ) : guessed ? (
             <>
               ; you said <b className="miss">{guessed}</b>
             </>
@@ -720,14 +735,16 @@ function Flashcards() {
       <div className="card-stage">
         {/* the Pokémon on a big answer-grid tile, name and all; once
             answered it opens the detail sheet (evolution line and all),
-            before that it stays inert so nothing gives the answer away —
-            Who's That even hides the name, and shows a silhouette unless
-            that's turned off */}
+            with a "Details" cue in its corner to say so — before that it
+            stays inert so nothing gives the answer away: Who's That even
+            hides the name, and shows a silhouette unless that's turned
+            off */}
         <div className={`stage-tile${silhouetted ? " mystery" : ""}`}>
           <PokemonCard
             pokemon={pokemon}
             eager
             hideName={mystery}
+            hint="Details"
             onClick={answered ? () => openDetail(pokemon) : undefined}
           />
         </div>
@@ -785,7 +802,12 @@ function Flashcards() {
                 // the typed answer, with no suggestions (they'd give the name
                 // away); once graded, the summary below says how it went
                 answered ? null : (
-                  <PokemonAutocomplete onSubmit={gradeName} placeholder="Type its name…" suggest={false} />
+                  <PokemonAutocomplete
+                    onSubmit={gradeName}
+                    onMiss={gradeTypedMiss}
+                    placeholder="Type its name…"
+                    suggest={false}
+                  />
                 )
               ) : (
                 <div className={`pad-grid cols-${pad.cols}`}>
@@ -822,7 +844,8 @@ function Flashcards() {
           <div className="pad-cta-gap" aria-hidden="true" />
         )}
         {/* Back on the left; Don't Know (or Undo, once answered) centred
-            under the CTA; Skip, or a note, on the right */}
+            under the CTA; Skip on the right while asking, or which earlier
+            card this is */}
         <div className="pad-actions">
           <span className="pad-actions-side">
             {canBack ? (
@@ -848,9 +871,7 @@ function Flashcards() {
               <span className="pad-note">
                 Earlier card {viewing !== null ? viewing + 1 : 0} of {history.length}
               </span>
-            ) : answered ? (
-              <span className="pad-note">Tap the Pokémon for its detail sheet</span>
-            ) : (
+            ) : answered ? null : (
               <button className="pad-ghost" onClick={() => next()}>
                 Skip ›
               </button>

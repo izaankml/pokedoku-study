@@ -1,7 +1,25 @@
 import type { KeyboardEvent } from "react";
 import type { Pokemon } from "../data/types.ts";
+import { formLabel } from "../logic/forms.ts";
 import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
+
+// The name on a tile: the species over the form's own name on a second
+// line ("Charizard" / "Mega X", "Lycanroc" / "Midday"); a Pokémon whose
+// name has no form word takes one line
+function CardName({ pokemon }: { pokemon: Pokemon }) {
+  const form = formLabel(pokemon);
+  if (form === pokemon.displayName) return <PokemonName name={pokemon.displayName} />;
+  return (
+    <>
+      <PokemonName name={pokemon.speciesName} />
+      <br />
+      <span className="card-form">
+        <PokemonName name={form} />
+      </span>
+    </>
+  );
+}
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -45,13 +63,13 @@ function PokemonCard({ pokemon, onClick, eager = false, hint, hideName = false, 
       </span>
       <figcaption title={hideName ? MYSTERY : pokemon.displayName}>
         <span className={hideName ? "card-name card-name-hidden" : "card-name"}>
-          {hideName ? "???" : <PokemonName name={pokemon.displayName} />}
+          {hideName ? "???" : <CardName pokemon={pokemon} />}
         </span>
       </figcaption>
-      {/* a small cue in the corner (e.g. "View Detail" once a card can be clicked) */}
+      {/* a small cue in the corner ("Details" once a flashcard can be clicked) */}
       {clickable && hint ? (
         <span className="card-hint" aria-hidden="true">
-          {hint}
+          {hint} ›
         </span>
       ) : null}
       {badge ? <span className="card-badge">{badge}</span> : null}

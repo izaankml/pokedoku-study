@@ -16,6 +16,9 @@ interface PokemonAutocompleteProps {
   // no suggestion list as the user types (Who's That would give the
   // name away): Enter submits the name typed, or nothing
   suggest?: boolean;
+  // when given, Enter on a name that is no Pokémon's hands the text here
+  // (Who's That grades it as a miss) instead of doing nothing
+  onMiss?: (typed: string) => void;
 }
 
 function PokemonAutocomplete({
@@ -25,6 +28,7 @@ function PokemonAutocomplete({
   eligible = null,
   autoFocus = false,
   suggest = true,
+  onMiss,
 }: PokemonAutocompleteProps) {
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(0);
@@ -56,7 +60,9 @@ function PokemonAutocomplete({
       setHighlighted((current) => Math.max(current - 1, 0));
     } else if (event.key === "Enter") {
       event.preventDefault();
-      submit(findByName(query, eligible) || suggestions[highlighted] || suggestions[0]);
+      const match = findByName(query, eligible) || suggestions[highlighted] || suggestions[0];
+      if (match) submit(match);
+      else if (onMiss && query.trim()) onMiss(query.trim());
     } else if (event.key === "Escape") {
       setOpen(false);
     }

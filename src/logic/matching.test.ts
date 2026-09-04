@@ -10,6 +10,7 @@ import {
   normalizeName,
   pairIsValid,
   searchNames,
+  wordBag,
 } from "./matching.ts";
 
 describe("normalizeName", () => {
@@ -40,6 +41,29 @@ describe("findByName", () => {
     expect(findByName("Mega Charizard X")?.name).toBe("charizardmegax");
     expect(findByName("charizard mega x")?.name).toBe("charizardmegax");
     expect(findByName("basculin white-striped")?.name).toBe("basculinwhitestriped");
+  });
+
+  it("takes a name's words in any order, but never a misspelling", () => {
+    expect(findByName("Eternal Floette")?.name).toBe("floetteeternal");
+    expect(findByName("Floette Eternal")?.name).toBe("floetteeternal");
+    expect(findByName("Charizard X Mega")?.name).toBe("charizardmegax");
+    expect(findByName("Charizard Gigantamax")?.name).toBe("charizardgmax");
+    expect(findByName("Raichu Alolan")?.name).toBe("raichualola");
+    expect(findByName("Galar Zapdos")?.name).toBe("zapdosgalar");
+    expect(findByName("Paldean Tauros Combat")?.name).toBe("taurospaldeacombat");
+    expect(findByName("Koko Tapu")?.name).toBe("tapukoko");
+    expect(findByName("Charizrd")).toBeNull();
+    expect(findByName("Charizard Mega")).toBeNull(); // Mega X or Mega Y, never plain
+    expect(findByName("Charizard Mega Z")).toBeNull();
+  });
+
+  it("gives every Pokémon's every naming, words reversed, back to that Pokémon", () => {
+    const reversed = (name: string): string => wordBag(name).split(" ").reverse().join(" ");
+    for (const pokemon of POKEMON) {
+      const names = [pokemon.displayName, pokemon.altName ?? pokemon.displayName];
+      if (pokemon.form) names.push(`${pokemon.speciesName} ${pokemon.form}`);
+      for (const name of names) expect(findByName(reversed(name))?.id, `${name} reversed`).toBe(pokemon.id);
+    }
   });
 });
 
