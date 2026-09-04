@@ -8,7 +8,7 @@
 
 import { CATEGORIES, CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
-import { POKEMON, POKEMON_BY_ID } from "../data/pokedex.ts";
+import { POKEMON, POKEMON_BY_ID, POKEMON_BY_NAME } from "../data/pokedex.ts";
 import { weaknessesOf } from "../data/typechart.ts";
 import { FLAGS } from "../data/types.ts";
 import type { Flag, Pokemon } from "../data/types.ts";
@@ -61,6 +61,34 @@ const sameList = (a: readonly string[], b: readonly string[]): boolean =>
 
 // every flag except the two form kinds, straight from the canonical list
 export const SPECIAL_FLAGS: Flag[] = FLAGS.filter((flag) => flag !== "mega" && flag !== "gmax");
+
+// Forms that look the same on the tile, so Who's That takes any of their
+// names for any of them: the same sprite (checked byte for byte on
+// 2026-09-04 — Partner Pikachu and Eevee show the base sprite; Own Tempo
+// Rockruff, the three Pumpkaboo and Gourgeist sizes, and the two
+// Gigantamax Toxtricity are one image each) and the size forms' base,
+// which differs only in size, which the tile scales away. Recolours
+// (Hisuian Electrode, the Deerling seasons, Squawkabilly's plumages,
+// Minior's cores) stay distinct. The first of a group is the one dealt.
+const LOOKALIKE_GROUPS: ReadonlyArray<readonly string[]> = [
+  ["pikachu", "pikachustarter"],
+  ["eevee", "eeveestarter"],
+  ["pumpkaboo", "pumpkaboosmall", "pumpkaboolarge", "pumpkaboosuper"],
+  ["gourgeist", "gourgeistsmall", "gourgeistlarge", "gourgeistsuper"],
+  ["rockruff", "rockruffdusk"],
+  ["toxtricitygmax", "toxtricitylowkeygmax"],
+];
+const LOOKALIKES = new Map<string, string[]>();
+for (const group of LOOKALIKE_GROUPS) {
+  const ids = group.map((slug) => {
+    const pokemon = POKEMON_BY_NAME.get(slug);
+    if (!pokemon) throw new Error(`unknown lookalike: ${slug}`);
+    return String(pokemon.id);
+  });
+  for (const slug of group) LOOKALIKES.set(slug, ids);
+}
+// the ids Who's That accepts for a Pokémon: its lookalike group, else itself
+export const lookalikeAnswers = (pokemon: Pokemon): string[] => LOOKALIKES.get(pokemon.name) ?? [String(pokemon.id)];
 
 export const DECKS: Deck[] = [
   {
@@ -141,10 +169,12 @@ export const DECKS: Deck[] = [
     input: "name",
     cols: 1,
     options: [],
-    // the record itself: form names must be exact, as on PokeDoku
-    answers: (pokemon) => [String(pokemon.id)],
+    // the record itself, or any of the forms that look the same as it:
+    // otherwise form names must be exact, as on PokeDoku
+    answers: lookalikeAnswers,
     categories: () => [],
-    eligible: () => true,
+    // a lookalike group is dealt once, as its first member
+    eligible: (pokemon) => lookalikeAnswers(pokemon)[0] === String(pokemon.id),
     bias: () => 1,
   },
 ];

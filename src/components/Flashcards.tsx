@@ -40,6 +40,7 @@ import type {
   Picked,
 } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
+import { wordBag } from "../logic/matching.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
 import { preloadSprite } from "../logic/sprites.ts";
 import { POKEMON_BY_ID, pokemonBySlug } from "../data/pokedex.ts";
@@ -55,9 +56,10 @@ import { useModalShell } from "./useModalShell.ts";
 import { useNow } from "./useNow.ts";
 
 const GAVE_UP = "gaveup";
-// Who's That: a typed name that is no Pokémon's is graded as a miss and
-// kept, as typed, behind this prefix — the summary says what was typed
-const TYPED_MISS = "typed:";
+// Who's That keeps what was typed in the card's picks behind this prefix,
+// after the Pokémon it resolved to — or alone, for a name that is
+// nobody's, which is graded as a miss; the summary quotes it
+const TYPED = "typed:";
 const TYPED_MAX = 40;
 const DASH_SLOTS = 10;
 // Shown in the group slot when a Pokémon is in no group at all
@@ -370,13 +372,13 @@ function Flashcards() {
   }
 
   // Who's That: the typed guess is graded on the spot — a Pokémon's name
-  // (spelt right, its words in any order) against the card's, and a name
-  // that is nobody's as a miss
-  function gradeName(guess: Pokemon): void {
-    grade([String(guess.id)]);
+  // (spelt right, its words in any order) against the card's and its
+  // lookalikes, and a name that is nobody's as a miss
+  function gradeName(guess: Pokemon, typed: string): void {
+    grade([String(guess.id), `${TYPED}${typed.slice(0, TYPED_MAX)}`]);
   }
   function gradeTypedMiss(typed: string): void {
-    grade([`${TYPED_MISS}${typed.slice(0, TYPED_MAX)}`]);
+    grade([`${TYPED}${typed.slice(0, TYPED_MAX)}`]);
   }
 
   // Nothing is graded on a multi pad's tap: options toggle until Submit.
@@ -649,22 +651,35 @@ function Flashcards() {
         </>
       );
     } else if (nameDeck) {
-      const pick = pickedList[0];
-      const typed = pick?.startsWith(TYPED_MISS) ? pick.slice(TYPED_MISS.length) : null;
-      const guessed = typed === null && pick !== undefined ? POKEMON_BY_ID.get(Number(pick))?.displayName : undefined;
+      // what was typed, and the Pokémon it resolved to — none for a name
+      // that is nobody's (a session from before the text was kept has
+      // only the Pokémon)
+      const typed = pickedList.find((pick) => pick.startsWith(TYPED))?.slice(TYPED.length) ?? null;
+      const lead = pickedList[0];
+      const resolved = lead !== undefined && !lead.startsWith(TYPED) ? POKEMON_BY_ID.get(Number(lead)) : undefined;
+      let said: ReactNode = null;
+      if (resolved) {
+        // quoted as typed, with PokeDoku's name for it where that says
+        // more ("deoxys (Deoxys Normal)")
+        const asTyped = typed ?? resolved.displayName;
+        const differs = wordBag(asTyped) !== wordBag(resolved.displayName);
+        said = (
+          <>
+            ; you said <b className="miss">{asTyped}</b>
+            {differs ? ` (${resolved.displayName})` : ""}
+          </>
+        );
+      } else if (typed !== null) {
+        said = (
+          <>
+            ; no Pokémon is called <b className="miss">{typed}</b>
+          </>
+        );
+      }
       summary = (
         <>
           It&apos;s <b className="hit">{pokemon.displayName}</b>
-          {typed !== null ? (
-            <>
-              ; no Pokémon is called <b className="miss">{typed}</b>
-            </>
-          ) : guessed ? (
-            <>
-              ; you said <b className="miss">{guessed}</b>
-            </>
-          ) : null}
-          . {backIn ? `Back in ${nextIn}.` : ""}
+          {said}. {backIn ? `Back in ${nextIn}.` : ""}
         </>
       );
     } else {
@@ -786,6 +801,8 @@ function Flashcards() {
                   onMiss={gradeTypedMiss}
                   placeholder="Type its name…"
                   suggest={false}
+                  submitLabel="Submit"
+                  focusWithoutScroll
                 />
               )
             ) : (
@@ -815,8 +832,8 @@ function Flashcards() {
 
   return (
     // a combo card stacks two pads, so its stage and buttons give some
-    // height back; Who's That's pad leads its tile, up top on a phone,
-    // clear of the keyboard (see .flashcards.name-deck)
+    // height back; Who's That's card sits up top on a phone, clear of the
+    // keyboard (see .flashcards.name-deck)
     <div className={`flashcards${parts ? " combo" : ""}${nameDeck ? " name-deck" : ""}`}>
       <div className="cards-topbar">
         <button className="deck-choose" aria-haspopup="dialog" onClick={() => setDeckSheet(true)}>
@@ -842,12 +859,8 @@ function Flashcards() {
         <span className="due-count">{due} due</span>
       </div>
 
-      {/* Who's That puts its pad first and the tile under it: an iPhone
-          scrolls a focused text box to about a third of the way down what
-          the keyboard leaves, and a box already higher than that stays
-          put — so the tile, below it, stays in view (see .name-deck) */}
-      {nameDeck ? pad : stage}
-      {nameDeck ? stage : pad}
+      {stage}
+      {pad}
 
       {/* the card's controls, docked at the bottom of the screen: the CTA
           slot and the action row */}

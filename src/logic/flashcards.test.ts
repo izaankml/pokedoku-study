@@ -54,6 +54,28 @@ describe("flashcard decks", () => {
     expect(isDeckId("method")).toBe(false);
   });
 
+  it("lets Who's That take any name of a form that looks the same, and deals the group once", () => {
+    const name = deck("name");
+    const gourgeist = by("gourgeist");
+    const large = by("gourgeistlarge");
+    expect(name.answers(large)).toEqual(name.answers(gourgeist));
+    expect(name.answers(gourgeist)).toContain(String(large.id));
+    expect(isRightPick(name, [String(gourgeist.id)], name.answers(large))).toBe(true);
+    expect(name.answers(by("pikachustarter"))).toEqual([String(by("pikachu").id), String(by("pikachustarter").id)]);
+    expect(name.answers(by("rockruffdusk"))).toEqual(name.answers(by("rockruff")));
+    // a recolour is its own answer
+    expect(name.answers(by("electrodehisui"))).toEqual([String(by("electrodehisui").id)]);
+    expect(name.answers(by("charizard"))).toEqual([String(by("charizard").id)]);
+    const pool = deckPool("name");
+    expect(pool).toContain(gourgeist);
+    expect(pool).not.toContain(large);
+    expect(pool).not.toContain(by("pikachustarter"));
+    expect(pool.filter((each) => each.speciesName === "Toxtricity" && each.flags.includes("gmax")).map((each) => each.name)).toEqual([
+      "toxtricitygmax",
+    ]);
+    expect(pool).toContain(by("electrodehisui"));
+  });
+
   it("answers with every category the Pokémon counts for", () => {
     expect(deck("region").answers(by("basculinwhitestriped"))).toEqual(["region-unova", "region-hisui"]);
     expect(deck("special").answers(by("koraidon"))).toEqual(["flag-legendary", "flag-paradox"]);
