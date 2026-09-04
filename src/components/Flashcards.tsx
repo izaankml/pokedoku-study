@@ -706,8 +706,10 @@ function Flashcards() {
   const canUndo = live && !gaveUp && session.undo?.key === key && session.undo.token === undoableAttempt;
 
   return (
-    // a combo card stacks two pads, so its stage and buttons give some height back
-    <div className={`flashcards${parts ? " combo" : ""}`}>
+    // a combo card stacks two pads, so its stage and buttons give some
+    // height back; Who's That's card sits up top on a phone, clear of the
+    // keyboard (see .flashcards.name-deck)
+    <div className={`flashcards${parts ? " combo" : ""}${nameDeck ? " name-deck" : ""}`}>
       <div className="cards-topbar">
         <button className="deck-choose" aria-haspopup="dialog" onClick={() => setDeckSheet(true)}>
           {deckLabel(deckId)}

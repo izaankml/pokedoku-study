@@ -1533,6 +1533,27 @@ button.pill {
   padding: 2px 0 12px; /* the tile runs the pad's width */
 }
 
+/* Who's That types its answer, and a phone's keyboard takes the bottom
+   half of the screen. A centred card puts the input's bottom just under
+   the keyboard's top edge, and iOS then pans the page to centre the input
+   in what's left, which carries the tile off the top of the screen. So on
+   a touch screen the card sits at the top of the column instead: the
+   input is already clear of the keyboard when it opens, nothing pans, and
+   the tile stays in view while typing */
+@media (pointer: coarse) {
+  .flashcards.name-deck .card-stage {
+    margin-top: 0;
+  }
+
+  /* and while it's asking, the pill row it would keep empty goes too:
+     the input clears the keyboard by 60px on a 956px phone, 30px on an
+     852px one. The pills' return on answering moves only the pad, and
+     the keyboard has gone by then */
+  .flashcards.name-deck .fact-pills:empty {
+    display: none;
+  }
+}
+
 /* the question's aside ("· pick all"), dimmer than the question */
 .prompt-note {
   color: var(--border-strong);
