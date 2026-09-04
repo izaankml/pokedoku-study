@@ -1332,6 +1332,28 @@ button.pill {
   width: 100%;
   max-width: 512px; /* 480px of content plus the pad's full-bleed 16px */
   margin: 0 auto;
+  /* How the pad fits a short screen. --fits-at is the viewport height at
+     which the class's tallest card — a Type card's four rows of options,
+     a Type × Region combo's seven — fits at full size with the smallest
+     tile and a one-line summary (measured, so a change to the pad's
+     spacing means measuring again; the phone's values are in the 480px
+     block). Below it the options and the CTA give up the shortfall, a
+     row's share each, down to their minimums, and the tile takes any
+     slack (see .stage-tile); shorter still, the page scrolls */
+  --pad-rows: 4;
+  --pad-btn-max: 60px;
+  --pad-btn-min: 40px;
+  --fits-at: 792px;
+  --shortfall: max(0px, var(--fits-at) - 100dvh);
+  --pad-btn: max(var(--pad-btn-min), var(--pad-btn-max) - var(--shortfall) / var(--pad-rows));
+}
+
+/* a combo card's two pads: shorter rows to begin with, and more of them */
+.flashcards.combo {
+  --pad-rows: 7;
+  --pad-btn-max: 46px;
+  --pad-btn-min: 36px;
+  --fits-at: 924px;
 }
 
 /* ---- cards: header row (deck chooser · filter · dashes · due) ---- */
@@ -1449,13 +1471,22 @@ button.pill {
 /* the stage sits at the top of the free space, so the tile stays high
    on the screen however tall the pad below runs */
 .card-stage {
-  flex: 1;
+  /* a definite 0px basis, not `flex: 1`'s 0%: Chrome evaluates the
+     container units below against the basis when it's a percentage, and
+     the tile ends up at its minimum */
+  flex: 1 1 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   padding: 2px 4px 12px;
+  /* a size container: the flex free space is measured without the tile,
+     and the tile is then sized from it (see .stage-tile) */
+  container-type: size;
+  /* room for the smallest tile, its gap and the pills row (the pad's
+     action row comes first); a screen too short even for that scrolls */
+  min-height: calc(96px + 38px + 14px);
 }
 
 /* the question's aside ("· pick all"), dimmer than the question */
@@ -1473,10 +1504,18 @@ button.pill {
 }
 
 /* the Pokémon on a big answer-grid tile, its name inside; once the card
-   is answered the tile is a button into the detail sheet */
+   is answered the tile is a button into the detail sheet. As big as the
+   stage's free space allows (less the 10px gap and the 28px pills row
+   under it), up to 200px: a combo card's taller pad, or a short screen,
+   gets a smaller tile, so the pad's action row stays on the screen */
 .stage-tile {
-  width: 200px;
+  width: clamp(96px, 100cqh - 38px, 200px);
   max-width: 100%;
+  /* the name's size follows the tile's (see figcaption) */
+  container-type: inline-size;
+  /* the size settles smoothly when the pad grows (the summary once
+     answered) or the deck changes */
+  transition: width var(--dur-med) var(--ease-out);
 }
 
 .stage-tile .pokemon-card {
@@ -1491,7 +1530,8 @@ button.pill {
 }
 
 .stage-tile .pokemon-card figcaption {
-  font-size: 1.15rem;
+  /* 1.15rem on the full 200px tile, down to 0.9rem on a small one */
+  font-size: clamp(0.9rem, 7.2cqw + 4px, 1.15rem);
   font-weight: 800;
   line-height: 1.15;
   color: var(--text-hi);
@@ -1503,26 +1543,35 @@ button.pill {
   filter: brightness(0) invert(0.82);
 }
 
-/* a combo card stacks two pads under the stage: a smaller tile keeps the
-   whole card on a phone screen */
-.flashcards.combo .stage-tile {
-  width: 168px;
-}
-
-.flashcards.combo .stage-tile .pokemon-card figcaption {
-  font-size: 1rem;
-}
-
+/* one row under the tile: centred while the pills fit, scrolling sideways
+   (no scrollbar) when a narrow screen can't fit them all, rather than
+   wrapping down into the pad */
 .fact-pills {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   gap: 6px;
   min-height: 28px;
+  max-width: 100%;
+  overflow: auto hidden;
+  scrollbar-width: none;
+}
+
+.fact-pills::-webkit-scrollbar {
+  display: none;
+}
+
+/* auto margins centre a short row; justify-content: center would put a
+   long row's first pills out of reach */
+.fact-pills > :first-child {
+  margin-left: auto;
+}
+
+.fact-pills > :last-child {
+  margin-right: auto;
 }
 
 .fact-pills .pill {
+  flex: none;
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
@@ -1647,36 +1696,24 @@ button.pill {
 
 /* One column count per deck (the type decks five, the rest four), the
    same on every screen size, so a deck's options sit in the same spots
-   on the phone and the desktop (muscle memory); a narrowed pad with
-   fewer options than that spreads them out (cols-1 to cols-3) */
+   on the phone and the desktop (muscle memory); a short last row is
+   centred (the three types under five columns, the two regions under
+   four); a narrowed pad with fewer options than that spreads them out
+   (cols-1 to cols-3). Wrapped flex rows rather than a grid, which can't
+   centre a partial row: each option is given its column's width */
 .pad-grid {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
 }
 
-.pad-grid.cols-1 {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.pad-grid.cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.pad-grid.cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.pad-grid.cols-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.pad-grid.cols-5 {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-/* tall buttons; a long label ("First Partner") wraps to a second line */
+/* tall buttons (shorter on a short screen, see .flashcards); a long label
+   ("First Partner") wraps to a second line */
 .pad-btn {
-  height: 60px;
+  flex: 0 0 auto;
+  min-width: 0;
+  height: var(--pad-btn);
   padding: 0 4px;
   line-height: 1.15;
   font-size: 0.9rem;
@@ -1687,15 +1724,31 @@ button.pill {
   color: var(--text-hi);
 }
 
+/* each option's width: its column's share, the gaps taken out */
+.pad-grid.cols-1 .pad-btn {
+  flex-basis: 100%;
+}
+
+.pad-grid.cols-2 .pad-btn {
+  flex-basis: calc((100% - 6px) / 2);
+}
+
+.pad-grid.cols-3 .pad-btn {
+  flex-basis: calc((100% - 12px) / 3);
+}
+
+.pad-grid.cols-4 .pad-btn {
+  flex-basis: calc((100% - 18px) / 4);
+}
+
+.pad-grid.cols-5 .pad-btn {
+  flex-basis: calc((100% - 24px) / 5);
+}
+
 /* five columns: the longest type names ("Fighting") need the room */
 .pad-grid.cols-5 .pad-btn {
   font-size: 0.84rem;
   padding: 0 2px;
-}
-
-/* a combo's two pads run shorter so both fit on a phone */
-.flashcards.combo .pad-btn {
-  height: 46px;
 }
 
 /* pointer devices only (see .tab:hover) */
@@ -1799,7 +1852,9 @@ button.pill {
 .pad-cta,
 .pad-cta-gap {
   width: 100%;
-  height: 50px;
+  /* 50px, giving up a row's share of a short screen's shortfall (see
+     .flashcards) down to 44px */
+  height: max(44px, 50px - var(--shortfall) / var(--pad-rows));
   margin-top: 10px;
 }
 
@@ -1865,7 +1920,7 @@ button.pill {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 8px;
-  padding: 6px 4px 10px;
+  padding: 4px 4px 8px;
   min-height: 40px;
 }
 
@@ -2326,24 +2381,19 @@ button.evo-tile:active {
      with room above the pill for the action row */
   .flashcards {
     margin-bottom: calc(-1 * var(--page-bottom));
+    /* the phone's chrome: the pill's zone inside the pad in place of the
+       page's bottom padding, and no tab bar at the top (see --fits-at) */
+    --fits-at: 753px;
+  }
+
+  .flashcards.combo {
+    --fits-at: 885px;
   }
 
   .answer-pad {
     margin-left: -16px;
     margin-right: -16px;
-    padding-bottom: calc(84px + var(--nav-lift));
-  }
-
-  /* short screens (an iPhone with Safari's bars out): the tile gives
-     height back so everything still fits above the nav */
-  @media (max-height: 700px) {
-    .stage-tile {
-      width: 168px;
-    }
-
-    .stage-tile .pokemon-card figcaption {
-      font-size: 1rem;
-    }
+    padding-bottom: calc(76px + var(--nav-lift));
   }
 
   /* five narrow columns: the longest type names ("Fighting") need the room */
@@ -2363,7 +2413,9 @@ button.evo-tile:active {
 
 .board {
   display: grid;
-  grid-template-columns: minmax(84px, 1fr) repeat(3, minmax(72px, 2fr));
+  /* the minimums keep the header pills readable, and still fit a 320px
+     screen (288px of content: 72 + 3 × 64 + the gaps) */
+  grid-template-columns: minmax(72px, 1fr) repeat(3, minmax(64px, 2fr));
   gap: var(--sp-2);
   margin: 0 auto;
   max-width: 480px;

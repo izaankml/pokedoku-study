@@ -34,6 +34,21 @@ describe("pickFlashcard (Region deck)", () => {
     const pick = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => 0.9, now: T0 });
     expect(pick.pokemon).toBe(p1);
   });
+
+  it("deals a due card before any new one, however the roll falls", () => {
+    const merged = mergeBlocks([]);
+    // p1 barely due (a day's interval, a day and a bit ago); p2 never seen
+    merged.flashcards[String(p1.id)] = { a: 3, c: 3, s: 1, t: T0 - 1.1 * DAY };
+    for (let index = 0; index < 20; index++) {
+      const roll = (index + 0.5) / 20;
+      const pick = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => roll, now: T0 });
+      expect(pick.pokemon).toBe(p1);
+    }
+    // once it's answered (seen just now), the queue is empty and p2 gets its turn
+    merged.flashcards[String(p1.id)] = { a: 4, c: 4, s: 2, t: T0 };
+    const after = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => 0.9, now: T0 });
+    expect(after.pokemon).toBe(p2);
+  });
 });
 
 describe("drillPairFor", () => {

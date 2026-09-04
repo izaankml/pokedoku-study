@@ -5,7 +5,7 @@ import { DECKS, cardKey, deckBias, deckPool, focusedDeckPool } from "./flashcard
 import type { CardFilter } from "./flashcards.ts";
 import { allValidPairs, pairIsValid, pairKey } from "./matching.ts";
 import type { CategoryPair } from "./matching.ts";
-import { dueFactor } from "./schedule.ts";
+import { dueFactor, scheduleStatus } from "./schedule.ts";
 import { smoothedAccuracy } from "./stats.ts";
 import type { MergedStats } from "./stats.ts";
 
@@ -99,8 +99,11 @@ export interface FlashcardPick {
 }
 
 // Picks a flashcard: a deck (the one asked for, or any single deck for
-// "all") and a Pokémon from that deck's pool, weighted by weakness, how
-// due it is, and the deck's own bias.
+// "all") and a Pokémon from that deck's pool. A review queue first: while
+// any card the pool can deal is due, the pick is among the due ones (so
+// the Cards header's due count runs down as they're answered); otherwise
+// anyone — either way weighted by weakness, how due it is, and the deck's
+// own bias.
 export function pickFlashcard(
   merged: MergedStats,
   { deckId = "all", exclude = new Set<number>(), filter = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
@@ -119,11 +122,13 @@ export function pickFlashcard(
     if (!members.length) members = pool;
     return members.map((pokemon) => ({ deckId: id, pokemon }));
   });
+  const entryOf = (card: FlashcardPick) => merged.flashcards[cardKey(card.deckId, card.pokemon)];
+  const dueCards = cards.filter((card) => scheduleStatus(entryOf(card), now) === "due");
   return pickWeighted(
-    cards,
-    ({ deckId: id, pokemon }) => {
-      const entry = merged.flashcards[cardKey(id, pokemon)];
-      return deckBias(id, pokemon) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
+    dueCards.length ? dueCards : cards,
+    (card) => {
+      const entry = entryOf(card);
+      return deckBias(card.deckId, card.pokemon) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
     },
     random,
   );

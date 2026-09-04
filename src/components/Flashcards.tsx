@@ -52,6 +52,7 @@ import PokemonAutocomplete from "./PokemonAutocomplete.tsx";
 import PokemonCard from "./PokemonCard.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import { useModalShell } from "./useModalShell.ts";
+import { useNow } from "./useNow.ts";
 
 const GAVE_UP = "gaveup";
 const DASH_SLOTS = 10;
@@ -254,9 +255,12 @@ function Flashcards() {
     !answered &&
     (parts ? parts.every((deck) => deckPicks(deck, selection).length > 0) : Boolean(padDecks[0].multi) && selection.length > 0);
   const filterN = filterCount(filter);
-  // the cards this deck and filter can deal — walks their pools, so only
-  // when the stats, the deck or the filter change
-  const due = useMemo(() => dueCardCount(merged, Date.now(), { deckId, filter }), [merged, deckId, filter]);
+  // the cards this deck and filter can deal that are due — the review
+  // queue the picker deals first. Walks their pools, so only when the
+  // stats, the deck or the filter change, or on a slow clock: a card
+  // answered wrong falls due again ten minutes on
+  const now = useNow(60_000);
+  const due = useMemo(() => dueCardCount(merged, now, { deckId, filter }), [merged, now, deckId, filter]);
 
   // The open sheet lives in the URL (#cards/region/pokemon-eevee) — only
   // once the card is answered, so nothing gives the answer away

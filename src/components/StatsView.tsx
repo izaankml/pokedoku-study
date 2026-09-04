@@ -21,6 +21,7 @@ import CategoryPill from "./CategoryPill.tsx";
 import Sprite from "./Sprite.tsx";
 import PokemonName from "./PokemonName.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
+import { useNow } from "./useNow.ts";
 import { usePagedList } from "./usePagedList.ts";
 
 const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
@@ -171,16 +172,6 @@ function ReviewPanel({ merged, now }: ReviewPanelProps) {
       {detail ? <PokemonDetail pokemon={detail} onClose={closeDetail} onOpen={openDetail} /> : null}
     </div>
   );
-}
-
-// Re-render every `ms` so relative times stay fresh.
-function useNow(ms: number): number {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), ms);
-    return () => clearInterval(id);
-  }, [ms]);
-  return now;
 }
 
 function timeAgo(timestamp: number, now: number): string {

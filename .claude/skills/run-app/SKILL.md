@@ -62,3 +62,13 @@ page rendered.
   `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`, set
   `CHROME_PATH`, or use the Playwright cache at
   `~/Library/Caches/ms-playwright/chromium-*/chrome-mac-arm64/...`.
+- For a Safari-engine check (the user's phone is iOS), Playwright's
+  WebKit build is cached at `~/Library/Caches/ms-playwright/webkit-*`
+  (installed 2026-09-03 with `npx playwright-core install webkit`);
+  `webkit.launch({ headless: true })` from `playwright-core` finds it
+  with no `executablePath`. Chrome and WebKit have differed on container
+  query units in flex layouts, so check both when a change leans on them.
+- A phone in standalone (home-screen) mode lays out as a viewport of the
+  screen height minus the status bar, with no insets in headless Chrome,
+  so emulate an iPhone 16 Pro Max as 440×894, an iPhone 15 as 393×793,
+  a 13 mini as 375×762, an SE as 375×647.
