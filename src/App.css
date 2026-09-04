@@ -345,12 +345,11 @@ header h1 .home-link:focus-visible {
          is the real screen height, so measure from that; elsewhere the
          correction is 0. */
       --nav-lift: calc(100dvh - 100lvh);
-    }
-
-    .app {
       /* clear the pill: 8px + nav from the screen bottom, which is
-         (100lvh - 100dvh) below the page's bottom */
-      padding-bottom: calc(var(--nav-h) + 20px + 100dvh - 100lvh);
+         (100lvh - 100dvh) below the page's bottom. The page's padding and
+         the Cards pad, which cancels it, both read this, so they agree
+         (the pad ran 8px past the page when only the padding changed) */
+      --page-bottom: calc(var(--nav-h) + 20px + var(--nav-lift));
     }
   }
 
@@ -1346,11 +1345,16 @@ button.pill {
      pad's spacing means measuring again (the phone's values, with the
      pill's zone inside the pad and no tab bar above, are in the 480px
      block) */
+  /* the height the column has, as in those measurements: the viewport
+     less the status bar a home-screen app pads out at the top (see .app)
+     and the tab pill's lift, where the layout viewport falls short of the
+     screen — dvh alone counts the status bar and runs the fit 62px long */
+  --screen: calc(100dvh - env(safe-area-inset-top, 0px) - var(--nav-lift, 0px));
   --tall-fits-at: 1004px;
-  --squeeze: max(0px, var(--tall-fits-at) - 100dvh);
+  --squeeze: max(0px, var(--tall-fits-at) - var(--screen));
   --tile: max(96px, 200px - var(--squeeze) * 104 / 180);
   --fits-at: 768px;
-  --shortfall: max(0px, var(--fits-at) - 100dvh);
+  --shortfall: max(0px, var(--fits-at) - var(--screen));
   --pad-btn: max(40px, 60px - var(--shortfall) / 4);
   --pad-cta: max(44px, 50px - var(--shortfall) / 4);
 }
