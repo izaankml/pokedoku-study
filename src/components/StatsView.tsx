@@ -237,7 +237,7 @@ function LinkDeviceQR() {
       ) : null}
       <p className="hint handoff-note">
         Scan with the other device&apos;s camera to connect it. This code
-        contains your token — don&apos;t share it or screenshot it publicly.
+        contains your token, so don&apos;t share it or screenshot it publicly.
       </p>
     </div>
   );
@@ -280,7 +280,7 @@ function DeviceList({ devices, absorbDevice, now }: DeviceListProps) {
                 if (
                   !window.confirm(
                     `Merge "${device.name}" (${device.attempts} answers) into this device and forget it? ` +
-                      "Do this for stale duplicates only — that device would start over on its next sync.",
+                      "Do this for stale duplicates only: that device would start over on its next sync.",
                   )
                 )
                   return;
@@ -363,7 +363,7 @@ function SyncPanel() {
   const statusHint = (gistMode: boolean) => (
     <p className="hint">
       <span className={`status-dot ${syncState.status}`} />
-      {syncState.status === "ok" && `Synced ${synced} — tracking ${devices}.`}
+      {syncState.status === "ok" && `Synced ${synced}, tracking ${devices}.`}
       {syncState.status === "syncing" && "Syncing…"}
       {syncState.status === "error" &&
         `Sync failed: ${syncState.lastError}.` +
@@ -402,7 +402,7 @@ function SyncPanel() {
         and write (nothing else), then generate
       </li>
       <li>
-        Paste the token here — then use <strong>Link another
+        Paste the token here, then use <strong>Link another
         device</strong> to move it to your other devices by QR code
       </li>
     </ol>
@@ -445,7 +445,7 @@ function SyncPanel() {
           </div>
           <p className="hint">
             Signed in as {account.email || account.displayName}. Progress is
-            kept in your Google account — to add a device, just sign in there.
+            kept in your Google account. To add a device, just sign in there.
           </p>
           {token ? (
             <div className="sync-actions">
@@ -507,7 +507,7 @@ function SyncPanel() {
         <>
           <p className="hint">
             Progress is stored on this device. Sign in with Google to keep
-            phone and desktop in sync — your stats live in your own Google
+            phone and desktop in sync. Your stats live in your own Google
             account.
           </p>
           {authError ? <p className="hint">Sign-in failed: {authError}</p> : null}
@@ -528,7 +528,7 @@ function SyncPanel() {
         <>
           <p className="hint">
             Progress is stored on this device. To share it between phone and
-            desktop, paste a GitHub token — the app keeps your stats in a
+            desktop, paste a GitHub token. The app keeps your stats in a
             private gist on your account.
           </p>
           <details className="sync-help">
@@ -726,7 +726,7 @@ function StatsView() {
             <CategoryRow category={covCategory} entry={merged.categories[covCategory.id]} onDrill={openDrill} />
           </div>
         ) : null}
-        <p className="cov-hint">Tap any square for its category — accuracy and a way into practice.</p>
+        <p className="cov-hint">Tap any square for its category: accuracy and a way into practice.</p>
       </section>
 
       <div className="accordion">

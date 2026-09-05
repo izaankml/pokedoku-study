@@ -127,8 +127,8 @@ function NameOne() {
           >
             {result.pokemon
               ? result.correct
-                ? `Correct — ${result.pokemon.displayName}!`
-                : `${result.pokemon.displayName} doesn't fit — it ${whyNot(result.pokemon, [a.id, b.id])}.`
+                ? `Correct: ${result.pokemon.displayName}!`
+                : `${result.pokemon.displayName} doesn't fit: it ${whyNot(result.pokemon, [a.id, b.id])}.`
               : "Revealed."}
           </p>
           {result.correct ? (
@@ -187,7 +187,7 @@ function NameAll() {
     const hit = species.find((candidate) => candidate.species === pokemon.species);
     const seq = (note?.seq ?? 0) + 1;
     if (hit && found.includes(hit.species)) {
-      setNote({ text: `${hit.displayName} — already found.`, tone: "revealed", seq });
+      setNote({ text: `${hit.displayName} is already found.`, tone: "revealed", seq });
       return;
     }
     recordAttempt({ categories: ids, pair, correct: Boolean(hit) });
@@ -195,7 +195,7 @@ function NameAll() {
       setFound((current) => [...current, hit.species]);
       setNote({ text: `✓ ${hit.displayName}`, tone: "correct", seq });
     } else {
-      setNote({ text: `${pokemon.displayName} doesn't fit — it ${whyNot(pokemon, ids)}.`, tone: "wrong", seq });
+      setNote({ text: `${pokemon.displayName} doesn't fit: it ${whyNot(pokemon, ids)}.`, tone: "wrong", seq });
     }
   }
 
@@ -227,7 +227,7 @@ function NameAll() {
   return (
     <>
       <p className="hint">
-        Name every Pokémon that fits — {species.length} to find. Forms count for their species.
+        Name every Pokémon that fits: {species.length} to find. Forms count for their species.
       </p>
       <div className="question">
         {target.map((category, index) => (
@@ -245,7 +245,7 @@ function NameAll() {
       </p>
       {done ? (
         <p key="done" className={`verdict ${revealed ? "revealed" : "correct"}`}>
-          {revealed ? `Revealed — ${found.length} of ${species.length} named.` : `All ${species.length} found!`}
+          {revealed ? `Revealed. ${found.length} of ${species.length} named.` : `All ${species.length} found!`}
         </p>
       ) : (
         <>

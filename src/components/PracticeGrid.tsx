@@ -311,7 +311,7 @@ function PracticeGrid() {
     const excludedHere =
       !correct && archive && (archive.excluded[selected].has(pokemon.species) || archive.excluded[selected].has(pokemon.id));
     if (excludedHere) {
-      setMessage(`${pokemon.displayName} doesn't count here — PokeDoku leaves it out of this cell.`);
+      setMessage(`${pokemon.displayName} doesn't count here: PokeDoku leaves it out of this cell.`);
       setWrongGuess(pokemon);
     } else if (correct) {
       setCells((current) =>
@@ -345,7 +345,7 @@ function PracticeGrid() {
       setSelected(null);
       setWrongGuess(null);
     } else {
-      setMessage(`${pokemon.displayName} doesn't fit — it ${whyNot(pokemon, [rowId, colId])}.`);
+      setMessage(`${pokemon.displayName} doesn't fit: it ${whyNot(pokemon, [rowId, colId])}.`);
       setWrongGuess(pokemon);
     }
   }
@@ -524,7 +524,7 @@ function PracticeGrid() {
       </div>
       {archive && !done ? (
         <p className="hint board-hint">
-          PokeDoku&apos;s board from {formatArchiveDate(archive.date)} — same rules; pick rates are what its players
+          PokeDoku&apos;s board from {formatArchiveDate(archive.date)}. Same rules; pick rates are what its players
           chose that day.
         </p>
       ) : null}
@@ -552,7 +552,7 @@ function PracticeGrid() {
               </span>
               {commonPicks.length ? (
                 <span className="result-note">
-                  Amber rates are your most common picks —{" "}
+                  Amber rates are your most common picks:{" "}
                   {listNames(commonPicks.map((pick) => pick.pokemon.displayName))} cost {commonCost} point
                   {commonCost === 1 ? "" : "s"}
                   {commonPicks.length > 1 ? " between them" : ""}.

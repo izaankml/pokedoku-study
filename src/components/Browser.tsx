@@ -82,7 +82,7 @@ function Browser() {
   return (
     <div className="browser">
       <p className="hint">
-        Pick a category — or two or three, like a PokeDoku cell — and study
+        Pick a category, or two or three like a PokeDoku cell, and study
         who fits.
       </p>
       <div className="browser-controls">

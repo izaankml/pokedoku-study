@@ -27,7 +27,7 @@ function ArchiveSheet({ activeId, onPick, onRandom, onClose }: ArchiveSheetProps
         if (!cancelled) setIndex(entries);
       })
       .catch(() => {
-        if (!cancelled) setProblem("Couldn't load the list of past boards — check your connection and try again.");
+        if (!cancelled) setProblem("Couldn't load the list of past boards. Check your connection and try again.");
       });
     return () => {
       cancelled = true;
@@ -48,7 +48,7 @@ function ArchiveSheet({ activeId, onPick, onRandom, onClose }: ArchiveSheetProps
         setLoadingId(null);
       }
     } catch {
-      setProblem("Couldn't load that board — check your connection and try again.");
+      setProblem("Couldn't load that board. Check your connection and try again.");
       setLoadingId(null);
     }
   }
@@ -70,7 +70,7 @@ function ArchiveSheet({ activeId, onPick, onRandom, onClose }: ArchiveSheetProps
           <p className="sheet-kicker">Past PokeDokus · real pick rates</p>
           {index === null && !problem ? <p className="hint">Loading…</p> : null}
           {index !== null && boards.length === 0 ? (
-            <p className="hint">No past boards yet — the first arrives the morning after a daily.</p>
+            <p className="hint">No past boards yet. The first arrives the morning after a daily.</p>
           ) : null}
           {boards.map((board) => (
             <button
