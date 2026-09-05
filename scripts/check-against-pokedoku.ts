@@ -26,5 +26,5 @@ const extra = [...answers.values()].filter(
 console.log(`${visible.length} visible on PokeDoku, ${answers.size} answers here`);
 if (missing.length) console.log("PokeDoku shows, app lacks:", missing.map((entry) => `${entry.id}:${entry.name}`).join(", "));
 if (extra.length) console.log("app answers PokeDoku hides:", extra.map((record) => `${record.id}:${record.name}`).join(", "));
-if (!missing.length && !extra.length) console.log("OK — the answers match");
+if (!missing.length && !extra.length) console.log("OK: the answers match");
 process.exit(missing.length || extra.length ? 1 : 0);

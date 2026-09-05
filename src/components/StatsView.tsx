@@ -32,10 +32,9 @@ const STATUS_LABELS: ReadonlyArray<readonly [ScheduleStatus, string]> = [
 ];
 
 // The deck whose pad offers a category (Not Fully Evolved, Mega and Gmax
-// have none) — the Study next pool, and which coverage squares get a
-// Cards button.
-// Only decks that credit their options count: Matchups offers the types
-// but teaches the type chart.
+// have none): the Study next pool, and which coverage squares get a Cards
+// button. Only decks that credit their options count; Matchups offers the
+// types but teaches the type chart.
 const DECK_FOR_CATEGORY = new Map<string, string>(
   DECKS.filter((deck) => !deck.categories).flatMap((deck) =>
     deck.options.map((option) => [option.id, deck.id] as const),
@@ -53,7 +52,7 @@ const COVERAGE_GROUPS: ReadonlyArray<readonly [CategoryGroup, string]> = [
   ["special", "Group"],
 ];
 
-// Cards → the deck for the category's group, dealt fresh.
+// The Cards button: the deck for the category's group, dealt fresh.
 function goCards(deckId: string): void {
   resetSessionForDeck(deckId);
   jumpToTab("cards", deckId === "all" ? [] : [deckId]);
@@ -151,7 +150,7 @@ function ReviewPanel({ merged, now }: ReviewPanelProps) {
   const cards = useMemo(() => scheduleSummary(merged.flashcards, flashcardKeys, now), [merged, flashcardKeys, now]);
   const pairKeys = useMemo(() => allValidPairs(QUIZ_CATEGORIES).map(([a, b]) => pairKey(a.id, b.id)), []);
   const pairs = useMemo(() => scheduleSummary(merged.pairs, pairKeys, now), [merged, pairKeys, now]);
-  // the tapped tile's status — its cards list below (tap again to close)
+  // the tapped tile's status, whose cards list below (tap again to close)
   const [openStatus, setOpenStatus] = useState<ScheduleStatus | null>(null);
   const [detail, openDetail, closeDetail] = useDetailHash(pokemonBySlug);
   return (
@@ -329,14 +328,14 @@ function SyncPanel() {
     if (googleAvailable && !account) preloadCloud();
   }, [googleAvailable, account]);
 
-  // Straight from the click handler — no awaits before the popup opens.
+  // Straight from the click handler, with no awaits before the popup opens.
   const handleSignIn = () => {
     setAuthError(null);
     setAuthBusy(true);
     connectGoogle()
       .then((result) => {
-        // Migration ran (or the gist was unreadable: keep the token so
-        // nothing is lost — the Forget button stays available).
+        // an unreadable gist keeps the token so nothing is lost; the
+        // Forget button stays available
         if (!result.hadLegacyToken || result.imported === null) return;
         const importedNote =
           result.imported > 0
@@ -574,7 +573,7 @@ function ResetPanel() {
   );
 }
 
-// "Aug 17, 2026, 2:30 PM PT" — __BUILD_TIME__ is always a full ISO stamp
+// "Aug 17, 2026, 2:30 PM PT"; __BUILD_TIME__ is always a full ISO stamp
 function formatBuildTime(iso: string): string {
   return new Date(iso).toLocaleString("en-US", {
     timeZone: "America/Los_Angeles",
@@ -649,8 +648,8 @@ function StatsView() {
     [merged],
   );
 
-  // Drill → a pair containing the category (an already-practised partner
-  // when one exists), straight into the Drill tab.
+  // The Drill button: a pair containing the category (an already-practised
+  // partner when one exists), straight into the Drill tab.
   const openDrill = (catId: string): void => {
     const [a, b] = drillPairFor(catId, merged);
     jumpToTab("drill", [a.id, b.id]);

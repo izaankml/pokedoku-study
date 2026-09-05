@@ -2,9 +2,9 @@
 //
 // The gist holds one JSON file with one stat block per device; every
 // device only rewrites its own block, so concurrent devices can never
-// clobber each other — merging is pure addition (stats.mergeBlocks).
+// clobber each other, and merging is pure addition (stats.mergeBlocks).
 //
-// Requires a fine-grained personal access token with ONLY the "Gists"
+// Requires a fine-grained personal access token with only the "Gists"
 // read/write permission. It is kept in localStorage on each device.
 
 import type { StatsBlock } from "./stats.ts";
@@ -123,7 +123,7 @@ function gistFileBody(devices: DeviceBlocks): { files: Record<string, { content:
 }
 
 // The blocks the gist holds right now (empty when the file is missing or
-// its content is corrupt — it is rebuilt from local blocks).
+// its content is corrupt, in which case it is rebuilt from local blocks).
 async function readDevices(gistId: string): Promise<DeviceBlocks> {
   const gist = await api<Gist>(`/gists/${gistId}`);
   const file = gist.files && gist.files[GIST_FILENAME];
@@ -174,7 +174,7 @@ export async function resetRemoteBlocks(ownBlock: StatsBlock): Promise<StatsBloc
 }
 
 // Drops another device's block from the gist (after its history has been
-// absorbed locally — see stats.absorbBlock). Returns the remaining blocks.
+// absorbed locally, see stats.absorbBlock). Returns the remaining blocks.
 export async function removeDeviceBlock(deviceId: string, ownBlock: StatsBlock): Promise<StatsBlock[]> {
   const gistId = await findGistId();
   if (!gistId) return [ownBlock];

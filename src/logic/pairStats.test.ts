@@ -4,8 +4,8 @@ import { buildPairStats } from "./pairStats.ts";
 
 const category = (type: string, obj: string | boolean = true) => ({ type, obj, excludedPokemonIds: [] });
 
-// rows: Ghost, Grass, Ground; columns: First Partner, Hoenn, Dark — the
-// 1 Sep 2026 board
+// rows: Ghost, Grass, Ground; columns: First Partner, Hoenn, Dark (the
+// 1 Sep 2026 board)
 const SPEC = {
   y1: category("POKEMON_TYPE", "ghost"),
   y2: category("POKEMON_TYPE", "grass"),

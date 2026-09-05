@@ -8,8 +8,8 @@ description: Launch the PokeDoku Study Vite dev server, drive it in headless Chr
 React + Vite single-page app. "Running" means: dev server up, headless
 Chrome navigates to it, clicks a tab, screenshots. Tabs are `Browse`
 (default), `Drill`, `Cards`, `Grid`, `Stats`. Each tab is also reachable
-by hash, with its state after it — `#cards/region`,
-`#browse/type-fire/flag-legendary`, `#drill/<a>/<b>` — which is the
+by hash, with its state after it (`#cards/region`,
+`#browse/type-fire/flag-legendary`, `#drill/<a>/<b>`), which is the
 quickest way to land a headless page on a specific view.
 
 ## 1. Dev server
@@ -21,10 +21,9 @@ timeout 30 bash -c 'until curl -sf http://localhost:5173 >/dev/null; do sleep 1;
 ```
 
 Start it as a background task and stop it afterwards via that task's ID
-(TaskStop). Never terminate processes found by port lookup — a
-protect-ports hook blocks that, and it could hit the user's own dev
-servers. `--strictPort` fails fast if 5173 is taken; pick another port
-and pass it to the driver via `APP_URL`.
+(TaskStop). Never terminate processes found by port lookup: it could hit
+the user's own dev servers. `--strictPort` fails fast if 5173 is taken;
+pick another port and pass it to the driver via `APP_URL`.
 
 ## 2. Driver (Playwright + local Chrome)
 
@@ -40,18 +39,18 @@ node shot.mjs Stats                          # tab name; default Stats
 
 `shot.mjs` (kept next to this file):
 - goes to `http://localhost:5173/` (override with `APP_URL`)
-- clicks the tab via `getByRole("tab", { name })` — tabs are
+- clicks the tab via `getByRole("tab", { name })`; tabs are
   `<button role="tab">`, so `getByRole("button")` times out
 - waits for the tab's root selector, saves `<tab>.png` full-page at 2x
 - on the Stats tab, prints `<th>` x-positions for every `.stats-table`
   so column alignment can be checked numerically
-- prints console/page errors — confirm they're empty before declaring success
+- prints console/page errors; confirm they're empty before declaring success
 
 `phone.mjs` (also next to this file) is the Cards driver: it emulates a
 phone (440×956 with a 62px status bar by default, see the gotchas), plants
 a chosen card in localStorage before load, can type and submit a Who's
-That answer, and prints the layout — tile, pad, foot, tab pill, and
-whether `scrollHeight` exceeds `innerHeight` (the card doesn't fit):
+That answer, and prints the layout (tile, pad, foot, tab pill, and
+whether `scrollHeight` exceeds `innerHeight`, meaning the card doesn't fit):
 
 ```bash
 cp /path/to/repo/.claude/skills/run-app/phone.mjs .
@@ -64,10 +63,10 @@ page rendered.
 
 ## 3. Gotchas
 
-- Fresh profile = empty stats: every row shows `0` / `—`. Expected.
+- Fresh profile = empty stats: every row shows `0` or a dash. Expected.
 - The Cross-device sync panel on Stats shows a "Sign In with Google"
-  button (the GitHub-token form is folded under "Legacy"); leave it —
-  nothing needs auth to render.
+  button (the GitHub-token form is folded under "Legacy"); leave it.
+  Nothing needs auth to render.
 - Fonts are bundled (`@fontsource-variable/nunito`); no network needed
   beyond localhost.
 - If Chrome isn't at
@@ -76,11 +75,10 @@ page rendered.
   `~/Library/Caches/ms-playwright/chromium-*/chrome-mac-arm64/...`.
 - For a Safari-engine check (the user's phone is iOS), Playwright's
   WebKit build is cached at `~/Library/Caches/ms-playwright/webkit-*`
-  (installed 2026-09-03 with `npx playwright-core install webkit`).
-  A newer `playwright-core` may want a newer build than the cached one
-  (on 2026-09-04 it asked for webkit-2359 with webkit-2336 cached): pass
-  the cached `webkit-*/pw_run.sh` as `executablePath` (`WEBKIT_PATH` for
-  `phone.mjs`) — the older build drives fine. Chrome and WebKit have
+  (installed with `npx playwright-core install webkit`). A newer
+  `playwright-core` may want a newer build than the cached one: pass the
+  cached `webkit-*/pw_run.sh` as `executablePath` (`WEBKIT_PATH` for
+  `phone.mjs`), and the older build drives fine. Chrome and WebKit have
   differed on container query units in flex layouts, so check both when
   a change leans on them.
 - A phone in standalone (home-screen) mode has the status bar inside

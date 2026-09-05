@@ -1,58 +1,31 @@
-// Harvests PokeDoku's global pick statistics.
+// Harvests PokeDoku's global pick statistics into public/archive/<id>.json
+// (one finished puzzle each: its spec and per-cell pick counts) and derives
+// from the archive the prior the app bundles (src/data/pick-stats.json),
+// the archive index, and the per-pair table (public/archive/pairs.json).
+// The stats endpoint is read-only; never GET /solution, which records a
+// play for the session's guest user.
 //
-// A guest session (see pokedoku-session.ts) can read, for any puzzle id,
-// how many players picked each Pokémon in each cell — no puzzle play
-// required, and the endpoint is read-only (never touch /solution: GETting
-// it CREATES a play record for the session's temp user).
-//
-// The archive is the record: public/archive/<id>.json holds one finished
-// puzzle — its category spec and full per-cell pick counts — indexed by
-// public/archive/index.json. It is deployed with the site but fetched
-// lazily, so the app bundle stays fixed while the archive grows. Two
-// things are derived from the archive on every save: the prior the app
-// bundles, src/data/pick-stats.json — one small entry per Pokémon (never
-// grows past the dex) plus the harvest's bookkeeping — and the per-pair
-// table, public/archive/pairs.json (src/logic/pairStats.ts): every
-// category pair PokeDoku has run, with its players' picks summed over
-// the boards that had it, fetched lazily by the Grid tab for random
-// grids. Nothing outside the archive is in either.
-//
-// PokeDoku schedules each day's puzzle from a pool of pre-generated ones,
-// so ids are not in date order (1528 ran on 2026-08-28, 1614 the next
-// day, 1507 three days after that) and nothing about an id says when, or
-// whether, it was played. The only way to know which puzzle just finished
-// is to have seen it while it was current. So the daily run notes the
-// current board — id, date and spec, readable only while current — as
-// pending, and on the first run after it has rotated out (new puzzles at
-// midnight US Eastern) archives it with its final counts. A board is
-// never archived while it is still being played: its counts keep moving
-// all day.
-//
-// PokeDoku only serves stats for roughly the last month of dailies (1562
-// had full stats on 2026-08-26 and a 400 a week later), so a backfill can
-// only reach what is still served; the archive is the long-term record.
+// Puzzle ids are not in date order and say nothing about when a puzzle
+// ran, so the daily run notes the current board as pending and archives it
+// on the first run after it rotates out (midnight US Eastern). PokeDoku
+// serves stats for roughly the last month only; the archive is the record.
 //
 //   node scripts/harvest-pick-stats.ts                  # daily
-//   node scripts/harvest-pick-stats.ts --backfill 1 1700  # sweep a range
-//     of ids for finished dailies not yet archived (without spec or
-//     date, which were only readable while each was current)
+//   node scripts/harvest-pick-stats.ts --backfill 1 1700  # archive any
+//     finished dailies in an id range (without spec or date)
 //   node scripts/harvest-pick-stats.ts --mirror-all     # push every
-//     archive file to Firestore (first-time seed, or repair after
-//     mirror failures); needs FIREBASE_SERVICE_ACCOUNT
+//     archive file to Firestore; needs FIREBASE_SERVICE_ACCOUNT
 //   node scripts/harvest-pick-stats.ts --rebuild        # rederive the
 //     prior, index and pair table from the archive on disk, no network
-//     (after changing how any of them is derived)
 //   POKEDOKU_SESSION_TOKEN=… node scripts/harvest-pick-stats.ts \
 //       --specs 2026-07-25 2026-09-01                  # give backfilled
-//     boards their categories: PokeDoku shows a signed-in user any past
-//     day's puzzle at pokedoku.com/puzzle/<date> (pokedoku-page.ts reads
-//     it out of the page), which a guest session is refused. The token
-//     is the browser's __Secure-next-auth.session-token cookie, read from
-//     the environment for the run and never written anywhere.
+//     boards their categories from pokedoku.com/puzzle/<date>, which only
+//     a signed-in user can see. The token is the browser's
+//     __Secure-next-auth.session-token cookie and is never written anywhere.
 //
-// Archives written by a run are also mirrored to Firestore
-// (firestore-archive.ts) when FIREBASE_SERVICE_ACCOUNT is set; mirror
-// failures only warn — the files are canonical and --mirror-all repairs.
+// Archives written by a run are mirrored to Firestore when
+// FIREBASE_SERVICE_ACCOUNT is set; mirror failures only warn, since the
+// files are canonical and --mirror-all repairs.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -74,9 +47,8 @@ const ARCHIVE_DIR = join(DATA_DIR, "..", "..", "public", "archive");
 // polite gap between requests; the daily run makes only a handful
 const THROTTLE_MS = 150;
 // A finished daily has tens of thousands of valid picks per cell; a stray
-// play of an id that was never scheduled has a handful. Cells under the
-// floor are neither counted nor archived. The floor is on picks, not on
-// distinct Pokémon: a cell with two valid answers legitimately shows two.
+// play of an unscheduled id has a handful. Cells under the floor are
+// neither counted nor archived.
 const MIN_CELL_PICKS = 1000;
 
 interface AnswerAggregate {
@@ -128,17 +100,10 @@ function cellAggregates(stats: PuzzleStats): PickStatsCell[] {
   });
 }
 
-// A category board's nine cells have different answer pools: a Pokémon
-// picked validly in all nine fits all six categories. The dataset says
-// how many can (maxValidInEveryCell — 75 as of 2026-09: dual-typed Water
-// types that learn Protect, Surf, Ice Beam and Hydro Pump), and the limit
-// is twice that: headroom for Pokémon PokeDoku has before the dataset is
-// rebuilt for a new generation, and for category definitions that differ
-// at the margins. Puzzle 1575 has 575 Pokémon picked in every cell at a
-// flat share — an everything-goes pool (PokeDoku's unlimited mode, most
-// likely), not a daily — and would swamp the prior with near-zero shares.
-// A rejected board stays pending and is retried daily, so a lagging
-// dataset delays it rather than losing it.
+// Tells a category board from an everything-goes pool, which would swamp
+// the prior: a Pokémon picked validly in all nine cells fits all six
+// categories, and the dataset says how many can. Twice that leaves
+// headroom for a dataset that lags PokeDoku's.
 const MAX_SHARED_BY_ALL_CELLS = 2 * maxValidInEveryCell();
 
 // Finished daily: a day's worth of picks, on a category board
@@ -210,7 +175,7 @@ async function mirrorArchives(puzzles: PickStatsPuzzle[]): Promise<void> {
     console.warn(`Firestore mirror unavailable: ${String(error)}`);
     return;
   }
-  if (!firestore) return; // no FIREBASE_SERVICE_ACCOUNT — mirroring stays dark
+  if (!firestore) return; // no FIREBASE_SERVICE_ACCOUNT: nothing to mirror to
   for (const puzzle of puzzles) {
     try {
       await firestore.mirror(puzzle);
@@ -261,7 +226,7 @@ async function fetchStats(session: PokedokuSession, id: number, quiet = false): 
   try {
     return await session.apiGet<PuzzleStats>(`/api/puzzle/stats/${id}`);
   } catch (error) {
-    if (!quiet) console.warn(`puzzle ${id}: ${String(error)} — skipped`);
+    if (!quiet) console.warn(`puzzle ${id}: ${String(error)}; skipped`);
     return null;
   }
 }
@@ -320,7 +285,7 @@ if (specsFlag !== -1) {
     }
     const existing = archived.get(puzzle.id);
     if (!existing) {
-      console.log(`${date}: puzzle ${puzzle.id} isn't archived (its stats were never served) — skipped`);
+      console.log(`${date}: puzzle ${puzzle.id} isn't archived (its stats were never served); skipped`);
     } else if (!existing.spec || !existing.date) {
       const { id, date: puzzleDate, ...spec } = puzzle;
       writeArchive({ id, date: puzzleDate, spec, cells: existing.cells });
@@ -390,7 +355,7 @@ if (backfillFlag !== -1) {
     const stats = await fetchStats(session, pending.id);
     const cells = stats ? cellAggregates(stats) : [];
     if (!isFinishedDaily(cells)) {
-      console.warn(`puzzle ${pending.id} (${pending.date}): no finished stats yet — still pending`);
+      console.warn(`puzzle ${pending.id} (${pending.date}): no finished stats yet; still pending`);
       stillPending.push(pending);
       continue;
     }

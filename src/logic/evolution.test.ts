@@ -76,7 +76,7 @@ describe("evolutionTree", () => {
     expect([...treeOf("Charizard Mega X").focusIds]).toEqual([byName("Charizard").id]);
     expect([...treeOf("Meowstic Female").focusIds]).toEqual([byName("Meowstic Female").id]);
   });
-  it("gives Mega Floette Eternal Flower Floette's line — none — not Floette's", () => {
+  it("gives Mega Floette Eternal Flower Floette's line (none), not Floette's", () => {
     expect(names(treeOf("Floette Mega").root)).toEqual(["Floette Eternal", []]);
     expect(names(treeOf("Floette Eternal").root)).toEqual(["Floette Eternal", []]);
     expect(names(treeOf("Floette").root)).toEqual(["Flabébé", [["Floette", [["Florges", []]]]]]);

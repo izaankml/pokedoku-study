@@ -68,7 +68,7 @@ export interface Pokemon {
   // the record it evolved from, null at the start of a line
   prevo: number | null;
   // any other records it evolves from (Gholdengo: Roaming Form Gimmighoul
-  // as well as the Chest Form) — absent for nearly everyone
+  // as well as the Chest Form); absent for nearly everyone
   otherPrevos?: number[];
   // false for a display-only form that is never an answer
   answer?: boolean;
@@ -88,7 +88,7 @@ export interface PokedexData {
   pokemon: Pokemon[];
 }
 
-// sprites.json: [host, spriteId, x0, y0, bw, bh, w, h] — host 0 is
+// sprites.json: [host, spriteId, x0, y0, bw, bh, w, h]. Host 0 is
 // PokeDoku's CDN, 1 is PokeAPI; the box is in sprite pixels.
 export type SpriteEntry = [
   host: number,
@@ -102,19 +102,12 @@ export type SpriteEntry = [
 ];
 export type SpritesData = Record<string, SpriteEntry>;
 
-// pick-stats.json: global pick data harvested from PokeDoku's daily
-// puzzles (scripts/harvest-pick-stats.ts). `prior` is the running
-// aggregate the app uses: per PokeDoku pokemon id, how many daily cells
-// it was picked in and the sum of its pick shares there (share = its
-// picks / all picks in that cell), so shareSum / cells is "when this
-// Pokémon is a live answer, what share of players reach for it".
-// `pending` is harvester state: the board(s) seen while current that will
-// be archived once finished. The full per-puzzle data — the day's
-// category spec (PokeDoku's own JSON, kept verbatim) and each cell's pick
-// counts — lives outside the bundle, as one PickStatsPuzzle per file in
-// public/archive/<id>.json (public/archive/index.json lists them), so
-// the archive can grow forever without growing the app. The prior is
-// rebuilt from those files on every harvest, so it never drifts from them.
+// pick-stats.json: the pick prior the app bundles, harvested from
+// PokeDoku's daily puzzles (scripts/harvest-pick-stats.ts). Per PokeDoku
+// pokemon id: how many daily cells it was picked in and the sum of its
+// pick shares there, so shareSum / cells is the share of players who reach
+// for it when it is a live answer. The full per-puzzle data lives in
+// public/archive/<id>.json, and the prior is rebuilt from it each harvest.
 export type PickPriorEntry = [cells: number, shareSum: number];
 
 export interface PickStatsCell {
@@ -132,9 +125,9 @@ export interface PickStatsPuzzle {
   cells: PickStatsCell[];
 }
 
-// A board noted while it was current — puzzle ids are not in date order,
-// so this is the only way to know which puzzle just finished. Archived
-// with its final counts on the first harvest after it rotates out.
+// A board noted while it was current (puzzle ids are not in date order, so
+// this is the only way to know which puzzle just finished). Archived with
+// its final counts on the first harvest after it rotates out.
 export interface PendingPuzzle {
   id: number;
   date: string;

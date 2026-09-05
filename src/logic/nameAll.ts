@@ -1,5 +1,5 @@
-// The Drill's "Name all" round: every Pokémon (one per species) fitting
-// a pair of categories, or a single Group — small enough to name in one
+// The Drill's "Name all" round: every Pokémon (one per species) fitting a
+// pair of categories or a single Group, small enough to name in one
 // sitting. Which shapes of question get drawn is the user's choice.
 
 import { CATEGORY_BY_ID, QUIZ_CATEGORIES } from "../data/categories.ts";
@@ -31,8 +31,8 @@ export const isNameAllKind = (value: unknown): value is NameAllKind => ALL_NAME_
 export const NAME_ALL_MIN = 2;
 export const NAME_ALL_MAX = 40;
 
-// Everyone fitting the target, one record per species — the base form
-// where it fits, else the first form that does — in dataset order
+// Everyone fitting the target, one record per species (the base form
+// where it fits, else the first form that does), in dataset order
 export function nameAllSpecies(target: NameAllTarget): Pokemon[] {
   const bySpecies = new Map<number, Pokemon>();
   for (const pokemon of intersectAll(target.map((category) => category.id))) {

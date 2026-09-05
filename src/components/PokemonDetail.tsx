@@ -13,15 +13,11 @@ import EvolutionLine, { FormsRows } from "./EvolutionLine.tsx";
 import { useFitRows } from "./useFitRows.ts";
 import { useModalShell } from "./useModalShell.ts";
 
-// The sheet is three blocks: identity (sprite; dex line, then the name
-// with the region pill beside it, then the type pills with the group
-// pills beside them — region and groups in one column), then the evolution
-// tree, then a label/value list of
-// everything else the Pokémon counts for. Types and region sit in the
-// header — they are what you recognise a Pokémon by. Dropped from the
-// list (still categories everywhere else): type count (two type pills
-// already say "dual"), the tracked abilities (the full ability row covers
-// them), and evolution method, stage and line (the tree shows all three).
+// The sheet is three blocks: identity (sprite, dex line, name and region,
+// types and groups), the evolution tree, then a label/value list of
+// everything else the Pokémon counts for. The list skips what the header
+// and tree already show: type count, the tracked abilities, and evolution
+// method, stage and line.
 const FACT_LABELS: Partial<Record<CategoryGroup, string>> = { move: "Moves" };
 const SKIP = new Set<CategoryGroup>(["type", "region", "special", "typeCount", "ability", "evo", "stage", "evoLine"]);
 
@@ -83,10 +79,9 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
   }, [pokemon]);
 
   // Types sit under the name with the groups beside them. When that row
-  // can't hold both (Koraidon on a phone) it drops under the sprite and
-  // spans the header (App.css .types-below); a name long enough to push the
-  // region pill down breaks over two lines with the pill beside them
-  // (.name-wraps)
+  // can't hold both it drops under the sprite (App.css .types-below); a
+  // name long enough to push the region pill down breaks over two lines
+  // with the pill beside them (.name-wraps)
   const headRef = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
     const head = headRef.current;
@@ -133,7 +128,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
   // abilities go after the category rows but before the (long) move row
   const before = facts.filter((fact) => fact.group !== "move");
   const moves = facts.filter((fact) => fact.group === "move");
-  // every pill jumps to Browse filtered to it — a type pill takes the
+  // every pill jumps to Browse filtered to it; a type pill takes the
   // whole typing along (a dual type browses both)
   const renderFact = (fact: FactGroup) => (
     <Fact key={fact.group} label={fact.label}>
@@ -144,9 +139,7 @@ function PokemonDetail({ pokemon, onClose, onOpen }: PokemonDetailProps) {
   );
 
   // Rendered on <body>: the tab roots animate a translate on entry, and a
-  // transforming ancestor would anchor the fixed backdrop to itself — a
-  // sheet opened by a reload would sit far down the page until the
-  // animation ended, then jump.
+  // transforming ancestor would anchor the fixed backdrop to itself.
   return createPortal(
     <div className="modal-backdrop" onClick={onClose}>
       <div

@@ -1,15 +1,11 @@
-// PokeDoku's category spec — its API's own JSON, kept verbatim in each
-// archived board (public/archive/<id>.json) — mapped onto this app's
-// categories. Shared by the Grid's replay (logic/archive.ts) and the
-// harvest script (scripts/harvest-pick-stats.ts), so it must stay free of
-// browser-only globals.
+// PokeDoku's category spec (its API's own JSON, kept verbatim in each
+// archived board) mapped onto this app's categories. Shared by the Grid's
+// replay and the harvest script, so it must stay free of browser globals.
 //
 // A spec names three x categories (the columns) and three y categories
 // (the rows); cell n of PokeDoku's stats (1-based, row-major) is
 // y[⌊(n−1)/3⌋] × x[(n−1) mod 3], matching the Grid's rowIndex*3+colIndex.
-// Each spec category maps onto one of the app's categories; a kind the
-// app lacks (LEGENDARY_TRIO, an unknown move) maps to null. Verified
-// against every archived board's picks.
+// A kind the app lacks (LEGENDARY_TRIO, an unknown move) maps to null.
 import { CATEGORY_BY_ID } from "../data/categories.ts";
 import { normalizeName } from "./matching.ts";
 
@@ -95,9 +91,8 @@ export function categoryIdFor(spec: SpecCategory): string | null {
 export const specAxis = (spec: Record<string, unknown>, axis: (typeof SPEC_AXES)[number]): SpecCategory | undefined =>
   spec[axis] as SpecCategory | undefined;
 
-// The app category ids of cell `index` (0–8, row-major) of a board with
-// this spec — row, then column — or null when either is a kind the app
-// lacks
+// The app category ids (row, then column) of cell `index` (0–8, row-major)
+// of a board with this spec, or null when either is a kind the app lacks
 export function specCellPair(spec: Record<string, unknown>, index: number): [string, string] | null {
   const row = specAxis(spec, SPEC_AXES[Math.floor(index / 3)]);
   const col = specAxis(spec, SPEC_AXES[3 + (index % 3)]);

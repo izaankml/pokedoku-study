@@ -7,23 +7,14 @@ import { formLabel, formTrigger, formsRow, isTemporary, isTransformation, varian
 import PokemonName from "./PokemonName.tsx";
 import Sprite from "./Sprite.tsx";
 
-// A Pokémon's whole evolution line as a tree of square tiles — sprite,
-// name and (for evolved forms) how it evolved — the Pokémon in question
-// highlighted. Each tile is joined by an arrow to its own evolutions:
-// one arrow to a lone evolution, one shared arrow into a column when it
-// branches. Within a branch, evolutions that go no further pack into
-// vertical columns — one per generation when three or more span several
-// (Eevee: the Kanto three, the Johto two, the Sinnoh two, Sylveon), else
-// pairs;
-// the tree never wraps — it shrinks to fit the sheet, then scrolls —
-// and ones that evolve again get a row each, so Goomy shows Sliggoo →
-// Goodra over Hisuian Sliggoo → Hisuian Goodra, and Applin has Flapple
-// and Appletun paired above Dipplin → Hydrapple. A lone tile sits centred
-// against whatever it's joined to. A Pokémon that evolves from two records
-// (Gholdengo, from either Gimmighoul) has them stacked before its arrow.
-// A Pokémon that doesn't evolve at all is a tree of its one tile.
-// the longest word of a name — the tile shrinks the name's font just
-// enough for it to fit (App.css .evo-name), so "Meowscarada" never breaks
+// A Pokémon's whole evolution line as a tree of square tiles, the Pokémon
+// in question highlighted. Each tile is joined by an arrow to its own
+// evolutions. Within a branch, evolutions that go no further pack into
+// columns (one per generation when three or more span several, else pairs)
+// and ones that evolve again get a row each.
+
+// the longest word of a name; the tile shrinks the name's font just enough
+// for it to fit (App.css .evo-name)
 const longestWord = (name: string): number => Math.max(...name.split(/[\s-]+/).map((word) => word.length));
 
 // How a stage evolved: the chip's short form and the full text for its title.
@@ -66,7 +57,7 @@ interface TileProps {
   note?: string | null;
   // a transformation of the same Pokémon (Mega, Rotom Wash …)
   form?: boolean;
-  // a transformation that only holds for a battle: dotted, "becomes, for a while"
+  // a transformation that only holds for a battle: dotted
   temporary?: boolean;
   // a variant of the species: another individual
   variant?: boolean;
@@ -74,13 +65,9 @@ interface TileProps {
 }
 
 // A stage: sprite, name, how it evolved, and a strip along the bottom in
-// its type colours (split for a dual type — the thing that changes along
-// a line: Charmander → Charizard gains Flying, Eevee's eight differ).
-// `note` (a form's trigger) replaces the evolution method; `temporary`
-// tiles (Mega, Gigantamax, an ability's form) are dotted to read as
-// "becomes, for a while" rather than "is"; a variant or a lasting form
-// (Alolan Raichu, Rotom Wash) is solid like a stage. Tapping a tile opens
-// that Pokémon's own sheet (`onOpen`); the current one is inert.
+// its type colours (split for a dual type). `note` replaces the evolution
+// method; `temporary` tiles are dotted. Tapping a tile opens that
+// Pokémon's own sheet; the current one is inert.
 function Tile({
   pokemon,
   evolved = false,
@@ -125,8 +112,7 @@ function Tile({
   );
 }
 
-// → evolves into · ⇢ becomes, for a while · ⇠ is a form of · ≈ another
-// form of the same
+// → evolves into; any other glyph marks a form relation
 const Arrow = ({ glyph = "→" }: { glyph?: string }) => (
   <span className={`evo-arrow${glyph === "→" ? "" : " form"}`} aria-hidden="true">
     {glyph}

@@ -1,16 +1,13 @@
 // Generates src/data/sprites.json: for every record in pokedex.json, which
 // sprite to show and where the Pokémon sits inside it.
 //
-// PokeDoku hosts its own 96×96 pixel sprites (keyed by PokeAPI id) — the
-// art the player actually sees in the game, with truer colours than
-// PokeAPI's fan sprites for Gen 6+ — so they come first, with PokeAPI as
-// the fallback for the few ids PokeDoku lacks (Partner Pikachu/Eevee, which
-// its own frontend remaps to the base species). Every sprite is decoded
-// here to find its alpha bounding box, because PokeDoku's CDN sends no CORS
-// headers and the app therefore can't measure them on a canvas at runtime
-// (see src/components/Sprite.tsx).
+// PokeDoku's own sprites (the art the player sees in the game, keyed by
+// PokeAPI id) come first, with PokeAPI's as the fallback. Every sprite is
+// decoded here to find its alpha bounding box, because PokeDoku's CDN
+// sends no CORS headers and the app can't measure them at runtime (see
+// src/components/Sprite.tsx).
 //
-//   node scripts/build-sprites.ts         # ~1250 small fetches, cached in .cache/
+//   node scripts/build-sprites.ts         # fetches are cached in .cache/
 //
 // Output entry: [host, spriteId, x0, y0, bw, bh, w, h] where host is 0 for
 // PokeDoku, 1 for PokeAPI, and the box is in sprite pixels.
@@ -47,7 +44,7 @@ async function fetchPng(host: number, id: number): Promise<Buffer | null> {
   return buffer;
 }
 
-// [x0, y0, bw, bh, w, h] — the alpha bounding box inside a w×h sprite
+// [x0, y0, bw, bh, w, h]: the alpha bounding box inside a w×h sprite
 type Box = [number, number, number, number, number, number];
 
 function boxOf(buffer: Buffer): Box | null {
@@ -73,9 +70,8 @@ const counts = { pokedoku: 0, pokedokuBase: 0, pokeapi: 0, pokeapiBase: 0, none:
 type CountKey = keyof typeof counts;
 // a form with no sprite of its own anywhere: the closest form to stand in
 const STAND_IN: Record<number, number> = {};
-// PokeDoku's sprite for these is a 128px rendered-style image, not pixel art
-// like the rest (it reads as a blurry odd one out beside its line), and
-// PokeAPI's 96px pixel sprite exists: Ash-Greninja, Own Tempo Rockruff
+// PokeDoku draws these in a rendered style rather than pixel art, and
+// PokeAPI's pixel sprite exists: Ash-Greninja, Own Tempo Rockruff
 const PREFER_POKEAPI = new Set<number>([10117, 10151]);
 let done = 0;
 for (const record of pokemon) {

@@ -1,17 +1,13 @@
-// Alternate forms that are transformations — the same Pokémon switched
-// into another shape by an item or a battle state, and back — as opposed
-// to variants that are different individuals (regional forms, Tauros
-// breeds, Oricorio, Wormadam's cloaks, Partner Pikachu, Minior's colours,
-// Squawkabilly, gender forms …). Only the transformations belong beside an
-// evolution line: Charizard ⇢ Mega X / Mega Y / Gigantamax. Regional forms
-// (and Lycanroc's, Toxtricity's) already sit in the tree via `prevo`.
+// Alternate forms that are transformations (the same Pokémon switched into
+// another shape by an item or a battle state, and back), as opposed to
+// variants that are different individuals (regional forms, Tauros breeds,
+// gender forms). Only transformations belong beside an evolution line.
 
 import { ALL_POKEMON, POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
 
-// Mega Stones (Serebii's Legends: Z-A table — the older ones aren't
-// formulaic: Blastoisinite, Alakazite, Lucarionite …), by species name;
-// X / Y / Z forms append their letter. Rayquaza needs no stone.
+// Mega Stones by species name (Serebii's Legends: Z-A table); X / Y / Z
+// forms append their letter. Rayquaza needs no stone.
 const MEGA_STONES: Record<string, string> = {
   Abomasnow: "Abomasite", Absol: "Absolite", Aerodactyl: "Aerodactylite", Aggron: "Aggronite",
   Alakazam: "Alakazite", Altaria: "Altarianite", Ampharos: "Ampharosite", Audino: "Audinite",
@@ -110,14 +106,9 @@ export function isTransformation(pokemon: Pokemon): boolean {
   return Boolean(pokemon.form) && (isMega(pokemon) || isGmax(pokemon) || pokemon.name in TRIGGERS);
 }
 
-// The transformations that last outside battle — switched by an item or a
-// state and kept until switched back: Rotom's appliances, Deoxys' formes,
-// the Therian and Origin formes, Sky Shaymin, the Kyurem and Necrozma
-// fusions, Hoopa Unbound, 10% Zygarde, the Calyrex riders, Ogerpon's
-// masks, Resolute Keldeo. Every other transformation holds for a battle
-// only: Mega, Gigantamax, Primal, Eternamax, and whatever an ability, a
-// move or a held item does once the battle starts (Zen Mode, Schooling,
-// Disguise, Battle Bond, the Crowned forms, Terastal Terapagos …).
+// The transformations that last outside battle, switched by an item or a
+// state and kept until switched back. Every other transformation (Mega,
+// Gigantamax, Primal, an ability's form) holds for a battle only.
 const LASTING = new Set([
   "rotomheat", "rotomwash", "rotomfrost", "rotomfan", "rotommow",
   "deoxysattack", "deoxysdefense", "deoxysspeed",
@@ -165,9 +156,8 @@ export function baseOf(pokemon: Pokemon): Pokemon {
 }
 
 // A transformation's kind, without its base's own form: Galar-Zen → Zen,
-// Rapid-Strike-Gmax → Gmax, Curly-Mega / M-Mega → Mega, Mega-X → Mega-X —
-// so Zen and Galar Zen, the two Gigantamax Urshifu, or Tatsugiri's three
-// Megas are counterparts.
+// Rapid-Strike-Gmax → Gmax, Curly-Mega → Mega. Forms of one kind on
+// different variants are counterparts.
 export function formKind(pokemon: Pokemon): string {
   const form = pokemon.form ?? "";
   if (isMega(pokemon)) return form.match(/Mega(-[XYZ])?$/)?.[0] ?? "Mega";
@@ -208,11 +198,9 @@ export function formLabel(pokemon: Pokemon): string {
   return pokemon.displayName.startsWith(prefix) ? pokemon.displayName.slice(prefix.length) : pokemon.displayName;
 }
 
-// The *variants* of a Pokémon: the other records of its species that
-// aren't transformations — regional forms, Own Tempo Rockruff, Partner
-// Pikachu, Oricorio's styles, Squawkabilly's plumages, Zarude Dada, the
-// female Meowstic … A stage's tree-mates (Alolan Raichu beside Raichu) are
-// left out by the caller. What each one is, in a word or two:
+// What a variant (a record of the species that isn't a transformation:
+// a regional form, Own Tempo Rockruff, Partner Pikachu) is, in a word or
+// two, for its tile in the Forms row
 const VARIANT_NOTES: Record<string, string> = {
   pikachustarter: "Let's Go Partner",
   eeveestarter: "Let's Go Partner",
@@ -234,7 +222,7 @@ const VARIANT_NOTES: Record<string, string> = {
   burmysandy: "From Cave Battles",
   burmytrash: "From Indoor Battles",
 };
-// by species (slug prefix) → note, or null when the label says it all
+// by species (slug prefix): the note, or null when the label is enough
 const VARIANT_KINDS: ReadonlyArray<readonly [RegExp, string | null]> = [
   [/^oricorio/, "Nectar Style"],
   [/^squawkabilly/, null],
@@ -269,21 +257,8 @@ export function counterpartsOf(pokemon: Pokemon): Pokemon[] {
   );
 }
 
-// The Forms row for a sheet: the Pokémon and the forms that relate to it
-// directly, as one flat list (base forms, then transformations, Megas,
-// Gigantamax — see formRank) —
-//   the species base S:  S, its transformations, its variants
-//   a variant V:         S, the variants, V's transformations (a gender
-//                        form shares S's: Pyroar Female lists Pyroar Mega)
-//   a transformation T:  T's base, that base's transformations, T's
-//                        counterparts (the same kind on other variants)
-// so Darmanitan lists Zen and Galarian Darmanitan (not Galar Zen); Zen
-// lists Darmanitan and Galar Zen; Galarian Darmanitan lists Darmanitan and
-// Galar Zen; Charizard Mega X lists Charizard, Mega X, Mega Y, Gmax;
-// every Lycanroc lists all three. Empty when there's nothing but itself.
-// A gender form (Pyroar Female, Meowstic Female) shares its base's
-// transformations — she Mega Evolves into the same Mega — unless she has
-// her own of that kind; those rows list each other.
+// A gender form shares its base's transformations (Pyroar Female Mega
+// Evolves into the same Mega) unless it has its own of that kind.
 const sharedFormsOf = (female: Pokemon, base: Pokemon): Pokemon[] => {
   const own = new Set(formsOf(female).map(formKind));
   return formsOf(base).filter((form) => !own.has(formKind(form)));
@@ -297,6 +272,10 @@ export function sharersOf(transformation: Pokemon): Pokemon[] {
     (variant) => variant.form === "F" && sharedFormsOf(variant, base).includes(transformation),
   );
 }
+// The Forms row for a sheet: the Pokémon and the forms that relate to it
+// directly (the species and its variants and transformations; for a
+// transformation, its base's other transformations and its counterparts),
+// ordered by formRank. Empty when there is nothing but itself.
 export function formsRow(pokemon: Pokemon): Pokemon[] {
   const species = POKEMON_BY_ID.get(pokemon.species) || pokemon;
   let list: Pokemon[];
@@ -321,8 +300,7 @@ export function formsRow(pokemon: Pokemon): Pokemon[] {
 }
 
 // Row order: base forms (the species and its variants), then the other
-// transformations (Zen, Primal, Origin …), then Megas, then Gigantamax —
-// dex order within each.
+// transformations, then Megas, then Gigantamax, in dex order within each.
 export function formRank(pokemon: Pokemon): number {
   if (!isTransformation(pokemon)) return 0;
   if (isMega(pokemon)) return 2;

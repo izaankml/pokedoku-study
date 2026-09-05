@@ -16,10 +16,9 @@ interface ToggleGroupProps {
   hint?: ReactNode;
 }
 
-// A titled panel of include/exclude chips — the Grid tab's category
-// groups and the Cards tab's per-deck filter. A plain div, not a
-// fieldset: legends get browser-special layout (no wrapping, drawn into
-// the border) that clips the title.
+// A titled panel of include/exclude chips (the Grid tab's category groups,
+// the Drill's question shapes). A plain div, not a fieldset, because a
+// legend's browser-special layout clips the title.
 function ToggleGroup({ id, title, toggles, onToggle, hint }: ToggleGroupProps) {
   return (
     <div id={id} className="grid-groups" role="group" aria-label={title}>

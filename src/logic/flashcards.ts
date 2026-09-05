@@ -1,10 +1,7 @@
-// Flashcard decks — the four deckable category groups (Region, Type,
-// Group, Stage), plus pairwise Combo decks ("combo:type+region") that ask
-// two of them about the same Pokémon on one card. Each deck shows a
-// Pokémon and asks one question over a fixed set of answer buttons; a
-// card can have several correct answers (a dual type, a form counting
-// for two regions, Koraidon being Paradox and Legendary). Single-pick
-// decks accept any of them; the multi Type deck wants the exact set.
+// Flashcard decks: one per category group, plus pairwise Combo decks
+// ("combo:type+region") that ask two of them about one Pokémon. A card can
+// have several right answers; single-pick decks accept any, multi decks
+// want the exact set.
 
 import { CATEGORIES, CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
@@ -26,7 +23,7 @@ export interface DeckOption {
 export interface Deck {
   id: string;
   label: string;
-  // the card's prompt — also the deck sheet's subtitle
+  // the card's prompt, also the deck sheet's subtitle
   question: string;
   // a dimmer aside after the prompt ("pick all")
   questionNote?: string;
@@ -62,14 +59,8 @@ const sameList = (a: readonly string[], b: readonly string[]): boolean =>
 // every flag except the two form kinds, straight from the canonical list
 export const SPECIAL_FLAGS: Flag[] = FLAGS.filter((flag) => flag !== "mega" && flag !== "gmax");
 
-// Forms that look the same on the tile, so Who's That takes any of their
-// names for any of them: the same sprite (checked byte for byte on
-// 2026-09-04 — Partner Pikachu and Eevee show the base sprite; Own Tempo
-// Rockruff, the three Pumpkaboo and Gourgeist sizes, and the two
-// Gigantamax Toxtricity are one image each) and the size forms' base,
-// which differs only in size, which the tile scales away. Recolours
-// (Hisuian Electrode, the Deerling seasons, Squawkabilly's plumages,
-// Minior's cores) stay distinct. The first of a group is the one dealt.
+// Forms that share a sprite, so Who's That takes any of their names for
+// any of them. Recolours stay distinct. The first of a group is dealt.
 const LOOKALIKE_GROUPS: ReadonlyArray<readonly string[]> = [
   ["pikachu", "pikachustarter"],
   ["eevee", "eeveestarter"],
@@ -101,7 +92,7 @@ export const DECKS: Deck[] = [
     options: CATEGORIES.filter((category) => category.group === "region"),
     answers: (pokemon) => pokemon.regions.map((region) => `region-${region}`),
     // not the regional forms, whose names give the answer away; dual-region
-    // forms (White-Striped Basculin, Bloodmoon Ursaluna) stay — theirs don't
+    // forms (White-Striped Basculin, Bloodmoon Ursaluna) stay
     eligible: (pokemon) => pokemon.regions.length > 0 && !isMegaOrGmax(pokemon) && !isRegionalForm(pokemon),
     // Gen 5+ regions are the user's known weak spot
     bias: (pokemon) => (pokemon.gen >= 5 ? 2 : 1),
@@ -156,7 +147,7 @@ export const DECKS: Deck[] = [
     cols: 5,
     options: CATEGORIES.filter((category) => category.group === "type"),
     answers: (pokemon) => weaknessesOf(pokemon.types).map((type) => `type-${type}`),
-    // pure type-chart knowledge — never credits the type categories
+    // pure type-chart knowledge; never credits the type categories
     categories: () => [],
     // Gmax never changes type; every Gen 6+ typing has a weakness, but guard anyway
     eligible: (pokemon) => !pokemon.flags.includes("gmax") && weaknessesOf(pokemon.types).length > 0,
@@ -210,7 +201,7 @@ export function comboParts(deckId: string): [Deck, Deck] | null {
 
 export const isDeckId = (id: string): boolean => id === "all" || DECK_BY_ID.has(id) || COMBO_IDS.includes(id);
 
-// "Region", "Type × Region", "All decks" — the chooser and the Stats lists.
+// "Region", "Type × Region", "All decks": the chooser and the Stats lists.
 export function deckLabel(deckId: string): string {
   if (deckId === "all") return "All decks";
   const parts = comboParts(deckId);
@@ -218,7 +209,7 @@ export function deckLabel(deckId: string): string {
   return deckById(deckId).label;
 }
 
-// Every option id the card can answer with — a combo's union. Attempts
+// Every option id the card can answer with (a combo's union). Attempts
 // are recorded against all of them.
 export function deckAnswers(deckId: string, pokemon: Pokemon): string[] {
   const parts = comboParts(deckId);
@@ -253,8 +244,8 @@ export function isRightPick(deck: Deck, picks: string[], answers: string[]): boo
 }
 
 // One deck's share of a combo card's picks, which both pads keep in one
-// list — option ids carry their group (type-…, region-…), so the split
-// is exact.
+// list. Option ids carry their group (type-…, region-…), so the split is
+// exact.
 export function deckPicks(deck: Deck, picks: string[]): string[] {
   return picks.filter((id) => deck.options.some((option) => option.id === id));
 }
@@ -290,7 +281,7 @@ export const FOCUS_FACETS: ReadonlyArray<readonly [FocusFacet, string]> = [
 // facet -> the category ids selected in it; missing or empty = everything
 export type CardFilter = Partial<Record<FocusFacet, string[]>>;
 
-// The chips a facet offers — its quizzable categories (stage without the
+// The chips a facet offers: its quizzable categories (stage without the
 // derived Not Fully Evolved, groups without the Mega/Gmax form kinds).
 const facetCache = new Map<FocusFacet, Category[]>();
 export function facetCategories(facet: FocusFacet): Category[] {
@@ -319,9 +310,8 @@ export function matchesFocus(pokemon: Pokemon, filter: CardFilter): boolean {
   });
 }
 
-// A deck's pool narrowed to the focus filter, cached per (deck, filter) —
-// re-filtering on every card advance is the app's hottest path, and a
-// user only ever has a handful of filter states.
+// A deck's pool narrowed to the focus filter, cached per (deck, filter):
+// it runs on every card advance, and a user has few filter states.
 const focusPoolCache = new Map<string, Pokemon[]>();
 export function focusedDeckPool(deckId: string, filter: CardFilter): Pokemon[] {
   const signature = FOCUS_FACETS.map(([facet]) => (filter[facet] ?? []).slice().sort().join(",")).join("|");
@@ -380,11 +370,11 @@ export function saveSilhouette(on: boolean): void {
 export const cardKey = (deckId: string, pokemon: Pokemon): string =>
   deckId === "region" ? String(pokemon.id) : `${deckId}:${pokemon.id}`;
 
-// Every card any deck can ask, with its stats key — the Stats tab lists
+// Every card any deck can ask, with its stats key. The Stats tab lists
 // them per review status, and the due counter walks them.
 export interface CardRef {
   deckId: string;
-  // "Region", "Type × Region" — for the Stats review lists
+  // "Region", "Type × Region", for the Stats review lists
   label: string;
   pokemon: Pokemon;
   key: string;
@@ -410,9 +400,9 @@ export interface DealScope {
   filter: CardFilter;
 }
 
-// How many cards are due for review right now — the Stats tab's "Review
-// 48 due cards" over every deck, or the Cards header's "12 due" over
-// just the cards its deck and filter can deal.
+// How many cards are due for review right now: over every deck for the
+// Stats tab, or over just the cards a deck and filter can deal for the
+// Cards header.
 export function dueCardCount(merged: MergedStats, now: number = Date.now(), scope?: DealScope): number {
   let due = 0;
   const isDue = (key: string): boolean => scheduleStatus(merged.flashcards[key], now) === "due";
@@ -463,8 +453,8 @@ export interface CardSession {
   card: Card | null;
   // the card after this one, picked early so its sprite can preload
   next: Card | null;
-  // options toggled so far — a combo's two pads together (deckPicks
-  // tells them apart)
+  // options toggled so far, a combo's two pads together (deckPicks tells
+  // them apart)
   selection: string[];
   picked: Picked;
   comboOk: ComboVerdict | null;
@@ -478,7 +468,7 @@ export interface CardSession {
   // live card)
   viewing: number | null;
   // the answer that can still be taken back: its recordAttempt token and
-  // the card it graded (memory-only — an undo never survives a reload)
+  // the card it graded (memory-only; an undo never survives a reload)
   undo: { token: number; key: string } | null;
 }
 

@@ -4,8 +4,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  /* every control paints its own pressed state; iOS's grey flash on top
-     of that (worst while scrolling past tappable cards) is just noise */
+  /* every control paints its own pressed state; iOS's grey tap flash
+     would double it */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -96,8 +96,8 @@
 }
 
 /* The document itself scrolls (not an inner box): iOS Safari only tucks
-   its toolbar away for page scrolling. Overscroll bounces the whole web
-   view, fixed nav included; that's the price. */
+   its toolbar away for page scrolling, at the cost of overscroll bouncing
+   the whole web view, fixed nav included. */
 html {
   min-height: 100%;
 }
@@ -297,12 +297,9 @@ header h1 .home-link:focus-visible {
 
 @media (max-width: 640px) {
   :root {
-    /* where the floating pill's bottom edge sits: --nav-inset + --nav-gap
-       above the bottom of the layout viewport, itself --nav-lift above
-       the screen's bottom (0 in a browser; see the home-screen rules).
-       In a browser the toolbar below already covers the home indicator,
-       so the pill sits just above the toolbar; a home-screen app gets the
-       inset (dipping into it a touch). */
+    /* the floating pill's bottom edge: --nav-inset + --nav-gap above the
+       layout viewport's bottom, itself --nav-lift above the screen's (0 in
+       a browser, whose toolbar already covers the home indicator) */
     --nav-inset: min(env(safe-area-inset-bottom), 8px);
     --nav-gap: 8px;
     --nav-lift: 0px;
@@ -339,16 +336,12 @@ header h1 .home-link:focus-visible {
       /* the pill's bottom edge lines up with the home indicator, the way
          system sheets end */
       --nav-gap: calc(8px - var(--nav-inset));
-      /* iOS 26 home-screen apps size the layout viewport as if the status
-         bar were opaque but still draw the page under it, leaving a
-         status-bar-high strip of body below `bottom: 0`. The large viewport
-         is the real screen height, so measure from that; elsewhere the
-         correction is 0. */
+      /* an iOS home-screen app's layout viewport can fall a status bar
+         short of the screen, leaving a strip of body below `bottom: 0`;
+         the large viewport is the real screen height, so measure from it */
       --nav-lift: calc(100dvh - 100lvh);
-      /* clear the pill: 8px + nav from the screen bottom, which is
-         (100lvh - 100dvh) below the page's bottom. The page's padding and
-         the Cards pad, which cancels it, both read this, so they agree
-         (the pad ran 8px past the page when only the padding changed) */
+      /* clear the pill: 8px + nav from the screen bottom. The page's
+         padding and the Cards pad both read this, so they agree */
       --page-bottom: calc(var(--nav-h) + 20px + var(--nav-lift));
     }
   }
@@ -580,7 +573,7 @@ button.pill {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* one colour token per type — pills and the Type deck's buttons both read it */
+/* one colour token per type; pills and the Type deck's buttons both read it */
 .type-normal { --type-c: var(--type-normal); }
 .type-fire { --type-c: var(--type-fire); }
 .type-water { --type-c: var(--type-water); }
@@ -938,8 +931,8 @@ button.pill {
   min-width: 0;
 }
 
-/* a tile: the sprite takes whatever height the name leaves — in an
-   answer grid, and as the Cards stage's big tile (.stage-tile) */
+/* a tile, in an answer grid or as the Cards stage's big tile: the sprite
+   takes whatever height the name leaves */
 :is(.answer-grid, .stage-tile) .pokemon-card {
   width: 100%;
   gap: 3px;
@@ -975,12 +968,8 @@ button.pill {
   }
 }
 
-/* Form names ("Gigantamax Urshifu (Rapid Strike)") need up to three
-   lines; every card reserves them so rows stay uniform, and the name is
-   centred inside that box */
-/* a card's sprite slot: the fit transform scales the sprite up inside
-   it, and a hair of spill at an edge tile must not widen the page (the
-   one thing that let a phone pan sideways) */
+/* a card's sprite slot: the fit transform scales the sprite up inside it,
+   and any spill at an edge tile must not widen the page */
 .card-art {
   display: grid;
   place-items: center;
@@ -1258,7 +1247,7 @@ button.pill {
 }
 
 /* Long-pressing a phone screen shouldn't start selecting the card, the
-   pills or the board — the answer input is the only text field here. */
+   pills or the board; the answer input is the only text field here. */
 .flashcards,
 .board,
 .question,
@@ -1371,25 +1360,13 @@ button.pill {
   width: 100%;
   max-width: 512px; /* 480px of content plus the pad's full-bleed 16px */
   margin: 0 auto;
-  /* How a card fits a short screen. The tile runs the column's width,
-     and its height is what the screen leaves it, 220px at most: a single
-     deck's tallest card (Type: four rows of 60px options under the full
-     tile) fits at --fits-at. Below that, everything on the card gives up
-     a share of the shortfall: the tile 124px of every 210, each of the
-     four rows 20, the CTA 6, down to their minimums (a 96px tile, 40px
-     rows, a 44px CTA) all at once; shorter still, the page scrolls. A
-     combo card stacks two pads (Type × Region: seven rows of 46px), so
-     its tile is full size only from --tall-fits-at, and it shares its
-     squeeze the same way (.flashcards.combo) — a combo's tile is shorter
-     than a single deck's on a phone. Both heights are measured with the
-     smallest tile and full-size rows, plus the tile's 124px of range, so
-     a change to the pad's spacing means measuring again (the phone's
-     values, with the pill's zone inside the pad and no tab bar above, are
-     in the 480px block) */
-  /* the height the column has, as in those measurements: the viewport
-     less the status bar a home-screen app pads out at the top (see .app)
-     and the tab pill's lift, where the layout viewport falls short of the
-     screen — dvh alone counts the status bar and runs the fit 62px long */
+  /* How a card fits a short screen: the tallest single-deck card fits at
+     --fits-at; below that the tile, the option rows and the CTA each give
+     up a share of the shortfall down to their minimums, and shorter still
+     the page scrolls. The fit heights were measured against the pad's
+     spacing, so a spacing change means measuring again. */
+  /* the height the column has: the viewport less the status bar a
+     home-screen app pads out at the top (see .app) and the tab pill's lift */
   --screen: calc(100dvh - env(safe-area-inset-top, 0px) - var(--nav-lift, 0px));
   --fits-at: 920px; /* 796px with the smallest tile */
   --shortfall: max(0px, var(--fits-at) - var(--screen));
@@ -1399,8 +1376,8 @@ button.pill {
   --tall-fits-at: 1052px; /* 928px with the smallest tile */
 }
 
-/* the combo card is the tallest card: the tile 124px of every 200 of the
-   squeeze, each of the seven rows 10, the CTA 6 */
+/* a combo card stacks two pads, so it is full size only from
+   --tall-fits-at and shares its squeeze across seven shorter rows */
 .flashcards.combo {
   --squeeze: max(0px, var(--tall-fits-at) - var(--screen));
   --tile: max(96px, 220px - var(--squeeze) * 124 / 200);
@@ -1521,10 +1498,8 @@ button.pill {
 /* ---- cards: the stage (the Pokémon's tile · fact pills) ---- */
 
 /* The tile sits right over the answer card, and the two are centred
-   between the header row and the docked foot: the stage's top margin and
-   the card's bottom margin are auto, so they split any spare height. A
-   card taller than the screen scrolls (nothing shrinks below its content),
-   under the sticky foot */
+   between the header row and the docked foot by auto margins. A card
+   taller than the screen scrolls under the sticky foot */
 .card-stage {
   flex: none;
   margin-top: auto;
@@ -1537,14 +1512,9 @@ button.pill {
 }
 
 /* Who's That types its answer, and a phone's keyboard takes the bottom
-   half of the screen. On a touch screen its card sits at the top of the
-   column, without the empty pill row it would keep while asking, so the
-   text box rests clear of the keyboard (60px on a 956px phone, 30px on
-   an 852px one) — and the box is focused without the scroll an iPhone
-   would otherwise make (see NameInput), so
-   the page holds still and the tile stays in view while typing. The
-   pills' return on answering moves only the pad, and the keyboard has
-   gone by then */
+   half of the screen, so on a touch screen its card sits at the top of
+   the column without the empty pill row, keeping the text box clear of
+   the keyboard and the tile in view while typing */
 @media (pointer: coarse) {
   .flashcards.name-deck .card-stage {
     margin-top: 0;
@@ -1554,11 +1524,9 @@ button.pill {
     display: none;
   }
 
-  /* While the box is focused the keyboard covers the foot and the tab
-     pill, and iOS 26's keyboard is see-through: they show faintly behind
-     it and hop as the keyboard's suggestion strip comes and goes (WebKit
-     re-anchors fixed and sticky boxes to the keyboard's frame). So they
-     fade out until the keyboard goes */
+  /* while the box is focused the keyboard covers the foot and the tab
+     pill, and iOS's see-through keyboard would show them hopping behind
+     it, so they fade out until the keyboard goes */
   .flashcards.name-deck:has(.answer-pad input:focus) .pad-foot,
   .app:has(.flashcards.name-deck .answer-pad input:focus) .tabs {
     opacity: 0;
@@ -1581,11 +1549,9 @@ button.pill {
   color: var(--wrong);
 }
 
-/* the Pokémon on a big answer-grid tile the width of the column, the
-   sprite in the middle and its name under it; once the card is answered
-   the tile is a button into the detail sheet, with a cue in its corner.
-   Its height comes from the screen's (see .flashcards), so a short screen
-   gets a shorter tile and the pad's action row stays on it */
+/* the Pokémon on a big tile the width of the column; once the card is
+   answered it is a button into the detail sheet. Its height follows the
+   screen's (see .flashcards), so a short screen gets a shorter tile */
 .stage-tile {
   width: 100%;
   height: var(--tile);
@@ -1682,10 +1648,9 @@ button.pill {
   border-radius: var(--radius-lg);
 }
 
-/* the card's controls — the CTA slot and the action row — on a panel
-   with a rounded top edge, docked at the bottom of the screen; sticky,
-   so a card taller than the screen scrolls under it and Submit stays in
-   reach */
+/* the card's controls (the CTA slot and the action row) on a panel docked
+   at the bottom of the screen; sticky, so a card taller than the screen
+   scrolls under it and Submit stays in reach */
 .pad-foot {
   flex: none;
   position: sticky;
@@ -1699,9 +1664,8 @@ button.pill {
 }
 
 /* on a phone the tab pill floats at the bottom, so the foot is a card of
-   its own, docked above the pill (the page's bottom padding keeps the
-   column clear of it, see --page-bottom) rather than a panel the pill
-   sits on; a tall card still scrolls under it */
+   its own docked above the pill (see --page-bottom) rather than a panel
+   the pill sits on */
 @media (max-width: 640px) {
   .pad-foot {
     bottom: calc(var(--page-bottom) - var(--nav-lift));
@@ -1794,13 +1758,9 @@ button.pill {
   animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
-/* One column count per deck (the type decks five, the rest four), the
-   same on every screen size, so a deck's options sit in the same spots
-   on the phone and the desktop (muscle memory); a short last row is
-   centred (the three types under five columns, the two regions under
-   four); a narrowed pad with fewer options than that spreads them out
-   (cols-1 to cols-3). Wrapped flex rows rather than a grid, which can't
-   centre a partial row: each option is given its column's width */
+/* One column count per deck on every screen size, so a deck's options sit
+   in the same spots on phone and desktop, with a short last row centred.
+   Wrapped flex rows rather than a grid, which can't centre a partial row */
 .pad-grid {
   display: flex;
   flex-wrap: wrap;
@@ -2289,7 +2249,7 @@ button.pill {
 }
 
 .evo-line {
-  --evo-tile: 100px; /* the largest any tile needs (a two-line name over a two-line method) — so all match */
+  --evo-tile: 100px; /* the largest any tile needs (a two-line name over a two-line method), so all match */
   display: flex;
   justify-content: center;
   width: max-content;
@@ -2304,7 +2264,7 @@ button.pill {
   flex: none;
 }
 
-/* a branch: a column of rows — the leaf columns, then each further chain */
+/* a branch: a column of rows, the leaf columns then each further chain */
 .evo-branch {
   display: flex;
   flex-direction: column;
@@ -2335,13 +2295,13 @@ button.pill {
   padding: 0 1px;
 }
 
-/* all one size: --evo-tile is what the tallest content — a two-line name
-   over a two-line method (Wormadam Sandy, Urshifu Rapid Strike) — needs
-   on a desktop; on a phone the tiles are smaller and just grow taller */
+/* all one size: --evo-tile is what the tallest content (a two-line name
+   over a two-line method) needs on a desktop; on a phone the tiles are
+   smaller and grow taller instead */
 .evo-tile {
   flex: none;
   width: var(--evo-tile);
-  min-height: var(--evo-tile-h, var(--evo-tile)); /* square unless a tile of the sheet needs more — then all match (useFitRows) */
+  min-height: var(--evo-tile-h, var(--evo-tile)); /* square unless a tile of the sheet needs more; then all match (useFitRows) */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2359,10 +2319,9 @@ button.pill {
   min-width: 0;
 }
 
-/* a transformation that only holds for a battle (Mega, Gigantamax,
-   Primal, an ability's form): dotted — "becomes, for a while". Variants
-   (regional forms, Own Tempo Rockruff) and lasting forms (Rotom Wash,
-   Origin Dialga) are solid like any stage: they are that Pokémon. */
+/* a transformation that only holds for a battle (Mega, Gigantamax, Primal,
+   an ability's form) is dotted; variants and lasting forms are solid like
+   any stage */
 .evo-tile.temporary {
   border-style: dotted;
   border-color: var(--border);
@@ -2478,10 +2437,9 @@ button.evo-tile:active {
     padding: 8px 0 6px;
   }
 
-  /* the phone's chrome: the foot ends 12px above the tab pill (the page's
-     bottom padding, see --page-bottom) and there's no tab bar at the top
-     (see .flashcards). A browser tab's pill sits 8px higher than a
-     home-screen app's, so its card needs 8px more */
+  /* the phone's fit heights: the foot ends above the tab pill (see
+     --page-bottom) and there is no tab bar at the top. A browser's pill
+     sits 8px higher than a home-screen app's, so its card needs 8px more */
   .flashcards {
     --fits-at: 896px; /* 772px with the smallest tile */
     --tall-fits-at: 1028px; /* 904px with the smallest tile */
@@ -2751,8 +2709,8 @@ button.evo-tile:active {
   font-size: 0.8rem;
 }
 
-/* The wrong guess: its tile wears the miss colour; tapping opens the
-   detail sheet, where "why doesn't it fit" lives */
+/* The wrong guess: its tile takes the miss colour; tapping opens the
+   detail sheet, which shows why it doesn't fit */
 .wrong-guess .pokemon-card {
   border-color: color-mix(in srgb, var(--wrong) 60%, var(--border));
   background: var(--wrong-soft);
@@ -2919,10 +2877,9 @@ button.evo-tile:active {
   margin-bottom: 14px;
 }
 
-/* Where there's room, the nine cells — not the board including its row
-   labels — sit on the page's centre line: the board is widened by a
-   phantom column on the right the size of the label column (84px + gap),
-   and everything that lines up with the board gets the same */
+/* Where there's room, the nine cells (not the board with its row labels)
+   sit on the page's centre line: a phantom right column the size of the
+   label column widens the board, and everything aligned with it */
 @media (min-width: 641px) {
   .board,
   .grid-topbar,
@@ -2938,8 +2895,8 @@ button.evo-tile:active {
   }
 }
 
-/* the board sheet: a fixed head, then the rows scroll — the list of past
-   PokeDokus grows by one a day */
+/* the board sheet: a fixed head, then the rows scroll (the list of past
+   PokeDokus grows by one a day) */
 .archive-sheet {
   max-height: min(78dvh, 620px);
   display: flex;
@@ -3669,12 +3626,11 @@ main > * {
   margin: calc(-1 * var(--sp-2)) 0 var(--sp-4);
 }
 
-/* keep the grid's answer panel clear of the phone nav when scrolled into view */
 /* ---- Pokémon detail popup ---- */
 
 /* sheets are as tall as their content, but every one starts at the same
-   height on the page — where a full-height sheet would sit if centred —
-   so tapping from one Pokémon to the next doesn't move the top edge */
+   height on the page (where a full-height sheet would sit if centred), so
+   tapping from one Pokémon to the next doesn't move the top edge */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -3791,19 +3747,16 @@ main > * {
   animation: none;
 }
 
-/* three blocks — identity, facts, evolution — divided by hairlines,
+/* three blocks (identity, facts, evolution) divided by hairlines,
    everything left-aligned so labels and values line up */
 .modal.detail {
   padding: 0;
   text-align: left;
 }
 
-/* one grid:   sprite | dex line
-                sprite | name  region
-                sprite | types  groups
-   the region pill sits right after the name, the group pills right after
-   the types — same place on every sheet; on a phone the types row drops
-   under the sprite and spans the header when it can't hold both */
+/* one grid: the sprite beside three rows (dex line; name and region;
+   types and groups), the same place on every sheet. On a phone the types
+   row drops under the sprite when it can't hold both */
 .detail-head {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -3844,10 +3797,10 @@ main > * {
   margin: 0;
   font-size: 1.35rem;
   line-height: 1.2;
-  white-space: nowrap; /* the layout gives way before the name does … */
+  white-space: nowrap; /* the layout gives way before the name does */
 }
 
-/* … unless it would push the region pill down: then the name takes two
+/* unless the name would push the region pill down: then it takes two
    lines and the pill sits centred beside them */
 .detail-head.name-wraps .detail-name-row {
   flex-wrap: nowrap;
@@ -3894,7 +3847,7 @@ main > * {
 }
 
 /* each row is a small-caps label with its pills beneath, like the
-   Evolution heading — one rhythm across the sheet */
+   Evolution heading, so the sheet has one rhythm */
 .detail-facts {
   margin: 0;
   padding: var(--sp-3) var(--sp-4) var(--sp-4);

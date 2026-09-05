@@ -29,8 +29,8 @@ interface PokemonCardProps {
   eager?: boolean;
   // a small cue in the corner, shown once the card is clickable
   hint?: string;
-  // keep the name off the card entirely — caption, tooltip and alt text
-  // (the Name deck asks who this is)
+  // keep the name off the card entirely (caption, tooltip and alt text),
+  // since the Name deck asks who this is
   hideName?: boolean;
   // a small figure in the corner: a replayed PokeDoku cell's real pick share
   badge?: string;

@@ -1,10 +1,6 @@
-// Evolution lines, drawn from each record's `prevo` (the record it evolved
-// from) — and its `otherPrevos`, where a Pokémon evolves from two records
-// (Gholdengo: Chest and Roaming Form Gimmighoul). A line is a tree walked
-// from the root of whatever line the Pokémon belongs to; a Pokémon that
-// doesn't evolve is a tree of one. Mega, Gigantamax and the other
-// transformations (forms.ts) have no evolution of their own, so they show
-// their base's line.
+// Evolution lines, drawn from each record's `prevo` and `otherPrevos`. A
+// line is a tree walked from its root; a Pokémon that doesn't evolve is a
+// tree of one. Transformations (forms.ts) show their base's line.
 
 import { ALL_POKEMON, POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { Pokemon } from "../data/types.ts";
@@ -39,9 +35,8 @@ function climb(pokemon: Pokemon): Pokemon {
 }
 
 // The root of the line a Pokémon belongs to, and the records to highlight:
-// the Pokémon itself, or what it's a transformation of (Charizard for Mega
-// Charizard X — see forms.ts) along with whoever shares that transformation
-// (Mega Meowstic is both Meowstics').
+// the Pokémon itself, or what it's a transformation of along with whoever
+// shares that transformation (Mega Meowstic is both Meowstics').
 function rootOf(pokemon: Pokemon): { root: Pokemon; focusIds: Set<number> } {
   let focus = baseOf(pokemon);
   // a transformation, or a cosmetic clone that has a stage but no line of
@@ -52,9 +47,7 @@ function rootOf(pokemon: Pokemon): { root: Pokemon; focusIds: Set<number> } {
   }
   let root = climb(focus);
   // a root that is only ever a second pre-evolution (Roaming Form
-  // Gimmighoul: everything it evolves into has another record as its
-  // `prevo`) belongs to that record's own line — unlike Burmy Sandy Cloak,
-  // which has Wormadam Sandy of its own as well as Mothim
+  // Gimmighoul) belongs to the primary pre-evolution's line
   const kids = childrenOf.get(root.id) || [];
   if (kids.length && kids.every((child) => child.prevo !== root.id)) root = climb(kids[0]);
   return { root, focusIds: new Set([focus.id, ...sharersOf(pokemon).map((sharer) => sharer.id)]) };
@@ -69,9 +62,8 @@ export interface EvolutionNode {
 export interface EvolutionTree {
   root: EvolutionNode;
   // the other records that evolve into exactly what the root does (Roaming
-  // Form Gimmighoul beside Gimmighoul, both → Gholdengo) — nearly always
-  // none. A record that shares only some evolutions (Burmy Sandy Cloak:
-  // Mothim, but its own Wormadam) keeps its own tree instead.
+  // Form Gimmighoul beside Gimmighoul); a record that shares only some
+  // evolutions keeps its own tree instead
   coRoots: Pokemon[];
   // the records to highlight
   focusIds: Set<number>;
@@ -100,13 +92,9 @@ export function evolutionTree(pokemon: Pokemon): EvolutionTree {
   return { root: node(root), coRoots, focusIds };
 }
 
-// The chip has room for a phrase, not a sentence: "Use a Water Stone" →
-// "Water Stone", "Level 16 during the day" → "Lv 16, day", "Trade holding
-// a Metal Coat" → "Trade + Metal Coat", "Use a Leaf Stone, or level up near
-// a Moss Rock" → "Leaf Stone / Moss Rock". The full text stays in the title.
-// A tile is square and about 90px wide (App.css), so a method needs to
-// stay under ~30 characters — the few dex lines that run longer get their
-// own phrasing here.
+// The tile has room for a phrase, not a sentence ("Use a Water Stone"
+// becomes "Water Stone"); the full text stays in the title. The few dex
+// lines the rewrites below can't shorten enough get their own phrasing.
 const TERSE: Record<string, string> = {
   "Have 49+ HP lost and walk under stone sculpture in Dusty Bowl": "Dusty Bowl arch, 49+ HP lost",
   "Evolve Nincada with an empty party slot and a Poké Ball": "Empty party slot + Poké Ball",
@@ -127,8 +115,8 @@ const TERSE: Record<string, string> = {
   "Level 25 from a special Rockruff during the evening": "Lv 25, Dusk",
 };
 
-// Title Case, leaving the little words alone: "Lv 20, female, cave
-// battle" → "Lv 20, Female, Cave Battle", "Trade + Metal Coat", "in Galar".
+// Title Case, leaving the little words alone ("Lv 20, Female, Cave
+// Battle", "in Galar").
 const SMALL = new Set(["a", "an", "the", "and", "or", "in", "at", "on", "of", "with", "its", "per", "vs"]);
 export function titleCase(text: string, mid = false): string {
   return text.replace(/[A-Za-zÀ-ÿ'’]+/g, (word: string, offset: number) =>
@@ -167,11 +155,10 @@ function shortHowRaw(detail: string): string {
     .replace(/Mount Lanakila/, "Mt. Lanakila");
 }
 
-// Where an evolution has to happen, when the dex's line for it doesn't say:
-// a regional form that evolves from a non-regional (or differently
-// regional) Pokémon — Koffing → Galarian Weezing, Pikachu → Alolan Raichu,
-// Quilava → Hisuian Typhlosion — does so by evolving in that region;
-// elsewhere it becomes the usual form. Null when nothing needs saying.
+// Where an evolution has to happen, when the dex's line doesn't say: a
+// regional form that evolves from a differently regional Pokémon (Koffing
+// to Galarian Weezing) does so in that region. Null when nothing needs
+// saying.
 const REGION_FORMS = new Set(["Alola", "Galar", "Hisui", "Paldea"]);
 export function evoWhere(pokemon: Pokemon): string | null {
   if (pokemon.form === null || !REGION_FORMS.has(pokemon.form)) return null;
@@ -180,11 +167,8 @@ export function evoWhere(pokemon: Pokemon): string | null {
   return `in ${pokemon.form}`;
 }
 
-// What the dex line leaves out — the sides of a branch that share one
-// line, and the gender an evolution needs (keyed by the record's slug).
-// (Burmy's cloak — and so its Wormadam — follows where it last battled;
-// PokeDoku lists each cloak as its own Burmy, so each Wormadam has its own
-// Burmy above it in the tree.)
+// What the dex line leaves out: what tells apart the sides of a branch
+// that share one line, and the gender an evolution needs (keyed by slug).
 const NOTES: Record<string, string> = {
   solgaleo: "in Sun / Scarlet",
   lunala: "in Moon / Violet",

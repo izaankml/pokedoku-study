@@ -1,14 +1,11 @@
 // A guest session on PokeDoku, the way the site gives every anonymous
 // visitor one: NextAuth's `anon` credentials provider mints a temp user,
-// and the session cookie (Domain=.pokedoku.com) then authenticates
-// api.pokedoku.com. Endpoints beyond /pokemon/all and /puzzle/current
-// (stats, archives, guesses) all 401 without it. Kamal authorized the
-// guest login on 2026-08-26.
+// and the session cookie then authenticates api.pokedoku.com. The stats
+// endpoints return 401 without it.
 //
-// Cookie handling is a deliberately small jar: every cookie either host
-// sets is kept by name and sent back to both hosts — fine here because
-// all traffic is same-site HTTPS between pokedoku.com and its api
-// subdomain.
+// The cookie jar is deliberately small: every cookie either host sets is
+// kept by name and sent back to both hosts, which is fine because all
+// traffic is same-site HTTPS between pokedoku.com and its api subdomain.
 
 const SITE = "https://pokedoku.com";
 const API = "https://api.pokedoku.com";
@@ -62,7 +59,7 @@ export class PokedokuSession {
     this.cookies.set("__Secure-next-auth.session-token", token);
   }
 
-  // A page of pokedoku.com itself, as the session — null when the site
+  // A page of pokedoku.com itself, as the session; null when the site
   // redirects instead (dated puzzle pages send anyone not signed in home)
   // or fails
   async sitePage(path: string): Promise<string | null> {
@@ -79,7 +76,7 @@ export class PokedokuSession {
     const response = await fetch(`${API}${path}`, {
       headers: { "Accept-Language": "en", Cookie: this.cookieHeader() },
     });
-    if (!response.ok) throw new Error(`GET ${path} → ${response.status}`);
+    if (!response.ok) throw new Error(`GET ${path}: HTTP ${response.status}`);
     this.storeCookies(response);
     return (await response.json()) as T;
   }
@@ -94,7 +91,7 @@ export class PokedokuSession {
       },
       body: JSON.stringify(body),
     });
-    if (!response.ok) throw new Error(`POST ${path} → ${response.status}`);
+    if (!response.ok) throw new Error(`POST ${path}: HTTP ${response.status}`);
     this.storeCookies(response);
     return (await response.json()) as T;
   }

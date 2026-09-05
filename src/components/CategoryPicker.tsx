@@ -13,14 +13,10 @@ interface CategoryPickerProps {
   label: string;
 }
 
-// A category picker: a field showing the choice (or "Any category") that
-// opens a panel with a search box over every category, grouped as in
-// Stats. Typing narrows the list by label or group ("fire", "galar",
-// "stone", "move"); the arrows and Enter pick from the keyboard. Tapping
-// the chosen category again — or the × on the field — clears it.
-// `partners` are the categories chosen in the other pickers: options that
-// can't combine with them (no Pokémon fits them all, or the same
-// exclusive group, like two evolution stages) are disabled.
+// A category picker: a field showing the choice that opens a searchable
+// panel of every category, grouped as in Stats. Tapping the chosen
+// category again, or the × on the field, clears it. Options that can't
+// combine with the `partners` chosen in the other pickers are disabled.
 function CategoryPicker({ value, onChange, partners = [], label }: CategoryPickerProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -67,9 +63,9 @@ function CategoryPicker({ value, onChange, partners = [], label }: CategoryPicke
     groupLabel,
     categories: CATEGORIES.filter((category) => category.group === group && matches(category, groupLabel)),
   })).filter((entry) => entry.categories.length);
-  // canJoin over ~95 categories isn't free: compute the disabled set only
-  // while the panel is open, keyed on the partners themselves (derived
-  // inside the memo from the string key, so the deps stay honest)
+  // canJoin over every category isn't free: compute the disabled set only
+  // while the panel is open, keyed on a string of the partners so the
+  // memo's deps are stable
   const partnersKey = partners.filter(Boolean).join("|");
   const disabledIds = useMemo(() => {
     const chosenPartners = partnersKey ? partnersKey.split("|") : [];

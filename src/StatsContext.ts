@@ -12,10 +12,9 @@ export interface SyncState {
   lastError?: string;
 }
 
-// What connectGoogle reports back for the migration offer: whether a
-// gist PAT was present, and how many other devices' histories were
-// imported from the gist (null = the gist couldn't be read — keep the
-// token so nothing is lost).
+// What connectGoogle reports back for the migration offer: whether a gist
+// token was present, and how many other devices' histories were imported
+// from the gist (null when the gist couldn't be read, so the token is kept).
 export interface ConnectResult {
   hadLegacyToken: boolean;
   imported: number | null;

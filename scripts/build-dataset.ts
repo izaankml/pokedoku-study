@@ -1,32 +1,15 @@
 // Generates src/data/pokedex.json from @pkmn/dex (Pokémon Showdown's data).
 //
-// @pkmn/dex is NOT a dependency of this project (it is ~50 MB installed).
-// Install it anywhere and point this script at that installation:
+// @pkmn/dex is not a dependency of this project. Install it anywhere and
+// point this script at that installation:
 //
 //   npm install --no-save @pkmn/dex
 //   npm run build-data            # looks in ./node_modules
 //   node scripts/build-dataset.ts /some/dir/with/node_modules
 //
-// The script validates the generated data against known-good counts and
-// spot checks, and exits non-zero if anything is off. To audit the result
-// against pokedoku-helper.com's PokeAPI-derived data, run
-// scripts/check-against-helper.ts afterwards.
-//
-// Category semantics follow PokeDoku (its "How to play" and the notes in
-// its UI):
-// - A record is one PokeDoku answer: a species, or an alternate form that
-//   answers some cell the base species can't. Mega and Gigantamax forms are
-//   the answers to the Mega/Gigantamax categories; the base species is not.
-// - Regions: regional forms count only for the region they debuted in; Mega,
-//   Gigantamax and Primal forms count for the base species' region; any
-//   other form that debuted in a different region counts for both.
-// - Evolution is form-aware (Kantonian Farfetch'd has no evolution line;
-//   Galarian Farfetch'd is first stage) and a Pokémon counts for every
-//   evolution method that works in some core game (Alakazam: trade AND
-//   item, via the Linking Cord). Mega/Gigantamax forms and battle-only
-//   Ash-Greninja/Eternamax have no evolution categories at all.
-// - Move categories are "can learn the move" (any core game, any method
-//   except events); Gigantamax forms have no moves.
+// The script validates the generated data against known counts and spot
+// checks, and exits non-zero if anything is off. Category semantics follow
+// PokeDoku's "How to play"; the README's Dataset section spells them out.
 
 import { createRequire } from "node:module";
 import { writeFileSync } from "node:fs";
@@ -154,10 +137,9 @@ const hasNoEvolution = (entry: DexSpecies): boolean =>
 
 // ---- evolution graph ----------------------------------------------------
 //
-// One graph over species + forms. A form's parent is whatever the dex names
-// (Sirfetch'd <- Farfetch'd-Galar), so a base species whose only evolution
-// belongs to a regional form (Kantonian Farfetch'd, Corsola, Qwilfish, Red-
-// Striped Basculin) has no evolution line — which is how PokeDoku sees it.
+// One graph over species and forms. A form's parent is whatever the dex
+// names (Sirfetch'd <- Farfetch'd-Galar), so a base species whose only
+// evolution belongs to a regional form has no evolution line, as in PokeDoku.
 
 const pool = species.concat(formes);
 const byName = new Map(pool.map((entry) => [entry.name, entry]));
@@ -199,18 +181,12 @@ function stageOf(entry: DexSpecies): Stage {
   return "final";
 }
 
-// "Branched: a pre-evo that can evolve into completely different Pokémon
-// (excluding forms of the same Pokémon)" — so Rockruff (three Lycanroc
-// forms) is not branched, Scyther (Scizor or Kleavor) is.
+// Branched means it can evolve into different species, forms of one species
+// aside: Scyther (Scizor or Kleavor) is, Rockruff (three Lycanroc forms) isn't.
 function isBranched(entry: DexSpecies): boolean {
   const kids = childrenOf.get(entry.name) || [];
   return new Set(kids.map((kid) => kid.num)).size >= 2;
 }
-
-// The record a Pokémon evolved from, for drawing evolution lines: the
-// parent species' number, or the parent form's record id when that form has
-// one (Sirfetch'd <- Farfetch'd-Galar). Filled in once the form records are
-// known — see prevoIdOf below.
 
 // ---- evolution methods --------------------------------------------------
 
@@ -341,12 +317,9 @@ function abilitiesOf(entry: DexSpecies): string[] {
   );
 }
 
-// Every ability, for display: regular slots first, then the hidden ability
-// (H) and any special one (S, e.g. Own Tempo Rockruff) marked as such.
-// The dex's "S" (special) slot: Battle Bond Greninja and Power Construct
-// Zygarde are ordinary Greninja / Zygarde with that ability, so it stays;
-// Own Tempo Rockruff is a form of its own (its record has the ability), so
-// base Rockruff doesn't list it.
+// Every ability, for display: regular slots first, then the hidden (H) and
+// special (S) slots marked as hidden. A special ability that is a form of
+// its own (Own Tempo Rockruff) is left off the base species.
 const SPECIAL_ABILITY_OWN_FORM = new Set(["rockruff"]);
 function abilityListOf(entry: DexSpecies): AbilitySlot[] {
   const slots = abilitySlots(entry);
@@ -390,8 +363,8 @@ function speciesFlags(entry: DexSpecies): Flag[] {
 }
 
 // Forms inherit the species-level flags. First partner only carries over to
-// regional forms (Hisuian Typhlosion) and the Let's Go partners — not to
-// Mega/Gigantamax forms or Ash-Greninja (PokeDoku's lists).
+// regional forms (Hisuian Typhlosion) and the Let's Go partners, not to
+// Mega/Gigantamax forms or Ash-Greninja.
 function formFlags(entry: DexSpecies, base: Pick<Pokemon, "flags">): Flag[] {
   const flags = base.flags.filter((flag) => flag !== "starter" || isRegionalForme(entry));
   if (isPartnerForme(entry)) flags.push("starter");
@@ -500,11 +473,9 @@ const baseOf = (num: number): Record_ => {
   return base;
 };
 
-// Stage/methods for a form: from the evolution graph when it takes part in
-// one (Growlithe-Hisui, Wormadam-Sandy); otherwise inherited from the form
-// it changes from (Zen Darmanitan-Galar <- Darmanitan-Galar, Rotom-Wash <-
-// Rotom). A form with neither (Bloodmoon Ursaluna, Paldean Tauros, Partner
-// Pikachu) is its own single-stage line.
+// A form's evolution fields: from the graph when it takes part in one,
+// else inherited from the form it changes from (Rotom-Wash <- Rotom). A
+// form with neither (Bloodmoon Ursaluna) is its own single-stage line.
 const evoCache = new Map<string, Evolution>();
 const evolutionOf = ({ stage, evoMethods, evoItem, evoDetail, branched }: Evolution): Evolution => ({
   stage,
@@ -540,12 +511,9 @@ function formEvolution(entry: DexSpecies): Evolution {
   return result;
 }
 
-// A form only earns an *answer* record if it can answer some cell its base
-// species cannot: a type the base lacks, a different type count, region,
-// stage, method, flag, move or ability. Otherwise the base record already
-// covers it — the form is still written, as `answer: false`, so the detail
-// sheet can draw it (Rockruff → Lycanroc / Midnight / Dusk; Kyurem ⇢
-// Black / White) without it ever being an answer anywhere.
+// A form is an answer only if it can answer some cell its base species
+// cannot. Otherwise it is written as `answer: false`, so the detail sheet
+// can still draw it.
 function coversNothingNew(form: Record_, base: Record_): boolean {
   const subset = <T>(a: readonly T[], b: readonly T[]): boolean => a.every((item) => b.includes(item));
   return (
@@ -561,10 +529,9 @@ function coversNothingNew(form: Record_, base: Record_): boolean {
   );
 }
 
-// the dex's name for a form where it isn't the game's — and a transformation
-// that belongs to one particular form carries that form's name first, the
-// way the dex's own "Droopy-Mega" and "Galar-Zen" do, so the app can tell
-// whose it is: Mega Floette is Eternal Flower Floette's (dex: changesFrom)
+// The game's name where the dex's differs. A transformation of one
+// particular form carries that form's name first ("Eternal-Mega", like the
+// dex's own "Galar-Zen"), so the app can tell whose it is.
 const FORM_NAME_OVERRIDES: Record<string, string> = { rockruffdusk: "Own-Tempo", floettemega: "Eternal-Mega" };
 const candidateForms = formes.filter((entry) => entry.id in FORM_IDS);
 const droppedForms: Record_[] = [];
@@ -850,7 +817,7 @@ check(get("charizardmegax").displayName === "Mega Charizard X", "form display na
 
 const label = (predicate: (record: Record_) => boolean, name: string): void =>
   console.log(String(count(predicate)).padStart(5), name);
-console.log(`@pkmn/dex ${dexVersion} — ${records.length} records (${baseRecords.length} species)\n`);
+console.log(`@pkmn/dex ${dexVersion}: ${records.length} records (${baseRecords.length} species)\n`);
 label((record) => record.types.length === 1, "mono-type");
 label((record) => record.types.length === 2, "dual-type");
 for (const method of ["level", "item", "stone", "trade", "friendship"] as const)
@@ -908,4 +875,4 @@ const out: PokedexData = {
 };
 const outPath = join(dirname(fileURLToPath(import.meta.url)), "../src/data/pokedex.json");
 writeFileSync(outPath, JSON.stringify(out, null, 1) + "\n");
-console.log(`\nOK — wrote ${outPath}`);
+console.log(`\nOK: wrote ${outPath}`);

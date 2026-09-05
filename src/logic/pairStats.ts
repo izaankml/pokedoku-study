@@ -1,12 +1,9 @@
 // The per-pair pick table a random grid draws real pick rates from: for
 // every category pair PokeDoku has run, its players' picks summed over
-// every archived board that had it — public/archive/pairs.json, rebuilt
-// by the harvest from the archive on every save (scripts/
-// harvest-pick-stats.ts). Only boards archived while current carry their
-// spec, so only they contribute. A cell under the pick floor, or on an
-// axis the app can't map, is left out while the board's other cells still
-// count. Pokémon keep PokeDoku's ids, as in the archive (the app folds
-// them with appIdFor when it reads the table).
+// every archived board that had it (public/archive/pairs.json, rebuilt by
+// the harvest). Only boards with a spec contribute; a cell under the pick
+// floor or on an axis the app can't map is left out. Pokémon keep
+// PokeDoku's ids, which the app folds with appIdFor.
 import type { PairStatsData, PickStatsPuzzle } from "../data/types.ts";
 import { pairKey } from "./matching.ts";
 import { specCellPair } from "./pokedokuSpec.ts";

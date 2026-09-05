@@ -110,7 +110,7 @@ describe("stats", () => {
       { merged: mergeBlocks([laptop]), now: T0 + 50 }
     );
     const merged = mergeBlocks([phone, laptop]);
-    // Newest write wins: streak 1 (not 5) — an extra review, self-healing.
+    // Newest write wins: streak 1 (not 5), which costs one extra review.
     expect(merged.flashcards["609"]).toMatchObject({ a: 5, c: 5, s: 1, t: T0 + 50 });
   });
 

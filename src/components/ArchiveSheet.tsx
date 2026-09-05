@@ -14,8 +14,7 @@ interface ArchiveSheetProps {
 
 // The bottom sheet the board chooser opens: a fresh random grid, or any
 // past PokeDoku the harvest saw while it was current. Only those carry
-// their categories — boards backfilled after their day have counts alone
-// and aren't listed.
+// their categories; boards backfilled after their day aren't listed.
 function ArchiveSheet({ activeId, onPick, onRandom, onClose }: ArchiveSheetProps) {
   useModalShell(onClose);
   const [index, setIndex] = useState<PickArchiveIndex | null>(null);
@@ -34,7 +33,7 @@ function ArchiveSheet({ activeId, onPick, onRandom, onClose }: ArchiveSheetProps
       cancelled = true;
     };
   }, []);
-  // newest day first — the index is by id, and PokeDoku's ids aren't in date order
+  // newest day first; the index is by id, and PokeDoku's ids aren't in date order
   const boards = (index ?? [])
     .flatMap((entry) => (entry.date ? [{ id: entry.id, date: entry.date }] : []))
     .sort((a, b) => b.date.localeCompare(a.date));

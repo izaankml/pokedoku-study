@@ -57,8 +57,8 @@ import { useNow } from "./useNow.ts";
 
 const GAVE_UP = "gaveup";
 // Who's That keeps what was typed in the card's picks behind this prefix,
-// after the Pokémon it resolved to — or alone, for a name that is
-// nobody's, which is graded as a miss; the summary quotes it
+// after the Pokémon it resolved to (or alone, for a name that is nobody's),
+// so the summary can quote it
 const TYPED = "typed:";
 const TYPED_MAX = 40;
 
@@ -151,8 +151,8 @@ interface FilterSheetProps {
   onDone: () => void;
 }
 
-// The Focus filters sheet: chip sections per facet — OR within a section,
-// AND across sections. Selected chips take the category's pill styling.
+// The Focus filters sheet: chip sections per facet, OR within a section
+// and AND across sections. Selected chips take the category's pill styling.
 function FilterSheet({ deckId, filter, onToggle, onClear, onDone }: FilterSheetProps) {
   useModalShell(onDone);
   return (
@@ -203,8 +203,8 @@ function FilterSheet({ deckId, filter, onToggle, onClear, onDone }: FilterSheetP
 
 function Flashcards() {
   const { merged, recordAttempt, undoLastAttempt, undoableAttempt } = useStats();
-  // the persisted focus filter — declared before the card state, whose
-  // initializer picks under it
+  // the persisted focus filter, declared before the card state because the
+  // card's initializer picks under it
   const [filter, setFilter] = useState<CardFilter>(loadCardFilter);
   // Who's That: silhouette (the default) or the sprite in full
   const [silhouette, setSilhouette] = useState<boolean>(loadSilhouette);
@@ -243,8 +243,8 @@ function Flashcards() {
   // the last submit's second chance, if it gave one (see NudgeKind)
   const [nudge, setNudge] = useState<Nudge | null>(null);
 
-  // What's on the table: the live card, or an earlier one Back stepped
-  // to — shown as it was graded; nothing on it can change
+  // What's on the table: the live card, or an earlier one Back stepped to,
+  // shown as it was graded and read-only
   const past: PastCard | undefined = viewing !== null ? history[viewing] : undefined;
   const live = past === undefined;
   const card = past ? past.card : liveCard;
@@ -254,11 +254,11 @@ function Flashcards() {
 
   const pokemon = pokemonOf(card);
   const parts = comboParts(card.deckId);
-  // the deck whose options fill the pad — a combo's two, each on its own pad
+  // the deck whose options fill the pad; a combo's two, each on its own pad
   const padDecks: [Deck] | [Deck, Deck] = parts ?? [DECK_BY_ID.get(card.deckId) as Deck];
-  // Who's That types its answer instead of picking options — and hides
-  // the name until it's answered, and the sprite's colours too unless
-  // the silhouette is turned off
+  // Who's That types its answer instead of picking options, and hides the
+  // name until answered, and the sprite's colours too while the silhouette
+  // is on
   const nameDeck = !parts && padDecks[0].input === "name";
   const mystery = nameDeck && picked === null;
   const silhouetted = mystery && silhouette;
@@ -289,14 +289,13 @@ function Flashcards() {
         ? typed.trim().length > 0
         : Boolean(padDecks[0].multi) && selection.length > 0);
   const filterN = filterCount(filter);
-  // the cards this deck and filter can deal that are due — the review
-  // queue the picker deals first. Walks their pools, so only when the
-  // stats, the deck or the filter change, or on a slow clock: a card
-  // answered wrong falls due again ten minutes on
+  // the due cards this deck and filter can deal, which the picker deals
+  // first. Walking the pools is costly, so this recomputes only when the
+  // stats, deck or filter change, or once a minute for cards falling due
   const now = useNow(60_000);
   const due = useMemo(() => dueCardCount(merged, now, { deckId, filter }), [merged, now, deckId, filter]);
 
-  // The open sheet lives in the URL (#cards/region/pokemon-eevee) — only
+  // The open sheet lives in the URL (#cards/region/pokemon-eevee), but only
   // once the card is answered, so nothing gives the answer away
   const resolve = useCallback(
     (slug: string | null): Pokemon | null => (picked !== null ? pokemonBySlug(slug) : null),
@@ -348,8 +347,8 @@ function Flashcards() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- freshCard reads the live stats; only a new card, deck or filter should line up again
   }, [liveCard, deckId, filter]);
 
-  // The deck lives in the URL (#cards/region) — replaced, not pushed, so
-  // Back still leaves the tab
+  // The deck lives in the URL (#cards/region), replaced rather than pushed
+  // so Back still leaves the tab
   useEffect(() => {
     writeHash("cards", deckId === "all" ? [] : [deckId]);
   }, [deckId]);
@@ -374,8 +373,8 @@ function Flashcards() {
     return () => window.removeEventListener("keydown", onKey, true);
   });
 
-  // Grades the picks — a combo's two pads together, each part against its
-  // own options — and records the attempt.
+  // Grades the picks (a combo's two pads together, each part against its
+  // own options) and records the attempt.
   function grade(picks: string[]): void {
     if (!live || answered) return;
     let ok: ComboVerdict | null = null;
@@ -400,13 +399,10 @@ function Flashcards() {
     });
   }
 
-  // Who's That: the name typed is graded against the card's Pokémon and
-  // its lookalikes — spelt right, its words in any order. Two slips get
-  // another go instead of a grade: the species named without its form
-  // ("Charizard" for Charizard Mega X, "Meowstic" for the female), and a
-  // misspelling of some Pokémon's name ("Pikachoo"). Anything else is
-  // graded — another Pokémon, or a name that is nobody's — and what was
-  // typed is kept for the summary
+  // Who's That: the typed name is graded against the card's Pokémon and its
+  // lookalikes. Naming the species without its form, or misspelling a name,
+  // gets another go instead of a grade; anything else is graded and kept
+  // for the summary
   function submitName(): void {
     const text = typed.trim().slice(0, TYPED_MAX);
     const answers = padDecks[0].answers(pokemon);
@@ -424,9 +420,9 @@ function Flashcards() {
     grade(match ? [String(match.id), `${TYPED}${text}`] : [`${TYPED}${text}`]);
   }
 
-  // Nothing is graded on a multi pad's tap: options toggle until Submit.
-  // A single-pick tap grades right away — except on a combo, where it
-  // stands as that pad's one pick until both pads are submitted together.
+  // A multi pad's options toggle until Submit. A single-pick tap grades
+  // right away, except on a combo, where it stands as that pad's one pick
+  // until both pads are submitted together.
   function choose(deck: Deck, option: DeckOption): void {
     if (!live || answered) return;
     if (deck.multi) {
@@ -448,7 +444,7 @@ function Flashcards() {
     else grade(selection);
   }
 
-  // Don't know reveals the whole card — a combo's two pads at once.
+  // Don't Know reveals the whole card, a combo's two pads at once.
   function giveUp(): void {
     if (!live || answered) return;
     const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct: false });
@@ -461,14 +457,14 @@ function Flashcards() {
     });
   }
 
-  // An answered card can be taken back once — the grade is un-recorded and
+  // An answered card can be taken back once: the grade is un-recorded and
   // the card returns unanswered with its picks back in place.
   function undoAnswer(): void {
     const undo = session.undo;
     if (!live || !undo || undo.key !== key) return;
     if (!undoLastAttempt(undo.token)) {
-      // the attempt can no longer be reverted (superseded elsewhere) —
-      // drop the stale undo and re-render so the button disappears
+      // superseded elsewhere: drop the stale undo and re-render so the
+      // button disappears
       session.undo = null;
       setLiveSelection((current) => [...current]);
       return;
@@ -483,7 +479,7 @@ function Flashcards() {
     return [...history, { card: liveCard, picked: livePicked, comboOk: liveComboOk }].slice(-HISTORY_MAX);
   }
 
-  // On to the next card — or, from an earlier card, forward through the
+  // On to the next card, or, from an earlier card, forward through the
   // history and back to the live one
   function next(forDeck: string = deckId): void {
     if (!live) {
@@ -574,7 +570,7 @@ function Flashcards() {
   // a part's ✓ or ✕, green or red on its own
   const mark = (ok: boolean): ReactNode => <span className={ok ? "mark correct" : "mark wrong"}>{ok ? "✓" : "✕"}</span>;
   // The verdict that replaces a single deck's question over its options
-  // once answered (a combo's parts each wear a mark instead)
+  // once answered (a combo's parts each get a mark instead)
   let verdict: ReactNode = null;
   let verdictClass = "";
   if (answered) {
@@ -611,12 +607,9 @@ function Flashcards() {
     if (involvesStage && pokemon.stage) factPills.push(getCategory(`stage-${pokemon.stage}`));
   }
 
-  // A deck's pad: its answers and the options shown. Narrowing: a filtered
-  // single-answer facet shows only the selected options. The pool is
-  // filtered by the same facet, so the right answer is normally among
-  // them — but a filter too tight for the deck makes the picker drop it,
-  // and then the whole pad comes back. A narrowed pad with fewer options
-  // than columns spreads them out.
+  // A deck's pad: its answers and the options shown. A filtered single-pick
+  // facet shows only the selected options while the right answer is among
+  // them; otherwise the whole pad comes back.
   const padOf = (deck: Deck): { answers: string[]; options: DeckOption[]; cols: number } => {
     const answers = deck.answers(pokemon);
     const facetSel = deck.multi ? [] : (filter[deck.id as FocusFacet] ?? []);
@@ -625,13 +618,12 @@ function Flashcards() {
     return { answers, options, cols: Math.max(1, Math.min(deck.cols, options.length)) };
   };
 
-  // Once answered, only the options the grade is about stay on the pad:
-  // the right answers (green — solid when picked, dashed when missed)
-  // and any wrong picks (red); the rest go.
+  // Once answered, only the right answers and any wrong picks stay on the
+  // pad; the rest go.
   const graded = (option: DeckOption, answers: string[]): boolean =>
     !answered || answers.includes(option.id) || pickedIds.has(option.id);
   const optionClass = (option: DeckOption, answers: string[]): string => {
-    // a type option is type-coloured wherever it appears — CategoryPill's rule
+    // a type option is type-coloured wherever it appears, as in CategoryPill
     let className = "pad-btn" + typeClassOf(CATEGORY_BY_ID.get(option.id));
     if (!answered) {
       if (selection.includes(option.id)) className += " selected";
@@ -646,9 +638,8 @@ function Flashcards() {
   const shortOf = (id: string): string =>
     padDecks.flatMap((deck) => deck.options).find((option) => option.id === id)?.short ?? getCategory(id).short;
 
-  // The one CTA slot under the pads: Submit (led by the picks, pad by
-  // pad — they trim before "Submit" does) on a multi deck or a combo, or
-  // for the name typed on Who's That; Next card once answered. A plain
+  // The one CTA slot under the pads: Submit (led by the picks) on a multi
+  // deck, a combo or Who's That; Next card once answered. A plain
   // single-pick deck grades on tap, so its slot stays empty.
   let cta: { label: ReactNode; onClick: () => void; disabled: boolean } | null = null;
   if (answered) {
@@ -672,10 +663,8 @@ function Flashcards() {
   }
 
   // The line under the options once answered: what was missed and what
-  // was wrong, and when the card comes back. A combo leads with its
-  // per-part verdicts and counts both parts' picks. A card answered
-  // right, or revealed, says only when it comes back: the kicker over
-  // the options already says which
+  // was wrong, and when the card comes back. A card answered right, or
+  // revealed, says only when it comes back
   const listNames = (ids: string[]): string => ids.map(shortOf).join(", ");
   let summary: ReactNode = null;
   if (answered) {
@@ -696,9 +685,8 @@ function Flashcards() {
         );
       }
     } else if (nameDeck) {
-      // what was typed, and the Pokémon it resolved to — none for a name
-      // that is nobody's (a session from before the text was kept has
-      // only the Pokémon)
+      // what was typed, and the Pokémon it resolved to, if any (an older
+      // stored session has only the Pokémon)
       const typed = pickedList.find((pick) => pick.startsWith(TYPED))?.slice(TYPED.length) ?? null;
       const lead = pickedList[0];
       const resolved = lead !== undefined && !lead.startsWith(TYPED) ? POKEMON_BY_ID.get(Number(lead)) : undefined;
@@ -767,11 +755,9 @@ function Flashcards() {
 
   // ---- the stage and the pad ----
 
-  // The Pokémon on a big answer-grid tile, name and all, the fact pills
-  // under it; once answered the tile opens the detail sheet (evolution
-  // line and all), with a "Details" cue in its corner to say so — before
-  // that it stays inert so nothing gives the answer away: Who's That even
-  // hides the name, and shows a silhouette unless that's turned off
+  // The Pokémon on a big tile with the fact pills under it. Once answered
+  // the tile opens the detail sheet; before that it stays inert so nothing
+  // gives the answer away
   const stage = (
     <div className="card-stage">
       <div className={`stage-tile${silhouetted ? " mystery" : ""}`}>

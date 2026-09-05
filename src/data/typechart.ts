@@ -1,5 +1,5 @@
-// The Gen 6+ type chart, attacker → defender → multiplier (only the
-// non-neutral entries; anything unlisted is ×1). Pure type maths — the
+// The Gen 6+ type chart: attacker, then defender, then multiplier (only
+// the non-neutral entries; anything unlisted is ×1). Pure type maths; the
 // Matchups deck ignores ability effects like Levitate on purpose.
 
 import { TYPE_NAMES } from "./types.ts";
@@ -46,8 +46,8 @@ export function defensiveMultiplier(attacker: PokemonType, defenderTypes: readon
 }
 
 // The attacking types that are super effective (×2 or ×4) against this
-// typing, in TYPE_NAMES order. Memoized per typing — there are only ~200
-// distinct typings, but every deck-pool build asks about every Pokémon.
+// typing, in TYPE_NAMES order. Memoized per typing, since every deck-pool
+// build asks about every Pokémon.
 const weaknessCache = new Map<string, PokemonType[]>();
 export function weaknessesOf(defenderTypes: readonly PokemonType[]): PokemonType[] {
   const key = defenderTypes.join("/");

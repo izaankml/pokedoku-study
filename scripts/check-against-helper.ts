@@ -1,7 +1,7 @@
 // Audits src/data/pokedex.json against pokedoku-helper.com's PokeAPI-derived
 // per-entry data (the closest public proxy for PokeDoku's own categories).
-// Prints every disagreement per field; exits 0 regardless — the two sources
-// legitimately differ in a few places (see README). Needs network access.
+// Prints every disagreement per field and exits 0 regardless, since the two
+// sources legitimately differ in a few places (see README). Needs network.
 //
 //   node scripts/check-against-helper.ts
 
@@ -93,8 +93,8 @@ for (const entry of helper) {
   };
   const mine = ourById.get(pokedokuId);
   if (!mine) {
-    // We deliberately drop forms covered by their base species; make sure
-    // the helper agrees they add nothing.
+    // forms covered by their base species have no record; check the
+    // helper agrees they add nothing
     const base = ourBase.get(entry.id);
     if (!base) {
       notCovered.push(`${label}: no record at all`);

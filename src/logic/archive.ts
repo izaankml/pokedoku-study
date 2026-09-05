@@ -1,14 +1,9 @@
-// Past PokeDoku boards, replayed in the Grid tab. The harvest
-// (scripts/harvest-pick-stats.ts) archives each finished daily as
-// public/archive/<id>.json — PokeDoku's own category spec plus every
-// cell's real pick counts — indexed by public/archive/index.json, and
-// sums the picks of every board that ran each category pair into
-// public/archive/pairs.json (logic/pairStats.ts). All are fetched lazily
-// here. A board seen while it was current carries its spec and date; one
-// backfilled later has only counts and can't be played.
-//
-// The spec maps onto the app's categories in logic/pokedokuSpec.ts; a
-// kind the app lacks makes the board unplayable rather than wrong.
+// Past PokeDoku boards, replayed in the Grid tab. The harvest archives
+// each finished daily as public/archive/<id>.json (its category spec and
+// every cell's pick counts), indexed by index.json, and sums picks per
+// category pair into pairs.json. All are fetched lazily here. A board
+// backfilled after its day has only counts and can't be played; a spec
+// kind the app lacks makes a board unplayable rather than wrong.
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import type { PairStatsData, PickArchiveIndex, PickStatsCell, PickStatsPuzzle, Pokemon } from "../data/types.ts";
 import type { Grid } from "./grid.ts";
@@ -33,9 +28,9 @@ export async function fetchArchivedPuzzle(id: number): Promise<PickStatsPuzzle> 
 }
 
 // The per-pair table: every category pair PokeDoku has run, with its
-// players' picks summed over the archived boards that had it — what a
-// random grid's cell shows in place of an estimate when its pair is one
-// PokeDoku has actually asked. Revalidated each time, like the index.
+// players' picks summed over the archived boards that had it. A random
+// grid's cell shows these in place of an estimate. Revalidated each time,
+// like the index.
 export async function fetchPairStats(): Promise<PairStatsData> {
   const response = await fetch(`${ARCHIVE_URL}pairs.json`, { cache: "no-cache" });
   if (!response.ok) throw new Error(`pair stats: HTTP ${response.status}`);
@@ -88,8 +83,8 @@ export function archivedShare(cell: PickStatsCell, pokemon: Pokemon): number {
   return (100 * count) / cell.total;
 }
 
-// The Pokémon PokeDoku's players validly picked in the cell, most picked
-// first — the ones this app knows
+// The Pokémon PokeDoku's players validly picked in the cell that this app
+// knows, most picked first
 export function archivedPicks(cell: PickStatsCell): Pokemon[] {
   const seen = new Set<number>();
   return cell.picks.flatMap(([id]) => {

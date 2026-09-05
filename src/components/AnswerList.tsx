@@ -14,14 +14,14 @@ interface AnswerListProps {
   title?: string;
   // the Pokémon to mark out (the one just guessed)
   highlightId?: number;
-  // a wrong guess, shown above the list as its own tile — tapping it
-  // opens the detail sheet, where "why doesn't it fit" lives
+  // a wrong guess, shown above the list as its own tile; tapping it opens
+  // the detail sheet, which shows why it doesn't fit
   guess?: Pokemon | null;
-  // a figure per Pokémon id, worn in the card's corner (a replayed
-  // PokeDoku cell's real pick shares)
+  // a figure per Pokémon id for the card's corner (a replayed PokeDoku
+  // cell's real pick shares)
   badges?: Map<number, string>;
   // false keeps the tiles inert: no detail sheet (a Name all round in
-  // progress — a sheet's evolution line would name the ones still to find)
+  // progress, where a sheet's evolution line would name the ones to find)
   tappable?: boolean;
 }
 

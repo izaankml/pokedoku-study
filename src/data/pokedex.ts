@@ -12,13 +12,10 @@ const data = pokedexJson as PokedexData;
 const SPRITES = spritesJson as unknown as SpritesData;
 const POKEDOKU_NAMES = pokedokuNamesJson as PokedokuNamesData;
 
-// Every record, answers and the display-only forms. A species is always an
-// answer; a form is an answer exactly when PokeDoku lists it as one — its
-// answer list shows Pyroar Female, Lycanroc Midnight, the Burmy cloaks …
-// as entries of their own, and hides a few (Cramorant's battle forms,
-// Minior's colours) that stay in the data only so the detail sheet can
-// draw a whole line. Categories, Browse, Drill, Cards and Grid use
-// POKEMON, the answers only.
+// Every record, answers and display-only forms alike. A species is always
+// an answer; a form is an answer exactly when PokeDoku lists it as one.
+// The hidden forms stay in the data so the detail sheet can draw a whole
+// line. Categories, Browse, Drill, Cards and Grid use POKEMON, the answers.
 export const ALL_POKEMON: Pokemon[] = data.pokemon;
 const isAnswer = (pokemon: Pokemon): boolean => {
   if (!pokemon.form) return true;
@@ -34,14 +31,10 @@ export const POKEMON_BY_NAME = new Map<string, Pokemon>(ALL_POKEMON.map((pokemon
 // a slug left over from another view.
 export const pokemonBySlug = (slug: string | null): Pokemon | null => (slug && POKEMON_BY_NAME.get(slug)) || null;
 
-// Pokémon are named the way PokeDoku names them — species first, then the
-// form ("Zapdos Galar", "Charizard Mega X", "Pikachu Partner"), and base
-// species by their form too where PokeDoku does ("Lycanroc Midday",
-// "Toxtricity Amped", "Meowstic Male") — built from its slug
-// (scripts/build-pokedoku-names.ts) on the species' proper name (so
-// "Mr. Mime Galar", not "Mr Mime Galar"). The dataset's own name
-// ("Galarian Zapdos", "Lycanroc") is kept as `altName`, still searchable;
-// `speciesName` is the plain species name.
+// Pokémon are named the way PokeDoku names them: species first, then the
+// form ("Zapdos Galar", "Lycanroc Midday"), built from its slug on the
+// species' proper name ("Mr. Mime Galar"). The dataset's own name
+// ("Galarian Zapdos") is kept as `altName`, still searchable.
 const SMALL = new Set(["of", "the", "and", "de"]);
 const cap = (word: string): string => (word ? word[0].toUpperCase() + word.slice(1) : word);
 const words = (slug: string): string =>
@@ -97,11 +90,10 @@ export interface SpriteCandidate {
   cors: boolean;
 }
 
-// The sprites the player sees on PokeDoku itself (its CDN, keyed by
-// PokeAPI id), with PokeAPI's as the fallback. sprites.json is built by
-// scripts/build-sprites.ts and carries each sprite's alpha bounding box
-// (`box`), because PokeDoku's CDN sends no CORS headers, so the app can't
-// measure those on a canvas at runtime; PokeAPI's can be (`cors`).
+// PokeDoku's own sprites (its CDN, keyed by PokeAPI id), with PokeAPI's
+// as the fallback. sprites.json carries each sprite's alpha bounding box
+// because PokeDoku's CDN sends no CORS headers, so the app can't measure
+// those at runtime; PokeAPI's can be.
 function candidate(host: number, id: number, box: SpriteBox | null = null): SpriteCandidate {
   return host === 0
     ? { url: `${POKEDOKU_SPRITES}/${id}.png`, box, cors: false }

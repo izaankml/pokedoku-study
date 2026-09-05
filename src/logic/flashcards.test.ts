@@ -116,7 +116,7 @@ describe("flashcard decks", () => {
   it("combo decks intersect eligibility and union answers", () => {
     expect(comboParts("region")).toBe(null);
     expect(comboParts("combo:type+special")?.map((sub) => sub.id)).toEqual(["type", "special"]);
-    // in no group, so no group combo — but type+region is fine
+    // in no group, so no group combo, but type+region is fine
     expect(deckEligible("combo:type+special", by("pikachu"))).toBe(false);
     expect(deckEligible("combo:type+region", by("pikachu"))).toBe(true);
     expect(deckAnswers("combo:type+special", by("koraidon"))).toEqual([

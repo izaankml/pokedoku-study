@@ -15,13 +15,10 @@ service cloud.firestore {
 
     // Google-account sync (src/logic/cloudSync.ts): one doc per device
     // block under the signed-in user's uid. Any of the account's devices
-    // may list every block and delete another device's (re-pull, absorb,
-    // reset-all); a written block must be one JSON string field, capped
-    // so a bug can't push unbounded docs.
-    //
-    // Reads and deletes carry no request.resource, so they get their own
-    // rule: a combined `read, write` rule that mentions
-    // request.resource.data errors on reads and denies them all.
+    // may list every block and delete another device's; a written block
+    // must be one JSON string field, capped so a bug can't push unbounded
+    // docs. Reads and deletes carry no request.resource, so they need a
+    // rule of their own.
     match /users/{uid}/blocks/{deviceId} {
       allow read, delete: if isOwner(uid);
       allow create, update: if isOwner(uid)

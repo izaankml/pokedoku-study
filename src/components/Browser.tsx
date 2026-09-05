@@ -10,7 +10,7 @@ import { hashStateFor, useHashChange, writeHash } from "../logic/hashState.ts";
 const SLOTS = 3;
 
 // Keeps ids greedily in order (earlier wins), dropping unknowns and any
-// that no longer combine — the one rule for which picks may coexist.
+// that no longer combine: the one rule for which picks may coexist.
 function keepValid(ids: string[]): string[] {
   const kept: string[] = [];
   for (const id of ids) {
@@ -76,7 +76,7 @@ function Browser() {
   const normalizedQuery = normalizeName(query);
   const shown = normalizedQuery ? pokemon.filter((entry) => matches(entry, normalizedQuery)) : pokemon;
   const title = chosen.length ? chosen.map((id) => getCategory(id).label).join(" × ") : "All Pokémon";
-  // the third picker earns its place once the first two are set
+  // the third picker appears once the first two are set
   const showThird = Boolean((picks[0] && picks[1]) || picks[2]);
 
   return (

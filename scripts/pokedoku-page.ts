@@ -1,11 +1,9 @@
 // The puzzle a pokedoku.com page carries. Next.js streams the server-
-// rendered data to the client as `self.__next_f.push([1, "<chunk>"])`
-// script tags; the chunks concatenate into the React Server Components
-// payload, and a puzzle page's payload holds the puzzle as
-// `"puzzle":{…}` — PokeDoku's own JSON for it, the same shape
-// /api/puzzle/current returns (id, date, x1–x3, y1–y3, …). The home page
-// carries the current puzzle; /puzzle/<date> carries that day's, for a
-// signed-in user.
+// rendered data as `self.__next_f.push([1, "<chunk>"])` script tags; the
+// chunks concatenate into the React Server Components payload, which holds
+// the puzzle as `"puzzle":{…}` in the same shape /api/puzzle/current
+// returns. The home page carries the current puzzle; /puzzle/<date>
+// carries that day's, for a signed-in user.
 
 export interface EmbeddedPuzzle extends Record<string, unknown> {
   id: number;
@@ -27,7 +25,7 @@ function rscPayload(html: string): string {
 }
 
 // The JSON object starting at text[start] (an opening brace), or null if
-// it never closes — strings and their escapes are skipped over
+// it never closes; strings and their escapes are skipped over
 function balancedObject(text: string, start: number): string | null {
   let depth = 0;
   let inString = false;
@@ -73,7 +71,7 @@ export function extractEmbeddedPuzzle(html: string): EmbeddedPuzzle | null {
       const parsed = JSON.parse(objectText) as unknown;
       if (isEmbeddedPuzzle(parsed)) return parsed;
     } catch {
-      // not JSON after all — keep looking
+      // not JSON after all; keep looking
     }
   }
 }

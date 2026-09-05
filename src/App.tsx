@@ -41,7 +41,7 @@ const TABS = ["Browse", "Grid", "Cards", "Drill", "Stats"] as const;
 type Tab = (typeof TABS)[number];
 const DEFAULT_TAB: Tab = "Browse";
 
-// The active tab is the first hash segment (#cards/region — see
+// The active tab is the first hash segment (#cards/region, see
 // logic/hashState.ts) so a refresh, a shared link, or back/forward lands
 // on the same tab; each tab keeps its own state after the slash.
 function tabFromHash(): Tab | null {
@@ -75,18 +75,18 @@ function App() {
   const [token, setToken] = useState(() => gistSync.consumeHandoffFromUrl() || gistSync.getToken());
   const [syncState, setSyncState] = useState<SyncState>(IDLE_SYNC);
 
-  // The Google account, once signed in / restored. The ref mirrors the
-  // state so callbacks with empty deps (syncNow) see it immediately —
-  // including in the window between sign-in and the re-render.
+  // The Google account, once signed in or restored. The ref mirrors the
+  // state so callbacks with empty deps (syncNow) see it immediately, even
+  // between sign-in and the re-render.
   const [account, setAccount] = useState<CloudAccount | null>(null);
   const accountRef = useRef<CloudAccount | null>(null);
   const applyAccount = useCallback((next: CloudAccount | null) => {
     accountRef.current = next;
     setAccount(next);
   }, []);
-  // True while a stored Google session is being restored at startup —
-  // sync holds off (rather than falling back to a leftover gist token)
-  // until the account is known.
+  // True while a stored Google session is being restored at startup; sync
+  // holds off until the account is known rather than falling back to a
+  // leftover gist token.
   const restoringRef = useRef(cloudSync.hasCloudSession());
 
   // Which sync backend to talk to right now (null: don't sync).
@@ -145,7 +145,7 @@ function App() {
 
   useEffect(() => {
     if (restoringRef.current) {
-      // A previous session chose Google sync — restore it (loading the
+      // A previous session chose Google sync: restore it (loading the
       // firebase chunk) before the first sync decides on a provider.
       let cancelled = false;
       void cloudSync.restoreAccount().then((restored) => {
@@ -179,13 +179,10 @@ function App() {
     };
   }, [syncNow]);
 
-  // One-deep undo: each attempt remembers the block as it stood before
-  // and after (withAttempt returns a fresh clone, so both objects stay
-  // intact) and a token; only the newest attempt can be taken back, and
-  // only while the current block IS that attempt's result — so any path
-  // that replaces the block (reset, merge, a future import) invalidates
-  // the undo structurally, clearUndo or not. Memory-only — a reload
-  // forgets it, which is fine for an oops-misclick affordance.
+  // One-deep undo: each attempt remembers the block before and after it,
+  // plus a token. Only the newest attempt can be taken back, and only while
+  // the current block is that attempt's result, so anything that replaces
+  // the block (reset, merge) invalidates the undo. Memory-only.
   const undoRef = useRef<{ token: number; before: StatsBlock; after: StatsBlock } | null>(null);
   const attemptCounterRef = useRef(0);
   // mirrors undoRef's token as state, so an Undo button can render away
@@ -231,8 +228,8 @@ function App() {
     (value: string) => {
       gistSync.setToken(value);
       setToken(value);
-      // While Google drives the sync, the PAT is just legacy cleanup —
-      // storing/forgetting it must not disturb the live sync state.
+      // While Google drives the sync, the token is legacy cleanup only;
+      // storing or forgetting it must not disturb the live sync state.
       if (accountRef.current) return;
       setRemoteBlocks([]);
       lastSyncRef.current = 0;
@@ -242,11 +239,9 @@ function App() {
     [syncNow],
   );
 
-  // Google sign-in, called straight from the button's click handler so
-  // the popup keeps its user-gesture credit. With a PAT present this is
-  // also the migration moment: pull what the gist knows and copy blocks
-  // Firestore hasn't seen (never overwriting — Firestore is fresher once
-  // a device has migrated).
+  // Google sign-in, called straight from the button's click handler so the
+  // popup keeps its user-gesture credit. With a gist token present this
+  // also migrates: gist blocks Firestore hasn't seen are copied over.
   const connectGoogle = useCallback(async (): Promise<ConnectResult> => {
     const signedIn = await cloudSync.signIn();
     const hadLegacyToken = Boolean(gistSync.getToken());
@@ -256,7 +251,7 @@ function App() {
         const gistBlocks = await gistSync.syncBlock(blockRef.current);
         imported = await cloudSync.importLegacyBlocks(gistBlocks, blockRef.current.deviceId);
       } catch {
-        imported = null; // gist unreachable — keep the token, offer nothing
+        imported = null; // gist unreachable: keep the token, offer nothing
       }
     }
     applyAccount(signedIn);
@@ -402,9 +397,9 @@ function App() {
     };
   }, []);
 
-  // Every route to another tab starts it at the top — including a pill's
-  // jumpToBrowse, whose unmounting modal shell restores the OLD tab's
-  // scroll offset during the same commit (this effect runs after it)
+  // Every route to another tab starts it at the top, including a pill's
+  // jumpToBrowse, whose unmounting modal shell restores the old tab's
+  // scroll offset in the same commit (this effect runs after it)
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [tab]);
@@ -413,7 +408,7 @@ function App() {
     <div className="app">
       <header>
         <h1>
-          <a className="home-link" href={"#" + DEFAULT_TAB.toLowerCase()} onClick={goHome} aria-label="PokeDoku Study — home">
+          <a className="home-link" href={"#" + DEFAULT_TAB.toLowerCase()} onClick={goHome} aria-label="PokeDoku Study home">
             <PokeballIcon className="pokeball-mark" width="22" height="22" />
             <span>PokeDoku</span> <span className="h1-sub">Study</span>
           </a>

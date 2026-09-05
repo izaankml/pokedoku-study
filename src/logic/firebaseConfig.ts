@@ -1,12 +1,7 @@
 // The Firebase project's public web-app config. These values are not
-// secrets — every visitor's bundle ships them; access control lives
-// entirely in Firestore security rules (each signed-in user can only
-// touch users/{their own uid}/…).
-//
-// Filled 2026-08-26 from the pokedoku-study console project (Batch 6's
-// "One-time console setup", .claude/PLAN.md). If it were ever blanked,
-// isFirebaseConfigured would hide every Google-sign-in surface again
-// and the app would fall back to the token-only sync UI.
+// secrets; every visitor's bundle ships them, and access control lives in
+// the Firestore security rules. If blanked, isFirebaseConfigured hides
+// every Google-sign-in surface and the app falls back to the gist sync UI.
 export const firebaseConfig = {
   apiKey: "AIzaSyAnqsvM-SKNPKATEj1cRuHItNuuHtELYZY",
   authDomain: "pokedoku-study.firebaseapp.com",

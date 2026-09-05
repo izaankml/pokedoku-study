@@ -23,16 +23,11 @@ export function PokeballIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-// Pixel sprites (PokeDoku's and PokeAPI's alike) draw every Pokémon at its
-// in-game relative size inside the same 96×96 canvas, so Charmander is a
-// speck and Gigantamax Venusaur fills the frame. Each sprite's alpha
-// bounding box (prebuilt in sprites.json, or measured here for CORS-able
-// fallbacks) is transformed so the box fills the slot — capped two ways:
-// at MAX_UPSCALE of the slot, so tiny Pokémon read clearly without erasing
-// the size relationship, and at MAX_NATIVE_SCALE CSS px per sprite pixel,
-// so pixel art never turns into chunky blocks in the big flashcard slot.
-// Slots are square, so the transform is expressed in the sprite's own
-// percentages.
+// Pixel sprites draw every Pokémon at its in-game relative size in one
+// canvas, so a Charmander is a speck. Each sprite's alpha bounding box
+// (prebuilt in sprites.json, or measured here for CORS-able fallbacks) is
+// scaled to fill the slot, capped at MAX_UPSCALE so the size relationship
+// survives and at MAX_NATIVE_SCALE so pixel art stays crisp.
 const FILL = 0.94; // fraction of the slot the sprite's box grows to
 const MAX_UPSCALE = 1.8;
 const MAX_NATIVE_SCALE = 2;
@@ -69,7 +64,7 @@ function measureBox(img: HTMLImageElement): SpriteBox | null {
       }
       if (x1 >= x0) box = { x0, y0, bw: x1 - x0 + 1, bh: y1 - y0 + 1, w, h };
     } catch {
-      // cross-origin canvas taint (or no 2d context) — leave it as drawn
+      // cross-origin canvas taint (or no 2d context): leave it as drawn
     }
   }
   boxCache.set(key, box);
@@ -106,7 +101,7 @@ interface SpriteProps {
 
 // Falls back to the base species' sprite, then the silhouette.
 function Sprite({ pokemon, className = "sprite", eager = false, label }: SpriteProps) {
-  // how many candidates have failed to load — for this Pokémon, so a new
+  // how many candidates have failed to load, for this Pokémon, so a new
   // one starts over on the same render rather than an effect later
   const [failed, setFailed] = useState({ id: pokemon.id, attempt: 0 });
   const attempt = failed.id === pokemon.id ? failed.attempt : 0;

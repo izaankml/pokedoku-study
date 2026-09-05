@@ -2,7 +2,7 @@
 // src/logic/cloudSync.ts performs (list, set, batch delete+set), run
 // against the Firestore emulator as the owning user, another user, and
 // no user, plus the public pickArchive mirror. Skipped unless
-// FIRESTORE_EMULATOR_HOST is set — `npm run test:rules` wraps this in
+// FIRESTORE_EMULATOR_HOST is set; `npm run test:rules` wraps this in
 // `firebase emulators:exec`, which starts the emulator (needs a JDK)
 // and sets the variable.
 

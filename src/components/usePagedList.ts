@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 
 // Long lists render in batches: `page` items at once, `page` more each
-// time the sentinel scrolls near (600px ahead). Render the sentinel —
-// attach `sentinelRef` to an empty element after the list — only while
-// `done` is false. A new `items` array starts the batching over.
+// time the sentinel scrolls near. Attach `sentinelRef` to an empty element
+// after the list, rendered only while `done` is false. A new `items` array
+// starts the batching over.
 export function usePagedList<T>(
   items: readonly T[],
   page = 60,

@@ -1,12 +1,8 @@
-// Generates src/data/pokedoku-names.json: PokeDoku's own name slug for every
-// record whose name carries a form — the alternate forms ("zapdos-galar",
-// "charizard-mega-x", "pikachu-partner") and the base species PokeDoku names
-// by their form too ("lycanroc-midday", "toxtricity-amped", "meowstic-male")
-// — fetched from its public answer list (which lists its hidden forms as
-// well, flagged `hidden`). The app shows Pokémon the way PokeDoku does —
-// species first, form after ("Zapdos Galar", not "Galarian Zapdos";
-// "Lycanroc Midday") — so what you type here is what you'd type there; and
-// a form is an answer in the app exactly when PokeDoku shows it (pokedex.ts).
+// Generates src/data/pokedoku-names.json: PokeDoku's own name slug for
+// every record whose name carries a form ("zapdos-galar", and base species
+// it names by their form like "lycanroc-midday"), from its public answer
+// list, hidden forms flagged. The app shows names the way PokeDoku does,
+// and a form is an answer exactly when PokeDoku shows it (pokedex.ts).
 //
 //   node scripts/build-pokedoku-names.ts
 

@@ -1,11 +1,10 @@
 // Mirrors archived puzzles into Firestore (`pickArchive/{puzzleId}`), so
-// the archive is queryable alongside the Batch 6 user-sync data. The
-// repo's public/archive files stay canonical; this is the database copy.
+// the archive is queryable alongside the user-sync data. The repo's
+// public/archive files stay canonical; this is the database copy.
 //
-// Writes go through the Firestore REST API as a service account (admin
-// writes bypass security rules, which stay locked to public-read).
-// Dormant until the FIREBASE_SERVICE_ACCOUNT env var holds the service
-// account's JSON key — the same ships-dark pattern as firebaseConfig.ts.
+// Writes go through the Firestore REST API as a service account, which
+// bypasses the public-read security rules. Dormant until the
+// FIREBASE_SERVICE_ACCOUNT env var holds the account's JSON key.
 import { createSign } from "node:crypto";
 import type { PickStatsPuzzle } from "../src/data/types.ts";
 
@@ -15,9 +14,9 @@ interface ServiceAccount {
   private_key: string;
 }
 
-// Firestore forbids nested arrays, so a cell's picks — [[id, count], …]
-// in the archive files — become a {pokemonId: count} map (order is
-// recoverable by sorting on count). Everything else mirrors as-is.
+// Firestore forbids nested arrays, so a cell's picks ([[id, count], …] in
+// the archive files) become a {pokemonId: count} map; order is recoverable
+// by sorting on count. Everything else mirrors as-is.
 export function archiveDocJson(puzzle: PickStatsPuzzle): Record<string, unknown> {
   return {
     id: puzzle.id,
@@ -30,7 +29,7 @@ export function archiveDocJson(puzzle: PickStatsPuzzle): Record<string, unknown>
   };
 }
 
-// Plain JSON → Firestore REST typed values
+// Plain JSON as Firestore REST typed values
 export function toFirestoreValue(value: unknown): Record<string, unknown> {
   if (value === null || value === undefined) return { nullValue: null };
   if (typeof value === "boolean") return { booleanValue: value };
@@ -70,7 +69,7 @@ async function getAccessToken(account: ServiceAccount): Promise<string> {
       assertion: `${header}.${claims}.${base64url(signature)}`,
     }),
   });
-  if (!response.ok) throw new Error(`token exchange → ${response.status}`);
+  if (!response.ok) throw new Error(`token exchange: HTTP ${response.status}`);
   const { access_token } = (await response.json()) as { access_token: string };
   return access_token;
 }
@@ -84,7 +83,7 @@ export class FirestoreArchive {
     this.token = token;
   }
 
-  // null when FIREBASE_SERVICE_ACCOUNT is unset — mirroring stays dark
+  // null when FIREBASE_SERVICE_ACCOUNT is unset, so nothing is mirrored
   static async fromEnv(): Promise<FirestoreArchive | null> {
     const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
     if (!raw) return null;
@@ -101,6 +100,6 @@ export class FirestoreArchive {
       headers: { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ fields: toFirestoreFields(archiveDocJson(puzzle)) }),
     });
-    if (!response.ok) throw new Error(`mirror puzzle ${puzzle.id} → ${response.status}`);
+    if (!response.ok) throw new Error(`mirror puzzle ${puzzle.id}: HTTP ${response.status}`);
   }
 }

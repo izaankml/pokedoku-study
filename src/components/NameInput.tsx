@@ -7,19 +7,12 @@ interface NameInputProps {
   placeholder?: string;
 }
 
-// Who's That's answer box: a plain text box, no suggestions (they'd give
-// the name away). Enter and the foot's Submit are the card's to handle
-// (Flashcards). It asks for the plain keyboard: a search box's (inputmode
-// search) puts a period beside the space bar on an iPhone, and a box
-// that looks like a name field (autofill left on, "name" in its
-// placeholder) gets the phone's own contact card offered over the keys.
-// Focus is taken without the page moving: an iPhone
-// scrolls a tapped text box into the middle of what the keyboard leaves
-// whether or not the keyboard would have covered it (WebKit forces that
-// scroll whenever the keyboard carries its accessory bar), but honours
-// preventScroll on a scripted focus — so the tap is taken over and the
-// box focused that way, and the card keeps the box clear of the keyboard
-// by layout (see .flashcards.name-deck)
+// Who's That's answer box: a plain text box with no suggestions (they'd
+// give the name away); Enter and Submit are the card's to handle. It asks
+// for the plain keyboard, with no search-key period and no contact
+// autofill. Focus is taken over on touch with preventScroll, since an
+// iPhone would otherwise scroll the box to mid-screen; the card keeps the
+// box clear of the keyboard by layout (see .flashcards.name-deck)
 function NameInput({ value, onChange, placeholder }: NameInputProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 

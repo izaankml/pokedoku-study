@@ -1,14 +1,12 @@
 name: Harvest pick stats
 
-# Daily, just after PokeDoku rotates (new puzzles at midnight US Eastern:
-# 04:00 UTC in summer, 05:00 in winter): archive the board that just
-# finished with its final counts, fold it into the pick prior, and note
-# the new board so it can be archived tomorrow (scripts/harvest-pick-stats.ts).
-# GitHub runs schedules hours late on this repo and occasionally skips
-# one, and a day whose board was never seen while current can't be
-# archived at all, so a second slot repeats the run — a no-op when the
-# first one got there. A push made with GITHUB_TOKEN doesn't fire the
-# on-push Pages deploy, so the job dispatches deploy.yml itself.
+# Daily, just after PokeDoku rotates (midnight US Eastern): archive the
+# board that just finished, fold it into the pick prior, and note the new
+# board so it can be archived tomorrow (scripts/harvest-pick-stats.ts).
+# GitHub runs schedules late and occasionally skips one, and a board never
+# seen while current can't be archived, so a second slot repeats the run
+# (a no-op when the first one got there). A push made with GITHUB_TOKEN
+# doesn't fire the on-push Pages deploy, so the job dispatches it itself.
 on:
   schedule:
     - cron: "20 5 * * *"

@@ -1,19 +1,14 @@
 // Cross-device progress sharing through Firestore, keyed by a Google
-// account ("Sign in with Google") — the successor to the gist/PAT sync
-// in sync.ts.
+// account; the successor to the gist sync in sync.ts.
 //
-// One doc per device block at users/{uid}/blocks/{deviceId}; each
-// device only writes its own doc, so concurrent devices can never
-// clobber each other (an even stronger property than the gist, whose
-// single shared file every device PATCHed whole). The block is stored
-// as one JSON string field — Firestore field paths choke on arbitrary
-// map keys (pair keys contain "|"), and blocks are only ever read
-// whole.
+// One doc per device block at users/{uid}/blocks/{deviceId}. Each device
+// writes only its own doc, so devices never clobber each other. The block
+// is one JSON string field: Firestore field paths reject some map keys,
+// and blocks are only ever read whole.
 //
-// The firebase SDK is heavy, so it is loaded only via dynamic import()
-// on first use: users who never sign in download none of it. Auth
-// persistence is the SDK default (IndexedDB) — sign in once per
-// device; the refresh token silently mints ID tokens from then on.
+// The firebase SDK is loaded by dynamic import() on first use, so users
+// who never sign in download none of it. Auth persistence is the SDK
+// default, so a device signs in once.
 
 import { firebaseConfig, isFirebaseConfigured } from "./firebaseConfig.ts";
 import type { StatsBlock } from "./stats.ts";
@@ -62,9 +57,9 @@ function loadBackend(): Promise<CloudBackend> {
   return backendPromise;
 }
 
-// Kick off the SDK download early (e.g. when a sign-in button renders)
-// so the popup call in the click handler isn't stuck behind it — Safari
-// only tolerates a short gap between the click and window.open.
+// Kick off the SDK download early (when a sign-in button renders) so the
+// popup call in the click handler isn't stuck behind it; Safari only
+// tolerates a short gap between the click and window.open.
 export function preloadCloud(): void {
   if (isFirebaseConfigured) void loadBackend().catch(() => undefined);
 }
@@ -91,9 +86,9 @@ export async function signOutGoogle(): Promise<void> {
   localStorage.removeItem(SESSION_KEY);
 }
 
-// Call once on startup when hasCloudSession(). Resolves with the
-// restored account, or null (revoked/signed out elsewhere — the flag is
-// cleared so the app falls back to signed-out).
+// Call once on startup when hasCloudSession(). Resolves with the restored
+// account, or null when it was revoked or signed out elsewhere, in which
+// case the flag is cleared so the app falls back to signed-out.
 export async function restoreAccount(): Promise<CloudAccount | null> {
   if (!hasCloudSession()) return null;
   if (!isFirebaseConfigured && !backendPromise) {
@@ -114,9 +109,8 @@ function requireUid(): string {
 
 type DeviceBlocks = Record<string, StatsBlock>;
 
-// A doc whose json is corrupt is skipped — the owning device rebuilds
-// it from its local block on its next write (mirror of the gist path's
-// corrupt-file handling).
+// A doc whose json is corrupt is skipped; the owning device rebuilds it
+// from its local block on its next write.
 function parseBlockDocs(docs: BlockDoc[]): DeviceBlocks {
   const devices: DeviceBlocks = {};
   for (const entry of docs) {
@@ -157,7 +151,7 @@ export async function resetRemoteBlocks(ownBlock: StatsBlock): Promise<StatsBloc
 }
 
 // Drops another device's block (after its history has been absorbed
-// locally — see stats.absorbBlock). Returns the remaining blocks.
+// locally, see stats.absorbBlock). Returns the remaining blocks.
 export async function removeDeviceBlock(deviceId: string, ownBlock: StatsBlock): Promise<StatsBlock[]> {
   const uid = requireUid();
   const backend = await loadBackend();
@@ -168,10 +162,10 @@ export async function removeDeviceBlock(deviceId: string, ownBlock: StatsBlock):
   return Object.values(devices);
 }
 
-// PAT → Google migration: copy gist blocks Firestore hasn't seen.
-// Never overwrites an existing doc (Firestore is always fresher once a
-// device has migrated); our own block is skipped — it syncs normally
-// right after. Returns how many blocks were imported.
+// Gist to Google migration: copy gist blocks Firestore hasn't seen. Never
+// overwrites an existing doc (Firestore is fresher once a device has
+// migrated); our own block is skipped, since it syncs normally right
+// after. Returns how many blocks were imported.
 export async function importLegacyBlocks(blocks: StatsBlock[], ownDeviceId: string): Promise<number> {
   const uid = requireUid();
   const backend = await loadBackend();
@@ -208,9 +202,9 @@ async function buildFirebaseBackend(): Promise<CloudBackend> {
   return {
     async signIn() {
       const provider = new authModule.GoogleAuthProvider();
-      // signInWithRedirect is broken on Safari 16.1+/iOS for a GitHub
-      // Pages origin (third-party storage partitioning); popup works
-      // everywhere, including installed-PWA standalone mode.
+      // signInWithRedirect is broken on Safari for a GitHub Pages origin
+      // (third-party storage partitioning); popup works everywhere,
+      // including installed-PWA standalone mode.
       const credential = await authModule.signInWithPopup(auth, provider);
       return toAccount(credential.user);
     },
@@ -233,8 +227,8 @@ async function buildFirebaseBackend(): Promise<CloudBackend> {
       });
     },
     async writeBlock(uid, deviceId, json) {
-      // updatedAt is debugging metadata only — merge semantics live
-      // entirely in stats.mergeBlocks.
+      // updatedAt is debugging metadata only; merge semantics live in
+      // stats.mergeBlocks.
       await setDoc(blockDoc(uid, deviceId), { json, updatedAt: serverTimestamp() });
     },
     async applyBatch(uid, deleteIds, write) {

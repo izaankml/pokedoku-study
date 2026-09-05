@@ -15,8 +15,8 @@ export interface Grid {
 }
 
 // Which category groups a new grid draws from. Moves and abilities are out
-// by default — on PokeDoku they're rare and the rest is what you get
-// quizzed on; the Grid tab lets you change the set.
+// by default, since PokeDoku rarely asks them; the Grid tab lets you
+// change the set.
 export const DEFAULT_EXCLUDED_GROUPS: CategoryGroup[] = ["move", "ability"];
 export function gridPool(excludedGroups: ReadonlyArray<CategoryGroup> = DEFAULT_EXCLUDED_GROUPS): Category[] {
   const excluded = new Set<CategoryGroup>(excludedGroups);
@@ -31,7 +31,7 @@ const KNOWN_GOOD: Grid = {
   cols: ["region-kanto", "mono", "dual"],
 };
 
-// Cheap check that 9 DISTINCT Pokémon can fill the board: fill the
+// Cheap check that nine distinct Pokémon can fill the board: fill the
 // tightest cells first, always taking an unused member.
 function hasDistinctSolution(rows: string[], cols: string[]): boolean {
   const cells: Pokemon[][] = [];

@@ -37,7 +37,7 @@ export function pairIsValid(catA: string, catB: string, min = 1): boolean {
   return intersection(catA, catB).length >= min;
 }
 
-// Everyone matching every category — Browse with up to three filters.
+// Everyone matching every category (Browse with up to three filters).
 // One and two ids reuse the pair caches; more get their own.
 const intersectAllCache = new Map<string, Pokemon[]>();
 export function intersectAll(catIds: string[]): Pokemon[] {
@@ -55,12 +55,9 @@ export function intersectAll(catIds: string[]): Pokemon[] {
   return members;
 }
 
-// A PokeDoku board names six distinct categories, so a Pokémon valid in
-// all nine of its cells matches all six. This is the most any board can
-// have: the largest intersection of six categories from the pool. It
-// comes from the dataset, so it moves with it when new games add
-// Pokémon or PokeDoku adds categories. The pick-stats harvest uses it to
-// tell a category board from an everything-goes pool.
+// A board names six distinct categories, so the most Pokémon any board can
+// have valid in all nine cells is the largest six-way intersection in the
+// pool. The pick-stats harvest uses it to spot everything-goes pools.
 const BOARD_CATEGORY_COUNT = 6;
 
 export function maxValidInEveryCell(pool: Category[] = QUIZ_CATEGORIES): number {
@@ -106,9 +103,8 @@ function popcount(bits: Uint32Array): number {
 }
 
 // Whether `candidate` can be added to the picked categories: not a
-// repeat, and someone still matches them all. Existence-only — the
-// pairwise checks are cached, and the three-way case stops at the first
-// match instead of materializing (and caching) the whole member list.
+// repeat, and someone still matches them all. Existence-only, so the
+// three-way case stops at the first match rather than building a list.
 export function canJoin(catIds: string[], candidate: string): boolean {
   if (catIds.includes(candidate)) return false;
   const others = catIds.filter(Boolean);
@@ -134,8 +130,8 @@ export function normalizeName(text: string): string {
     .replace(/[^a-z0-9]/g, "");
 }
 
-// The words of a name, each normalised, in sorted order — "Charizard
-// Mega X", "Mega Charizard X" and "X Mega Charizard" give one list
+// The words of a name, each normalised, in sorted order, so "Charizard
+// Mega X" and "Mega Charizard X" give one list
 const wordsOf = (text: string): string[] =>
   text
     .split(/[\s\-–—()/]+/)
@@ -172,13 +168,9 @@ interface SearchEntry {
   pokemon: Pokemon;
 }
 
-// Each Pokémon is searchable by its display name ("Growlithe Hisui", as
-// PokeDoku names it), the dataset's own name ("Hisuian Growlithe") and,
-// for forms, the dex slug too ("growlithehisui"). A match has to reach the
-// species name, though: "venusaur" or "venusaur m" finds Venusaur Mega,
-// but "mega", "galar" or "dusk" (for Lycanroc Dusk) on their own find
-// nothing by their form word — `speciesAt` is where the species starts in
-// each name, so a prefix match must run past it.
+// Each Pokémon is searchable by its display name, the dataset's own name
+// and, for forms, the dex slug. A prefix match must reach the species
+// name (`speciesAt`), so "mega" or "galar" alone find nothing.
 const SEARCH_INDEX: SearchEntry[] = POKEMON.map((pokemon) => {
   const species = normalizeName(pokemon.speciesName || pokemon.displayName);
   const names = [normalizeName(pokemon.displayName)];
@@ -198,10 +190,9 @@ for (const { norms, pokemon } of SEARCH_INDEX) {
   for (const { norm } of norms) NORM_TO_POKEMON.set(norm, pokemon);
 }
 
-// Every naming as a bag of words. No two Pokémon share a bag
-// (matching.test.ts checks), so a name typed with its words in another
-// order — "Eternal Floette", "Charizard Gigantamax" — still lands on
-// exactly one.
+// Every naming as a bag of words. No two Pokémon share a bag (a test
+// checks), so a name typed with its words in another order still lands
+// on exactly one.
 const BAG_TO_POKEMON = new Map<string, Pokemon>();
 for (const { namings, pokemon } of SEARCH_INDEX) {
   for (const words of namings) {
@@ -219,12 +210,10 @@ export function findByName(query: string, eligible: PokemonFilter = null): Pokem
   return pokemon && (!eligible || eligible(pokemon)) ? pokemon : null;
 }
 
-// Whether a name says which species a form is, but not which form —
-// "Charizard" or "Mega Charizard" for Charizard Mega X, "Tauros Paldea"
-// for the Combat Breed: every word typed is in one of the Pokémon's
-// namings, the species' own words are all there, and some of the
-// naming's are missing. Never for a Pokémon that has no form to leave
-// out ("Koko" for Tapu Koko is just nobody).
+// Whether a name says which species a form is but not which form
+// ("Charizard" for Charizard Mega X): every word typed is in one of the
+// Pokémon's namings, the species' words are all there, and some of the
+// naming's are missing. Never for a Pokémon with no form to leave out.
 export function namesSpeciesOnly(query: string, pokemon: Pokemon): boolean {
   if (pokemon.form === null) return false;
   const typed = new Set(wordsOf(query));
@@ -240,9 +229,9 @@ export function namesSpeciesOnly(query: string, pokemon: Pokemon): boolean {
 type Stretch = "anywhere" | "prefix" | "whole";
 
 // The fewest edits (insert, delete, substitute, swap two neighbours) that
-// turn `query` into some stretch of `text` — anywhere in it, a prefix of
-// it, or the whole of it. Stops early, returning Infinity, once no
-// stretch can come within `maxEdits`.
+// turn `query` into some stretch of `text`: anywhere in it, a prefix of
+// it, or the whole of it. Returns Infinity once no stretch can come
+// within `maxEdits`.
 function editsToMatch(query: string, text: string, maxEdits: number, stretch: Stretch): number {
   if (stretch === "whole" && Math.abs(query.length - text.length) > maxEdits) return Infinity;
   const width = text.length + 1;
@@ -281,18 +270,14 @@ function editsToMatch(query: string, text: string, maxEdits: number, stretch: St
 }
 
 // How many typos a query of this length may carry: none under five
-// letters, one from five, two from eight, three from twelve — "vensaur"
-// gets one, "pikachoo" and "dusknior" two, "typhlosoin" two.
+// letters, one from five, two from eight, three from twelve.
 const typoAllowance = (query: string): number =>
   query.length < 5 ? 0 : Math.min(3, Math.floor(query.length / 4));
 
 // The edits that turn the words typed into some of a naming's words, each
-// typed word its own word of the naming within its own typo allowance,
-// with the species' words all reached — or Infinity. Word by word, so a
-// budget for a long name is never spent on a word that is nobody's
-// ("Charizard blah" is no slip on Charizard Gmax), and a form word may
-// go unsaid ("Mega Charizrd" is a slip on Charizard Mega X: species
-// first, form next).
+// typed word matched to its own word within its own typo allowance and
+// the species' words all reached, or Infinity. Word by word, so a long
+// name's budget is never spent on a word that is nobody's.
 function editsToWords(typed: string[], naming: string[], speciesWords: string[]): number {
   if (typed.length > naming.length) return Infinity;
   const used = new Set<number>();
@@ -319,10 +304,8 @@ function editsToWords(typed: string[], naming: string[], speciesWords: string[])
 
 // The Pokémon a name is a misspelling of: its species name run together
 // ("tapukokko"), or each word typed a slip on a word of one of its
-// namings ("Charizrd", "X Mega Charizrd", "Alolan Raichuu"), the species
-// always among them. The nearest, when several are close. Never a name
-// spelt right (that's someone, see findByName), nor one that is only the
-// start of a name ("Chariz") — that's short of a name, not a slip in one.
+// namings, the species always among them. The nearest when several are
+// close. Never a name spelt right (see findByName), nor a mere prefix.
 export function nearMiss(query: string, eligible: PokemonFilter = null): Pokemon | null {
   const typed = wordsOf(query);
   if (!typed.length) return null;
@@ -368,8 +351,8 @@ export function searchNames(query: string, limit = 8, eligible: PokemonFilter = 
   if (exact.length >= limit || maxEdits === 0) return exact.slice(0, limit);
 
   // Near-misses are judged on the species name alone, or on the names that
-  // open with it ("Lycanroc Dusk", "lycanrocdusk") — a typo budget must
-  // never be spent on a form-first name's form word ("Mega Chimecho").
+  // open with it, so a typo budget is never spent on a form-first name's
+  // form word ("Mega Chimecho").
   const fuzzy: { edits: number; pokemon: Pokemon }[] = [];
   for (const { species, norms, pokemon } of candidates) {
     let edits = editsToMatch(normalized, species, maxEdits, "anywhere");
@@ -393,9 +376,8 @@ export function guessFilterFor(catIds: string[]): PokemonFilter {
 }
 
 // Every valid category pair, as [catA, catB] with catA.id < catB.id.
-// Cached per category list — by ARRAY IDENTITY, so pass a module-level
-// list (QUIZ_CATEGORIES, CATEGORIES); an inline .filter() would miss the
-// cache every call. Used for drill selection and schedule summaries.
+// Cached by array identity, so pass a module-level list (QUIZ_CATEGORIES,
+// CATEGORIES) rather than an inline filter.
 export type CategoryPair = [Category, Category];
 const validPairsCache = new WeakMap<Category[], CategoryPair[]>();
 

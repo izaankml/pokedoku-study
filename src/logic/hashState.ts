@@ -1,13 +1,11 @@
 // The URL hash carries where you are: "#tab" plus each tab's own state
-// after it — "#cards/region", "#browse/region-kanto/type-fire",
-// "#drill/type-fire/flag-legendary" — so a refresh, a shared link or
-// back/forward lands on the same view. Tab changes push a history entry;
-// changes within a tab replace it, so Back always means "previous tab".
-// An open detail sheet is a trailing "pokemon-<slug>" segment
-// ("#browse/region-kanto/pokemon-eevee"): opening pushes an entry, so Back
-// closes the sheet; closing it pops that entry, so Back never reopens it.
-// A sheet opened from within a sheet (tapping a tile of the evolution
-// line) pushes another, so Back returns to the previous sheet while ×
+// after it ("#cards/region", "#browse/region-kanto/type-fire"), so a
+// refresh, a shared link or back/forward lands on the same view. Tab
+// changes push a history entry; changes within a tab replace it, so Back
+// always means "previous tab". An open detail sheet is a trailing
+// "pokemon-<slug>" segment: opening pushes an entry, so Back closes the
+// sheet; closing pops it, so Back never reopens it. A sheet opened from a
+// sheet pushes another, so Back returns to the previous sheet while ×
 // closes them all (the entry's state counts the depth).
 
 import { useCallback, useEffect, useState } from "react";
@@ -61,13 +59,10 @@ export function hashStateFor(tab: string): string[] | null {
   return current === tab.toLowerCase() ? rest : null;
 }
 
-// Jump to another tab with the given state segments (a clicked pill into
-// Browse, the Stats tab's Cards/Drill entry points). history.pushState
-// fires no events, so the synthetic hashchange is what tells App to
-// switch tab — and the target, if already mounted, to re-read its state.
-// With a detail sheet open, its pushed history entry is REPLACED rather
-// than pushed onto: otherwise Back would land on the sheet the user just
-// left and reopen it.
+// Jump to another tab with the given state segments. history.pushState
+// fires no events, so the synthetic hashchange tells App to switch tab and
+// a mounted target to re-read its state. An open detail sheet's history
+// entry is replaced rather than pushed onto, so Back doesn't reopen it.
 export function jumpToTab(tab: string, rest: string[] = []): void {
   writeHash(tab, rest, { push: historyDepth() === 0, detail: null });
   window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -86,9 +81,8 @@ function historyDepth(): number {
 }
 
 // Runs `handler` whenever the location's hash may have changed: real
-// navigation (hashchange/popstate) and jumpToBrowse's synthetic event.
-// `handler` should be stable (module fn or useCallback) or re-subscribing
-// is fine — the effect re-binds when it changes.
+// navigation (hashchange/popstate) and jumpToTab's synthetic event. The
+// effect re-binds when `handler` changes.
 export function useHashChange(handler: () => void): void {
   useEffect(() => {
     window.addEventListener("hashchange", handler);
@@ -103,8 +97,8 @@ export function useHashChange(handler: () => void): void {
 export type DetailResolver = (slug: string | null) => Pokemon | null;
 
 // The open detail sheet, synced with the hash. `resolve(slug)` returns the
-// Pokémon that slug means here (or null — a slug left over from another
-// view is dropped from the hash). Returns [pokemon | null, open, close].
+// Pokémon that slug means here, or null for a slug left over from another
+// view, which is dropped from the hash. Returns [pokemon | null, open, close].
 export function useDetailHash(resolve: DetailResolver): [Pokemon | null, (pokemon: Pokemon) => void, () => void] {
   const [selected, setSelected] = useState<Pokemon | null>(() => resolve(readHash().detail));
   // Back/forward (or a hand-edited hash) opens or closes the sheet
@@ -121,8 +115,8 @@ export function useDetailHash(resolve: DetailResolver): [Pokemon | null, (pokemo
   };
   const close = (): void => {
     setSelected(null);
-    // the entries we pushed on open — pop them; a sheet opened from a pasted
-    // or refreshed link has none, so just drop the segment
+    // pop the entries pushed on open; a sheet opened from a pasted or
+    // refreshed link has none, so just drop the segment
     const depth = historyDepth();
     if (depth) window.history.go(-depth);
     else {
@@ -149,6 +143,6 @@ export function saveJson(key: string, value: unknown): void {
     if (value === null || value === undefined) localStorage.removeItem(key);
     else localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // storage full or unavailable — the app just won't remember this
+    // storage full or unavailable: the app won't remember this
   }
 }

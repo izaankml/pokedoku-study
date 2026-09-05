@@ -99,11 +99,9 @@ export interface FlashcardPick {
 }
 
 // Picks a flashcard: a deck (the one asked for, or any single deck for
-// "all") and a Pokémon from that deck's pool. A review queue first: while
-// any card the pool can deal is due, the pick is among the due ones (so
-// the Cards header's due count runs down as they're answered); otherwise
-// anyone — either way weighted by weakness, how due it is, and the deck's
-// own bias.
+// "all") and a Pokémon from that deck's pool. While any card the pool can
+// deal is due, the pick is among the due ones; otherwise anyone. Either
+// way weighted by weakness, how due it is, and the deck's own bias.
 export function pickFlashcard(
   merged: MergedStats,
   { deckId = "all", exclude = new Set<number>(), filter = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
@@ -111,8 +109,8 @@ export function pickFlashcard(
   const deckIds = deckId === "all" ? DECKS.map((deck) => deck.id) : [deckId];
   // Per deck: prefer the focused pool without the recent cards; a filter
   // narrow enough to exhaust it drops the recent-exclusion first and the
-  // filter only as a last resort — and each deck falls back on its own,
-  // so a tight filter never silently removes a deck from the All mix.
+  // filter only as a last resort. Each deck falls back on its own, so a
+  // tight filter never silently removes a deck from the All mix.
   const cards = deckIds.flatMap((id) => {
     const pool = deckPool(id);
     const focused = focusedDeckPool(id, filter);
@@ -141,7 +139,7 @@ export interface DrillPairForOptions {
 
 // A drill pair containing `catId` (the Stats tab's Drill buttons): an
 // already-practised partner when one exists, otherwise any partner from
-// another group with a non-empty intersection — weighted by weakness and
+// another group with a non-empty intersection, weighted by weakness and
 // how due the pair is either way.
 export function drillPairFor(
   catId: string,

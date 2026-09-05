@@ -84,7 +84,7 @@ const cap = (text: string): string => text[0].toUpperCase() + text.slice(1);
 // ---- fun, Browse-only filters ----
 
 // The Pikachu-clone archetype: each generation's electric rodent, plus
-// the Pikachu line and its imitator. A judgment-call list — edit freely.
+// the Pikachu line and its imitator. A judgment-call list; edit freely.
 const PIKACHU_CLONES = new Set([
   25, // Pikachu
   26, // Raichu
@@ -205,8 +205,8 @@ export const CATEGORIES: Category[] = [
       group: "region",
       priorWeight,
       // `regions` lists every region a record counts for: a species' origin,
-      // or for a form that debuted elsewhere, both (White-Striped Basculin is
-      // Unova and Hisui) — see scripts/build-dataset.ts
+      // or both for a form that debuted elsewhere (White-Striped Basculin is
+      // Unova and Hisui)
       predicate: (pokemon) => pokemon.regions.includes(id),
       miss: `isn't from ${label}`,
     }),
@@ -292,17 +292,16 @@ export const CATEGORIES: Category[] = [
   ...FUN_CATEGORIES,
 ];
 
-// What Drill and Grid draw from and Stats tables show — everything but
+// What Drill and Grid draw from and Stats tables show: everything but
 // the Browse-only curiosities.
 export const QUIZ_CATEGORIES: Category[] = CATEGORIES.filter((category) => !category.browseOnly);
 
 export const CATEGORY_BY_ID = new Map<string, Category>(CATEGORIES.map((category) => [category.id, category]));
 
-// Whether a category is decided by a Pokémon's evolution line — its stage,
+// Whether a category is decided by a Pokémon's evolution line: its stage,
 // how it evolved, whether the line branches, whether it's a First Partner
-// or Baby line. Mega and Gigantamax forms sit outside every line (no
-// stage, no method), so they are never answers there and needn't be
-// offered as guesses.
+// or Baby line. Mega and Gigantamax forms sit outside every line, so they
+// are never answers there and needn't be offered as guesses.
 const EVOLUTION_LINE_GROUPS = new Set<CategoryGroup>(["evo", "stage", "evoLine"]);
 const EVOLUTION_LINE_FLAGS = new Set(["flag-starter", "flag-baby"]);
 export function considersEvolutionLine(catId: string): boolean {
@@ -339,9 +338,8 @@ export const QUIZ_CATEGORY_GROUPS = CATEGORY_GROUPS.filter(([group]) =>
 );
 
 // Groups where one Pokémon can never satisfy two categories, so such pairs
-// are structurally empty. Everything else (types → dual types, evolution
-// methods → Alakazam, regions → dual-region forms, ...) is decided by the
-// actual intersection.
+// are structurally empty. Everything else (dual types, Alakazam's two
+// methods, dual-region forms) is decided by the actual intersection.
 export const EXCLUSIVE_GROUPS = new Set<CategoryGroup>(["typeCount", "stage"]);
 
 export function getCategory(id: string): Category {
@@ -351,14 +349,14 @@ export function getCategory(id: string): Category {
 }
 
 // The type-colour CSS class for a type category (" type-fire", leading
-// space included), "" for everything else — the one rule for colouring
+// space included), "" for everything else: the one rule for colouring
 // UI by a category (pills, the Cards option buttons).
 export function typeClassOf(cat: Pick<Category, "id" | "group"> | undefined): string {
   return cat?.group === "type" ? ` type-${cat.id.slice(5)}` : "";
 }
 
 // The colour-family class for any category (" type-fire", " region-galar",
-// " group-legendary", " cat-evo"), leading space included — shared by
+// " group-legendary", " cat-evo"), leading space included; shared by
 // CategoryPill and controls styled like pills (the Focus filter chips).
 export function pillClassOf(cat: Pick<Category, "id" | "group">): string {
   if (cat.group === "type") return typeClassOf(cat);

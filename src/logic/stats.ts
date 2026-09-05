@@ -2,16 +2,16 @@
 // sync (sync.ts) merges blocks like this one from other devices; each
 // device only ever writes its own block.
 //
-// Counts (a, c) merge by addition. Schedule state (s, t — see
-// schedule.ts) merges last-writer-wins by t: whichever device answered
-// most recently owns the item's streak. That is only correct because a
-// device computes its new streak from the *merged* state, not from its
-// own block alone (see withAttempt).
+// Counts (a, c) merge by addition. Schedule state (s, t; see schedule.ts)
+// merges last-writer-wins by t: whichever device answered most recently
+// owns the item's streak. That is only correct because a device computes
+// its new streak from the merged state, not its own block (see
+// withAttempt).
 
 const KEY = "pokedoku-study:stats:v1";
 
-// One item's history: attempts and correct answers, plus — in the
-// scheduled tables — the current streak and when it was last seen.
+// One item's history: attempts and correct answers, plus, in the
+// scheduled tables, the current streak and when it was last seen.
 export interface StatEntry {
   a: number;
   c: number;
@@ -155,7 +155,7 @@ export function summarizeBlock(block: StatsBlock): BlockSummary {
 
 // Folds another device's history into this block (counts add up; the
 // later schedule state wins) so the other block can be dropped without
-// losing anything. Returns a NEW block.
+// losing anything. Returns a new block.
 export function absorbBlock(own: StatsBlock, other: StatsBlock): StatsBlock {
   const next = structuredClone(own);
   for (const table of ALL_TABLES) {
@@ -199,7 +199,7 @@ export interface WithAttemptOptions {
   now?: number;
 }
 
-// Returns a NEW block (so React state updates propagate).
+// Returns a new block (so React state updates propagate).
 export function withAttempt(
   block: StatsBlock,
   { categories = [], pair, speciesId, correct }: AttemptEvent,

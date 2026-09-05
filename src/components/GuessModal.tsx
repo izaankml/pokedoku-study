@@ -14,8 +14,8 @@ interface GuessModalProps {
   categories: [string, string];
   // the verdict on the last guess (a wrong one keeps the popup open)
   message: string;
-  // the Pokémon behind a wrong verdict — shown as a tile that opens its
-  // detail sheet, so "why doesn't it fit" is one tap away
+  // the Pokémon behind a wrong verdict, shown as a tile that opens its
+  // detail sheet
   wrongGuess?: Pokemon | null;
   onGuess: (pokemon: Pokemon) => void;
   onReveal: () => void;

@@ -133,8 +133,7 @@ function NameOne() {
           </p>
           {result.correct ? (
             <p className="due-note">
-              {/* PokeDoku's own pick rates need a login; the pool size is
-                  the local stand-in for how findable the answer was */}
+              {/* the pool size stands in for how findable the answer was */}
               {answers.length === 1 ? "The only valid answer!" : `One of ${answers.length} valid answers.`}
             </p>
           ) : null}
@@ -214,7 +213,7 @@ function NameAll() {
     setNote(null);
   }
 
-  // the last shape can't be turned off — there'd be nothing to draw
+  // the last shape can't be turned off; there'd be nothing to draw
   function toggleKind(kind: string) {
     if (!NAME_ALL_KINDS.some(([each]) => each === kind)) return;
     const next = kinds.includes(kind as NameAllKind)

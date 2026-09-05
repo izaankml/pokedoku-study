@@ -25,7 +25,7 @@ export const BABY_IDS = new Set<number>([
 
 // First-partner base forms (Bulbasaur..Sprigatito lines). Expanded to whole
 // evolution lines by the build script. The Let's Go Partner Pikachu/Eevee
-// forms are first partners too (PokeDoku counts them) — see FORM_IDS.
+// forms are first partners too (see FORM_IDS).
 export const STARTER_BASE_IDS = new Set<number>([
   1, 4, 7, 152, 155, 158, 252, 255, 258, 387, 390, 393, 495, 498, 501, 650,
   653, 656, 722, 725, 728, 810, 813, 816, 906, 909, 912,
@@ -55,9 +55,8 @@ export const PARADOX_IDS = new Set<number>([
 ]);
 
 // Species debuting in Legends: Arceus. @pkmn/dex reports them as gen 8;
-// their region of origin is Hisui, not Galar. Regional FORMS of older
-// species (Hisuian Growlithe etc.) do not relocate the species — they get
-// their own records instead (see FORM_IDS).
+// their region of origin is Hisui, not Galar. Regional forms of older
+// species get their own records instead (see FORM_IDS).
 export const HISUI_IDS = new Set<number>([899, 900, 901, 902, 903, 904, 905]);
 
 // Gen-8 forms that debuted in Legends: Arceus but are not named "-Hisui"
@@ -69,16 +68,9 @@ export const HISUI_FORM_IDS = new Set<string>([
 ]);
 
 // Evolution methods a Pokémon counts for, where they can't be read off the
-// dex evoType (keys are dex ids/slugs). PokeDoku counts every method that
-// works in some core game, so a Pokémon can have several. Sources: PokeDoku's
-// notes and pokedoku-helper.com's PokeAPI-derived data.
-// - Linking Cord (Legends: Arceus) makes the classic trade evolutions also
-//   count as item.
-// - Modern games swapped some location/level evolutions for stones or made
-//   held items usable, so those count as item AND level.
-// - dex "other" methods: PokeAPI files most as level-up (Rage Fist, 999 coins,
-//   1000 steps, recoil...), a few as item (Sweets, Towers), and three as
-//   nothing at all (critical hits, taking damage, agile-style moves).
+// dex evoType (keys are dex slugs). PokeDoku counts every method that works
+// in some core game, so a Pokémon can have several; the README's Dataset
+// section explains the judgment calls.
 export const EVO_METHOD_OVERRIDES: Record<string, EvoMethod[]> = {
   alakazam: ["trade", "item"],
   machamp: ["trade", "item"],
@@ -154,8 +146,8 @@ export const EVO_DETAIL_OVERRIDES: Record<string, string> = {
 export const PREVO_OVERRIDES: Record<string, string> = {
   melmetal: "Meltan",
   lycanrocdusk: "Rockruff-Dusk", // Dusk Lycanroc comes from Own Tempo Rockruff, a form of its own
-  // a form keeps its form when it evolves (PokeDoku lists these Burmy, Shellos
-  // and Deerling forms as entries of their own — see POKEDOKU_FORM_IDS)
+  // a form keeps its form when it evolves (PokeDoku lists these Burmy and
+  // Shellos forms as entries of their own, see FORM_IDS)
   wormadamsandy: "Burmy-Sandy",
   wormadamtrash: "Burmy-Trash",
   gastrodoneast: "Shellos-East",
@@ -200,16 +192,10 @@ export const DISPLAY_NAME_OVERRIDES: Record<string, string> = {
   urshifurapidstrikegmax: "Gigantamax Urshifu (Rapid Strike)",
 };
 
-// Alternate forms that can get their own dataset record, mapped from their
-// @pkmn/dex id to the PokeAPI id PokeDoku uses for them (which is also the
-// sprite id). This is the intersection of @pkmn/dex formes and PokeDoku's
-// visible answer list (api.pokedoku.com/api/pokemon/all), minus Totems and
-// PokeDoku's own cosmetic pseudo-ids (90000+: seasons, genders, cloaks),
-// which have no PokeAPI sprite and no category difference.
-// The build script drops any form here whose category profile is a subset
-// of its base species' (e.g. Kyurem-Black, Lycanroc Midnight) — those never
-// answer a cell the base species doesn't. Mega and Gigantamax forms always
-// stay: in PokeDoku they are the answers to the Mega/Gigantamax categories.
+// Alternate forms that get a dataset record, mapped from their @pkmn/dex id
+// to the PokeAPI id PokeDoku uses for them (also the sprite id): the
+// @pkmn/dex formes in PokeDoku's answer list. The build script marks any
+// form whose categories are a subset of its base species' as display-only.
 export const FORM_IDS: Record<string, number> = {
   venusaurmega: 10033, // Venusaur-Mega
   charizardmegax: 10034, // Charizard-Mega-X
@@ -274,8 +260,7 @@ export const FORM_IDS: Record<string, number> = {
   ampharosmega: 10045, // Ampharos-Mega
   wooperpaldea: 10253, // Wooper-Paldea
   // PokeDoku's own entries (ids 90000 + dex number) for cosmetic forms
-  // PokeAPI doesn't split out; they cover nothing new, so they're
-  // display-only records, sprites from PokeDoku's CDN
+  // PokeAPI doesn't split out: display-only records with PokeDoku's sprites
   burmysandy: 90412, // burmy-sandy-cloak
   burmytrash: 91412, // burmy-trash-cloak
   cherrimsunshine: 90421, // cherrim-sunshine
@@ -385,7 +370,7 @@ export const FORM_IDS: Record<string, number> = {
   floetteeternal: 10061, // Floette-Eternal
   floettemega: 10296, // Floette-Mega
   meowsticf: 10025, // Meowstic-F
-  meowsticmmega: 10314, // Meowstic-M-Mega (both genders Mega Evolve into it; PokeDoku's hidden meowstic-female-mega isn't a thing yet)
+  meowsticmmega: 10314, // Meowstic-M-Mega (both genders Mega Evolve into it)
   aegislashblade: 10026, // Aegislash-Blade
   malamarmega: 10297, // Malamar-Mega
   barbaraclemega: 10298, // Barbaracle-Mega
@@ -506,12 +491,10 @@ export const FORM_IDS: Record<string, number> = {
   urshifugmax: 10226, // Urshifu-Gmax (Single Strike)
 };
 
-// PokeDoku also lists, as entries of its own (ids 90000 + dex number), the
-// female of the gender-dimorphic species and Sawsbuck's seasons; the dex
-// has no forme for these, so the builder clones the species record — same
-// everything, with this form — as a display-only record. `prevo` is the
-// record id of the pre-evolution's matching form where there is one, else
-// the species' own pre-evolution.
+// Entries PokeDoku lists that have no dex forme (the female of a
+// gender-dimorphic species, Sawsbuck's seasons): the builder clones the
+// species record under this form as a display-only record. `prevo` is the
+// pre-evolution's matching form where there is one.
 export const CLONED_FORMS: ClonedForm[] = [
   { id: 90449, species: 449, name: "hippopotasf", form: "F" },
   { id: 90450, species: 450, name: "hippowdonf", form: "F", prevo: 90449 },
@@ -521,7 +504,7 @@ export const CLONED_FORMS: ClonedForm[] = [
   { id: 90668, species: 668, name: "pyroarf", form: "F", prevo: 667 },
   { id: 10136, species: 774, name: "miniorred", form: "Red" }, // Minior's red core (the dex's base Minior is the meteor)
   { id: 10257, species: 925, name: "mausholdthree", form: "Three", prevo: 924 }, // Family of Three (PokeAPI's default 925 is Family of Four)
-  { id: 99901, species: 10, name: "caterpiecowboyhat", form: "Cowboy-Hat" }, // PokeDoku's own joke entry — selectable there, so here too
+  { id: 99901, species: 10, name: "caterpiecowboyhat", form: "Cowboy-Hat" }, // PokeDoku's own joke entry, selectable there
   { id: 91586, species: 586, name: "sawsbucksummer", form: "Summer", prevo: 91585 },
   { id: 90586, species: 586, name: "sawsbuckautumn", form: "Autumn", prevo: 90585 },
   { id: 92586, species: 586, name: "sawsbuckwinter", form: "Winter", prevo: 92585 },

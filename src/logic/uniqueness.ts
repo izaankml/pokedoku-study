@@ -2,12 +2,10 @@
 // (src/data/pick-stats.json, written by scripts/harvest-pick-stats.ts).
 //
 // The prior gives each Pokémon a weight: across every harvested daily
-// cell it was picked in, the mean share of that cell's picks it took.
-// Estimated pick% for a practice cell is the pick's weight normalized
-// over the cell's whole answer pool — "of players facing this cell, how
-// many would reach for this one". A cell's uniqueness is 100 minus that,
-// mirroring PokeDoku's own 0–900 board score (each of 9 cells adds
-// 100 − pick%; their untouched board reads 900).
+// cell it was picked in, the mean share of that cell's picks it took. The
+// estimated pick% for a practice cell is the pick's weight normalized over
+// the cell's answer pool. A cell's uniqueness is 100 minus that, as in
+// PokeDoku's own board score.
 import pickStatsJson from "../data/pick-stats.json" with { type: "json" };
 import type { PickStatsData, Pokemon } from "../data/types.ts";
 
@@ -49,7 +47,7 @@ export function estimatePickPercent(pokemon: Pokemon, pool: Pokemon[]): number |
 }
 
 // Every pool member's estimate at once, by id (a filled cell's answer
-// list) — empty when there is no harvested data to estimate from
+// list); empty when there is no harvested data to estimate from
 export function estimatePickPercents(pool: Pokemon[]): Map<number, number> {
   const estimates = new Map<number, number>();
   if (WEIGHTS.size === 0) return estimates;
@@ -69,7 +67,7 @@ export function cellUniqueness(pokemon: Pokemon, pool: Pokemon[]): number | null
 export const formatPickPercent = (value: number): string =>
   value < 0.005 ? "<0.01%" : `${Number(value.toFixed(2))}%`;
 
-// an estimate, marked as one: "~12.5%" — but "<0.01%" as is, since "<"
+// an estimate, marked as one: "~12.5%", but "<0.01%" as is, since "<"
 // already says the figure is approximate
 export function formatPickEstimate(value: number): string {
   const label = formatPickPercent(value);

@@ -3,7 +3,7 @@
 // Each scheduled stats entry carries `s` (consecutive-correct streak) and
 // `t` (last seen, epoch ms). A correct answer bumps the streak and pushes
 // the next review out; a miss resets it so the item comes back within the
-// session. There is no ease factor — the streak alone indexes the table.
+// session. There is no ease factor; the streak alone indexes the table.
 
 import type { StatEntry, StatTable } from "./stats.ts";
 
@@ -11,7 +11,7 @@ const MIN = 60e3;
 const DAY = 86400e3;
 
 export const INTERVALS_MS = [
-  10 * MIN, // s=0: just missed or brand new — back later this session
+  10 * MIN, // s=0: just missed or brand new, back later this session
   1 * DAY,
   3 * DAY,
   7 * DAY,
