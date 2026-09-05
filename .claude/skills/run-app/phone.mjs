@@ -9,6 +9,7 @@
 //   default 440×956 with a 62px status bar, an iPhone 16 Pro Max as a
 //   home-screen app), ENGINE=webkit (no inset emulation there; WEBKIT_PATH
 //   points at a cached pw_run.sh when playwright-core wants a newer build)
+/* global window, document -- the page callbacks below run in the browser */
 import { readFileSync } from "node:fs";
 import { chromium, webkit } from "playwright-core";
 
