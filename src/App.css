@@ -1682,10 +1682,10 @@ button.pill {
   border-radius: var(--radius-lg);
 }
 
-/* the card's controls — the CTA slot and the action row — on a
-   full-bleed panel with a rounded top edge, docked at the bottom (it runs
-   on under the tab pill on a phone); sticky, so a card taller than the
-   screen scrolls under it and Submit stays in reach */
+/* the card's controls — the CTA slot and the action row — on a panel
+   with a rounded top edge, docked at the bottom of the screen; sticky,
+   so a card taller than the screen scrolls under it and Submit stays in
+   reach */
 .pad-foot {
   flex: none;
   position: sticky;
@@ -1696,6 +1696,18 @@ button.pill {
   background: var(--bg-1);
   border-top: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* on a phone the tab pill floats at the bottom, so the foot is a card of
+   its own, docked above the pill (the page's bottom padding keeps the
+   column clear of it, see --page-bottom) rather than a panel the pill
+   sits on; a tall card still scrolls under it */
+@media (max-width: 640px) {
+  .pad-foot {
+    bottom: calc(var(--page-bottom) - var(--nav-lift));
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+  }
 }
 
 /* a combo's two pads, stacked */
@@ -1925,6 +1937,17 @@ button.pill {
 
 .pad-summary .miss {
   color: var(--wrong);
+}
+
+/* Who's That's second chance, under the text box: the species without
+   its form, or a misspelling, asks for another go instead of a grade */
+.pad-nudge {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--warn);
+  text-align: center;
+  animation: fade-up var(--dur-med) var(--ease-out) both;
 }
 
 /* The one CTA slot under the options: Submit on a multi part, Next card
@@ -2455,21 +2478,20 @@ button.evo-tile:active {
     padding: 8px 0 6px;
   }
 
-  /* the foot runs out to the screen's edges, like a system keyboard: it
-     takes over the page's bottom padding and runs on under the tab pill,
-     with room above the pill for the action row */
+  /* the phone's chrome: the foot ends 12px above the tab pill (the page's
+     bottom padding, see --page-bottom) and there's no tab bar at the top
+     (see .flashcards). A browser tab's pill sits 8px higher than a
+     home-screen app's, so its card needs 8px more */
   .flashcards {
-    margin-bottom: calc(-1 * var(--page-bottom));
-    /* the phone's chrome: the pill's zone inside the foot in place of the
-       page's bottom padding, and no tab bar at the top (see .flashcards) */
-    --fits-at: 881px; /* 757px with the smallest tile */
-    --tall-fits-at: 1013px; /* 889px with the smallest tile */
+    --fits-at: 896px; /* 772px with the smallest tile */
+    --tall-fits-at: 1028px; /* 904px with the smallest tile */
   }
 
-  .pad-foot {
-    margin-left: -16px;
-    margin-right: -16px;
-    padding-bottom: calc(76px + var(--nav-lift));
+  @media (display-mode: standalone) {
+    .flashcards {
+      --fits-at: 888px; /* 764px with the smallest tile */
+      --tall-fits-at: 1020px; /* 896px with the smallest tile */
+    }
   }
 
   /* five narrow columns: the longest type names ("Fighting") need the room */

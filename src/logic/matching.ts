@@ -134,6 +134,28 @@ export function normalizeName(text: string): string {
     .replace(/[^a-z0-9]/g, "");
 }
 
+// The words of a name, each normalised, in sorted order — "Charizard
+// Mega X", "Mega Charizard X" and "X Mega Charizard" give one list
+const wordsOf = (text: string): string[] =>
+  text
+    .split(/[\s\-–—()/]+/)
+    .map(normalizeName)
+    .filter(Boolean)
+    .sort();
+
+// Those words as one key
+export const wordBag = (text: string): string => wordsOf(text).join(" ");
+
+// Every naming a Pokémon goes by: PokeDoku's ("Floette Eternal"), the
+// dataset's ("Floette (Eternal)", "Alolan Raichu") and the species with
+// the form's own words ("Tauros Paldea Combat")
+function namingsOf(pokemon: Pokemon): string[] {
+  const names = [pokemon.displayName];
+  if (pokemon.altName) names.push(pokemon.altName);
+  if (pokemon.form) names.push(`${pokemon.speciesName} ${pokemon.form}`);
+  return names;
+}
+
 interface SearchName {
   norm: string;
   // where the species name starts in `norm`
@@ -142,7 +164,11 @@ interface SearchName {
 
 interface SearchEntry {
   species: string;
+  // the species name's words, normalised and sorted
+  speciesWords: string[];
   norms: SearchName[];
+  // each naming's words, normalised and sorted (see BAG_TO_POKEMON)
+  namings: string[][];
   pokemon: Pokemon;
 }
 
@@ -159,7 +185,12 @@ const SEARCH_INDEX: SearchEntry[] = POKEMON.map((pokemon) => {
   if (pokemon.altName) names.push(normalizeName(pokemon.altName));
   if (pokemon.form && !names.includes(pokemon.name)) names.push(pokemon.name);
   const norms = names.map((norm) => ({ norm, speciesAt: Math.max(0, norm.indexOf(species)) }));
-  return { species, norms, pokemon };
+  const namings: string[][] = [];
+  for (const naming of namingsOf(pokemon)) {
+    const words = wordsOf(naming);
+    if (!namings.some((kept) => kept.join(" ") === words.join(" "))) namings.push(words);
+  }
+  return { species, speciesWords: wordsOf(pokemon.speciesName || pokemon.displayName), norms, namings, pokemon };
 });
 
 const NORM_TO_POKEMON = new Map<string, Pokemon>();
@@ -167,29 +198,14 @@ for (const { norms, pokemon } of SEARCH_INDEX) {
   for (const { norm } of norms) NORM_TO_POKEMON.set(norm, pokemon);
 }
 
-// The words of a name, each normalised, in sorted order: one key for
-// "Charizard Mega X", "Mega Charizard X" and "X Mega Charizard".
-export const wordBag = (text: string): string =>
-  text
-    .split(/[\s\-–—()/]+/)
-    .map(normalizeName)
-    .filter(Boolean)
-    .sort()
-    .join(" ");
-
-// Every naming a Pokémon goes by, as a bag of words: PokeDoku's ("Floette
-// Eternal"), the dataset's ("Floette (Eternal)", "Alolan Raichu") and the
-// species with the form's own words ("Tauros Paldea Combat"). No two
-// Pokémon share a bag (matching.test.ts checks), so a name typed with its
-// words in another order — "Eternal Floette", "Charizard Gigantamax" —
-// still lands on exactly one.
+// Every naming as a bag of words. No two Pokémon share a bag
+// (matching.test.ts checks), so a name typed with its words in another
+// order — "Eternal Floette", "Charizard Gigantamax" — still lands on
+// exactly one.
 const BAG_TO_POKEMON = new Map<string, Pokemon>();
-for (const pokemon of POKEMON) {
-  const names = [pokemon.displayName];
-  if (pokemon.altName) names.push(pokemon.altName);
-  if (pokemon.form) names.push(`${pokemon.speciesName} ${pokemon.form}`);
-  for (const name of names) {
-    const bag = wordBag(name);
+for (const { namings, pokemon } of SEARCH_INDEX) {
+  for (const words of namings) {
+    const bag = words.join(" ");
     if (!BAG_TO_POKEMON.has(bag)) BAG_TO_POKEMON.set(bag, pokemon);
   }
 }
@@ -203,16 +219,36 @@ export function findByName(query: string, eligible: PokemonFilter = null): Pokem
   return pokemon && (!eligible || eligible(pokemon)) ? pokemon : null;
 }
 
+// Whether a name says which species a form is, but not which form —
+// "Charizard" or "Mega Charizard" for Charizard Mega X, "Tauros Paldea"
+// for the Combat Breed: every word typed is in one of the Pokémon's
+// namings, the species' own words are all there, and some of the
+// naming's are missing. Never for a Pokémon that has no form to leave
+// out ("Koko" for Tapu Koko is just nobody).
+export function namesSpeciesOnly(query: string, pokemon: Pokemon): boolean {
+  if (pokemon.form === null) return false;
+  const typed = new Set(wordsOf(query));
+  if (!typed.size) return false;
+  if (!wordsOf(pokemon.speciesName || pokemon.displayName).every((word) => typed.has(word))) return false;
+  return namingsOf(pokemon).some((naming) => {
+    const full = new Set(wordsOf(naming));
+    return typed.size < full.size && [...typed].every((word) => full.has(word));
+  });
+}
+
+// Which stretch of `text` a query is measured against
+type Stretch = "anywhere" | "prefix" | "whole";
+
 // The fewest edits (insert, delete, substitute, swap two neighbours) that
-// turn `query` into some stretch of `text` — a prefix of it when
-// `anchored`, anywhere in it otherwise. Stops early, returning Infinity,
-// once no stretch can come within `maxEdits`.
-function editsToMatch(query: string, text: string, maxEdits: number, anchored: boolean): number {
+// turn `query` into some stretch of `text` — anywhere in it, a prefix of
+// it, or the whole of it. Stops early, returning Infinity, once no
+// stretch can come within `maxEdits`.
+function editsToMatch(query: string, text: string, maxEdits: number, stretch: Stretch): number {
+  if (stretch === "whole" && Math.abs(query.length - text.length) > maxEdits) return Infinity;
   const width = text.length + 1;
   let previousRow: number[] = new Array<number>(width);
   let twoRowsBack: number[] | null = null;
-  for (let column = 0; column < width; column++) previousRow[column] = anchored ? column : 0;
-  let best = Infinity;
+  for (let column = 0; column < width; column++) previousRow[column] = stretch === "anywhere" ? 0 : column;
   for (let row = 1; row <= query.length; row++) {
     const currentRow: number[] = new Array<number>(width);
     currentRow[0] = row;
@@ -238,6 +274,8 @@ function editsToMatch(query: string, text: string, maxEdits: number, anchored: b
     twoRowsBack = previousRow;
     previousRow = currentRow;
   }
+  if (stretch === "whole") return previousRow[width - 1];
+  let best = Infinity;
   for (let column = 1; column < width; column++) best = Math.min(best, previousRow[column]);
   return best;
 }
@@ -247,6 +285,61 @@ function editsToMatch(query: string, text: string, maxEdits: number, anchored: b
 // gets one, "pikachoo" and "dusknior" two, "typhlosoin" two.
 const typoAllowance = (query: string): number =>
   query.length < 5 ? 0 : Math.min(3, Math.floor(query.length / 4));
+
+// The edits that turn the words typed into some of a naming's words, each
+// typed word its own word of the naming within its own typo allowance,
+// with the species' words all reached — or Infinity. Word by word, so a
+// budget for a long name is never spent on a word that is nobody's
+// ("Charizard blah" is no slip on Charizard Gmax), and a form word may
+// go unsaid ("Mega Charizrd" is a slip on Charizard Mega X: species
+// first, form next).
+function editsToWords(typed: string[], naming: string[], speciesWords: string[]): number {
+  if (typed.length > naming.length) return Infinity;
+  const used = new Set<number>();
+  let edits = 0;
+  for (const word of typed) {
+    const maxEdits = typoAllowance(word);
+    let bestAt = -1;
+    let bestEdits = Infinity;
+    naming.forEach((candidate, at) => {
+      if (used.has(at)) return;
+      const cost = editsToMatch(word, candidate, maxEdits, "whole");
+      if (cost < bestEdits) {
+        bestEdits = cost;
+        bestAt = at;
+      }
+    });
+    if (bestAt < 0) return Infinity;
+    used.add(bestAt);
+    edits += bestEdits;
+  }
+  const reached = [...used].map((at) => naming[at]);
+  return speciesWords.every((word) => reached.includes(word)) ? edits : Infinity;
+}
+
+// The Pokémon a name is a misspelling of: its species name run together
+// ("tapukokko"), or each word typed a slip on a word of one of its
+// namings ("Charizrd", "X Mega Charizrd", "Alolan Raichuu"), the species
+// always among them. The nearest, when several are close. Never a name
+// spelt right (that's someone, see findByName), nor one that is only the
+// start of a name ("Chariz") — that's short of a name, not a slip in one.
+export function nearMiss(query: string, eligible: PokemonFilter = null): Pokemon | null {
+  const typed = wordsOf(query);
+  if (!typed.length) return null;
+  const runTogether = typed.length === 1 ? typed[0] : null;
+  let best: { edits: number; pokemon: Pokemon } | null = null;
+  for (const { species, speciesWords, namings, pokemon } of SEARCH_INDEX) {
+    if (eligible && !eligible(pokemon)) continue;
+    let edits = Infinity;
+    if (runTogether !== null && speciesWords.length > 1) {
+      edits = editsToMatch(runTogether, species, typoAllowance(runTogether), "whole");
+    }
+    for (const naming of namings) edits = Math.min(edits, editsToWords(typed, naming, speciesWords));
+    if (edits === 0) return null;
+    if (edits < Infinity && (!best || edits < best.edits)) best = { edits, pokemon };
+  }
+  return best?.pokemon ?? null;
+}
 
 // Exact hits first (prefix, then substring of the species), then, only
 // while the list has room, near-misses ordered by how far off they are.
@@ -279,10 +372,10 @@ export function searchNames(query: string, limit = 8, eligible: PokemonFilter = 
   // never be spent on a form-first name's form word ("Mega Chimecho").
   const fuzzy: { edits: number; pokemon: Pokemon }[] = [];
   for (const { species, norms, pokemon } of candidates) {
-    let edits = editsToMatch(normalized, species, maxEdits, false);
+    let edits = editsToMatch(normalized, species, maxEdits, "anywhere");
     for (const { norm, speciesAt } of norms) {
       if (edits === 0) break;
-      if (speciesAt === 0) edits = Math.min(edits, editsToMatch(normalized, norm, maxEdits, true));
+      if (speciesAt === 0) edits = Math.min(edits, editsToMatch(normalized, norm, maxEdits, "prefix"));
     }
     if (edits <= maxEdits) fuzzy.push({ edits, pokemon });
   }

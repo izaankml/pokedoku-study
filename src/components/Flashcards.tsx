@@ -40,7 +40,7 @@ import type {
   Picked,
 } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
-import { findByName, wordBag } from "../logic/matching.ts";
+import { findByName, namesSpeciesOnly, nearMiss, wordBag } from "../logic/matching.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
 import { preloadSprite } from "../logic/sprites.ts";
 import { POKEMON_BY_ID, pokemonBySlug } from "../data/pokedex.ts";
@@ -61,6 +61,21 @@ const GAVE_UP = "gaveup";
 // nobody's, which is graded as a miss; the summary quotes it
 const TYPED = "typed:";
 const TYPED_MAX = 40;
+
+// Who's That's two second chances: the species named without its form,
+// and a misspelling of some Pokémon's name. Neither is graded; the card
+// says so under the box and waits for another go
+type NudgeKind = "form" | "spelling";
+interface Nudge {
+  key: string;
+  kind: NudgeKind;
+  // which submit it came from, so a repeat shows again
+  at: number;
+}
+const NUDGE_TEXT: Record<NudgeKind, string> = {
+  form: "Right species, but which form?",
+  spelling: "Check your spelling.",
+};
 const DASH_SLOTS = 10;
 // Shown in the group slot when a Pokémon is in no group at all
 const REGULAR: PillCategory = { id: "flag-regular", label: "Regular", short: "Regular", group: "special" };
@@ -225,6 +240,8 @@ function Flashcards() {
   // Who's That's typed answer, kept with the card it's for: a new card
   // starts blank, an undone one has its text back
   const [typedFor, setTypedFor] = useState<{ key: string; text: string }>({ key: "", text: "" });
+  // the last submit's second chance, if it gave one (see NudgeKind)
+  const [nudge, setNudge] = useState<Nudge | null>(null);
 
   // What's on the table: the live card, or an earlier one Back stepped
   // to — shown as it was graded; nothing on it can change
@@ -250,6 +267,8 @@ function Flashcards() {
   const gaveUp = picked === GAVE_UP;
   const key = cardKey(card.deckId, pokemon);
   const typed = typedFor.key === key ? typedFor.text : "";
+  // the nudge belongs to the live card while it's still being asked
+  const shownNudge = nudge !== null && nudge.key === key && live && picked === null ? nudge : null;
   // After answering, merged already reflects this attempt's new streak.
   const entry = merged.flashcards[key];
   const nextIn = answered && entry ? formatInterval(intervalFor(entry.s)) : null;
@@ -372,6 +391,7 @@ function Flashcards() {
     }
     const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct });
     session.undo = { token, key };
+    setNudge(null);
     apply({
       selection: picks,
       picked: picks,
@@ -381,11 +401,26 @@ function Flashcards() {
   }
 
   // Who's That: the name typed is graded against the card's Pokémon and
-  // its lookalikes — spelt right, its words in any order — and a name
-  // that is nobody's as a miss; what was typed is kept for the summary
+  // its lookalikes — spelt right, its words in any order. Two slips get
+  // another go instead of a grade: the species named without its form
+  // ("Charizard" for Charizard Mega X, "Meowstic" for the female), and a
+  // misspelling of some Pokémon's name ("Pikachoo"). Anything else is
+  // graded — another Pokémon, or a name that is nobody's — and what was
+  // typed is kept for the summary
   function submitName(): void {
     const text = typed.trim().slice(0, TYPED_MAX);
+    const answers = padDecks[0].answers(pokemon);
     const match = findByName(text);
+    if (!match || !answers.includes(String(match.id))) {
+      const accepted = answers.map((id) => POKEMON_BY_ID.get(Number(id))).filter((each) => each !== undefined);
+      let kind: NudgeKind | null = null;
+      if (accepted.some((each) => namesSpeciesOnly(text, each))) kind = "form";
+      else if (!match && nearMiss(text)) kind = "spelling";
+      if (kind) {
+        setNudge({ key, kind, at: (nudge?.at ?? 0) + 1 });
+        return;
+      }
+    }
     grade(match ? [String(match.id), `${TYPED}${text}`] : [`${TYPED}${text}`]);
   }
 
@@ -418,6 +453,7 @@ function Flashcards() {
     if (!live || answered) return;
     const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct: false });
     session.undo = { token, key };
+    setNudge(null);
     apply({
       picked: GAVE_UP,
       comboOk: null,
@@ -636,8 +672,10 @@ function Flashcards() {
   }
 
   // The line under the options once answered: what was missed and what
-  // was wrong, or the verdict, and when the card comes back. A combo
-  // leads with its per-part verdicts and counts both parts' picks.
+  // was wrong, and when the card comes back. A combo leads with its
+  // per-part verdicts and counts both parts' picks. A card answered
+  // right, or revealed, says only when it comes back: the kicker over
+  // the options already says which
   const listNames = (ids: string[]): string => ids.map(shortOf).join(", ");
   let summary: ReactNode = null;
   if (answered) {
@@ -648,20 +686,15 @@ function Flashcards() {
           {parts[0].label} {mark(comboOk.a)} · {parts[1].label} {mark(comboOk.b)} ·{" "}
         </>
       ) : null;
-    if (gaveUp) {
-      summary = (
-        <>
-          {prefix}
-          {["Revealed", backIn].filter(Boolean).join(" · ")}
-        </>
-      );
-    } else if (wasCorrect) {
-      summary = (
-        <>
-          {prefix}
-          {["Correct", backIn].filter(Boolean).join(" · ")}
-        </>
-      );
+    if (gaveUp || wasCorrect) {
+      if (backIn || prefix) {
+        summary = (
+          <>
+            {prefix}
+            {backIn ? (prefix ? backIn : `Back in ${nextIn}`) : null}
+          </>
+        );
+      }
     } else if (nameDeck) {
       // what was typed, and the Pokémon it resolved to — none for a name
       // that is nobody's (a session from before the text was kept has
@@ -805,10 +838,18 @@ function Flashcards() {
               ) : null}
             </div>
             {deck.input === "name" ? (
-              // the typed answer (Enter or the foot's Submit grades it);
-              // once graded, the summary below says how it went
+              // the typed answer (Enter or the foot's Submit grades it),
+              // with the last submit's second chance under it, if it gave
+              // one; once graded, the summary below says how it went
               answered ? null : (
-                <NameInput value={typed} onChange={(text) => setTypedFor({ key, text })} placeholder="Type its name…" />
+                <>
+                  <NameInput value={typed} onChange={(text) => setTypedFor({ key, text })} placeholder="Your answer…" />
+                  {shownNudge ? (
+                    <p key={shownNudge.at} className="pad-nudge" aria-live="polite">
+                      {NUDGE_TEXT[shownNudge.kind]}
+                    </p>
+                  ) : null}
+                </>
               )
             ) : (
               <div className={`pad-grid cols-${deckPad.cols}`}>
@@ -871,7 +912,15 @@ function Flashcards() {
           slot and the action row */}
       <div className="pad-foot">
         {cta ? (
-          <button className="pad-cta" disabled={cta.disabled} onClick={cta.onClick}>
+          // Who's That's Submit leaves the focus in the text box (a click
+          // would take it on mousedown), so a second chance is typed
+          // straight away and a phone's keyboard stays up
+          <button
+            className="pad-cta"
+            disabled={cta.disabled}
+            onClick={cta.onClick}
+            onMouseDown={nameDeck && !answered ? (event) => event.preventDefault() : undefined}
+          >
             <span className="pad-cta-label">{cta.label}</span>
           </button>
         ) : (

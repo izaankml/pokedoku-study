@@ -47,6 +47,18 @@ node shot.mjs Stats                          # tab name; default Stats
   so column alignment can be checked numerically
 - prints console/page errors — confirm they're empty before declaring success
 
+`phone.mjs` (also next to this file) is the Cards driver: it emulates a
+phone (440×956 with a 62px status bar by default, see the gotchas), plants
+a chosen card in localStorage before load, can type and submit a Who's
+That answer, and prints the layout — tile, pad, foot, tab pill, and
+whether `scrollHeight` exceeds `innerHeight` (the card doesn't fit):
+
+```bash
+cp /path/to/repo/.claude/skills/run-app/phone.mjs .
+node phone.mjs name charizardmegax "Charizard" nudge.png   # deck, slug, typed, out
+HEIGHT=800 node phone.mjs type charizard - short.png       # a shorter screen
+```
+
 Then **Read the PNG** and look at it. Numbers alone don't prove the
 page rendered.
 
@@ -64,10 +76,13 @@ page rendered.
   `~/Library/Caches/ms-playwright/chromium-*/chrome-mac-arm64/...`.
 - For a Safari-engine check (the user's phone is iOS), Playwright's
   WebKit build is cached at `~/Library/Caches/ms-playwright/webkit-*`
-  (installed 2026-09-03 with `npx playwright-core install webkit`);
-  `webkit.launch({ headless: true })` from `playwright-core` finds it
-  with no `executablePath`. Chrome and WebKit have differed on container
-  query units in flex layouts, so check both when a change leans on them.
+  (installed 2026-09-03 with `npx playwright-core install webkit`).
+  A newer `playwright-core` may want a newer build than the cached one
+  (on 2026-09-04 it asked for webkit-2359 with webkit-2336 cached): pass
+  the cached `webkit-*/pw_run.sh` as `executablePath` (`WEBKIT_PATH` for
+  `phone.mjs`) — the older build drives fine. Chrome and WebKit have
+  differed on container query units in flex layouts, so check both when
+  a change leans on them.
 - A phone in standalone (home-screen) mode has the status bar inside
   `100dvh` and pads it out with `env(safe-area-inset-top)`. Emulate that
   in Chromium with the real screen size plus a CDP session:

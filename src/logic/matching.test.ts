@@ -7,11 +7,19 @@ import {
   guessFilterFor,
   intersectAll,
   maxValidInEveryCell,
+  namesSpeciesOnly,
+  nearMiss,
   normalizeName,
   pairIsValid,
   searchNames,
   wordBag,
 } from "./matching.ts";
+
+const bySlug = (slug: string) => {
+  const pokemon = POKEMON.find((candidate) => candidate.name === slug);
+  if (!pokemon) throw new Error(`no such Pokémon: ${slug}`);
+  return pokemon;
+};
 
 describe("normalizeName", () => {
   it("strips diacritics and punctuation", () => {
@@ -64,6 +72,74 @@ describe("findByName", () => {
       if (pokemon.form) names.push(`${pokemon.speciesName} ${pokemon.form}`);
       for (const name of names) expect(findByName(reversed(name))?.id, `${name} reversed`).toBe(pokemon.id);
     }
+  });
+});
+
+describe("namesSpeciesOnly", () => {
+  it("is the species named without its form, in any of the form's namings", () => {
+    const megaX = bySlug("charizardmegax");
+    expect(namesSpeciesOnly("Charizard", megaX)).toBe(true);
+    expect(namesSpeciesOnly("charizard mega", megaX)).toBe(true);
+    expect(namesSpeciesOnly("Mega Charizard", megaX)).toBe(true);
+    expect(namesSpeciesOnly("Charizard X", megaX)).toBe(true);
+    // the whole name, or another Pokémon's, or words that are nobody's
+    expect(namesSpeciesOnly("Charizard Mega X", megaX)).toBe(false);
+    expect(namesSpeciesOnly("Charizard Mega Y", megaX)).toBe(false);
+    expect(namesSpeciesOnly("Charizard blah", megaX)).toBe(false);
+    expect(namesSpeciesOnly("Mega", megaX)).toBe(false);
+    expect(namesSpeciesOnly("", megaX)).toBe(false);
+    // the dataset's naming and the species with the form's own words count too
+    expect(namesSpeciesOnly("Paldean Tauros", bySlug("taurospaldeacombat"))).toBe(true);
+    expect(namesSpeciesOnly("Tauros Paldea", bySlug("taurospaldeacombat"))).toBe(true);
+    expect(namesSpeciesOnly("Mr Mime", bySlug("mrmimegalar"))).toBe(true);
+    expect(namesSpeciesOnly("Darmanitan Galar", bySlug("darmanitangalarzen"))).toBe(true);
+    expect(namesSpeciesOnly("Meowstic", bySlug("meowsticf"))).toBe(true);
+  });
+
+  it("is never true of a Pokémon with no form to leave out", () => {
+    expect(namesSpeciesOnly("Koko", bySlug("tapukoko"))).toBe(false);
+    expect(namesSpeciesOnly("Tapu", bySlug("tapukoko"))).toBe(false);
+    expect(namesSpeciesOnly("Charizard", bySlug("charizard"))).toBe(false);
+    // a base species PokeDoku names by its form is still a species
+    expect(namesSpeciesOnly("Lycanroc", bySlug("lycanroc"))).toBe(false);
+    expect(namesSpeciesOnly("Mime", bySlug("mrmime"))).toBe(false);
+  });
+});
+
+describe("nearMiss", () => {
+  it("finds the Pokémon a misspelt name is meant to be", () => {
+    expect(nearMiss("Charizrd")?.displayName).toBe("Charizard");
+    expect(nearMiss("Charizar")?.displayName).toBe("Charizard");
+    expect(nearMiss("pikachoo")?.displayName).toBe("Pikachu");
+    expect(nearMiss("dusknior")?.displayName).toBe("Dusknoir");
+    expect(nearMiss("Mega Charizrd X")?.displayName).toBe("Charizard Mega X");
+    expect(nearMiss("X Mega Charizrd")?.displayName).toBe("Charizard Mega X");
+    expect(nearMiss("Alolan Raichuu")?.displayName).toBe("Raichu Alola");
+    expect(nearMiss("Tapu Kokko")?.displayName).toBe("Tapu Koko");
+    expect(nearMiss("tapukokko")?.displayName).toBe("Tapu Koko");
+    expect(nearMiss("Galarain Mr Mime")?.displayName).toBe("Mr. Mime Galar");
+    // a slip in a word too short to forgive one stays a slip
+    expect(nearMiss("Galarian Mr Mmie")).toBeNull();
+    // the form left unsaid: the species is the slip, the form comes next
+    expect(nearMiss("Mega Charizrd")?.speciesName).toBe("Charizard");
+  });
+
+  it("is nobody for a name spelt right, one only begun, a short one, or one with a word that is nobody's", () => {
+    expect(nearMiss("Charizard")).toBeNull();
+    expect(nearMiss("Chariz")).toBeNull();
+    expect(nearMiss("pika")).toBeNull();
+    expect(nearMiss("pikc")).toBeNull();
+    expect(nearMiss("notapokemon")).toBeNull();
+    expect(nearMiss("Charizard blah")).toBeNull();
+    expect(nearMiss("Charizard Mega Z")).toBeNull();
+    // a form word alone, slipped or not, names no species
+    expect(nearMiss("Megaa")).toBeNull();
+    expect(nearMiss("Kokko")).toBeNull();
+  });
+
+  it("keeps to the Pokémon `eligible` accepts", () => {
+    expect(nearMiss("Charizrd", (pokemon) => pokemon.speciesName !== "Charizard")).toBeNull();
+    expect(nearMiss("Charizrd", (pokemon) => pokemon.displayName !== "Charizard")?.speciesName).toBe("Charizard");
   });
 });
 

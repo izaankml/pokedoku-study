@@ -9,7 +9,11 @@ interface NameInputProps {
 
 // Who's That's answer box: a plain text box, no suggestions (they'd give
 // the name away). Enter and the foot's Submit are the card's to handle
-// (Flashcards). Focus is taken without the page moving: an iPhone
+// (Flashcards). It asks for the plain keyboard: a search box's (inputmode
+// search) puts a period beside the space bar on an iPhone, and a box
+// that looks like a name field (autofill left on, "name" in its
+// placeholder) gets the phone's own contact card offered over the keys.
+// Focus is taken without the page moving: an iPhone
 // scrolls a tapped text box into the middle of what the keyboard leaves
 // whether or not the keyboard would have covered it (WebKit forces that
 // scroll whenever the keyboard carries its accessory bar), but honours
@@ -33,8 +37,8 @@ function NameInput({ value, onChange, placeholder }: NameInputProps) {
       <input
         ref={inputRef}
         type="text"
-        inputMode="search"
         enterKeyHint="go"
+        autoComplete="off"
         autoCapitalize="off"
         autoCorrect="off"
         spellCheck={false}
