@@ -1506,13 +1506,12 @@ button.pill {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
   padding: 2px 0 12px; /* the tile runs the pad's width */
 }
 
-/* once answered the tile holds its height (see .stage-tile) and the
-   pills and the answer card follow right under it, so the free space
-   goes under the card instead (see .answer-pad) */
+/* once answered the tile holds its height (see .stage-tile), and the
+   pills and the answer card are centred in the free space under it
+   (see .answer-block) */
 .flashcards.answered .card-stage {
   flex-grow: 0;
 }
@@ -1652,12 +1651,24 @@ button.pill {
 
 /* ---- cards: the answer card and the docked foot ---- */
 
-/* the question and its options (and the summary once answered): a card
-   right under the tile; the bottom margin takes whatever free space the
-   stage leaves (see .stage-tile), so the foot stays docked */
+/* the pills and the answer card, right under the tile while asking (the
+   bottom margin takes whatever free space the stage leaves, so the foot
+   stays docked) and centred between the tile and the foot once answered */
+.answer-block {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 auto;
+}
+
+.flashcards.answered .answer-block {
+  margin-top: auto;
+}
+
+/* the question and its options (and the summary once answered) */
 .answer-pad {
   flex: none;
-  margin: 0 0 auto;
   padding: 12px;
   background: var(--bg-1);
   border: 1px solid var(--border-subtle);

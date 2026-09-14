@@ -771,10 +771,9 @@ function Flashcards() {
 
   // ---- the stage and the pad ----
 
-  // The Pokémon on a big tile with the fact pills under it. Once answered
-  // the tile opens the detail sheet, and holds the height it had while
-  // asking (see heldTileHeight); before that it stays inert so nothing
-  // gives the answer away
+  // The Pokémon on a big tile. Once answered the tile opens the detail
+  // sheet, and holds the height it had while asking (see heldTileHeight);
+  // before that it stays inert so nothing gives the answer away
   const stage = (
     <div className="card-stage">
       <div
@@ -790,11 +789,16 @@ function Flashcards() {
           onClick={answered ? () => openDetail(pokemon) : undefined}
         />
       </div>
-      <div className="fact-pills">
-        {factPills.map((category) => (
-          <CategoryPill key={category.id} cat={category} useShort />
-        ))}
-      </div>
+    </div>
+  );
+
+  // the fact pills, over the answer card once answered (empty, and out of
+  // the layout, while asking)
+  const pills = (
+    <div className="fact-pills">
+      {factPills.map((category) => (
+        <CategoryPill key={category.id} cat={category} useShort />
+      ))}
     </div>
   );
 
@@ -859,7 +863,10 @@ function Flashcards() {
                 </>
               )
             ) : (
-              <div className={`pad-grid cols-${deckPad.cols}`}>
+              // once graded the remaining options take four columns
+              // whatever the deck, so a type reads at the same size as a
+              // region under it
+              <div className={`pad-grid cols-${answered ? 4 : deckPad.cols}`}>
                 {deckPad.options.filter((option) => graded(option, deckPad.answers)).map((option) => (
                   <button
                     key={option.id}
@@ -914,7 +921,12 @@ function Flashcards() {
       </div>
 
       {stage}
-      {pad}
+      {/* the pills and the answer card, centred in the free space once
+          answered (see .answer-block) */}
+      <div className="answer-block">
+        {pills}
+        {pad}
+      </div>
 
       {/* the card's controls, docked at the bottom of the screen: the CTA
           slot and the action row */}
