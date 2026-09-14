@@ -771,9 +771,11 @@ function Flashcards() {
 
   // ---- the stage and the pad ----
 
-  // The Pokémon on a big tile. Once answered the tile opens the detail
-  // sheet, and holds the height it had while asking (see heldTileHeight);
-  // before that it stays inert so nothing gives the answer away
+  // The Pokémon on a big tile with the fact pills under it (empty, and
+  // out of the layout, while asking). Once answered the tile opens the
+  // detail sheet, and holds the height it had while asking (see
+  // heldTileHeight); before that it stays inert so nothing gives the
+  // answer away
   const stage = (
     <div className="card-stage">
       <div
@@ -789,16 +791,11 @@ function Flashcards() {
           onClick={answered ? () => openDetail(pokemon) : undefined}
         />
       </div>
-    </div>
-  );
-
-  // the fact pills, over the answer card once answered (empty, and out of
-  // the layout, while asking)
-  const pills = (
-    <div className="fact-pills">
-      {factPills.map((category) => (
-        <CategoryPill key={category.id} cat={category} useShort />
-      ))}
+      <div className="fact-pills">
+        {factPills.map((category) => (
+          <CategoryPill key={category.id} cat={category} useShort />
+        ))}
+      </div>
     </div>
   );
 
@@ -921,12 +918,7 @@ function Flashcards() {
       </div>
 
       {stage}
-      {/* the pills and the answer card, centred in the free space once
-          answered (see .answer-block) */}
-      <div className="answer-block">
-        {pills}
-        {pad}
-      </div>
+      {pad}
 
       {/* the card's controls, docked at the bottom of the screen: the CTA
           slot and the action row */}
