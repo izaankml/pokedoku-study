@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useStats } from "../StatsContext.ts";
 import { pickFlashcard } from "../logic/picker.ts";
@@ -56,6 +56,8 @@ import { useModalShell } from "./useModalShell.ts";
 import { useNow } from "./useNow.ts";
 
 const GAVE_UP = "gaveup";
+// how far the page runs past the screen (0 when everything fits)
+const pageOverflow = (): number => document.documentElement.scrollHeight - window.innerHeight;
 // Who's That keeps what was typed in the card's picks behind this prefix,
 // after the Pokémon it resolved to (or alone, for a name that is nobody's),
 // so the summary can quote it
@@ -288,6 +290,34 @@ function Flashcards() {
       : nameDeck
         ? typed.trim().length > 0
         : Boolean(padDecks[0].multi) && selection.length > 0);
+  // The tile fills the free space over the answer card while the card is
+  // being asked (see .stage-tile) and is held at that height once
+  // answered, so it stays where it was as the options collapse. A held
+  // tile that would push the answered card off the screen (a one-row
+  // pad gains the pills and the summary) gives the overflow back, down
+  // to the tile's set height.
+  const tileRef = useRef<HTMLDivElement>(null);
+  const [asked, setAsked] = useState<{ height: number; overflow: number; floor: number } | null>(null);
+  useEffect(() => {
+    const tile = tileRef.current;
+    if (answered || !tile) return undefined;
+    const observer = new ResizeObserver(() => {
+      setAsked({
+        height: tile.getBoundingClientRect().height,
+        overflow: pageOverflow(),
+        floor: parseFloat(getComputedStyle(tile).flexBasis) || 0,
+      });
+    });
+    observer.observe(tile);
+    return () => observer.disconnect();
+  }, [answered]);
+  const heldTileHeight = answered && asked ? asked.height : null;
+  useLayoutEffect(() => {
+    const tile = tileRef.current;
+    if (!answered || !asked || !tile) return;
+    const excess = pageOverflow() - asked.overflow;
+    if (excess > 0) tile.style.height = `${Math.max(asked.floor, asked.height - excess)}px`;
+  }, [answered, asked]);
   const filterN = filterCount(filter);
   // the due cards this deck and filter can deal, which the picker deals
   // first. Walking the pools is costly, so this recomputes only when the
@@ -638,28 +668,14 @@ function Flashcards() {
   const shortOf = (id: string): string =>
     padDecks.flatMap((deck) => deck.options).find((option) => option.id === id)?.short ?? getCategory(id).short;
 
-  // The one CTA slot under the pads: Submit (led by the picks) on a multi
-  // deck, a combo or Who's That; Next card once answered. A plain
-  // single-pick deck grades on tap, so its slot stays empty.
+  // The one CTA slot under the pads: Submit on a multi deck, a combo or
+  // Who's That; Next card once answered. A plain single-pick deck grades
+  // on tap, so its slot stays empty.
   let cta: { label: ReactNode; onClick: () => void; disabled: boolean } | null = null;
   if (answered) {
     cta = { label: "Next card", onClick: () => next(), disabled: false };
-  } else if (nameDeck) {
+  } else if (nameDeck || parts || padDecks[0].multi) {
     cta = { label: "Submit", onClick: submit, disabled: !canSubmit };
-  } else if (parts || padDecks[0].multi) {
-    const picks = padDecks.flatMap((deck) => deckPicks(deck, selection));
-    cta = {
-      label: picks.length ? (
-        <>
-          <span className="pad-cta-picks">{picks.map(shortOf).join(" + ")}</span>
-          <span className="pad-cta-verb"> · Submit</span>
-        </>
-      ) : (
-        "Submit"
-      ),
-      onClick: submit,
-      disabled: !canSubmit,
-    };
   }
 
   // The line under the options once answered: what was missed and what
@@ -756,11 +772,16 @@ function Flashcards() {
   // ---- the stage and the pad ----
 
   // The Pokémon on a big tile with the fact pills under it. Once answered
-  // the tile opens the detail sheet; before that it stays inert so nothing
+  // the tile opens the detail sheet, and holds the height it had while
+  // asking (see heldTileHeight); before that it stays inert so nothing
   // gives the answer away
   const stage = (
     <div className="card-stage">
-      <div className={`stage-tile${silhouetted ? " mystery" : ""}`}>
+      <div
+        ref={tileRef}
+        className={`stage-tile${silhouetted ? " mystery" : ""}`}
+        style={heldTileHeight !== null ? { flex: "none", height: heldTileHeight } : undefined}
+      >
         <PokemonCard
           pokemon={pokemon}
           eager
@@ -865,8 +886,9 @@ function Flashcards() {
   return (
     // a combo card stacks two pads, so its stage and buttons give some
     // height back; Who's That's card sits up top on a phone, clear of the
-    // keyboard (see .flashcards.name-deck)
-    <div className={`flashcards${parts ? " combo" : ""}${nameDeck ? " name-deck" : ""}`}>
+    // keyboard (see .flashcards.name-deck); an answered card keeps its
+    // tile where it was (see .flashcards.answered)
+    <div className={`flashcards${parts ? " combo" : ""}${nameDeck ? " name-deck" : ""}${answered ? " answered" : ""}`}>
       <div className="cards-topbar">
         <button className="deck-choose" aria-haspopup="dialog" onClick={() => setDeckSheet(true)}>
           {deckLabel(deckId)}

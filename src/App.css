@@ -1368,12 +1368,12 @@ button.pill {
   /* the height the column has: the viewport less the status bar a
      home-screen app pads out at the top (see .app) and the tab pill's lift */
   --screen: calc(100dvh - env(safe-area-inset-top, 0px) - var(--nav-lift, 0px));
-  --fits-at: 920px; /* 796px with the smallest tile */
+  --fits-at: 882px; /* 758px with the smallest tile */
   --shortfall: max(0px, var(--fits-at) - var(--screen));
   --tile: max(96px, 220px - var(--shortfall) * 124 / 210);
   --pad-btn: max(40px, 60px - var(--shortfall) * 20 / 210);
   --pad-cta: max(44px, 50px - var(--shortfall) * 6 / 210);
-  --tall-fits-at: 1052px; /* 928px with the smallest tile */
+  --tall-fits-at: 1014px; /* 890px with the smallest tile */
 }
 
 /* a combo card stacks two pads, so it is full size only from
@@ -1497,31 +1497,34 @@ button.pill {
 
 /* ---- cards: the stage (the Pokémon's tile · fact pills) ---- */
 
-/* The tile sits right over the answer card, and the two are centred
-   between the header row and the docked foot by auto margins. A card
-   taller than the screen scrolls under the sticky foot */
+/* The tile sits right over the answer card and takes the free space
+   between the header row and the docked foot while the card is being
+   asked (see .stage-tile). A card taller than the screen scrolls under
+   the sticky foot */
 .card-stage {
-  flex: none;
-  margin-top: auto;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
   gap: 10px;
   padding: 2px 0 12px; /* the tile runs the pad's width */
 }
 
+/* once answered the tile holds its height (see .stage-tile) and the
+   pills and the answer card follow right under it, so the free space
+   goes under the card instead (see .answer-pad) */
+.flashcards.answered .card-stage {
+  flex-grow: 0;
+}
+
 /* Who's That types its answer, and a phone's keyboard takes the bottom
-   half of the screen, so on a touch screen its card sits at the top of
-   the column without the empty pill row, keeping the text box clear of
-   the keyboard and the tile in view while typing */
+   half of the screen, so on a touch screen its tile keeps its set height
+   with the card right under it rather than pushing the text box down to
+   the foot, keeping the box clear of the keyboard and the tile in view
+   while typing */
 @media (pointer: coarse) {
   .flashcards.name-deck .card-stage {
-    margin-top: 0;
-  }
-
-  .flashcards.name-deck .fact-pills:empty {
-    display: none;
+    flex-grow: 0;
   }
 
   /* while the box is focused the keyboard covers the foot and the tab
@@ -1550,16 +1553,17 @@ button.pill {
 }
 
 /* the Pokémon on a big tile the width of the column; once the card is
-   answered it is a button into the detail sheet. Its height follows the
-   screen's (see .flashcards), so a short screen gets a shorter tile */
+   answered it is a button into the detail sheet. While the card is being
+   asked the tile grows into the stage's free space from a set height
+   that follows the screen's (see .flashcards), so a short screen gets a
+   shorter tile; once answered the options collapse, so Flashcards holds
+   the tile at the height it had (an inline height), keeping it where it
+   was, and the free space falls under the answer card instead */
 .stage-tile {
   width: 100%;
-  height: var(--tile);
+  flex: 1 0 var(--tile);
   /* the name's size follows the tile's height (see figcaption) */
   container-type: size;
-  /* the size settles smoothly when the viewport changes (a browser's
-     bars collapsing) */
-  transition: height var(--dur-med) var(--ease-out);
 }
 
 .stage-tile .pokemon-card {
@@ -1592,9 +1596,10 @@ button.pill {
   filter: brightness(0) invert(0.82);
 }
 
-/* one row under the tile: centred while the pills fit, scrolling sideways
-   (no scrollbar) when a narrow screen can't fit them all, rather than
-   wrapping down into the pad */
+/* one row under the tile once the card is answered (the tile has the
+   row's space while asking): centred while the pills fit, scrolling
+   sideways (no scrollbar) when a narrow screen can't fit them all,
+   rather than wrapping down into the pad */
 .fact-pills {
   display: flex;
   align-items: center;
@@ -1603,6 +1608,10 @@ button.pill {
   max-width: 100%;
   overflow: auto hidden;
   scrollbar-width: none;
+}
+
+.fact-pills:empty {
+  display: none;
 }
 
 .fact-pills::-webkit-scrollbar {
@@ -1638,7 +1647,8 @@ button.pill {
 /* ---- cards: the answer card and the docked foot ---- */
 
 /* the question and its options (and the summary once answered): a card
-   under the tile, centred with it (see .card-stage) */
+   right under the tile; the bottom margin takes whatever free space the
+   stage leaves (see .stage-tile), so the foot stays docked */
 .answer-pad {
   flex: none;
   margin: 0 0 auto;
@@ -1954,25 +1964,12 @@ button.pill {
   cursor: default;
 }
 
-/* the Submit label leads with the picks ("Fighting + Electric · Submit"):
-   a long list trims rather than wraps, and never trims "Submit" itself */
 .pad-cta-label {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-}
-
-.pad-cta-picks {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.pad-cta-verb {
-  flex: none;
-  white-space: pre;
 }
 
 /* the row under the CTA: Back on the left, Don't Know (or Undo, once
@@ -2441,14 +2438,14 @@ button.evo-tile:active {
      --page-bottom) and there is no tab bar at the top. A browser's pill
      sits 8px higher than a home-screen app's, so its card needs 8px more */
   .flashcards {
-    --fits-at: 896px; /* 772px with the smallest tile */
-    --tall-fits-at: 1028px; /* 904px with the smallest tile */
+    --fits-at: 858px; /* 734px with the smallest tile */
+    --tall-fits-at: 990px; /* 866px with the smallest tile */
   }
 
   @media (display-mode: standalone) {
     .flashcards {
-      --fits-at: 888px; /* 764px with the smallest tile */
-      --tall-fits-at: 1020px; /* 896px with the smallest tile */
+      --fits-at: 850px; /* 726px with the smallest tile */
+      --tall-fits-at: 982px; /* 858px with the smallest tile */
     }
   }
 
