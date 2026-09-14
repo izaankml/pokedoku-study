@@ -1561,7 +1561,13 @@ button.pill {
    was, and the free space falls under the answer card instead */
 .stage-tile {
   width: 100%;
-  flex: 1 0 var(--tile);
+  /* the set height is the flex basis, kept on height and min-height
+     rather than in the flex shorthand, which iOS Safari drops with a
+     calc() basis */
+  flex-grow: 1;
+  flex-shrink: 0;
+  height: var(--tile);
+  min-height: var(--tile);
   /* the name's size follows the tile's height (see figcaption) */
   container-type: size;
 }

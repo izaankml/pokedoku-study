@@ -305,7 +305,7 @@ function Flashcards() {
       setAsked({
         height: tile.getBoundingClientRect().height,
         overflow: pageOverflow(),
-        floor: parseFloat(getComputedStyle(tile).flexBasis) || 0,
+        floor: parseFloat(getComputedStyle(tile).minHeight) || 0,
       });
     });
     observer.observe(tile);
