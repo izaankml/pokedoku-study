@@ -20,7 +20,7 @@ describe("pickFlashcard (Region deck)", () => {
     const seen = new Set();
     for (let i = 0; i < 20; i++) {
       const roll = (i + 0.5) / 20;
-      seen.add(pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => roll, now: T0 }).pokemon);
+      seen.add(pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => roll, now: T0 }).subject);
     }
     // p1 only wins the bottom ~5% of rolls.
     expect(seen.has(p2)).toBe(true);
@@ -32,7 +32,7 @@ describe("pickFlashcard (Region deck)", () => {
     merged.flashcards[String(p1.id)] = { a: 5, c: 5, s: 2, t: T0 - 30 * DAY }; // 10x overdue
     merged.flashcards[String(p2.id)] = { a: 5, c: 5, s: 2, t: T0 }; // just seen
     const pick = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => 0.9, now: T0 });
-    expect(pick.pokemon).toBe(p1);
+    expect(pick.subject).toBe(p1);
   });
 
   it("deals a due card before any new one, however the roll falls", () => {
@@ -42,12 +42,12 @@ describe("pickFlashcard (Region deck)", () => {
     for (let index = 0; index < 20; index++) {
       const roll = (index + 0.5) / 20;
       const pick = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => roll, now: T0 });
-      expect(pick.pokemon).toBe(p1);
+      expect(pick.subject).toBe(p1);
     }
     // once it's answered (seen just now), the queue is empty and p2 gets its turn
     merged.flashcards[String(p1.id)] = { a: 4, c: 4, s: 2, t: T0 };
     const after = pickFlashcard(merged, { deckId: "region", exclude: excludeAllBut, random: () => 0.9, now: T0 });
-    expect(after.pokemon).toBe(p2);
+    expect(after.subject).toBe(p2);
   });
 });
 

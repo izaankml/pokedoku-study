@@ -10,23 +10,28 @@ import {
   HISTORY_MAX,
   SPECIAL_FLAGS,
   cardKey,
-  comboParts,
+  dealtDeckIds,
   deckCategories,
   deckLabel,
+  deckParts,
   deckPicks,
   dueCardCount,
   facetCategories,
   filterCount,
   focusPoolSize,
   isDeckId,
+  isNature,
+  isNatureDeck,
   isRightPick,
   loadCardFilter,
   loadSilhouette,
   matchesFocus,
+  partAnswers,
   saveCardFilter,
   saveSession,
   saveSilhouette,
   session,
+  subjectOf,
 } from "../logic/flashcards.ts";
 import type {
   Card,
@@ -38,11 +43,13 @@ import type {
   FocusFacet,
   PastCard,
   Picked,
+  SubjectId,
 } from "../logic/flashcards.ts";
 import { hashStateFor, useDetailHash, writeHash } from "../logic/hashState.ts";
 import { findByName, namesSpeciesOnly, nearMiss, wordBag } from "../logic/matching.ts";
 import { formatInterval, intervalFor } from "../logic/schedule.ts";
 import { preloadSprite } from "../logic/sprites.ts";
+import { STAT_LABELS } from "../data/natures.ts";
 import { POKEMON_BY_ID, pokemonBySlug } from "../data/pokedex.ts";
 import { CATEGORY_BY_ID, getCategory, pillClassOf, typeClassOf } from "../data/categories.ts";
 import type { Pokemon } from "../data/types.ts";
@@ -50,6 +57,7 @@ import CategoryPill, { TypeIcon } from "./CategoryPill.tsx";
 import type { PillCategory } from "./CategoryPill.tsx";
 import Chevron from "./Chevron.tsx";
 import NameInput from "./NameInput.tsx";
+import NatureCard from "./NatureCard.tsx";
 import PokemonCard from "./PokemonCard.tsx";
 import PokemonDetail from "./PokemonDetail.tsx";
 import { useModalShell } from "./useModalShell.ts";
@@ -81,12 +89,6 @@ const NUDGE_TEXT: Record<NudgeKind, string> = {
 const DASH_SLOTS = 10;
 // Shown in the group slot when a Pokémon is in no group at all
 const REGULAR: PillCategory = { id: "flag-regular", label: "Regular", short: "Regular", group: "special" };
-
-const pokemonOf = (card: Card): Pokemon => {
-  const pokemon = POKEMON_BY_ID.get(card.pokemonId);
-  if (!pokemon) throw new Error(`unknown Pokémon on card: ${card.pokemonId}`);
-  return pokemon;
-};
 
 // A deck named in the URL (#cards/region) wins over the remembered one.
 function initialDeck(): string {
@@ -254,9 +256,13 @@ function Flashcards() {
   const comboOk = past ? past.comboOk : liveComboOk;
   const selection = past ? (Array.isArray(past.picked) ? past.picked : []) : liveSelection;
 
-  const pokemon = pokemonOf(card);
-  const parts = comboParts(card.deckId);
-  // the deck whose options fill the pad; a combo's two, each on its own pad
+  // what the card is about: a Pokémon, or on the Natures deck a nature
+  const subject = subjectOf(card);
+  const pokemon = isNature(subject) ? null : subject;
+  const nature = isNature(subject) ? subject : null;
+  const parts = deckParts(card.deckId);
+  // the deck whose options fill the pad; a combo's two (or the Natures
+  // deck's), each on its own pad
   const padDecks: [Deck] | [Deck, Deck] = parts ?? [DECK_BY_ID.get(card.deckId) as Deck];
   // Who's That types its answer instead of picking options, and hides the
   // name until answered, and the sprite's colours too while the silhouette
@@ -267,7 +273,7 @@ function Flashcards() {
 
   const answered = picked !== null;
   const gaveUp = picked === GAVE_UP;
-  const key = cardKey(card.deckId, pokemon);
+  const key = cardKey(card.deckId, subject);
   const typed = typedFor.key === key ? typedFor.text : "";
   // the nudge belongs to the live card while it's still being asked
   const shownNudge = nudge !== null && nudge.key === key && live && picked === null ? nudge : null;
@@ -279,7 +285,9 @@ function Flashcards() {
   const wasCorrect =
     answered &&
     !gaveUp &&
-    (parts ? Boolean(comboOk && comboOk.a && comboOk.b) : isRightPick(padDecks[0], pickedList, padDecks[0].answers(pokemon)));
+    (parts
+      ? Boolean(comboOk && comboOk.a && comboOk.b)
+      : isRightPick(padDecks[0], pickedList, partAnswers(padDecks[0], subject)));
   // Submit stands ready once a multi deck has a pick, a combo has one on
   // each pad, or Who's That has a name typed (a plain single-pick deck
   // grades on the tap instead)
@@ -319,6 +327,8 @@ function Flashcards() {
     if (excess > 0) tile.style.height = `${Math.max(asked.floor, asked.height - excess)}px`;
   }, [answered, asked]);
   const filterN = filterCount(filter);
+  const deckInPlay = DECK_BY_ID.get(deckId);
+  const filterable = !(deckInPlay && isNatureDeck(deckInPlay));
   // the due cards this deck and filter can deal, which the picker deals
   // first. Walking the pools is costly, so this recomputes only when the
   // stats, deck or filter change, or once a minute for cards falling due
@@ -333,14 +343,19 @@ function Flashcards() {
   );
   const [detail, openDetail, closeDetail] = useDetailHash(resolve);
 
-  function freshCard(forDeck: string, alsoExclude: number[] = [], withFilter: CardFilter = filter): Card {
+  function freshCard(forDeck: string, alsoExclude: SubjectId[] = [], withFilter: CardFilter = filter): Card {
     const pick = pickFlashcard(merged, {
       deckId: forDeck,
       exclude: new Set([...session.recent, ...alsoExclude]),
       filter: withFilter,
     });
-    return { deckId: pick.deckId, pokemonId: pick.pokemon.id };
+    return { deckId: pick.deckId, subjectId: pick.subject.id };
   }
+
+  // Whether a card lined up earlier is still one `forDeck` would deal
+  // (All: any single deck the focus filter leaves in the mix)
+  const inPlay = (candidate: Card, forDeck: string): boolean =>
+    forDeck === "all" ? dealtDeckIds("all", filter).includes(candidate.deckId) : candidate.deckId === forDeck;
 
   // Writes the changed fields into the session (and localStorage) first,
   // then mirrors them into React state.
@@ -369,11 +384,12 @@ function Flashcards() {
   useEffect(() => {
     const fits = (candidate: Card | null): candidate is Card =>
       candidate !== null &&
-      (deckId === "all" ? comboParts(candidate.deckId) === null : candidate.deckId === deckId) &&
-      candidate.pokemonId !== liveCard.pokemonId &&
-      matchesFocus(pokemonOf(candidate), filter);
-    if (!fits(session.next)) session.next = freshCard(deckId, [liveCard.pokemonId]);
-    preloadSprite(pokemonOf(session.next));
+      inPlay(candidate, deckId) &&
+      candidate.subjectId !== liveCard.subjectId &&
+      matchesFocus(subjectOf(candidate), filter);
+    if (!fits(session.next)) session.next = freshCard(deckId, [liveCard.subjectId]);
+    const upcoming = subjectOf(session.next);
+    if (!isNature(upcoming)) preloadSprite(upcoming);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- freshCard reads the live stats; only a new card, deck or filter should line up again
   }, [liveCard, deckId, filter]);
 
@@ -411,14 +427,14 @@ function Flashcards() {
     let correct: boolean;
     if (parts) {
       ok = {
-        a: isRightPick(parts[0], deckPicks(parts[0], picks), parts[0].answers(pokemon)),
-        b: isRightPick(parts[1], deckPicks(parts[1], picks), parts[1].answers(pokemon)),
+        a: isRightPick(parts[0], deckPicks(parts[0], picks), partAnswers(parts[0], subject)),
+        b: isRightPick(parts[1], deckPicks(parts[1], picks), partAnswers(parts[1], subject)),
       };
       correct = ok.a && ok.b;
     } else {
-      correct = isRightPick(padDecks[0], picks, padDecks[0].answers(pokemon));
+      correct = isRightPick(padDecks[0], picks, partAnswers(padDecks[0], subject));
     }
-    const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct });
+    const token = recordAttempt({ categories: deckCategories(card.deckId, subject), speciesId: key, correct });
     session.undo = { token, key };
     setNudge(null);
     apply({
@@ -435,7 +451,7 @@ function Flashcards() {
   // for the summary
   function submitName(): void {
     const text = typed.trim().slice(0, TYPED_MAX);
-    const answers = padDecks[0].answers(pokemon);
+    const answers = partAnswers(padDecks[0], subject);
     const match = findByName(text);
     if (!match || !answers.includes(String(match.id))) {
       const accepted = answers.map((id) => POKEMON_BY_ID.get(Number(id))).filter((each) => each !== undefined);
@@ -477,7 +493,7 @@ function Flashcards() {
   // Don't Know reveals the whole card, a combo's two pads at once.
   function giveUp(): void {
     if (!live || answered) return;
-    const token = recordAttempt({ categories: deckCategories(card.deckId, pokemon), speciesId: key, correct: false });
+    const token = recordAttempt({ categories: deckCategories(card.deckId, subject), speciesId: key, correct: false });
     session.undo = { token, key };
     setNudge(null);
     apply({
@@ -516,14 +532,10 @@ function Flashcards() {
       apply({ viewing: viewing !== null && viewing + 1 < history.length ? viewing + 1 : null });
       return;
     }
-    session.recent = [...session.recent, pokemon.id].slice(-10);
+    session.recent = [...session.recent, subject.id].slice(-10);
     const lined = session.next;
     const upcoming =
-      lined &&
-      (forDeck === "all" ? comboParts(lined.deckId) === null : lined.deckId === forDeck) &&
-      lined.pokemonId !== pokemon.id
-        ? lined
-        : freshCard(forDeck, [pokemon.id]);
+      lined && inPlay(lined, forDeck) && lined.subjectId !== subject.id ? lined : freshCard(forDeck, [subject.id]);
     session.next = null;
     apply({ card: upcoming, selection: [], picked: null, comboOk: null, history: settled(), viewing: null });
   }
@@ -545,7 +557,7 @@ function Flashcards() {
     setDeckId(id);
     setDeckSheet(false);
     apply({
-      card: freshCard(id, [liveCard.pokemonId]),
+      card: freshCard(id, [liveCard.subjectId]),
       selection: [],
       picked: null,
       comboOk: null,
@@ -575,8 +587,9 @@ function Flashcards() {
 
   function doneFilters(): void {
     setFilterSheet(false);
-    if (livePicked === null && !matchesFocus(pokemonOf(liveCard), filter)) {
-      apply({ card: freshCard(deckId, [liveCard.pokemonId]), selection: [], picked: null, comboOk: null, viewing: null });
+    const stays = matchesFocus(subjectOf(liveCard), filter) && inPlay(liveCard, deckId);
+    if (livePicked === null && !stays) {
+      apply({ card: freshCard(deckId, [liveCard.subjectId]), selection: [], picked: null, comboOk: null, viewing: null });
     }
   }
 
@@ -622,26 +635,43 @@ function Flashcards() {
 
   // The fact pills under the name: empty while asking; the Pokémon's
   // types, region, group (and stage, when the deck asked it) once
-  // answered.
+  // answered, or a nature's raised and lowered stats.
   const involvesStage = card.deckId === "stage" || Boolean(parts?.some((sub) => sub.id === "stage"));
-  let factPills: PillCategory[] = [];
-  if (answered) {
+  let factPills: ReactNode[] = [];
+  if (answered && pokemon) {
     const groupPills = SPECIAL_FLAGS.filter((flag) => pokemon.flags.includes(flag)).map((flag) =>
       getCategory(`flag-${flag}`),
     );
-    factPills = [
+    const categories: PillCategory[] = [
       ...pokemon.types.map((type) => getCategory(`type-${type}`)),
       ...pokemon.regions.map((region) => getCategory(`region-${region}`)),
       ...(groupPills.length ? groupPills : [REGULAR]),
     ];
-    if (involvesStage && pokemon.stage) factPills.push(getCategory(`stage-${pokemon.stage}`));
+    if (involvesStage && pokemon.stage) categories.push(getCategory(`stage-${pokemon.stage}`));
+    factPills = categories.map((category) => <CategoryPill key={category.id} cat={category} useShort />);
+  } else if (answered && nature) {
+    factPills =
+      nature.raised && nature.lowered
+        ? [
+            <span key="up" className="pill stat-up">
+              ▲ {STAT_LABELS[nature.raised].short}
+            </span>,
+            <span key="down" className="pill stat-down">
+              ▼ {STAT_LABELS[nature.lowered].short}
+            </span>,
+          ]
+        : [
+            <span key="none" className="pill">
+              No stat changes
+            </span>,
+          ];
   }
 
   // A deck's pad: its answers and the options shown. A filtered single-pick
   // facet shows only the selected options while the right answer is among
   // them; otherwise the whole pad comes back.
   const padOf = (deck: Deck): { answers: string[]; options: DeckOption[]; cols: number } => {
-    const answers = deck.answers(pokemon);
+    const answers = partAnswers(deck, subject);
     const facetSel = deck.multi ? [] : (filter[deck.id as FocusFacet] ?? []);
     const narrowed = facetSel.length > 0 && answers.some((id) => facetSel.includes(id));
     const options = narrowed ? deck.options.filter((option) => facetSel.includes(option.id)) : deck.options;
@@ -680,7 +710,8 @@ function Flashcards() {
 
   // The line under the options once answered: what was missed and what
   // was wrong, and when the card comes back. A card answered right, or
-  // revealed, says only when it comes back
+  // revealed, says only when it comes back, as does a Natures card, whose
+  // one answer per pad is already on the pad
   const listNames = (ids: string[]): string => ids.map(shortOf).join(", ");
   let summary: ReactNode = null;
   if (answered) {
@@ -691,7 +722,7 @@ function Flashcards() {
           {parts[0].label} {mark(comboOk.a)} · {parts[1].label} {mark(comboOk.b)} ·{" "}
         </>
       ) : null;
-    if (gaveUp || wasCorrect) {
+    if (gaveUp || wasCorrect || nature) {
       if (backIn || prefix) {
         summary = (
           <>
@@ -700,7 +731,7 @@ function Flashcards() {
           </>
         );
       }
-    } else if (nameDeck) {
+    } else if (nameDeck && pokemon) {
       // what was typed, and the Pokémon it resolved to, if any (an older
       // stored session has only the Pokémon)
       const typed = pickedList.find((pick) => pick.startsWith(TYPED))?.slice(TYPED.length) ?? null;
@@ -732,7 +763,7 @@ function Flashcards() {
         </>
       );
     } else {
-      const graded = padDecks.map((deck) => ({ picks: deckPicks(deck, pickedList), answers: deck.answers(pokemon) }));
+      const graded = padDecks.map((deck) => ({ picks: deckPicks(deck, pickedList), answers: partAnswers(deck, subject) }));
       const missed = graded.flatMap(({ picks, answers }) => answers.filter((id) => !picks.includes(id)));
       const wrong = graded.flatMap(({ picks, answers }) => picks.filter((id) => !answers.includes(id)));
       const clauses: ReactNode[] = [];
@@ -771,11 +802,11 @@ function Flashcards() {
 
   // ---- the stage and the pad ----
 
-  // The Pokémon on a big tile with the fact pills under it (empty, and
-  // out of the layout, while asking). Once answered the tile opens the
-  // detail sheet, and holds the height it had while asking (see
-  // heldTileHeight); before that it stays inert so nothing gives the
-  // answer away
+  // The Pokémon (or nature) on a big tile with the fact pills under it
+  // (empty, and out of the layout, while asking). Once answered a
+  // Pokémon's tile opens the detail sheet, and holds the height it had
+  // while asking (see heldTileHeight); before that it stays inert so
+  // nothing gives the answer away
   const stage = (
     <div className="card-stage">
       <div
@@ -783,19 +814,19 @@ function Flashcards() {
         className={`stage-tile${silhouetted ? " mystery" : ""}`}
         style={heldTileHeight !== null ? { flex: "none", height: heldTileHeight } : undefined}
       >
-        <PokemonCard
-          pokemon={pokemon}
-          eager
-          hideName={mystery}
-          hint="Details"
-          onClick={answered ? () => openDetail(pokemon) : undefined}
-        />
+        {isNature(subject) ? (
+          <NatureCard nature={subject} />
+        ) : (
+          <PokemonCard
+            pokemon={subject}
+            eager
+            hideName={mystery}
+            hint="Details"
+            onClick={answered ? () => openDetail(subject) : undefined}
+          />
+        )}
       </div>
-      <div className="fact-pills">
-        {factPills.map((category) => (
-          <CategoryPill key={category.id} cat={category} useShort />
-        ))}
-      </div>
+      <div className="fact-pills">{factPills}</div>
     </div>
   );
 
@@ -889,26 +920,32 @@ function Flashcards() {
 
   return (
     // a combo card stacks two pads, so its stage and buttons give some
-    // height back; Who's That's card sits up top on a phone, clear of the
-    // keyboard (see .flashcards.name-deck); an answered card keeps its
-    // tile where it was (see .flashcards.answered)
-    <div className={`flashcards${parts ? " combo" : ""}${nameDeck ? " name-deck" : ""}${answered ? " answered" : ""}`}>
+    // height back (a Natures card's two pads are short, see
+    // .flashcards.natures); Who's That's card sits up top on a phone,
+    // clear of the keyboard (see .flashcards.name-deck); an answered card
+    // keeps its tile where it was (see .flashcards.answered)
+    <div
+      className={`flashcards${parts && !nature ? " combo" : ""}${nature ? " natures" : ""}${nameDeck ? " name-deck" : ""}${answered ? " answered" : ""}`}
+    >
       <div className="cards-topbar">
         <button className="deck-choose" aria-haspopup="dialog" onClick={() => setDeckSheet(true)}>
           {deckLabel(deckId)}
           <Chevron />
         </button>
-        <button
-          className={`filter-open${filterN ? " on" : ""}`}
-          aria-label="Focus filters"
-          aria-haspopup="dialog"
-          onClick={() => setFilterSheet(true)}
-        >
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 5h16l-6.3 7.2V19l-3.4-1.8v-5L4 5Z" />
-          </svg>
-          {filterN ? <span className="filter-badge">{filterN}</span> : null}
-        </button>
+        {/* the focus filters are about Pokémon, so the Natures deck has none */}
+        {filterable ? (
+          <button
+            className={`filter-open${filterN ? " on" : ""}`}
+            aria-label="Focus filters"
+            aria-haspopup="dialog"
+            onClick={() => setFilterSheet(true)}
+          >
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 5h16l-6.3 7.2V19l-3.4-1.8v-5L4 5Z" />
+            </svg>
+            {filterN ? <span className="filter-badge">{filterN}</span> : null}
+          </button>
+        ) : null}
         <div className="dash-row" aria-hidden="true">
           {Array.from({ length: DASH_SLOTS }, (_, index) => (
             <span key={index} className={`dash${dashes[index] ? ` ${dashes[index]}` : ""}`} />

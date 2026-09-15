@@ -1385,6 +1385,13 @@ button.pill {
   --pad-cta: max(44px, 50px - var(--squeeze) * 6 / 200);
 }
 
+/* a Natures card stacks two short pads (a question and two rows each),
+   which stand taller than the tallest single pad by the second question
+   and its spacing, so it fits from that much above --fits-at */
+.flashcards.natures {
+  --shortfall: max(0px, var(--fits-at) + 31px - var(--screen));
+}
+
 /* ---- cards: header row (deck chooser · filter · dashes · due) ---- */
 
 .cards-topbar {
@@ -1600,6 +1607,49 @@ button.pill {
 /* Who's That: a silhouette until the card is answered */
 .stage-tile.mystery .sprite {
   filter: brightness(0) invert(0.82);
+}
+
+/* the Natures deck's tile: the nature's name, large, where a Pokémon
+   deck shows a sprite; the same chrome as the Pokémon tile */
+.stage-tile .nature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding: 12px 10px 10px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1), var(--edge-hi);
+}
+
+.nature-kicker {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
+/* 2.4rem on the full 220px tile, down to 1.5rem on a short one */
+.nature-name {
+  font-size: clamp(1.5rem, 20cqh, 2.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-hi);
+}
+
+/* a nature's raised and lowered stats, in the pill row once answered */
+.pill.stat-up {
+  background: color-mix(in srgb, var(--correct) 22%, var(--surface-1));
+  border-color: color-mix(in srgb, var(--correct) 55%, var(--border));
+}
+
+.pill.stat-down {
+  background: color-mix(in srgb, var(--wrong) 18%, var(--surface-1));
+  border-color: color-mix(in srgb, var(--wrong) 50%, var(--border));
 }
 
 /* one row under the tile once the card is answered (the tile has the
@@ -3483,6 +3533,17 @@ button.srs-tile {
   width: 32px;
   height: 32px;
   image-rendering: pixelated;
+}
+
+/* a nature's row: no sprite, and nothing to open */
+.card-status-thumb.nature-thumb {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-low);
+}
+
+.card-status-row.inert {
+  pointer-events: none;
 }
 
 .card-status-name {

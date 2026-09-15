@@ -43,7 +43,11 @@ so on).
   answered); Next returns. The Region deck skips regional forms, whose
   names give the answer away. Tapping the deck in play again goes back to
   All. Keyboard: arrows move over the options, Space picks, Enter
-  submits or moves on.
+  submits or moves on. The Natures deck asks about the 25 natures rather
+  than a Pokémon: the card names a nature, and two pads take the stat it
+  raises and the stat it lowers (None for a neutral nature), graded each
+  on its own like a combo's. Natures are mixed into All while no focus
+  filter is set, since the filters are about Pokémon.
 - **Grid**: a full 3×3 practice board, generated so every cell is
   solvable with distinct Pokémon; wrong guesses say why. Correct picks
   show an estimated global pick percentage (how many PokeDoku players

@@ -10,7 +10,7 @@ import type { MergedStats, StatEntry } from "../logic/stats.ts";
 import { allValidPairs, pairKey } from "../logic/matching.ts";
 import { scheduleSummary } from "../logic/schedule.ts";
 import type { ScheduleStatus, ScheduleSummary } from "../logic/schedule.ts";
-import { DECKS, allCardKeys, allCardRefs, dueCardCount, resetSessionForDeck } from "../logic/flashcards.ts";
+import { DECKS, allCardKeys, allCardRefs, dueCardCount, isNature, resetSessionForDeck } from "../logic/flashcards.ts";
 import type { CardRef } from "../logic/flashcards.ts";
 import { drillPairFor } from "../logic/picker.ts";
 import { pokemonBySlug } from "../data/pokedex.ts";
@@ -121,19 +121,37 @@ function CardStatusList({ status, merged, now, onOpen }: CardStatusListProps) {
 
   return (
     <div className="card-status-list">
-      {shown.map((ref) => (
-        <button key={ref.key} type="button" className="card-status-row" onClick={() => onOpen(ref.pokemon)}>
-          <span className="card-status-thumb">
-            <Sprite pokemon={ref.pokemon} />
-          </span>
-          <span className="card-status-name">
-            <PokemonName name={ref.pokemon.displayName} />
-          </span>
+      {shown.map((ref) => {
+        const meta = (
           <span className="card-status-meta">
             {ref.label} · {timing(ref)}
           </span>
-        </button>
-      ))}
+        );
+        // a nature has no sprite and no detail sheet to open
+        if (isNature(ref.subject)) {
+          return (
+            <div key={ref.key} className="card-status-row inert">
+              <span className="card-status-thumb nature-thumb" aria-hidden="true">
+                ▲▼
+              </span>
+              <span className="card-status-name">{ref.subject.name}</span>
+              {meta}
+            </div>
+          );
+        }
+        const pokemon = ref.subject;
+        return (
+          <button key={ref.key} type="button" className="card-status-row" onClick={() => onOpen(pokemon)}>
+            <span className="card-status-thumb">
+              <Sprite pokemon={pokemon} />
+            </span>
+            <span className="card-status-name">
+              <PokemonName name={pokemon.displayName} />
+            </span>
+            {meta}
+          </button>
+        );
+      })}
       {!done ? <div ref={sentinelRef} aria-hidden="true" /> : null}
       {!refs.length ? <p className="hint">Nothing here right now.</p> : null}
     </div>

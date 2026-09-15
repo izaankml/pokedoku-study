@@ -1,8 +1,9 @@
 // Phone-emulating driver for the Cards tab: deals a chosen card, optionally
 // types a Who's That answer, screenshots the viewport and prints the layout.
 // Usage: node phone.mjs <deck> <pokemonSlug|-> <typed|-> <out.png> [answer]
-//   deck:    name | type | region | stage | special | matchup | combo:type+region …
-//   slug:    dex slug of the Pokémon to deal ("charizardmegax"), or - for random
+//   deck:    name | type | region | stage | special | matchup | nature | combo:type+region …
+//   slug:    dex slug of the Pokémon to deal ("charizardmegax"), a nature's
+//            lower-case name on the nature deck ("adamant"), or - for random
 //   typed:   text to type into Who's That's box and submit with Enter, or -
 //   answer:  "go" presses Enter once more; "pick" taps a pick deck's first option
 // Env: APP_URL (default http://localhost:5173/), WIDTH/HEIGHT/TOP (CSS px;
@@ -21,8 +22,9 @@ const top = Number(process.env.TOP ?? 62);
 const engine = process.env.ENGINE ?? "chromium";
 
 const pokedex = JSON.parse(readFileSync(new URL("../../../src/data/pokedex.json", import.meta.url), "utf8"));
-const pokemonId = slug === "-" ? null : pokedex.pokemon.find((entry) => entry.name === slug)?.id;
-if (slug !== "-" && !pokemonId) throw new Error(`no such Pokémon: ${slug}`);
+// the card's subject id: a nature's name as given, else the Pokémon's dex id
+const subjectId = slug === "-" ? null : deck === "nature" ? slug : pokedex.pokemon.find((entry) => entry.name === slug)?.id;
+if (slug !== "-" && !subjectId) throw new Error(`no such Pokémon: ${slug}`);
 
 const browser =
   engine === "webkit"
@@ -49,10 +51,10 @@ if (engine !== "webkit") {
 
 // the Cards session is read from localStorage on load, so a chosen card
 // is planted there first (the shape is CardSession in logic/flashcards.ts)
-if (pokemonId) {
+if (subjectId) {
   const session = {
     deckId: deck,
-    card: { deckId: deck, pokemonId },
+    card: { deckId: deck, subjectId },
     selection: [],
     picked: null,
     comboOk: null,

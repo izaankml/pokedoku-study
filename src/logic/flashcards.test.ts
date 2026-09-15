@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { NATURES, NATURE_BY_ID } from "../data/natures.ts";
 import { POKEMON_BY_ID } from "../data/pokedex.ts";
 import {
   COMBO_IDS,
@@ -6,21 +7,25 @@ import {
   DECK_BY_ID,
   allCardKeys,
   cardKey,
-  comboParts,
+  dealtDeckIds,
   deckAnswers,
   deckCategories,
   deckEligible,
   deckLabel,
+  deckParts,
   deckPicks,
   deckPool,
   dueCardCount,
   facetCategories,
   focusedDeckPool,
   isDeckId,
+  isNature,
   isRightPick,
   matchesFocus,
+  partAnswers,
+  subjectOf,
 } from "./flashcards.ts";
-import type { Deck } from "./flashcards.ts";
+import type { Deck, PokemonDeck, Subject } from "./flashcards.ts";
 import type { Pokemon } from "../data/types.ts";
 import { pickFlashcard } from "./picker.ts";
 import { emptyBlock, mergeBlocks } from "./stats.ts";
@@ -30,15 +35,19 @@ const by = (name: string): Pokemon => {
   if (!pokemon) throw new Error(`no such Pokémon: ${name}`);
   return pokemon;
 };
-const deck = (id: string): Deck => {
+const asPokemon = (subject: Subject): Pokemon => {
+  if (isNature(subject)) throw new Error(`a nature where a Pokémon was expected: ${subject.id}`);
+  return subject;
+};
+const deck = (id: string): PokemonDeck => {
   const found = DECK_BY_ID.get(id);
-  if (!found) throw new Error(`no such deck: ${id}`);
+  if (!found || "about" in found) throw new Error(`no such Pokémon deck: ${id}`);
   return found;
 };
 
 describe("flashcard decks", () => {
-  it("offers the four deckable groups, Matchups and Who's That, plus the six pairwise combos", () => {
-    expect(DECKS.map((each) => each.id)).toEqual(["region", "type", "special", "stage", "matchup", "name"]);
+  it("offers the four deckable groups, Matchups, Who's That and Natures, plus the six pairwise combos", () => {
+    expect(DECKS.map((each) => each.id)).toEqual(["region", "type", "special", "stage", "matchup", "name", "nature"]);
     expect(COMBO_IDS).toEqual([
       "combo:type+region",
       "combo:type+stage",
@@ -70,7 +79,8 @@ describe("flashcard decks", () => {
     expect(pool).toContain(gourgeist);
     expect(pool).not.toContain(large);
     expect(pool).not.toContain(by("pikachustarter"));
-    expect(pool.filter((each) => each.speciesName === "Toxtricity" && each.flags.includes("gmax")).map((each) => each.name)).toEqual([
+    const gmaxToxtricity = pool.map(asPokemon).filter((each) => each.speciesName === "Toxtricity" && each.flags.includes("gmax"));
+    expect(gmaxToxtricity.map((each) => each.name)).toEqual([
       "toxtricitygmax",
     ]);
     expect(pool).toContain(by("electrodehisui"));
@@ -114,8 +124,8 @@ describe("flashcard decks", () => {
   });
 
   it("combo decks intersect eligibility and union answers", () => {
-    expect(comboParts("region")).toBe(null);
-    expect(comboParts("combo:type+special")?.map((sub) => sub.id)).toEqual(["type", "special"]);
+    expect(deckParts("region")).toBe(null);
+    expect(deckParts("combo:type+special")?.map((sub) => sub.id)).toEqual(["type", "special"]);
     // in no group, so no group combo, but type+region is fine
     expect(deckEligible("combo:type+special", by("pikachu"))).toBe(false);
     expect(deckEligible("combo:type+region", by("pikachu"))).toBe(true);
@@ -145,6 +155,41 @@ describe("flashcard decks", () => {
     expect(deckPool("combo:type+special")).toContain(by("koraidon"));
   });
 
+  it("asks every nature on two single-pick pads, the raised stat and the lowered one", () => {
+    const parts = deckParts("nature");
+    expect(parts?.map((part) => part.label)).toEqual(["Raised", "Lowered"]);
+    expect(deckLabel("nature")).toBe("Natures");
+    expect(isDeckId("nature")).toBe(true);
+    expect(deckPool("nature")).toEqual(NATURES);
+    const adamant = NATURE_BY_ID.get("adamant") as Subject;
+    const hardy = NATURE_BY_ID.get("hardy") as Subject;
+    expect(deckAnswers("nature", adamant)).toEqual(["nature-up-attack", "nature-down-spAttack"]);
+    expect(deckAnswers("nature", hardy)).toEqual(["nature-up-none", "nature-down-none"]);
+    expect(deckCategories("nature", adamant)).toEqual([]);
+    expect(deckEligible("nature", adamant)).toBe(true);
+    expect(deckEligible("nature", by("pikachu"))).toBe(false);
+    expect(deckEligible("region", adamant)).toBe(false);
+    expect(cardKey("nature", adamant)).toBe("nature:adamant");
+    expect(subjectOf({ deckId: "nature", subjectId: "adamant" })).toBe(adamant);
+    expect(subjectOf({ deckId: "region", subjectId: 25 })).toBe(by("pikachu"));
+    // the two pads' picks sit in one list, graded each against its own options
+    const [raised, lowered] = parts as [Deck, Deck];
+    const picks = ["nature-down-spAttack", "nature-up-attack"];
+    expect(isRightPick(raised, deckPicks(raised, picks), partAnswers(raised, adamant))).toBe(true);
+    expect(isRightPick(lowered, deckPicks(lowered, picks), partAnswers(lowered, adamant))).toBe(true);
+    expect(isRightPick(lowered, deckPicks(lowered, ["nature-up-attack", "nature-down-speed"]), partAnswers(lowered, adamant))).toBe(false);
+    expect(raised.options.map((option) => option.short)).toEqual(["Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "None"]);
+  });
+
+  it("mixes Natures into All only while no focus filter is set", () => {
+    expect(dealtDeckIds("all", {})).toEqual(["region", "type", "special", "stage", "matchup", "name", "nature"]);
+    expect(dealtDeckIds("all", { type: ["type-fire"] })).toEqual(["region", "type", "special", "stage", "matchup", "name"]);
+    expect(dealtDeckIds("nature", { type: ["type-fire"] })).toEqual(["nature"]);
+    // the filter is about Pokémon: a nature is never filtered out of its own deck
+    expect(focusedDeckPool("nature", { type: ["type-fire"] })).toEqual(NATURES);
+    expect(matchesFocus(NATURE_BY_ID.get("bold") as Subject, { type: ["type-fire"] })).toBe(true);
+  });
+
   it("focus filters match OR within a facet and AND across facets", () => {
     expect(matchesFocus(by("pikachu"), {})).toBe(true);
     expect(matchesFocus(by("pikachu"), { region: ["region-kanto", "region-unova"] })).toBe(true);
@@ -153,7 +198,7 @@ describe("flashcard decks", () => {
     expect(matchesFocus(by("charizard"), { region: ["region-kanto"], type: ["type-water"] })).toBe(false);
     const legendaryStages = focusedDeckPool("stage", { special: ["flag-legendary"] });
     expect(legendaryStages.length).toBeGreaterThan(0);
-    expect(legendaryStages.every((pokemon) => pokemon.flags.includes("legendary"))).toBe(true);
+    expect(legendaryStages.every((subject) => asPokemon(subject).flags.includes("legendary"))).toBe(true);
     // the chips: 4 stages (no Not Fully Evolved), 7 groups (no Mega/Gmax)
     expect(facetCategories("stage").map((category) => category.id)).toEqual([
       "stage-first",
@@ -183,7 +228,7 @@ describe("flashcard decks", () => {
     for (let i = 0; i < 20; i++) {
       const pick = pickFlashcard(merged, { deckId: "combo:type+region", random: () => i / 20 });
       expect(pick.deckId).toBe("combo:type+region");
-      expect(deckEligible("combo:type+region", pick.pokemon)).toBe(true);
+      expect(deckEligible("combo:type+region", pick.subject)).toBe(true);
     }
     const seen = new Set<string>();
     for (let i = 0; i < 40; i++) {
@@ -198,7 +243,17 @@ describe("flashcard decks", () => {
         filter: { region: ["region-hisui"] },
         random: () => i / 20,
       });
-      expect(pick.pokemon.regions).toContain("hisui");
+      expect(asPokemon(pick.subject).regions).toContain("hisui");
+    }
+    // the Natures deck deals natures, and All leaves them out under a filter
+    for (let i = 0; i < 20; i++) {
+      const pick = pickFlashcard(merged, { deckId: "nature", random: () => i / 20 });
+      expect(pick.deckId).toBe("nature");
+      expect(isNature(pick.subject)).toBe(true);
+    }
+    for (let i = 0; i < 40; i++) {
+      const pick = pickFlashcard(merged, { deckId: "all", filter: { type: ["type-fire"] }, random: () => i / 40 });
+      expect(pick.deckId).not.toBe("nature");
     }
   });
 });
@@ -212,9 +267,12 @@ describe("dueCardCount", () => {
     block.flashcards[cardKey("region", growlithe)] = anHourAgo;
     block.flashcards[cardKey("type", growlithe)] = anHourAgo;
     block.flashcards[cardKey("combo:type+region", growlithe)] = anHourAgo;
+    block.flashcards[cardKey("nature", NATURE_BY_ID.get("jolly") as Subject)] = anHourAgo;
     const merged = mergeBlocks([block]);
-    expect(dueCardCount(merged, now)).toBe(3);
-    expect(dueCardCount(merged, now, { deckId: "all", filter: {} })).toBe(2); // All never deals combos
+    expect(dueCardCount(merged, now)).toBe(4);
+    expect(dueCardCount(merged, now, { deckId: "all", filter: {} })).toBe(3); // All never deals combos
+    expect(dueCardCount(merged, now, { deckId: "all", filter: { type: ["type-fire"] } })).toBe(2); // nor natures under a filter
+    expect(dueCardCount(merged, now, { deckId: "nature", filter: {} })).toBe(1);
     expect(dueCardCount(merged, now, { deckId: "region", filter: {} })).toBe(1);
     expect(dueCardCount(merged, now, { deckId: "region", filter: { type: ["type-fire"] } })).toBe(1);
     expect(dueCardCount(merged, now, { deckId: "region", filter: { type: ["type-water"] } })).toBe(0);

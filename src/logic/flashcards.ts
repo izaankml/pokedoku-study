@@ -1,10 +1,12 @@
 // Flashcard decks: one per category group, plus pairwise Combo decks
-// ("combo:type+region") that ask two of them about one Pokémon. A card can
-// have several right answers; single-pick decks accept any, multi decks
-// want the exact set.
+// ("combo:type+region") that ask two of them about one Pokémon, and a
+// Natures deck about the 25 natures. A card can have several right
+// answers; single-pick decks accept any, multi decks want the exact set.
 
 import { CATEGORIES, CATEGORY_BY_ID, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
+import { NATURES, NATURE_BY_ID, STAT_LABELS, STAT_NAMES } from "../data/natures.ts";
+import type { Nature } from "../data/natures.ts";
 import { POKEMON, POKEMON_BY_ID, POKEMON_BY_NAME } from "../data/pokedex.ts";
 import { weaknessesOf } from "../data/typechart.ts";
 import { FLAGS } from "../data/types.ts";
@@ -13,14 +15,32 @@ import { loadJson, saveJson } from "./hashState.ts";
 import { scheduleStatus } from "./schedule.ts";
 import type { MergedStats } from "./stats.ts";
 
-// An answer button: always a category of the deck's group.
+// What a card is about: a Pokémon on every deck but Natures, whose cards
+// are the natures. A deck's pool holds one kind only.
+export type Subject = Pokemon | Nature;
+export type SubjectId = Subject["id"];
+
+export const isNature = (subject: Subject): subject is Nature => "raised" in subject;
+
+const pokemonOf = (subject: Subject): Pokemon => {
+  if (isNature(subject)) throw new Error(`a nature on a Pokémon deck: ${subject.id}`);
+  return subject;
+};
+
+const natureOf = (subject: Subject): Nature => {
+  if (!isNature(subject)) throw new Error(`a Pokémon on the Natures deck: ${subject.id}`);
+  return subject;
+};
+
+// An answer button: a category of the deck's group, or a stat on the
+// Natures deck.
 export interface DeckOption {
   id: string;
   label: string;
   short: string;
 }
 
-export interface Deck {
+interface DeckBase {
   id: string;
   label: string;
   // the card's prompt, also the deck sheet's subtitle
@@ -35,6 +55,13 @@ export interface Deck {
   // answer-pad grid columns
   cols: number;
   options: DeckOption[];
+  // two pads asked at once about one card (Natures: the raised stat and
+  // the lowered one), each graded on its own like a combo's
+  parts?: [Deck, Deck];
+}
+
+// A deck about Pokémon: its pool is the dex, narrowed by `eligible`.
+export interface PokemonDeck extends DeckBase {
   // the option ids that are right for this Pokémon
   answers: (pokemon: Pokemon) => string[];
   // the categories an attempt is credited to, when not the answers
@@ -44,6 +71,23 @@ export interface Deck {
   eligible: (pokemon: Pokemon) => boolean;
   // how much more often than normal to ask about this Pokémon
   bias: (pokemon: Pokemon) => number;
+}
+
+// A deck about the natures: every nature is asked, none is credited to
+// a PokeDoku category.
+export interface NatureDeck extends DeckBase {
+  about: "nature";
+  answers: (nature: Nature) => string[];
+  categories: () => string[];
+}
+
+export type Deck = PokemonDeck | NatureDeck;
+
+export const isNatureDeck = (deck: Deck): deck is NatureDeck => "about" in deck;
+
+// A pad's answers for the card's subject.
+export function partAnswers(deck: Deck, subject: Subject): string[] {
+  return isNatureDeck(deck) ? deck.answers(natureOf(subject)) : deck.answers(pokemonOf(subject));
 }
 
 const isMegaOrGmax = (pokemon: Pokemon): boolean =>
@@ -81,7 +125,54 @@ for (const group of LOOKALIKE_GROUPS) {
 // the ids Who's That accepts for a Pokémon: its lookalike group, else itself
 export const lookalikeAnswers = (pokemon: Pokemon): string[] => LOOKALIKES.get(pokemon.name) ?? [String(pokemon.id)];
 
-export const DECKS: Deck[] = [
+// ---- the Natures deck: the raised stat on one pad, the lowered on another ----
+
+type StatSide = "up" | "down";
+
+// The five stats and None (a neutral nature), on a pad of the given side.
+// Option ids carry the side, so deckPicks tells the two pads apart.
+const statOptions = (side: StatSide): DeckOption[] => [
+  ...STAT_NAMES.map((stat) => ({ id: `nature-${side}-${stat}`, ...STAT_LABELS[stat] })),
+  { id: `nature-${side}-none`, label: "None", short: "None" },
+];
+
+const NATURE_RAISED: NatureDeck = {
+  about: "nature",
+  id: "nature-up",
+  label: "Raised",
+  question: "Which stat is raised?",
+  cols: 3, // the five stats and None: two rows of three
+  options: statOptions("up"),
+  answers: (nature) => [`nature-up-${nature.raised ?? "none"}`],
+  categories: () => [],
+};
+
+const NATURE_LOWERED: NatureDeck = {
+  about: "nature",
+  id: "nature-down",
+  label: "Lowered",
+  question: "Which stat is lowered?",
+  cols: 3,
+  options: statOptions("down"),
+  answers: (nature) => [`nature-down-${nature.lowered ?? "none"}`],
+  categories: () => [],
+};
+
+// The deck in the chooser; its card is the two pads above, submitted
+// together and graded each on its own.
+const NATURE_DECK: NatureDeck = {
+  about: "nature",
+  id: "nature",
+  label: "Natures",
+  question: "Which stat rises, which falls?",
+  parts: [NATURE_RAISED, NATURE_LOWERED],
+  cols: 3,
+  options: [...NATURE_RAISED.options, ...NATURE_LOWERED.options],
+  answers: (nature) => [...NATURE_RAISED.answers(nature), ...NATURE_LOWERED.answers(nature)],
+  categories: () => [],
+};
+
+const POKEMON_DECKS: PokemonDeck[] = [
   {
     id: "region",
     label: "Region",
@@ -170,7 +261,14 @@ export const DECKS: Deck[] = [
   },
 ];
 
+export const DECKS: Deck[] = [...POKEMON_DECKS, NATURE_DECK];
+
 export const DECK_BY_ID = new Map<string, Deck>(DECKS.map((deck) => [deck.id, deck]));
+
+const isNatureDeckId = (deckId: string): boolean => {
+  const deck = DECK_BY_ID.get(deckId);
+  return deck !== undefined && isNatureDeck(deck);
+};
 
 function deckById(deckId: string): Deck {
   const deck = DECK_BY_ID.get(deckId);
@@ -192,11 +290,14 @@ const COMBO_PAIRS = [
 
 export const COMBO_IDS: string[] = COMBO_PAIRS.map(([a, b]) => `combo:${a}+${b}`);
 
-// The two sub-decks of a combo id, or null for anything else.
-export function comboParts(deckId: string): [Deck, Deck] | null {
-  if (!COMBO_IDS.includes(deckId)) return null;
-  const [a, b] = deckId.slice("combo:".length).split("+");
-  return [deckById(a), deckById(b)];
+// The two pads of a card: a combo's two decks, or a deck's own parts
+// (Natures); null for a deck with one pad.
+export function deckParts(deckId: string): [Deck, Deck] | null {
+  if (COMBO_IDS.includes(deckId)) {
+    const [a, b] = deckId.slice("combo:".length).split("+");
+    return [deckById(a), deckById(b)];
+  }
+  return DECK_BY_ID.get(deckId)?.parts ?? null;
 }
 
 export const isDeckId = (id: string): boolean => id === "all" || DECK_BY_ID.has(id) || COMBO_IDS.includes(id);
@@ -204,35 +305,41 @@ export const isDeckId = (id: string): boolean => id === "all" || DECK_BY_ID.has(
 // "Region", "Type × Region", "All decks": the chooser and the Stats lists.
 export function deckLabel(deckId: string): string {
   if (deckId === "all") return "All decks";
-  const parts = comboParts(deckId);
-  if (parts) return `${parts[0].label} × ${parts[1].label}`;
+  if (COMBO_IDS.includes(deckId)) {
+    const [a, b] = deckParts(deckId) as [Deck, Deck];
+    return `${a.label} × ${b.label}`;
+  }
   return deckById(deckId).label;
 }
 
 // Every option id the card can answer with (a combo's union). Attempts
 // are recorded against all of them.
-export function deckAnswers(deckId: string, pokemon: Pokemon): string[] {
-  const parts = comboParts(deckId);
-  return parts ? parts.flatMap((part) => part.answers(pokemon)) : deckById(deckId).answers(pokemon);
+export function deckAnswers(deckId: string, subject: Subject): string[] {
+  const parts = deckParts(deckId);
+  return parts ? parts.flatMap((part) => partAnswers(part, subject)) : partAnswers(deckById(deckId), subject);
 }
 
 // What an attempt is credited to: the answers, unless the deck says
 // otherwise (a combo's parts each their own way).
-export function deckCategories(deckId: string, pokemon: Pokemon): string[] {
-  const credited = (deck: Deck): string[] => (deck.categories ?? deck.answers)(pokemon);
-  const parts = comboParts(deckId);
+export function deckCategories(deckId: string, subject: Subject): string[] {
+  const credited = (deck: Deck): string[] =>
+    isNatureDeck(deck) ? deck.categories() : (deck.categories ?? deck.answers)(pokemonOf(subject));
+  const parts = deckParts(deckId);
   return parts ? parts.flatMap(credited) : credited(deckById(deckId));
 }
 
 // A combo only asks Pokémon both its sub-decks would ask.
-export function deckEligible(deckId: string, pokemon: Pokemon): boolean {
-  const parts = comboParts(deckId);
-  return parts ? parts.every((part) => part.eligible(pokemon)) : deckById(deckId).eligible(pokemon);
+export function deckEligible(deckId: string, subject: Subject): boolean {
+  const eligible = (deck: Deck): boolean =>
+    isNatureDeck(deck) ? isNature(subject) : !isNature(subject) && deck.eligible(subject);
+  const parts = deckParts(deckId);
+  return parts ? parts.every(eligible) : eligible(deckById(deckId));
 }
 
-export function deckBias(deckId: string, pokemon: Pokemon): number {
-  const parts = comboParts(deckId);
-  return parts ? parts[0].bias(pokemon) * parts[1].bias(pokemon) : deckById(deckId).bias(pokemon);
+export function deckBias(deckId: string, subject: Subject): number {
+  const bias = (deck: Deck): number => (isNatureDeck(deck) ? 1 : deck.bias(pokemonOf(subject)));
+  const parts = deckParts(deckId);
+  return parts ? bias(parts[0]) * bias(parts[1]) : bias(deckById(deckId));
 }
 
 // Single-pick decks accept any of the Pokémon's answers (Koraidon is
@@ -255,15 +362,33 @@ export function deckPicks(deck: Deck, picks: string[]): string[] {
 const distinctFromBase = (deckId: string, pokemon: Pokemon): boolean =>
   pokemon.form === null || !sameList(deckAnswers(deckId, pokemon), deckAnswers(deckId, baseOf(pokemon)));
 
-// The Pokémon a deck can ask about, computed once per deck id.
-const poolCache = new Map<string, Pokemon[]>();
-export function deckPool(deckId: string): Pokemon[] {
+// The cards a deck can deal (the Natures deck: every nature), computed
+// once per deck id.
+const poolCache = new Map<string, Subject[]>();
+export function deckPool(deckId: string): Subject[] {
   let pool = poolCache.get(deckId);
   if (!pool) {
-    pool = POKEMON.filter((pokemon) => deckEligible(deckId, pokemon) && distinctFromBase(deckId, pokemon));
+    pool = isNatureDeckId(deckId)
+      ? [...NATURES]
+      : POKEMON.filter((pokemon) => deckEligible(deckId, pokemon) && distinctFromBase(deckId, pokemon));
     poolCache.set(deckId, pool);
   }
   return pool;
+}
+
+// The card's subject by its id, or undefined for an id the deck has no
+// card for.
+export function findSubject(deckId: string, subjectId: SubjectId): Subject | undefined {
+  return isNatureDeckId(deckId) ? NATURE_BY_ID.get(String(subjectId)) : POKEMON_BY_ID.get(Number(subjectId));
+}
+
+// The single decks a deal from `deckId` can draw on: the deck itself, or
+// for All every Pokémon deck, and Natures while no focus filter is set
+// (a filter narrows the deal to Pokémon).
+export function dealtDeckIds(deckId: string, filter: CardFilter): string[] {
+  if (deckId !== "all") return [deckId];
+  const filtered = filterCount(filter) > 0;
+  return DECKS.filter((deck) => !(filtered && isNatureDeck(deck))).map((deck) => deck.id);
 }
 
 // ---- focus filters: constrain the pool every deck draws from ----
@@ -302,34 +427,36 @@ export const filterCount = (filter: CardFilter): number =>
   FOCUS_FACETS.reduce((count, [facet]) => count + (filter[facet]?.length ?? 0), 0);
 
 // OR within a facet, AND across facets; empty facets match everything.
-export function matchesFocus(pokemon: Pokemon, filter: CardFilter): boolean {
+// The facets are about Pokémon, so a nature is never filtered out.
+export function matchesFocus(subject: Subject, filter: CardFilter): boolean {
+  if (isNature(subject)) return true;
   return FOCUS_FACETS.every(([facet]) => {
     const chosen = filter[facet];
     if (!chosen?.length) return true;
-    return chosen.some((id) => CATEGORY_BY_ID.get(id)?.predicate(pokemon));
+    return chosen.some((id) => CATEGORY_BY_ID.get(id)?.predicate(subject));
   });
 }
 
 // A deck's pool narrowed to the focus filter, cached per (deck, filter):
 // it runs on every card advance, and a user has few filter states.
-const focusPoolCache = new Map<string, Pokemon[]>();
-export function focusedDeckPool(deckId: string, filter: CardFilter): Pokemon[] {
+const focusPoolCache = new Map<string, Subject[]>();
+export function focusedDeckPool(deckId: string, filter: CardFilter): Subject[] {
   const signature = FOCUS_FACETS.map(([facet]) => (filter[facet] ?? []).slice().sort().join(",")).join("|");
-  if (signature === "||||") return deckPool(deckId);
+  if (signature === "||||" || isNatureDeckId(deckId)) return deckPool(deckId);
   const key = `${deckId}#${signature}`;
   let pool = focusPoolCache.get(key);
   if (!pool) {
-    pool = deckPool(deckId).filter((pokemon) => matchesFocus(pokemon, filter));
+    pool = deckPool(deckId).filter((subject) => matchesFocus(subject, filter));
     focusPoolCache.set(key, pool);
   }
   return pool;
 }
 
-// The filter sheet's live count: everyone the current deck could ask
-// under the filter ("all": anyone some deck could ask).
+// The filter sheet's live count: every Pokémon the current deck could
+// ask under the filter ("all": anyone some Pokémon deck could ask).
 export function focusPoolSize(deckId: string, filter: CardFilter): number {
-  if (deckId === "all") return new Set(DECKS.flatMap((deck) => focusedDeckPool(deck.id, filter))).size;
-  return focusedDeckPool(deckId, filter).length;
+  const deckIds = dealtDeckIds(deckId, filter).filter((id) => !isNatureDeckId(id));
+  return new Set(deckIds.flatMap((id) => focusedDeckPool(id, filter))).size;
 }
 
 const FILTER_KEY = "pokedoku-study:card-filter:v1";
@@ -367,8 +494,8 @@ export function saveSilhouette(on: boolean): void {
 
 // Stats key for a card. The region deck keeps the bare species id so
 // history recorded before decks existed still counts.
-export const cardKey = (deckId: string, pokemon: Pokemon): string =>
-  deckId === "region" ? String(pokemon.id) : `${deckId}:${pokemon.id}`;
+export const cardKey = (deckId: string, subject: Subject): string =>
+  deckId === "region" ? String(subject.id) : `${deckId}:${subject.id}`;
 
 // Every card any deck can ask, with its stats key. The Stats tab lists
 // them per review status, and the due counter walks them.
@@ -376,7 +503,7 @@ export interface CardRef {
   deckId: string;
   // "Region", "Type × Region", for the Stats review lists
   label: string;
-  pokemon: Pokemon;
+  subject: Subject;
   key: string;
 }
 
@@ -384,7 +511,7 @@ let cardRefsCache: CardRef[] | null = null;
 export function allCardRefs(): CardRef[] {
   cardRefsCache ??= [...DECKS.map((deck) => deck.id), ...COMBO_IDS].flatMap((deckId) => {
     const label = deckLabel(deckId);
-    return deckPool(deckId).map((pokemon) => ({ deckId, label, pokemon, key: cardKey(deckId, pokemon) }));
+    return deckPool(deckId).map((subject) => ({ deckId, label, subject, key: cardKey(deckId, subject) }));
   });
   return cardRefsCache;
 }
@@ -410,19 +537,35 @@ export function dueCardCount(merged: MergedStats, now: number = Date.now(), scop
     for (const ref of allCardRefs()) if (isDue(ref.key)) due += 1;
     return due;
   }
-  const deckIds = scope.deckId === "all" ? DECKS.map((deck) => deck.id) : [scope.deckId];
-  for (const deckId of deckIds) {
-    for (const pokemon of focusedDeckPool(deckId, scope.filter)) if (isDue(cardKey(deckId, pokemon))) due += 1;
+  for (const deckId of dealtDeckIds(scope.deckId, scope.filter)) {
+    for (const subject of focusedDeckPool(deckId, scope.filter)) if (isDue(cardKey(deckId, subject))) due += 1;
   }
   return due;
 }
 
 // ---- the current card, mirrored to localStorage ----
 
-// A card on the table: which deck, which Pokémon.
+// A card on the table: which deck, which Pokémon or nature.
 export interface Card {
   deckId: string;
-  pokemonId: number;
+  subjectId: SubjectId;
+}
+
+export function subjectOf(card: Card): Subject {
+  const subject = findSubject(card.deckId, card.subjectId);
+  if (!subject) throw new Error(`unknown card: ${card.deckId} ${card.subjectId}`);
+  return subject;
+}
+
+// A stored card, in its current shape or the one from before the Natures
+// deck (a pokemonId); null for anything no deck can deal.
+function storedCard(value: unknown): Card | null {
+  if (typeof value !== "object" || value === null) return null;
+  const raw = value as { deckId?: unknown; subjectId?: unknown; pokemonId?: unknown };
+  if (typeof raw.deckId !== "string" || !isDeckId(raw.deckId)) return null;
+  const subjectId = raw.subjectId ?? raw.pokemonId;
+  if (typeof subjectId !== "number" && typeof subjectId !== "string") return null;
+  return findSubject(raw.deckId, subjectId) ? { deckId: raw.deckId, subjectId } : null;
 }
 
 // What was submitted: the graded picks, "gaveup", or null while unanswered.
@@ -458,8 +601,8 @@ export interface CardSession {
   selection: string[];
   picked: Picked;
   comboOk: ComboVerdict | null;
-  // last few Pokémon ids, to avoid immediate repeats
-  recent: number[];
+  // the last few cards' subject ids, to avoid immediate repeats
+  recent: SubjectId[];
   // the last few results, oldest first, for the header dashes
   dashes: DashResult[];
   // the last few answered cards, oldest first, for Back
@@ -476,16 +619,14 @@ export interface CardSession {
 // `undo` (an undo never survives a reload).
 type StoredSession = Omit<CardSession, "next" | "undo">;
 
+// The stored fields other than the cards, which storedCard reads on
+// their own below.
 function isStoredSession(value: unknown): value is StoredSession {
   if (typeof value !== "object" || value === null) return false;
   const stored = value as Partial<StoredSession>;
-  const cardOk =
-    stored.card === null ||
-    (typeof stored.card === "object" && stored.card !== null && isDeckId((stored.card as Card).deckId));
   return (
     typeof stored.deckId === "string" &&
     isDeckId(stored.deckId) &&
-    cardOk &&
     Array.isArray(stored.selection) &&
     Array.isArray(stored.recent)
   );
@@ -512,21 +653,23 @@ export const session: CardSession = {
   undo: null,
   ...(isStoredSession(stored) ? stored : {}),
 };
-// fields newer than a stored session get sane shapes back
+// the cards in their current shape; fields newer than a stored session
+// get sane shapes back
+session.card = storedCard(session.card);
+session.recent = session.recent.filter((id) => typeof id === "number" || typeof id === "string");
 session.dashes = Array.isArray(session.dashes)
   ? session.dashes.filter((dash) => dash === "correct" || dash === "wrong")
   : [];
-const isPastCard = (value: unknown): value is PastCard => {
-  if (typeof value !== "object" || value === null) return false;
+const pastCardOf = (value: unknown): PastCard | null => {
+  if (typeof value !== "object" || value === null) return null;
   const past = value as Partial<PastCard>;
-  return (
-    typeof past.card === "object" &&
-    past.card !== null &&
-    isDeckId(past.card.deckId) &&
-    (past.picked === "gaveup" || Array.isArray(past.picked))
-  );
+  const card = storedCard(past.card);
+  if (!card || !(past.picked === "gaveup" || Array.isArray(past.picked))) return null;
+  return { card, picked: past.picked, comboOk: past.comboOk ?? null };
 };
-session.history = Array.isArray(session.history) ? session.history.filter(isPastCard).slice(-HISTORY_MAX) : [];
+session.history = Array.isArray(session.history)
+  ? session.history.map(pastCardOf).filter((past): past is PastCard => past !== null).slice(-HISTORY_MAX)
+  : [];
 session.viewing =
   typeof session.viewing === "number" && session.viewing >= 0 && session.viewing < session.history.length
     ? session.viewing

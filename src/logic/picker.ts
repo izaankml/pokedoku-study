@@ -1,8 +1,7 @@
 import { QUIZ_CATEGORIES, getCategory } from "../data/categories.ts";
 import type { Category } from "../data/categories.ts";
-import type { Pokemon } from "../data/types.ts";
-import { DECKS, cardKey, deckBias, deckPool, focusedDeckPool } from "./flashcards.ts";
-import type { CardFilter } from "./flashcards.ts";
+import { cardKey, dealtDeckIds, deckBias, deckPool, focusedDeckPool } from "./flashcards.ts";
+import type { CardFilter, Subject, SubjectId } from "./flashcards.ts";
 import { allValidPairs, pairIsValid, pairKey } from "./matching.ts";
 import type { CategoryPair } from "./matching.ts";
 import { dueFactor, scheduleStatus } from "./schedule.ts";
@@ -85,8 +84,8 @@ export function pickDrillPair(
 export interface PickFlashcardOptions {
   // a deck id ("region", "combo:type+region"), or "all" for any single deck
   deckId?: string;
-  // Pokémon ids not to pick (the last few cards)
-  exclude?: Set<number>;
+  // subject ids (Pokémon or natures) not to pick: the last few cards
+  exclude?: Set<SubjectId>;
   // the user's focus filter (flashcards.ts CardFilter)
   filter?: CardFilter;
   random?: RandomSource;
@@ -95,38 +94,37 @@ export interface PickFlashcardOptions {
 
 export interface FlashcardPick {
   deckId: string;
-  pokemon: Pokemon;
+  subject: Subject;
 }
 
 // Picks a flashcard: a deck (the one asked for, or any single deck for
-// "all") and a Pokémon from that deck's pool. While any card the pool can
-// deal is due, the pick is among the due ones; otherwise anyone. Either
+// "all") and a card from that deck's pool. While any card the pool can
+// deal is due, the pick is among the due ones; otherwise any. Either
 // way weighted by weakness, how due it is, and the deck's own bias.
 export function pickFlashcard(
   merged: MergedStats,
-  { deckId = "all", exclude = new Set<number>(), filter = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
+  { deckId = "all", exclude = new Set<SubjectId>(), filter = {}, random = Math.random, now = Date.now() }: PickFlashcardOptions = {},
 ): FlashcardPick {
-  const deckIds = deckId === "all" ? DECKS.map((deck) => deck.id) : [deckId];
   // Per deck: prefer the focused pool without the recent cards; a filter
   // narrow enough to exhaust it drops the recent-exclusion first and the
   // filter only as a last resort. Each deck falls back on its own, so a
   // tight filter never silently removes a deck from the All mix.
-  const cards = deckIds.flatMap((id) => {
+  const cards = dealtDeckIds(deckId, filter).flatMap((id) => {
     const pool = deckPool(id);
     const focused = focusedDeckPool(id, filter);
-    let members = focused.filter((pokemon) => !exclude.has(pokemon.id));
+    let members = focused.filter((subject) => !exclude.has(subject.id));
     if (!members.length) members = focused;
-    if (!members.length) members = pool.filter((pokemon) => !exclude.has(pokemon.id));
+    if (!members.length) members = pool.filter((subject) => !exclude.has(subject.id));
     if (!members.length) members = pool;
-    return members.map((pokemon) => ({ deckId: id, pokemon }));
+    return members.map((subject) => ({ deckId: id, subject }));
   });
-  const entryOf = (card: FlashcardPick) => merged.flashcards[cardKey(card.deckId, card.pokemon)];
+  const entryOf = (card: FlashcardPick) => merged.flashcards[cardKey(card.deckId, card.subject)];
   const dueCards = cards.filter((card) => scheduleStatus(entryOf(card), now) === "due");
   return pickWeighted(
     dueCards.length ? dueCards : cards,
     (card) => {
       const entry = entryOf(card);
-      return deckBias(card.deckId, card.pokemon) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
+      return deckBias(card.deckId, card.subject) * (1.25 - smoothedAccuracy(entry)) * dueFactor(entry, now);
     },
     random,
   );
